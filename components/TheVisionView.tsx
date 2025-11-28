@@ -1,6 +1,6 @@
 // components/views/platform/TheVisionView.tsx
 import React, { useState, useEffect, useCallback, useMemo, useRef, FC, ReactNode } from 'react';
-import Card from '../../Card';
+import Card from './Card';
 
 // --- START: ADVANCED UTILITY TYPES AND INTERFACES ---
 // To simulate a real-world enterprise application, we need robust and detailed typing for our data models.
