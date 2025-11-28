@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useMemo, useCallback } from 'react';
 import { Calendar, Users, Percent, ClipboardCheck, Loader2, PartyPopper, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 
@@ -349,4 +349,3 @@ export const PayrollProcessingWizard: React.FC = () => {
 };
 
 export default PayrollProcessingWizard;
-```
