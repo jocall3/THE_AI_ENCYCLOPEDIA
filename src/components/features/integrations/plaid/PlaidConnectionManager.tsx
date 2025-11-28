@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import {
@@ -181,4 +181,3 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
 };
 
 export default PlaidConnectionManager;
-```
