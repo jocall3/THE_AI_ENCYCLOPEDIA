@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, CardContent, Grid, Button, LinearProgress } from '@mui/material';
 
@@ -107,4 +107,3 @@ const AutomatedPortfolioRebalancer = () => {
 };
 
 export default AutomatedPortfolioRebalancer;
-```
