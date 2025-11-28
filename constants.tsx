@@ -8,7 +8,7 @@
 import React from 'react';
 import { View } from './types';
 import {
-    Bot, Shuffle, Users, Trophy, PiggyBank, CreditCard, Megaphone, Lightbulb, TrendingUp, Scan, FileText, Truck, Landmark, BookOpen, Shield, Globe, Wallet, HeartPulse, Link as LinkIcon, FileSignature, GraduationCap, Home, Handshake, TrendingDown, Code, Presentation, GaugeCircle, Smartphone, FileCog, Accessibility, KeyRound, Palette, Leaf, Gem, GitCommit, Percent, Network, Image as ImageIcon, Cube, Target
+    Bot, Shuffle, Users, Trophy, PiggyBank, CreditCard, Megaphone, Lightbulb, TrendingUp, Scan, FileText, Truck, Landmark, BookOpen, Shield, Globe, Wallet, HeartPulse, Link as LinkIcon, FileSignature, GraduationCap, Home, Handshake, TrendingDown, Code, Presentation, GaugeCircle, Smartphone, FileCog, Accessibility, KeyRound, Palette, Leaf, Gem, GitCommit, Percent, Network, Image as ImageIcon, Box, Target
 } from 'lucide-react';
 
 // ================================================================================================
@@ -19,7 +19,7 @@ import {
 
 const DashboardIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
     </svg>
 );
 
@@ -31,13 +31,7 @@ const TransactionsIcon: React.FC = () => (
 
 const SendMoneyIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" />
-    </svg>
-);
-
-const BudgetsIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l6-6m-5.5 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm11 0a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
     </svg>
 );
 
@@ -47,214 +41,119 @@ const InvestmentsIcon: React.FC = () => (
     </svg>
 );
 
-const AIAdvisorIcon: React.FC = () => (
+const BudgetsIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+const GoalsIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
 );
 
 const SecurityIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.417l5.611-1.573a12.036 12.036 0 013.389.817l.47-.532a12.035 12.035 0 013.39-.816l5.61-1.573A12.02 12.02 0 0018.382 5.984z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0c0-6.627-5.373-12-12-12-.748 0-1.453.07-2.131.202l1.757 1.757a2 2 0 012.828 0l2.828 2.828a2 2 0 010 2.828l-5.656 5.656a2 2 0 01-2.828 0l-2.828-2.828a2 2 0 010-2.828l1.757-1.757z" />
     </svg>
 );
 
 const SettingsIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
 );
 
-const VisionIcon: React.FC = () => (
+const AIAdvisorIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-    </svg>
-);
-
-const APIIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-    </svg>
-);
-
-const PlaidIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
     </svg>
 );
 
 
-
 // ================================================================================================
-// FEATURE ICON COMPONENTS (from lucide-react)
+// NAVIGATION CONSTANTS
 // ================================================================================================
-const AutonomousFinanceAgentLogIcon: React.FC = () => <Bot size={20} />;
-const FinancialRuleBuilderIcon: React.FC = () => <Shuffle size={20} />;
-const JointBudgetTrackerIcon: React.FC = () => <Users size={20} />;
-const GamifiedGroupSavingsIcon: React.FC = () => <Trophy size={20} />;
-const SharedVaultDashboardIcon: React.FC = () => <PiggyBank size={20} />;
-const CorporateCardControlsPanelIcon: React.FC = () => <CreditCard size={20} />;
-const AIAdCampaignManagerIcon: React.FC = () => <Megaphone size={20} />;
-const AIInsightFeedIcon: React.FC = () => <Lightbulb size={20} />;
-const RetirementPlannerIcon: React.FC = () => <TrendingUp size={20} />;
-const AIInvoiceScannerIcon: React.FC = () => <Scan size={20} />;
-const PayrollProcessingWizardIcon: React.FC = () => <FileText size={20} />;
-const SupplyChainFinancePortalIcon: React.FC = () => <Truck size={20} />;
-const TreasuryDashboardIcon: React.FC = () => <Landmark size={20} />;
-const FinancialLiteracyModuleIcon: React.FC = () => <BookOpen size={20} />;
-const TeenDebitCardManagerIcon: React.FC = () => <Shield size={20} />;
-const ForeignExchangeHedgingToolIcon: React.FC = () => <Globe size={20} />;
-const MultiCurrencyWalletIcon: React.FC = () => <Wallet size={20} />;
-const APIHealthDashboardIcon: React.FC = () => <HeartPulse size={20} />;
-const MarqetaCardProgramDashboardIcon: React.FC = () => <CreditCard size={20} />;
-const PlaidConnectionManagerIcon: React.FC = () => <LinkIcon size={20} />;
-const StripeChargeDashboardIcon: React.FC = () => <CreditCard size={20} />;
-const DigitalTrustAndWillCreatorIcon: React.FC = () => <FileSignature size={20} />;
-const CollegeSavingsPlanner529Icon: React.FC = () => <GraduationCap size={20} />;
-const MortgageAffordabilityCalculatorIcon: React.FC = () => <Home size={20} />;
-const AIBillNegotiatorIcon: React.FC = () => <Handshake size={20} />;
-const DebtPayoffPlannerIcon: React.FC = () => <TrendingDown size={20} />;
-const DeveloperPortalIcon: React.FC = () => <Code size={20} />;
-const PitchAnalysisStepperIcon: React.FC = () => <Presentation size={20} />;
-const SecurityScoreDashboardIcon: React.FC = () => <GaugeCircle size={20} />;
-const DeviceManagerIcon: React.FC = () => <Smartphone size={20} />;
-const TransactionRuleBuilderUIIcon: React.FC = () => <FileCog size={20} />;
-const AccessibilitySettingsPanelIcon: React.FC = () => <Accessibility size={20} />;
-const TwoFactorAuthSetupIcon: React.FC = () => <KeyRound size={20} />;
-const ThemeBuilderIcon: React.FC = () => <Palette size={20} />;
-const CarbonFootprintOptimizerIcon: React.FC = () => <Leaf size={20} />;
-const AlternativeAssetTrackerIcon: React.FC = () => <Gem size={20} />;
-const AutomatedPortfolioRebalancerIcon: React.FC = () => <GitCommit size={20} />;
-const AITaxOptimizerIcon: React.FC = () => <Percent size={20} />;
-const DeFiYieldExplorerIcon: React.FC = () => <Network size={20} />;
-const NFTValuationToolIcon: React.FC = () => <ImageIcon size={20} />;
-const Web3CorporateWalletIcon: React.FC = () => <Cube size={20} />;
+// This structure defines the navigation items for the sidebar. By centralizing this,
+// we can easily add, remove, or reorder views. Each item requires a unique `id` from
+// the `View` enum, a user-facing `label`, and a corresponding `icon` component.
 
-// ================================================================================================
-// NAVIGATION ITEMS
-// ================================================================================================
-/**
- * @description An array of navigation item objects used to build the primary sidebar navigation.
- * Each object represents a main view within the application.
- *
- * @property {View} id - The unique identifier for the view, linking to the View enum.
- * @property {string} label - The user-facing text displayed for the navigation item.
- * @property {React.ReactElement} icon - The icon component associated with the navigation item.
- * @property {string} [section] - The section header for grouping navigation items.
- */
-export const NAV_ITEMS = [
-    // Personal Section
-    { id: View.Dashboard, label: 'Dashboard', icon: <DashboardIcon />, section: 'Personal' },
-    { id: View.Transactions, label: 'Transactions', icon: <TransactionsIcon /> },
-    { id: View.SendMoney, label: 'Send Money', icon: <SendMoneyIcon /> },
-    { id: View.Budgets, label: 'Budgets', icon: <BudgetsIcon /> },
-    { id: View.Investments, label: 'Investments', icon: <InvestmentsIcon /> },
-    { id: View.CreditHealth, label: 'Credit Health', icon: <TrendingUp size={20}/> },
-    { id: View.FinancialGoals, label: 'Financial Goals', icon: <Target size={20}/> },
+export interface NavItem {
+    id: View;
+    label: string;
+    icon: React.ReactElement;
+    category?: 'Personal' | 'Corporate' | 'Wealth & Investing' | 'Platform' | 'Settings';
+}
 
-    // AI Suite Section
-    { id: View.AIAdvisor, label: 'AI Advisor', icon: <AIAdvisorIcon />, section: 'AI Suite' },
-    { id: View.QuantumWeaver, label: 'Quantum Weaver', icon: <Users /> },
-    { id: View.AIAdStudio, label: 'AI Ad Studio', icon: <Megaphone /> },
-    { id: View.Marketplace, label: 'Agent Marketplace', icon: <Landmark /> },
+const ICON_SIZE = 20;
 
-    // Corporate Section
-    { id: View.CorporateCommand, label: 'Corporate Command', icon: <Landmark />, section: 'Corporate' },
-    { id: View.ModernTreasury, label: 'Modern Treasury', icon: <Users /> },
+export const NAV_ITEMS: NavItem[] = [
+    // Personal Banking
+    { id: View.Dashboard, label: 'Dashboard', icon: <DashboardIcon />, category: 'Personal' },
+    { id: View.Transactions, label: 'Transactions', icon: <TransactionsIcon />, category: 'Personal' },
+    { id: View.SendMoney, label: 'Send Money', icon: <SendMoneyIcon />, category: 'Personal' },
+    { id: View.Budgets, label: 'Budgets', icon: <PiggyBank size={ICON_SIZE} />, category: 'Personal' },
+    { id: View.Goals, label: 'Financial Goals', icon: <Target size={ICON_SIZE} />, category: 'Personal' },
+    { id: View.CreditHealth, label: 'Credit Health', icon: <HeartPulse size={ICON_SIZE} />, category: 'Personal' },
 
-    // Web3 Section
-    { id: View.Crypto, label: 'Crypto', icon: <Wallet />, section: 'Web3' },
+    // Wealth & Investing
+    { id: View.Investments, label: 'Investments', icon: <TrendingUp size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.Crypto, label: 'Crypto & Web3', icon: <Wallet size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.AlgoTradingLab, label: 'Algo-Trading Lab', icon: <Box size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.ForexArena, label: 'Forex Arena', icon: <Shuffle size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.CommoditiesExchange, label: 'Commodities Exchange', icon: <Gem size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.RealEstateEmpire, label: 'Real Estate Empire', icon: <Home size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.ArtCollectibles, label: 'Art & Collectibles', icon: <Palette size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.DerivativesDesk, label: 'Derivatives Desk', icon: <GitCommit size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.VentureCapital, label: 'Venture Capital Desk', icon: <Lightbulb size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.PrivateEquity, label: 'Private Equity Lounge', icon: <Users size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.TaxOptimization, label: 'Tax Optimization', icon: <Percent size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.LegacyBuilder, label: 'Legacy Builder', icon: <FileSignature size={ICON_SIZE} />, category: 'Wealth & Investing' },
     
-    // Platform Section
-    { id: View.Security, label: 'Security', icon: <SecurityIcon />, section: 'Platform' },
-    { id: View.APIIntegration, label: 'API Status', icon: <APIIcon /> },
-    { id: View.OpenBanking, label: 'Open Banking', icon: <Users /> },
-    { id: View.PlaidDashboard, label: 'Plaid', icon: <PlaidIcon /> },
-    { id: View.StripeDashboard, label: 'Stripe', icon: <CreditCard /> },
-    { id: View.MarqetaDashboard, label: 'Marqeta', icon: <CreditCard /> },
-    { id: View.FinancialDemocracy, label: 'Financial Democracy', icon: <Users /> },
-    { id: View.TheVision, label: 'The Vision', icon: <VisionIcon /> },
+    // Corporate & Business
+    { id: View.CorporateCommand, label: 'Corporate Command', icon: <Landmark size={ICON_SIZE} />, category: 'Corporate' },
+    { id: View.ModernTreasury, label: 'Modern Treasury', icon: <Truck size={ICON_SIZE} />, category: 'Corporate' },
+    { id: View.MarqetaDashboard, label: 'Card Programs (Marqeta)', icon: <CreditCard size={ICON_SIZE} />, category: 'Corporate' },
+    { id: View.PlaidDashboard, label: 'Data Network (Plaid)', icon: <Network size={ICON_SIZE} />, category: 'Corporate' },
+    { id: View.StripeDashboard, label: 'Payments (Stripe)', icon: <CreditCard size={ICON_SIZE} />, category: 'Corporate' },
+    { id: View.SSO, label: 'Single Sign-On (SSO)', icon: <KeyRound size={ICON_SIZE} />, category: 'Corporate' },
 
-    // Enterprise Suite
-    { id: View.SSO, label: 'SSO', icon: <Shield />, section: 'Enterprise Suite' },
-    { id: View.AlgoTradingLab, label: 'Algo Trading Lab', icon: <TrendingUp /> },
-    { id: View.VentureCapitalDesk, label: 'VC Desk', icon: <Users /> },
-    { id: View.PrivateEquityLounge, label: 'Private Equity Lounge', icon: <Landmark /> },
-    { id: View.DerivativesDesk, label: 'Derivatives Desk', icon: <FileText /> },
-    { id: View.ForexArena, label: 'Forex Arena', icon: <Globe /> },
-    { id: View.CommoditiesExchange, label: 'Commodities Exchange', icon: <Truck /> },
-    { id: View.TaxOptimizationChamber, label: 'Tax Optimization', icon: <FileText /> },
-    { id: View.RealEstateEmpire, label: 'Real Estate Empire', icon: <Home /> },
-    { id: View.ArtCollectibles, label: 'Art & Collectibles', icon: <ImageIcon /> },
-    { id: View.LegacyBuilder, label: 'Legacy Builder', icon: <FileSignature /> },
-    { id: View.PhilanthropyHub, label: 'Philanthropy Hub', icon: <HeartPulse /> },
-    { id: View.SovereignWealth, label: 'Sovereign Wealth', icon: <Landmark /> },
-    { id: View.GlobalMarketMap, label: 'Global Market Map', icon: <Globe /> },
-    { id: View.QuantumAssets, label: 'Quantum Assets', icon: <Cube /> },
-    { id: View.ConciergeService, label: 'Concierge Service', icon: <Users /> },
+    // AI & Platform
+    { id: View.AIAdvisor, label: 'AI Financial Advisor', icon: <Bot size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.QuantumWeaver, label: 'Quantum Weaver AI', icon: <GaugeCircle size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.Marketplace, label: 'Agent Marketplace', icon: <Trophy size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.AIAdStudio, label: 'AI Ad Studio', icon: <Megaphone size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.CardCustomization, label: 'Card Customization', icon: <ImageIcon size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.FinancialDemocracy, label: 'Financial Democracy', icon: <Handshake size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.OpenBanking, label: 'Open Banking', icon: <LinkIcon size={ICON_SIZE} />, category: 'Platform' },
+    { id: View.APIIntegration, label: 'API Status', icon: <FileCog size={ICON_SIZE} />, category: 'Platform' },
 
-    // All Features Section
-    { id: View.AutonomousFinanceAgentLog, label: 'Autonomous Agent Log', icon: <AutonomousFinanceAgentLogIcon />, section: 'Features' },
-    { id: View.FinancialRuleBuilder, label: 'Financial Rule Builder', icon: <FinancialRuleBuilderIcon /> },
-    { id: View.JointBudgetTracker, label: 'Joint Budget Tracker', icon: <JointBudgetTrackerIcon /> },
-    { id: View.GamifiedGroupSavings, label: 'Gamified Group Savings', icon: <GamifiedGroupSavingsIcon /> },
-    { id: View.SharedVaultDashboard, label: 'Shared Vault Dashboard', icon: <SharedVaultDashboardIcon /> },
-    { id: View.CorporateCardControlsPanel, label: 'Corp Card Controls', icon: <CorporateCardControlsPanelIcon /> },
-    { id: View.AIAdCampaignManager, label: 'AI Ad Manager', icon: <AIAdCampaignManagerIcon /> },
-    { id: View.AIInsightFeed, label: 'AI Insight Feed', icon: <AIInsightFeedIcon /> },
-    { id: View.RetirementPlanner, label: 'Retirement Planner', icon: <RetirementPlannerIcon /> },
-    { id: View.AIInvoiceScanner, label: 'AI Invoice Scanner', icon: <AIInvoiceScannerIcon /> },
-    { id: View.PayrollProcessingWizard, label: 'Payroll Wizard', icon: <PayrollProcessingWizardIcon /> },
-    { id: View.SupplyChainFinancePortal, label: 'Supply Chain Finance', icon: <SupplyChainFinancePortalIcon /> },
-    { id: View.TreasuryDashboard, label: 'Treasury Dashboard', icon: <TreasuryDashboardIcon /> },
-    { id: View.FinancialLiteracyModule, label: 'Financial Literacy', icon: <FinancialLiteracyModuleIcon /> },
-    { id: View.TeenDebitCardManager, label: 'Teen Debit Card Manager', icon: <TeenDebitCardManagerIcon /> },
-    { id: View.ForeignExchangeHedgingTool, label: 'FX Hedging Tool', icon: <ForeignExchangeHedgingToolIcon /> },
-    { id: View.MultiCurrencyWallet, label: 'Multi-Currency Wallet', icon: <MultiCurrencyWalletIcon /> },
-    { id: View.APIHealthDashboard, label: 'API Health Dashboard', icon: <APIHealthDashboardIcon /> },
-    { id: View.MarqetaCardProgramDashboard, label: 'Marqeta Dashboard', icon: <MarqetaCardProgramDashboardIcon /> },
-    { id: View.PlaidConnectionManager, label: 'Plaid Connections', icon: <PlaidConnectionManagerIcon /> },
-    { id: View.StripeChargeDashboard, label: 'Stripe Charges', icon: <StripeChargeDashboardIcon /> },
-    { id: View.DigitalTrustAndWillCreator, label: 'Digital Will Creator', icon: <DigitalTrustAndWillCreatorIcon /> },
-    { id: View.CollegeSavingsPlanner529, label: '529 Planner', icon: <CollegeSavingsPlanner529Icon /> },
-    { id: View.MortgageAffordabilityCalculator, label: 'Mortgage Calculator', icon: <MortgageAffordabilityCalculatorIcon /> },
-    { id: View.AIBillNegotiator, label: 'AI Bill Negotiator', icon: <AIBillNegotiatorIcon /> },
-    { id: View.DebtPayoffPlanner, label: 'Debt Payoff Planner', icon: <DebtPayoffPlannerIcon /> },
-    { id: View.DeveloperPortal, label: 'Developer Portal', icon: <DeveloperPortalIcon /> },
-    { id: View.PitchAnalysisStepper, label: 'Pitch Analysis Stepper', icon: <PitchAnalysisStepperIcon /> },
-    { id: View.SecurityScoreDashboard, label: 'Security Score', icon: <SecurityScoreDashboardIcon /> },
-    { id: View.DeviceManager, label: 'Device Manager', icon: <DeviceManagerIcon /> },
-    { id: View.TransactionRuleBuilderUI, label: 'Transaction Rules', icon: <TransactionRuleBuilderUIIcon /> },
-    { id: View.AccessibilitySettingsPanel, label: 'Accessibility', icon: <AccessibilitySettingsPanelIcon /> },
-    { id: View.TwoFactorAuthSetup, label: '2FA Setup', icon: <TwoFactorAuthSetupIcon /> },
-    { id: View.ThemeBuilder, label: 'Theme Builder', icon: <ThemeBuilderIcon /> },
-    { id: View.CarbonFootprintOptimizer, label: 'Carbon Optimizer', icon: <CarbonFootprintOptimizerIcon /> },
-    { id: View.AlternativeAssetTracker, label: 'Alternative Assets', icon: <AlternativeAssetTrackerIcon /> },
-    { id: View.AutomatedPortfolioRebalancer, label: 'Portfolio Rebalancer', icon: <AutomatedPortfolioRebalancerIcon /> },
-    { id: View.AITaxOptimizer, label: 'AI Tax Optimizer', icon: <AITaxOptimizerIcon /> },
-    { id: View.DeFiYieldExplorer, label: 'DeFi Yield Explorer', icon: <DeFiYieldExplorerIcon /> },
-    { id: View.NFTValuationTool, label: 'NFT Valuation Tool', icon: <NFTValuationToolIcon /> },
-    { id: View.Web3CorporateWallet, label: 'Web3 Corporate Wallet', icon: <Web3CorporateWalletIcon /> },
+    // High Net Worth
+    { id: View.Concierge, label: 'Concierge Service', icon: <Users size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.PhilanthropyHub, label: 'Philanthropy Hub', icon: <Globe size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    { id: View.SovereignWealth, label: 'Sovereign Wealth Sim', icon: <Landmark size={ICON_SIZE} />, category: 'Wealth & Investing' },
+    
+    // Settings & Meta
+    { id: View.Security, label: 'Security Center', icon: <Shield size={ICON_SIZE} />, category: 'Settings' },
+    { id: View.Personalization, label: 'Personalization', icon: <Palette size={ICON_SIZE} />, category: 'Settings' },
+    { id: View.TheVision, label: 'The Vision', icon: <BookOpen size={ICON_SIZE} />, category: 'Settings' },
 ];
 
+// ================================================================================================
+// MOCK DATA & GENERATORS
+// ================================================================================================
+// While the application aims to be dynamic, providing realistic mock data is crucial for
+// development, testing, and creating a compelling demonstration. These constants provide
+// the foundational data structures.
 
-// ================================================================================================
-// BANKING & FINANCIAL INSTITUTION CONSTANTS
-// ================================================================================================
-/**
- * @description A list of mock bank data for use in the Plaid Link simulation.
- * Each object represents a financial institution with its name, logo, and a primary color.
- * This data is used to create a realistic and visually appealing bank selection screen.
- */
 export const banks = [
-    { name: 'Chase', logo: 'https://logo.clearbit.com/chase.com', color: '#117ACA' },
-    { name: 'Bank of America', logo: 'https://logo.clearbit.com/bankofamerica.com', color: '#E21D33' },
-    { name: 'Wells Fargo', logo: 'https://logo.clearbit.com/wellsfargo.com', color: '#D71E28' },
-    { name: 'Citi', logo: 'https://logo.clearbit.com/citi.com', color: '#003B70' },
-    { name: 'US Bank', logo: 'https://logo.clearbit.com/usbank.com', color: '#002F6C' },
-    { name: 'Capital One', logo: 'https://logo.clearbit.com/capitalone.com', color: '#003E7D' },
-    { name: 'PNC', logo: 'https://logo.clearbit.com/pnc.com', color: '#F28500' },
-    { name: 'TD Bank', logo: 'https://logo.clearbit.com/td.com', color: '#038303' },
-    { name: 'American Express', logo: 'https://logo.clearbit.com/americanexpress.com', color: '#016FD0' },
+  { name: 'Chase', logo: 'https://logo.clearbit.com/chase.com' },
+  { name: 'Bank of America', logo: 'https://logo.clearbit.com/bankofamerica.com' },
+  { name: 'Wells Fargo', logo: 'https://logo.clearbit.com/wellsfargo.com' },
+  { name: 'Citi', logo: 'https://logo.clearbit.com/citi.com' },
+  { name: 'U.S. Bank', logo: 'https://logo.clearbit.com/usbank.com' },
+  { name: 'PNC Bank', logo: 'https://logo.clearbit.com/pnc.com' },
+  { name: 'Capital One', logo: 'https://logo.clearbit.com/capitalone.com' },
+  { name: 'TD Bank', logo: 'https://logo.clearbit.com/td.com' },
 ];
