@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -35,183 +35,153 @@ const generateMockStartups = (count: number): Startup[] => {
       id: i + 1,
       name: `Prosperity Corp ${i + 1}`,
       sector: sectors[i % sectors.length],
-      valuation: parseFloat(valuation.toFixed(2)),
-      fundraisingGoal: parseFloat(goal.toFixed(2)),
-      amountRaised: parseFloat(raised.toFixed(2)),
-      investors: Math.floor(Math.random() * 500) + 10,
-      description: `Disrupting the ${sectors[i % sectors.length]} market with proprietary, cost-free technology leveraging the Balcony of Prosperity ecosystem.`,
-      growthRate: parseFloat((Math.random() * 50 + 10).toFixed(1)),
-      stage: stages[i % stages.length] as 'Seed' | 'Series A' | 'Growth',
+      valuation: parseFloat(valuation.toFixed(1)),
+      fundraisingGoal: parseFloat(goal.toFixed(1)),
+      amountRaised: parseFloat(raised.toFixed(1)),
+      investors: Math.floor(Math.random() * 20) + 1,
+      description: `An innovative company in the ${sectors[i % sectors.length]} space, focusing on scalable solutions.`,
+      growthRate: parseFloat((Math.random() * 50 + 5).toFixed(1)),
+      stage: stages[i % stages.length],
     };
   });
 };
 
-const MOCK_STARTUPS = generateMockStartups(100);
+const mockStartups: Startup[] = generateMockStartups(100);
 
-// --- Component Definitions ---
+// --- Sub-components for better structure ---
 
-const InvestmentCard: React.FC<{ startup: Startup; onInvest: (id: number) => void }> = ({ startup, onInvest }) => {
-  const progressValue = useMemo(() => (startup.amountRaised / startup.fundraisingGoal) * 100, [startup]);
-  const formattedValuation = `$${startup.valuation.toLocaleString(undefined, { maximumFractionDigits: 0 })}M`;
-  const formattedGoal = `$${startup.fundraisingGoal.toFixed(1)}M`;
+const StatCard: React.FC<{ icon: React.ElementType; title: string; value: string; change?: string }> = ({ icon: Icon, title, value, change }) => (
+  <Card>
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
+      <Icon className="h-4 w-4 text-gray-400" />
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold text-white">{value}</div>
+      {change && <p className="text-xs text-gray-400">{change} vs last cycle</p>}
+    </CardContent>
+  </Card>
+);
+
+const StartupCard: React.FC<{ startup: Startup; onInvest: (startup: Startup, amount: number) => void }> = ({ startup, onInvest }) => {
+  const [investmentAmount, setInvestmentAmount] = useState('');
+  const progress = (startup.amountRaised / startup.fundraisingGoal) * 100;
+
+  const handleInvest = () => {
+    const amount = parseFloat(investmentAmount);
+    if (!isNaN(amount) && amount > 0) {
+      onInvest(startup, amount);
+      setInvestmentAmount('');
+    }
+  };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow border-l-4 border-emerald-500">
-      <CardHeader className="p-4 pb-2">
+    <Card className="flex flex-col h-full">
+      <CardHeader>
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-bold flex items-center">
-            <Briefcase className="w-5 h-5 mr-2 text-primary" />
-            {startup.name}
-          </CardTitle>
-          <Badge variant="secondary" className={`capitalize text-xs font-medium ${
-            startup.stage === 'Seed' ? 'bg-blue-100 text-blue-800' :
-            startup.stage === 'Series A' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-purple-100 text-purple-800'
-          }`}>
-            {startup.stage}
-          </Badge>
+          <div>
+            <CardTitle className="text-base">{startup.name}</CardTitle>
+            <p className="text-sm text-cyan-400">{startup.sector}</p>
+          </div>
+          <Badge>{startup.stage}</Badge>
         </div>
-        <p className="text-sm text-gray-500 mt-1">{startup.description}</p>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
-        <div className="grid grid-cols-2 gap-y-2 text-sm mb-3">
-          <div className="flex items-center text-gray-600">
-            <Zap className="w-4 h-4 mr-2 text-orange-500" />
-            <span className="font-semibold">{startup.sector}</span>
+      <CardContent className="flex-grow space-y-3">
+        <p className="text-sm text-gray-400 line-clamp-2">{startup.description}</p>
+        <div className="text-sm">
+          <span className="font-semibold text-white">${startup.valuation}M</span>
+          <span className="text-gray-400"> Valuation</span>
+        </div>
+        <div>
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>Fundraising</span>
+            <span>{progress.toFixed(0)}%</span>
           </div>
-          <div className="flex items-center text-gray-600">
-            <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
-            Growth Rate: <span className="font-semibold ml-1">{startup.growthRate}%</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <DollarSign className="w-4 h-4 mr-2 text-yellow-600" />
-            Valuation: <span className="font-semibold ml-1">{formattedValuation}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Target className="w-4 h-4 mr-2 text-red-500" />
-            Goal: <span className="font-semibold ml-1">{formattedGoal}</span>
+          <Progress value={progress} />
+          <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <span>${startup.amountRaised.toFixed(1)}M raised</span>
+            <span>Goal: ${startup.fundraisingGoal.toFixed(1)}M</span>
           </div>
         </div>
-
-        <div className="mt-3">
-          <div className="flex justify-between text-xs text-gray-600 mb-1">
-            <span>Raised: <span className="font-bold text-emerald-600">${startup.amountRaised.toFixed(1)}M</span></span>
-            <span>{Math.round(progressValue)}% Funded</span>
-          </div>
-          <Progress value={progressValue} className="h-2 bg-gray-200" indicatorClassName="bg-emerald-500" />
+        <div className="flex space-x-2">
+          <Input 
+            type="number" 
+            placeholder="Amount (USD)" 
+            className="flex-grow" 
+            value={investmentAmount} 
+            onChange={(e) => setInvestmentAmount(e.target.value)}
+          />
+          <Button onClick={handleInvest}>Invest</Button>
         </div>
-
-        <Button
-          className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700"
-          onClick={() => onInvest(startup.id)}
-        >
-          Invest Now
-          <ArrowUpRight className="w-4 h-4 ml-2" />
-        </Button>
       </CardContent>
     </Card>
   );
 };
 
+
+// --- Main Component: VentureCapitalDesk ---
+
 const VentureCapitalDesk: React.FC = () => {
+  const [startups, setStartups] = useState<Startup[]>(mockStartups.slice(0, 12)); // Display first 12 initially
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSector, setSelectedSector] = useState('All');
-  const [selectedStage, setSelectedStage] = useState('All');
+  const [portfolioValue] = useState(15000000); // Mock portfolio value
+  const [deployedCapital] = useState(4200000); // Mock deployed capital
 
-  const sectors = useMemo(() => ['All', ...Array.from(new Set(MOCK_STARTUPS.map(s => s.sector)))], []);
-  const stages = useMemo(() => ['All', 'Seed', 'Series A', 'Growth'], []);
-
-  const filteredStartups = useMemo(() => {
-    return MOCK_STARTUPS.filter(startup => {
-      const matchesSearch = startup.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            startup.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesSector = selectedSector === 'All' || startup.sector === selectedSector;
-      const matchesStage = selectedStage === 'All' || startup.stage === selectedStage;
-
-      return matchesSearch && matchesSector && matchesStage;
-    }).sort((a, b) => b.valuation - a.valuation); // Sort by valuation descending
-  }, [searchTerm, selectedSector, selectedStage]);
-
-  const handleInvest = useCallback((id: number) => {
-    // In a real application, this would open a modal for investment details and transaction
-    const startup = MOCK_STARTUPS.find(s => s.id === id);
-    if (startup) {
-      alert(`Initiating investment process for ${startup.name}. Welcome to the Balcony of Prosperity!`);
-    }
+  const handleInvest = useCallback((investedStartup: Startup, amount: number) => {
+    // In a real app, this would trigger an API call.
+    // Here we just update the local state for demonstration.
+    setStartups(prevStartups =>
+      prevStartups.map(s =>
+        s.id === investedStartup.id
+          ? { ...s, amountRaised: s.amountRaised + amount / 1000000, investors: s.investors + 1 }
+          : s
+      )
+    );
+    // You might also want a notification here.
   }, []);
 
+  const filteredStartups = useMemo(() => {
+    return startups.filter(s =>
+      s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.sector.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [startups, searchTerm]);
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <Card className="mb-6 shadow-md border-t-4 border-blue-600">
-        <CardHeader>
-          <CardTitle className="text-3xl font-extrabold text-gray-800 flex items-center">
-            <DollarSign className="w-7 h-7 mr-3 text-blue-600" />
-            Venture Capital Desk (Prosperity Fund)
-          </CardTitle>
-          <p className="text-md text-gray-600 mt-1">
-            Browse and invest in curated, high-growth startups within the 
-            100 integrated, cost-free companies ecosystem.
-          </p>
-        </CardHeader>
-      </Card>
-
-      {/* Filtering and Search Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
-        <div className="col-span-1 md:col-span-2">
-          <Input
-            placeholder="Search by company name or description..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full"
-          />
+    <div className="space-y-6 p-4 md:p-6 text-white">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Venture Capital Desk</h1>
+          <p className="text-gray-400">Access exclusive seed and growth stage investment opportunities.</p>
         </div>
-
-        <div className="col-span-1">
-          <select
-            value={selectedSector}
-            onChange={(e) => setSelectedSector(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {sectors.map(sector => (
-              <option key={sector} value={sector}>{sector === 'All' ? 'All Sectors' : sector}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="col-span-1">
-          <select
-            value={selectedStage}
-            onChange={(e) => setSelectedStage(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {stages.map(stage => (
-              <option key={stage} value={stage}>{stage === 'All' ? 'All Stages' : stage}</option>
-            ))}
-          </select>
-        </div>
+        <Button variant="outline">
+          Syndicate Portal <ArrowUpRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
 
-      <Separator className="my-6" />
+      <Separator />
 
-      {/* Startup Listing */}
-      <h2 className="text-2xl font-semibold mb-6 text-gray-700">
-        Opportunities ({filteredStartups.length})
-      </h2>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={Briefcase} title="Portfolio Value" value={`$${(portfolioValue / 1000000).toFixed(2)}M`} change="+12.5%" />
+        <StatCard icon={DollarSign} title="Deployed Capital" value={`$${(deployedCapital / 1000000).toFixed(2)}M`} />
+        <StatCard icon={Target} title="Active Deals" value={`${startups.length}`} />
+        <StatCard icon={TrendingUp} title="Est. IRR" value="28.2%" change="+2.1%" />
+      </div>
+      
+      <div>
+        <Input
+          placeholder="Search startups by name or sector..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
 
-      {filteredStartups.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredStartups.map(startup => (
-            <InvestmentCard key={startup.id} startup={startup} onInvest={handleInvest} />
-          ))}
-        </div>
-      ) : (
-        <Card className="p-10 text-center border-dashed">
-          <p className="text-xl text-gray-500">No startups match your current criteria.</p>
-          <Button variant="link" onClick={() => { setSearchTerm(''); setSelectedSector('All'); setSelectedStage('All'); }} className="mt-2">
-            Clear Filters
-          </Button>
-        </Card>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredStartups.map(startup => (
+          <StartupCard key={startup.id} startup={startup} onInvest={handleInvest} />
+        ))}
+      </div>
     </div>
   );
 };
