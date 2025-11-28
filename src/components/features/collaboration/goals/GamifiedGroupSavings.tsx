@@ -1,4 +1,4 @@
-```tsx
+
 import React, a, { useState, useMemo, useEffect, FC } from 'react';
 import { Target, Trophy, Users, TrendingUp, Plus, Star } from 'lucide-react';
 
@@ -27,10 +27,10 @@ const initialMembers: Member[] = [
 
 const GOAL_AMOUNT = 10000;
 const predefinedMilestones: Milestone[] = [
-  { amount: 2500, name: "Seed Starter", reward: "Bronze Saver Badge 🥉" },
-  { amount: 5000, name: "Growth Spurt", reward: "Silver Saver Badge 🥈" },
-  { amount: 7500, name: "Money Tree", reward: "Gold Saver Badge 🥇" },
-  { amount: 10000, name: "Goal Smasher", reward: "Platinum Trophy 🏆" },
+  { amount: 2500, name: "Seed Starter", reward: "Bronze Saver Badge ð¥" },
+  { amount: 5000, name: "Growth Spurt", reward: "Silver Saver Badge ð¥" },
+  { amount: 7500, name: "Money Tree", reward: "Gold Saver Badge ð¥" },
+  { amount: 10000, name: "Goal Smasher", reward: "Platinum Trophy ð" },
 ];
 
 // --- HELPER COMPONENTS ---
@@ -215,4 +215,3 @@ const GamifiedGroupSavings: React.FC = () => {
 };
 
 export default GamifiedGroupSavings;
-```
