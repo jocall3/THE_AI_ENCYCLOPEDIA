@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useCallback } from 'react';
 import { PlusCircle, Trash2, ArrowRight, X } from 'lucide-react';
 
@@ -391,4 +391,3 @@ export default function FinancialRuleBuilder() {
     </div>
   );
 }
-```
