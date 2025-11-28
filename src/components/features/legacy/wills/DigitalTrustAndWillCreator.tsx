@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useMemo, FC, ChangeEvent, FormEvent } from 'react';
 import { User, Shield, Users, Globe, Building, Gift, Baby, Coffin, CheckCircle, Download, Printer, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -445,4 +445,3 @@ const DigitalTrustAndWillCreator: FC = () => {
 };
 
 export default DigitalTrustAndWillCreator;
-```
