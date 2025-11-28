@@ -1,0 +1,40 @@
+name: Clean Triple Backticks
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Remove backticks and file-type tags
+        run: |
+          # Find all files except .git contents and binary files
+          git ls-files | while read file; do
+            # Skip binary files
+            if file "$file" | grep -qi "text"; then
+              # Remove leading ``` and any file type after it
+              sed -i '1s/^```[A-Za-z0-9_-]*$//' "$file"
+              sed -i '1s/^```[A-Za-z0-9_-]*//' "$file"
+              
+              # Remove a trailing ``` on last line
+              sed -i '${s/^```$//}' "$file"
+              sed -i '${s/^```//}' "$file"
+            fi
+          done
+
+      - name: Commit changes if any
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add -A
+            git commit -m "Remove triple backticks and file-type headers"
+            git push
+          fi
