@@ -1,4 +1,3 @@
-
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { DataContext } from '../context/DataContext';
 import Card from './Card';
@@ -190,7 +189,7 @@ const SecurityView: React.FC = () => {
                                         {activity.device}
                                         {activity.isCurrent && <span className="px-1.5 py-0.5 bg-green-900/50 text-green-400 text-xs rounded">Current</span>}
                                     </p>
-                                    <p className="text-xs text-gray-400">{activity.location} • {activity.ip}</p>
+                                    <p className="text-xs text-gray-400">{activity.location} â€¢ {activity.ip}</p>
                                 </div>
                                 <span className="text-xs text-gray-500">{new Date(activity.timestamp).toLocaleString()}</span>
                             </div>
