@@ -49,22 +49,38 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
                 <div className="flex-1 overflow-y-auto">
                     <nav className="flex-1 px-2 py-4 space-y-2">
                         {NAV_ITEMS.map((item) => (
-                             <a
+                             <button
                                 key={item.id}
-                                href="#"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleNavClick(item.id);
-                                }}
-                                className={`flex items-center px-4 py-2 text-gray-300 transition-colors duration-200 transform rounded-md hover:bg-gray-700/50 hover:text-white ${
+                                onClick={() => handleNavClick(item.id)}
+                                className={`flex items-center w-full px-4 py-2 text-left text-gray-300 transition-colors duration-200 transform rounded-md hover:bg-gray-700/50 hover:text-white ${
                                     activeView === item.id ? 'bg-cyan-500/20 text-cyan-300 border-l-4 border-cyan-400' : ''
                                 }`}
                             >
                                 {item.icon}
                                 <span className="mx-4 font-medium">{item.label}</span>
-                            </a>
+                            </button>
                         ))}
                     </nav>
+                </div>
+                <div className="border-t border-gray-700/50 px-6 py-4">
+                    <a
+                        href="#"
+                        className="flex items-center group"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleNavClick('Personalization' as View);
+                        }}
+                    >
+                        <img
+                            className="h-10 w-10 rounded-full"
+                            src="https://www.gravatar.com/avatar/?d=mp"
+                            alt="User avatar"
+                        />
+                        <div className="ml-4">
+                            <p className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors">James Burvel O'Callaghan III</p>
+                            <p className="text-xs text-gray-400">Google Account</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </>
