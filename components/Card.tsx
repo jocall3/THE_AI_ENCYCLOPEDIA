@@ -1,4 +1,3 @@
-
 // components/Card.tsx
 // This component has been significantly re-architected to function as a highly
 // versatile and state-aware container, in alignment with production-grade standards
@@ -188,17 +187,17 @@ const CardHeader: React.FC<{
 
   return (
     <div
-      className={`flex items-start justify-between pb-4 ${headerCursorClass}`}
+      className={`flex items-start justify-between ${headerCursorClass} ${title || subtitle || icon ? 'pb-4' : ''}`}
       onClick={handleHeaderClick}
     >
-      <div className="flex items-center flex-1 pr-4">
+      <div className="flex items-center flex-1 pr-4 min-w-0">
         {icon && <div className="mr-3 flex-shrink-0">{icon}</div>}
-        <div>
+        <div className="min-w-0">
             {title && (
             <h3 className="text-xl font-semibold text-gray-100 truncate">{title}</h3>
             )}
             {subtitle && (
-            <p className="text-sm text-gray-400 mt-1">{subtitle}</p>
+            <p className="text-sm text-gray-400 mt-1 truncate">{subtitle}</p>
             )}
         </div>
       </div>
@@ -285,11 +284,17 @@ const Card: React.FC<CardProps> = ({
       if (isCollapsed) {
         setContentHeight(0);
       } else {
-        const contentEl = contentRef.current;
-        setContentHeight(contentEl ? contentEl.scrollHeight : 'auto');
+        // Force reflow/repaint before measuring to ensure we capture the actual height after transition starts
+        requestAnimationFrame(() => {
+            const contentEl = contentRef.current;
+            if (contentEl) {
+                // Set height immediately to avoid jump, then let CSS handle transition
+                setContentHeight(contentEl.scrollHeight);
+            }
+        });
       }
     }
-  }, [isCollapsed, isCollapsible, children]);
+  }, [isCollapsed, isCollapsed, isCollapsible, children]); // Added children to dependency array to re-measure if content changes
 
   useEffect(() => {
     if (!isCollapsible && isCollapsed) {
@@ -317,20 +322,24 @@ const Card: React.FC<CardProps> = ({
       return <ErrorDisplay message={errorState} onRetry={onRetry} />;
     }
 
-    const contentWrapperStyle = {
+    const contentWrapperStyle: React.CSSProperties = {
       height: isCollapsible ? contentHeight : 'auto',
     };
 
-    const contentPadding = (title || subtitle || icon || isCollapsible || headerActions) ? 'pt-4' : '';
+    // Determine if we need padding above the main content, assuming header is already handled.
+    const needsContentPadding = (title || subtitle || icon || headerActions) && !isMetric;
 
     return (
         <div
           style={contentWrapperStyle}
-          className="transition-[height] duration-500 ease-in-out overflow-hidden"
+          className={`transition-[height] duration-500 ease-in-out overflow-hidden ${isCollapsible ? 'relative' : ''}`}
           aria-hidden={isCollapsed}
         >
-          <div ref={contentRef}>
-             <div className={contentPadding}>
+          <div 
+            ref={contentRef} 
+            className={isCollapsible ? 'absolute top-0 left-0 right-0' : ''}
+          >
+             <div className={needsContentPadding ? 'pt-4' : ''}>
                 {children}
              </div>
           </div>
@@ -351,14 +360,21 @@ const Card: React.FC<CardProps> = ({
           actions={headerActions}
         />
         
-        {(isLoading || errorState) ? (
-            renderCardContent()
-        ) : (
-            <>
-                {renderCardContent()}
-                <CardFooter>{footerContent}</CardFooter>
-            </>
-        )}
+        {/* Wrapper to ensure loading/error states take up the full padded area */}
+        <div className={`
+            ${(isLoading || errorState) ? paddingClasses : ''} 
+            ${(isLoading || errorState) && !(title || subtitle || icon || headerActions) ? 'p-0' : ''}
+        `}>
+            {(isLoading || errorState) ? (
+                renderCardContent()
+            ) : (
+                <>
+                    {renderCardContent()}
+                    <CardFooter>{footerContent}</CardFooter>
+                </>
+            )}
+        </div>
+
       </div>
     </div>
   );
