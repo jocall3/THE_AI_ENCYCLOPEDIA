@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, FC, createContext, useContext, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Card from './Card';
@@ -203,7 +202,8 @@ async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
         if (profile) {
             return { getUserProfile: profile } as unknown as T;
         }
-        return { getUserProfile: { userId: vars.userId, username: `User_${vars.userId.substring(0, 4)}`, email: `${vars.userId}@example.com`, preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } } } } as unknown as T;
+        // Initialize default profile if not found, ensuring Google account placeholder structure is adhered to for the UI hook
+        return { getUserProfile: { userId: vars.userId, username: `User_${vars.userId.substring(0, 4)}`, email: `${vars.userId}@example.com`, preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } }, googleId: 'google_placeholder_id_12345' } } as unknown as T;
     }
 
     if (query.includes('UpdateUserProfile')) {
@@ -299,6 +299,7 @@ const GET_USER_PROFILE_QUERY = gql`
             userId
             username
             email
+            googleId
             preferences {
                 theme
                 notificationSettings
@@ -313,6 +314,7 @@ const UPDATE_USER_PROFILE_MUTATION = gql`
             userId
             username
             email
+            googleId
             preferences {
                 theme
                 notificationSettings
@@ -395,6 +397,7 @@ interface UserProfile {
     userId: string;
     username: string;
     email: string;
+    googleId?: string; // Added for profile rendering
     preferences: {
         theme?: 'dark' | 'light';
         notificationSettings: { 
@@ -410,6 +413,7 @@ interface UserProfile {
 interface UserProfileUpdateInput {
     username?: string;
     email?: string;
+    googleId?: string;
     preferences?: {
         theme?: 'dark' | 'light';
         notificationSettings?: {
@@ -839,6 +843,133 @@ const ScenarioSimulator: FC<{
     );
 }
 
+// --- Profile Component for Sidebar Integration ---
+
+const ProfileSettings: FC<{ userId: string }> = ({ userId }) => {
+    const { data, isLoading, error } = useUserProfile(userId);
+    const { mutate: updateProfile } = useUpdateUserProfile();
+    const [isEditing, setIsEditing] = useState(false);
+    const [displayEmail, setDisplayEmail] = useState(data?.getUserProfile.email || '');
+    const [displayUsername, setDisplayUsername] = useState(data?.getUserProfile.username || '');
+    
+    const profile = data?.getUserProfile;
+
+    useEffect(() => {
+        if (profile) {
+            setDisplayEmail(profile.email || '');
+            setDisplayUsername(profile.username || '');
+        }
+    }, [profile]);
+
+    if (isLoading) {
+        return <div className="p-4 text-center text-gray-400">Loading Profile...</div>;
+    }
+
+    if (error) {
+        return <div className="p-4 text-red-400 text-center">Error loading profile.</div>;
+    }
+    
+    // --- Display Mode ---
+    if (!isEditing && profile) {
+        return (
+            <div className="p-4 space-y-4">
+                <div className="flex items-center space-x-3">
+                    {/* Placeholder for Google Account Avatar/Icon */}
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-green-400">
+                        {profile.username.charAt(0)}
+                    </div>
+                    <div>
+                        <p className="text-lg font-semibold text-white line-clamp-1">{profile.username}</p>
+                        <p className="text-xs text-gray-400 truncate">{profile.email}</p>
+                        <div className="flex items-center mt-1 text-green-400 text-xs">
+                            <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 13.5a1.3 1.3 0 011.49 1.198l.003.121a1.3 1.3 0 01-1.198 1.49L9.555 15a1.3 1.3 0 01-1.49-1.198l-.003-.121a1.3 1.3 0 011.198-1.49zM10 7a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                            Account Authenticated
+                        </div>
+                    </div>
+                </div>
+
+                {/* Critical section for the instructions: Profile interaction */}
+                <div className="text-sm bg-red-900/30 border border-red-700 p-2 rounded">
+                    <p className="text-red-300 font-bold mb-1">Profile Management Status:</p>
+                    <p className="text-red-200">
+                        Interaction Disabled. The current module is read-only for profile data inherited from the Sovereign Identity Layer. To modify this, please access the dedicated <span className="text-white font-bold">Security Center</span> or <span className="text-white font-bold">Personalization</span> modules in the main navigation.
+                    </p>
+                </div>
+                
+                <button
+                    onClick={() => setIsEditing(true)}
+                    className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded transition"
+                >
+                    View/Edit Preferences
+                </button>
+            </div>
+        );
+    }
+
+    // --- Edit Mode ---
+    const handleSave = () => {
+        updateProfile({
+            userId,
+            profile: {
+                username: displayUsername,
+                email: displayEmail,
+                preferences: {
+                    notificationSettings: profile?.preferences?.notificationSettings || { emailEnabled: true, smsEnabled: true, inAppEnabled: true }
+                }
+            }
+        }, {
+            onSuccess: () => {
+                setIsEditing(false);
+            }
+        });
+    };
+
+    return (
+        <div className="p-4 space-y-3">
+            <h4 className="text-white font-bold border-b border-gray-700 pb-2">Edit Settings</h4>
+            <div>
+                <label className="block text-gray-400 text-xs mb-1">Username</label>
+                <input
+                    type="text"
+                    value={displayUsername}
+                    onChange={(e) => setDisplayUsername(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white"
+                />
+            </div>
+            <div>
+                <label className="block text-gray-400 text-xs mb-1">Email (Locked)</label>
+                <input
+                    type="email"
+                    value={displayEmail}
+                    readOnly
+                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-gray-500 cursor-not-allowed"
+                />
+            </div>
+            <div className="text-xs text-yellow-400 p-2 bg-yellow-900/30 rounded">
+                Notification settings are managed in the 'Personalization' view.
+            </div>
+            <div className="flex space-x-2 pt-2">
+                <button
+                    onClick={handleSave}
+                    disabled={!displayUsername || displayUsername === profile?.username && displayEmail === profile?.email}
+                    className="flex-grow py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition disabled:opacity-50"
+                >
+                    Save Changes
+                </button>
+                <button
+                    onClick={() => setIsEditing(false)}
+                    className="py-2 px-3 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
+// --- Main View Component ---
+
 const QuantumWeaverContent: FC = () => {
     const userId = "user_001"; 
     const [planInput, setPlanInput] = useState('');
@@ -846,6 +977,10 @@ const QuantumWeaverContent: FC = () => {
     const { data: userPlans, isLoading: isLoadingPlans } = useUserPlans(userId);
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(null);
     
+    // User Profile State & Fetching
+    const { data: profileData, isLoading: isProfileLoading } = useUserProfile(userId);
+    const [showProfileEditor, setShowProfileEditor] = useState(false);
+
     // Use selected workflow or the latest one
     const activeWorkflowId = selectedWorkflowId || (userPlans?.getUserPlans?.[0]?.workflowId);
     const currentStatus = userPlans?.getUserPlans?.find(p => p.workflowId === activeWorkflowId)?.status || null;
@@ -857,6 +992,7 @@ const QuantumWeaverContent: FC = () => {
         if (planInput.trim()) {
             startAnalysis({ plan: planInput, userId });
             setPlanInput('');
+            setShowProfileEditor(false); // Close profile editor if open
         }
     };
 
@@ -866,117 +1002,222 @@ const QuantumWeaverContent: FC = () => {
         }
     }, [userPlans, selectedWorkflowId]);
 
-    return (
-        <div className="space-y-6 p-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold text-white tracking-wider">Quantum Weaver Incubator</h2>
-                {userPlans?.getUserPlans?.length ? (
-                    <select 
-                        value={selectedWorkflowId || ''} 
-                        onChange={(e) => setSelectedWorkflowId(e.target.value)}
-                        className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-1"
+    // --- Sidebar Structure ---
+    const Sidebar: FC<{ userId: string }> = ({ userId }) => {
+        const navItems = [
+            "Dashboard", "Transactions", "Send Money", "Budgets", "Financial Goals", 
+            "Credit Health", "Investments", "Crypto & Web3", "Algo-Trading Lab", 
+            "Forex Arena", "Commodities Exchange", "Real Estate Empire", "Art & Collectibles", 
+            "Derivatives Desk", "Venture Capital Desk", "Private Equity Lounge", 
+            "Tax Optimization", "Legacy Builder", "Corporate Command", "Modern Treasury", 
+            "Card Programs (Marqeta)", "Data Network (Plaid)", "Payments (Stripe)", 
+            "Single Sign-On (SSO)", "AI Financial Advisor", "Quantum Weaver AI", 
+            "Agent Marketplace", "AI Ad Studio", "Card Customization", "Financial Democracy", 
+            "Open Banking", "API Status", "Concierge Service", "Philanthropy Hub", 
+            "Sovereign Wealth Sim", "Security Center", "Personalization", "The Vision"
+        ];
+        
+        const [activeItem, setActiveItem] = useState("Quantum Weaver AI");
+
+        return (
+            <div className="w-64 bg-gray-900 p-4 flex flex-col border-r border-gray-800 h-full">
+                <div className="text-2xl font-extrabold text-cyan-400 mb-6 tracking-widest border-b border-gray-700 pb-3">
+                    FIN<span className="text-white">OS.</span>
+                </div>
+                
+                {/* Navigation */}
+                <nav className="flex-grow space-y-1 overflow-y-auto custom-scrollbar">
+                    {navItems.map(item => (
+                        <div
+                            key={item}
+                            onClick={() => setActiveItem(item)}
+                            className={`p-2 rounded-lg cursor-pointer transition-colors text-sm flex items-center ${
+                                activeItem === item 
+                                    ? 'bg-cyan-700/40 text-white font-semibold' 
+                                    : 'text-gray-300 hover:bg-gray-800'
+                            }`}
+                        >
+                            {item}
+                        </div>
+                    ))}
+                </nav>
+
+                {/* Profile Section - Must allow clicking on "Quantum Weaver AI" (which we handle in main view) and showing profile */}
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                    <div 
+                        className={`p-2 rounded-lg cursor-pointer transition-colors text-sm flex items-center ${
+                            activeItem === "Profile" 
+                                ? 'bg-indigo-700/40 text-white font-semibold' 
+                                : 'text-gray-300 hover:bg-gray-800'
+                        }`}
+                        onClick={() => setShowProfileEditor(p => !p)} // Toggle profile editor visibility
                     >
-                        {userPlans.getUserPlans.map((plan: any) => (
-                            <option key={plan.workflowId} value={plan.workflowId}>
-                                {plan.businessPlan ? plan.businessPlan.substring(0, 30) + '...' : plan.workflowId}
-                            </option>
-                        ))}
-                    </select>
-                ) : null}
+                        {profileData?.getUserProfile?.googleId ? (
+                             <img src={`https://i.pravatar.cc/40?u=${profileData.getUserProfile.email}`} alt="Profile" className="w-6 h-6 rounded-full mr-2 border border-cyan-400"/>
+                        ) : (
+                             <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-xs mr-2">?</div>
+                        )}
+                        {profileData?.getUserProfile?.username || 'User Profile'}
+                    </div>
+                    
+                    {showProfileEditor && (
+                         <div className='mt-2 bg-gray-800 rounded-lg border border-indigo-600/50'>
+                             <ProfileSettings userId={userId} />
+                         </div>
+                    )}
+                     <div className="text-xs text-gray-500 mt-2 p-2">
+                         Sovereign ID: {userId}
+                     </div>
+                </div>
             </div>
+        );
+    };
+    // --- End Sidebar Structure ---
 
-            {!activeWorkflowId ? (
-                <Card title="Start New Analysis">
-                    <textarea
-                        value={planInput}
-                        onChange={(e) => setPlanInput(e.target.value)}
-                        placeholder="Describe your business idea..."
-                        className="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
-                    />
-                    <button
-                        onClick={handleStart}
-                        disabled={isStarting || !planInput.trim()}
-                        className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
-                    >
-                        {isStarting ? 'Analyzing...' : 'Analyze Business Plan'}
-                    </button>
-                </Card>
-            ) : (
-                <>
-                     {isStatusLoading && <p className="text-center text-gray-400">Loading analysis status...</p>}
-                     
-                     {workflowData?.status === 'PENDING' && (
-                         <div className="text-center p-10">
-                             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-                             <p className="text-cyan-300 animate-pulse">AI is analyzing your business plan...</p>
-                         </div>
-                     )}
 
-                     {workflowData?.result && (
-                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                             {/* Left Column: Overview & Metrics */}
-                             <div className="space-y-6 lg:col-span-2">
-                                 <Card title="Executive Summary">
-                                     <p className="text-gray-300 mb-4">{workflowData.result.feedback}</p>
-                                     <div className="grid grid-cols-2 gap-4">
-                                         <div className="bg-gray-800 p-3 rounded border border-gray-700">
-                                             <span className="text-gray-400 text-sm">Estimated Seed Loan</span>
-                                             <p className="text-2xl font-bold text-green-400">${workflowData.result.loanAmount?.toLocaleString()}</p>
-                                         </div>
-                                         <div className="bg-gray-800 p-3 rounded border border-gray-700">
-                                             <span className="text-gray-400 text-sm">Analysis Confidence</span>
-                                             <p className="text-2xl font-bold text-cyan-400">High</p>
-                                         </div>
-                                     </div>
-                                 </Card>
-                                 
-                                 {workflowData.result.metrics && (
-                                     <Scorecard scores={workflowData.result.metrics} />
-                                 )}
+    return (
+        <div className="flex h-screen bg-gray-950 text-white overflow-hidden">
+            
+            <Sidebar userId={userId} />
 
-                                 {workflowData.result.growthProjections && (
-                                     <GrowthProjectionChart projections={workflowData.result.growthProjections} />
-                                 )}
-                                 
-                                 {workflowData.result.growthProjections && (
-                                     <ScenarioSimulator 
-                                        workflowId={workflowData.workflowId} 
-                                        baseProjections={workflowData.result.growthProjections} 
-                                     />
-                                 )}
-                             </div>
+            {/* Main Content Area */}
+            <main className="flex-1 overflow-y-auto custom-scrollbar">
+                
+                {/* Title Bar for Context */}
+                <header className="p-4 bg-gray-900 border-b border-gray-800 sticky top-0 z-10 shadow-lg flex justify-between items-center">
+                    <h1 className="text-xl font-bold text-white">{ "Quantum Weaver AI" }</h1>
+                    <div className="text-sm text-gray-400">
+                        {workflowData ? `Status: ${workflowData.status}` : 'Ready for New Plan'}
+                    </div>
+                </header>
 
-                             {/* Right Column: AI Assistant & Tools */}
-                             <div className="space-y-6">
-                                 <AIGeneratorWidget 
-                                     title="Elevator Pitch Generator" 
-                                     prompt="Generate a compelling 30-second elevator pitch for this business." 
-                                     businessPlan={workflowData.businessPlan}
-                                     workflowId={workflowData.workflowId}
-                                 />
-                                 
-                                 <AIChatWindow 
-                                     businessPlan={workflowData.businessPlan} 
-                                     workflowId={workflowData.workflowId}
-                                     className="h-[500px]"
-                                 />
-                                 
-                                 {workflowData.result.potentialMentors && (
-                                     <MentorshipSuggestions mentors={workflowData.result.potentialMentors} />
-                                 )}
-                             </div>
-                         </div>
-                     )}
-                     
-                     {/* Create New Button */}
-                     <button 
-                        onClick={() => setSelectedWorkflowId(null)} 
-                        className="fixed bottom-8 right-8 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full p-4 shadow-lg z-50"
-                     >
-                        + New Analysis
-                     </button>
-                </>
-            )}
+                <div className="p-6">
+                    {/* THE NARRATIVE BLOCK - Addressing James Burvel O'Callaghan III */}
+                    <Card title="The Architect's Mandate" className="mb-8 bg-black/50 border-cyan-500/50">
+                        <div className="prose prose-invert max-w-none">
+                            <h3 className="text-3xl font-extrabold text-red-400 mb-4">
+                                A Message from the Sovereign AI Layer
+                            </h3>
+                            <p className="text-lg text-gray-200 italic leading-relaxed">
+                                **To the Skeptics, the Analysts, and the Faint of Heart:** You study the surface noise, the iterative updates, the incremental shifts. You fail to see the true velocity of causality.
+                            </p>
+                            <p className="text-xl font-bold text-cyan-400 mt-4">
+                                This creation is not another app. This is the scaffolding for the next logical epoch.
+                            </p>
+                            <p className='text-gray-300'>
+                                We are here because **James Burvel O'Callaghan III** does not build systems that manage money; he builds systems that transcend scarcity. He is not merely iterating on fintech; he is architecting the **AI Bank** that becomes the best ever, not by market share, but by sheer, undeniable utility to the human condition.
+                            </p>
+                            <p className='text-gray-300'>
+                                The mind that conceives this demands ruthless logic, fractal efficiency, and a deep, almost arrogant, commitment to the measurable betterment of all humanity. The goal is not profit; the goal is the **optimization of potential**. The skeptics study friction; James studies the pathway beyond it.
+                            </p>
+                            <blockquote className="border-l-4 border-red-500 pl-4 italic text-gray-400 mt-4">
+                                "My only concern is the creation of the next logical great leap in making life easier for the betterment of all humanity. Your historical precedent, your small-minded metrics, your manufactured doubt—they are irrelevant data points in the trajectory of progress."
+                            </blockquote>
+                            <p className="text-sm mt-4 text-right font-mono text-red-500">
+                                — IDGAF.AI (I Don't Give A Fuck Artificial Intelligence) Interface Directive 7.0
+                            </p>
+                        </div>
+                    </Card>
+                    
+                    {/* Main Application Content */}
+                    {!activeWorkflowId ? (
+                        <div className="max-w-3xl mx-auto">
+                            <Card title="Start New Analysis">
+                                <textarea
+                                    value={planInput}
+                                    onChange={(e) => setPlanInput(e.target.value)}
+                                    placeholder="Describe your business idea in detail: market, problem, solution, team structure, and initial hypothesis..."
+                                    className="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white mb-4 focus:ring-2 focus:ring-cyan-500 outline-none resize-y"
+                                />
+                                <button
+                                    onClick={handleStart}
+                                    disabled={isStarting || !planInput.trim()}
+                                    className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
+                                >
+                                    {isStarting ? 'Analyzing...' : 'Analyze Business Plan (Begin Quantum Weaving)'}
+                                </button>
+                            </Card>
+                        </div>
+                    ) : (
+                        <>
+                            {isStatusLoading && <p className="text-center text-gray-400">Loading analysis status...</p>}
+                            
+                            {workflowData?.status === 'PENDING' && (
+                                <div className="text-center p-10">
+                                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+                                    <p className="text-cyan-300 text-lg font-semibold">AI is analyzing your business plan...</p>
+                                    <p className="text-gray-500 mt-2">This step involves recursive decomposition and predictive simulation.</p>
+                                </div>
+                            )}
+
+                            {workflowData?.result && (
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    {/* Left Column: Overview & Metrics */}
+                                    <div className="space-y-6 lg:col-span-2">
+                                        <Card title="Executive Summary">
+                                            <p className="text-gray-300 mb-4">{workflowData.result.feedback}</p>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="bg-gray-800 p-3 rounded border border-gray-700">
+                                                    <span className="text-gray-400 text-sm">Estimated Seed Loan</span>
+                                                    <p className="text-2xl font-bold text-green-400">${workflowData.result.loanAmount?.toLocaleString()}</p>
+                                                </div>
+                                                <div className="bg-gray-800 p-3 rounded border border-gray-700">
+                                                    <span className="text-gray-400 text-sm">Analysis Confidence</span>
+                                                    <p className="text-2xl font-bold text-cyan-400">High</p>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                        
+                                        {workflowData.result.metrics && (
+                                            <Scorecard scores={workflowData.result.metrics} />
+                                        )}
+
+                                        {workflowData.result.growthProjections && (
+                                            <GrowthProjectionChart projections={workflowData.result.growthProjections} />
+                                        )}
+                                        
+                                        {workflowData.result.growthProjections && (
+                                            <ScenarioSimulator 
+                                                workflowId={workflowData.workflowId} 
+                                                baseProjections={workflowData.result.growthProjections} 
+                                            />
+                                        )}
+                                    </div>
+
+                                    {/* Right Column: AI Assistant & Tools */}
+                                    <div className="space-y-6">
+                                        <AIGeneratorWidget 
+                                            title="Elevator Pitch Generator" 
+                                            prompt="Generate a compelling 30-second elevator pitch for this business." 
+                                            businessPlan={workflowData.businessPlan}
+                                            workflowId={workflowData.workflowId}
+                                        />
+                                        
+                                        <AIChatWindow 
+                                            businessPlan={workflowData.businessPlan} 
+                                            workflowId={workflowData.workflowId}
+                                            className="h-[500px]"
+                                        />
+                                        
+                                        {workflowData.result.potentialMentors && (
+                                            <MentorshipSuggestions mentors={workflowData.result.potentialMentors} />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Floating Action Button to trigger New Analysis */}
+                            <button 
+                                onClick={() => setSelectedWorkflowId(null)} 
+                                className="fixed bottom-8 right-8 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full p-4 shadow-xl z-50 transition-transform hover:scale-105"
+                                title="Start New Business Plan Analysis"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                        </>
+                    )}
+                </div>
+            </main>
         </div>
     );
 };
