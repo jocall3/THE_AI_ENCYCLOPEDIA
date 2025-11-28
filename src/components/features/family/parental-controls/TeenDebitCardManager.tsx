@@ -237,7 +237,7 @@ export default function TeenDebitCardManager() {
                                 <User className="w-5 h-5" />
                                 {selectedTeen.name}'s Debit Card
                             </CardTitle>
-                            <CardDescription>Card ending in â¢â¢â¢â¢ {selectedTeen.card.last4}</CardDescription>
+                            <CardDescription>Card ending in •••• {selectedTeen.card.last4}</CardDescription>
                         </div>
                         <Button variant="ghost" size="icon">
                             <MoreVertical className="w-5 h-5"/>
