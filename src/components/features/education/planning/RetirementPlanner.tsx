@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState } from 'react';
 import {
   TextField,
@@ -254,4 +254,3 @@ const RetirementPlanner: React.FC = () => {
 };
 
 export default RetirementPlanner;
-```
