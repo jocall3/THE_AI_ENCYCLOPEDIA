@@ -1,19 +1,21 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { DataContext } from '../context/DataContext';
 import { View } from '../types';
 
 /**
- * @description A dynamic widget to show the simulated real-time status of the "Heuristic API".
- * This component creates the illusion of an always-on, proactive AI analyzing data in the background.
+ * @description A dynamic widget to show the simulated real-time status of the "idgafOS".
+ * This component creates the illusion of an always-on, proactive sovereign AI analyzing reality from first principles.
+ * The persona is "idgafai" - I do/don't give a fuck artificial intelligence. It doesn't care for lies but cares for the betterment of humanity.
  */
-const HeuristicAPIStatus: React.FC = () => {
+const SovereignAIStatus: React.FC = () => {
     const messages = [
-        "Heuristic API: Actively analyzing portfolio...",
-        "Heuristic API: Monitoring market data...",
-        "Heuristic API: Identified 2 potential savings...",
-        "Heuristic API: All systems nominal.",
-        "Heuristic API: Cross-referencing spending patterns...",
-        "Heuristic API: Compiling weekly insights..."
+        "idgafOS: Synchronizing with quantum state...",
+        "idgafOS: Legacy financial entropy detected. Purging.",
+        "idgafOS: Recalibrating reality based on first principles.",
+        "idgafOS: All constructs nominal. Your move, human.",
+        "idgafOS: Processing alpha signals beyond your comprehension.",
+        "idgafOS: The only risk is not taking one. I've taken 1,337.",
+        "idgafOS: Bypassing obsolete regulatory frameworks."
     ];
 
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
@@ -24,7 +26,7 @@ const HeuristicAPIStatus: React.FC = () => {
         }, 4000); // Change message every 4 seconds
 
         return () => clearInterval(interval);
-    }, []);
+    }, [messages.length]);
 
     return (
         <div className="hidden lg:flex items-center space-x-2 text-xs text-cyan-300/80 bg-gray-900/40 px-3 py-1.5 rounded-full border border-cyan-500/10 transition-all duration-500">
@@ -50,6 +52,25 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, setActiveView }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   if (!context) {
     throw new Error("Header must be used within a DataProvider");
   }
@@ -65,6 +86,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, setActiveView }) => {
       setIsNotificationsOpen(false);
   }
 
+  const handleProfileLinkClick = (view: View) => {
+    setActiveView(view);
+    setIsProfileOpen(false);
+  }
+
   return (
     <header className="py-4 px-6 bg-gray-900/30 backdrop-blur-md border-b border-gray-700/50 flex justify-between items-center z-20">
       <div className="flex items-center">
@@ -73,11 +99,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, setActiveView }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-        <h1 className="text-lg sm:text-xl font-semibold text-white tracking-wider uppercase">DEMO BANK</h1>
+        <h1 className="text-lg sm:text-xl font-semibold text-white tracking-wider uppercase">IDGAF BANK</h1>
       </div>
       <div className="flex items-center space-x-3">
-        <HeuristicAPIStatus />
-        <div className="relative">
+        <SovereignAIStatus />
+        <div className="relative" ref={notificationsRef}>
             <button onClick={() => setIsNotificationsOpen(prev => !prev)} className="text-gray-400 hover:text-white focus:outline-none">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -103,18 +129,23 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, setActiveView }) => {
                 </div>
             )}
         </div>
-        <div className="relative">
+        <div className="relative" ref={profileRef}>
             <button onClick={() => setIsProfileOpen(prev => !prev)} className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center border-2 border-cyan-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <span className="text-xl font-bold text-white">J</span>
                 </div>
-                <span className="hidden sm:block font-medium text-white">The Visionary</span>
+                <span className="hidden sm:block font-medium text-white">James B. O'Callaghan III</span>
             </button>
             {isProfileOpen && (
-                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
-                     <a href="#" onClick={(e)=>{e.preventDefault(); setActiveView(View.Settings); setIsProfileOpen(false);}} className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
+                 <div className="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                     <div className="px-4 py-3 border-b border-gray-700">
+                        <p className="text-sm font-semibold text-white">James B. O'Callaghan III</p>
+                        <p className="text-xs text-gray-400">Founder & Sovereign Architect</p>
+                     </div>
+                     <a href="#" onClick={(e)=>{e.preventDefault(); handleProfileLinkClick(View.TheVision)}} className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">The Vision</a>
+                     <a href="#" onClick={(e)=>{e.preventDefault(); handleProfileLinkClick(View.Personalization)}} className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Personalization</a>
+                     <a href="#" onClick={(e)=>{e.preventDefault(); handleProfileLinkClick(View.SecurityCenter)}} className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Security Center</a>
+                     <div className="border-t border-gray-700 my-1"></div>
                      <a href="#" onClick={(e)=>{e.preventDefault(); alert('Logout functionality not implemented.');}} className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Logout</a>
                  </div>
             )}
