@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import { StripeCharge } from './types'; // Assuming you have a types file
 import { getStripeCharges, refundStripeCharge } from './api'; // Assuming you have an API file
@@ -142,4 +142,3 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey })
 };
 
 export default StripeChargeDashboard;
-```
