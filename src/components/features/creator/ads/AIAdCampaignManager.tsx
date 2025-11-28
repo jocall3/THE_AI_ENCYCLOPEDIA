@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useMemo, FC, PropsWithChildren } from 'react';
 import { PlusCircle, Zap, Target, DollarSign, Calendar, Eye, BarChart2, Lightbulb, PauseCircle, PlayCircle, Edit, MoreVertical, Search, ChevronLeft, ChevronRight, CheckCircle, Clock, Copy, Trash2, ArrowLeft, Bot, Sparkles, Wand2 } from 'lucide-react';
 
@@ -586,4 +586,3 @@ const AIAdCampaignManager: React.FC = () => {
 };
 
 export default AIAdCampaignManager;
-```
