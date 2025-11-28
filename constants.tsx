@@ -27,417 +27,77 @@ export const NAV_ITEMS = [
     { id: View.SendMoney, label: 'Send Money', icon: <SendMoneyIcon /> },
     { id: View.Budgets, label: 'Budgets', icon: <BudgetsIcon /> },
     { id: View.Investments, label: 'Investments', icon: <InvestmentsIcon /> },
-    { id: View.Goals, label: 'Financial Goals', icon: <GoalsIcon /> },
     { id: View.Crypto, label: 'Crypto & Web3', icon: <CryptoIcon /> },
-    { id: View.Rewards, label: 'Rewards Hub', icon: <RewardsIcon /> },
-    { id: View.CreditHealth, label: 'Credit Health', icon: <CreditHealthIcon /> },
+    { id: View.Goals, label: 'Financial Goals', icon: <GoalsIcon /> },
+    { id: View.Security, label: 'Security Center', icon: <SecurityIcon /> },
+    
+    // Corporate Section
+    { id: View.CorporateCommand, label: 'Corporate Command', icon: <CorporateIcon />, section: 'Corporate' },
+    { id: View.SendMoney, label: 'Treasury & Payments', icon: <SendMoneyIcon /> },
+    { id: View.Budgets, label: 'Budgeting & Cards', icon: <BudgetsIcon /> },
 
-    // Business & AI Section
-    { id: View.AIAdvisor, label: 'AI Advisor', icon: <AIAdvisorIcon />, section: 'Intelligence' },
+    // AI & Advanced Tools Section
+    { id: View.AIAdvisor, label: 'AI Financial Advisor', icon: <AIAdvisorIcon />, section: 'AI & Tools' },
     { id: View.QuantumWeaver, label: 'Quantum Weaver', icon: <QuantumWeaverIcon /> },
-    { id: View.AIAdStudio, label: 'AI Ad Studio', icon: <AIAdStudioIcon /> },
-    { id: View.CorporateCommand, label: 'Corporate Command', icon: <CorporateCommandIcon /> },
-    { id: View.ModernTreasury, label: 'Ledger Accounts', icon: <ModernTreasuryIcon /> },
-    { id: View.Marketplace, label: 'Marketplace', icon: <MarketplaceIcon /> },
+    { id: View.Marketplace, label: 'Agent Marketplace', icon: <MarketplaceIcon /> },
+    { id: View.AIAdStudio, label: 'AI Ad Studio', icon: <AdStudioIcon /> },
 
-    // Platform & Developer Section
-    { id: View.PlaidDashboard, label: 'Plaid', icon: <PlaidIcon />, section: 'Developer' },
-    { id: View.StripeDashboard, label: 'Stripe', icon: <StripeIcon /> },
-    { id: View.MarqetaDashboard, label: 'Marqeta', icon: <MarqetaIcon /> },
-    { id: View.APIIntegration, label: 'API Status', icon: <APIIntegrationIcon /> },
+    // Platform & Integrations Section
+    { id: View.APIIntegration, label: 'API Status', icon: <APIStatusIcon />, section: 'Platform' },
     { id: View.OpenBanking, label: 'Open Banking', icon: <OpenBankingIcon /> },
-    { id: View.FinancialDemocracy, label: 'Financial Democracy', icon: <FinancialDemocracyIcon /> },
-    { id: View.SSO, label: 'SSO', icon: <SSOIcon /> },
-
-    // Balcony of Prosperity Section
-    { id: View.Global, label: 'Global Markets', icon: <GlobalIcon />, section: 'Balcony of Prosperity' },
-    { id: View.Quantum, label: 'Quantum Finance', icon: <QuantumIcon /> },
-    { id: View.Legacy, label: 'Legacy Planning', icon: <LegacyIcon /> },
-    { id: View.Philanthropy, label: 'Philanthropy', icon: <PhilanthropyIcon /> },
-    { id: View.Venture, label: 'Venture Capital', icon: <VentureIcon /> },
-    { id: View.RealEstate, label: 'Real Estate', icon: <RealEstateIcon /> },
-    { id: View.Commodities, label: 'Commodities', icon: <CommoditiesIcon /> },
-    { id: View.Forex, label: 'Forex Trading', icon: <ForexIcon /> },
-    { id: View.Algo, label: 'Algorithmic Trading', icon: <AlgoIcon /> },
-    { id: View.Private, label: 'Private Equity', icon: <PrivateIcon /> },
-    { id: View.Tax, label: 'Tax Optimization', icon: <TaxIcon /> },
-    { id: View.Concierge, label: 'Concierge Services', icon: <ConciergeIcon /> },
-    { id: View.Art, label: 'Art & Collectibles', icon: <ArtIcon /> },
-    { id: View.Derivatives, label: 'Derivatives Trading', icon: <DerivativesIcon /> },
-    { id: View.Sovereign, label: 'Sovereign Wealth', icon: <SovereignIcon /> },
-
-    // Settings & Personalization
-    { id: View.Security, label: 'Security', icon: <SecurityIcon />, section: 'Platform' },
-    { id: View.Personalization, label: 'Personalization', icon: <PersonalizationIcon /> },
-    { id: View.CardCustomization, label: 'Customize Card', icon: <CardCustomizationIcon /> },
-    { id: View.Settings, label: 'Settings', icon: <SettingsIcon /> },
-    { id: View.SASPlatforms, label: 'The Winning Vision', icon: <VisionIcon /> },
+    { id: View.FinancialDemocracy, label: 'Financial Democracy', icon: <DemocracyIcon /> },
 ];
 
 
 // ================================================================================================
 // ICON COMPONENTS
 // ================================================================================================
-// In accordance with production-grade standards, each icon is defined as a full,
-// multi-line React component. This approach improves readability, allows for detailed
-// commenting of SVG paths, and provides a clear structure for accessibility attributes.
-// Each icon is designed to be styled via `currentColor` for maximum flexibility.
-// ------------------------------------------------------------------------------------------------
+// Note: In a larger application, these would typically be in their own `components/icons` directory
+// and possibly dynamically imported. For this demo, they are co-located for simplicity.
+// They are designed to be minimal and use `currentColor` for easy styling via Tailwind's text color utilities.
 
-// --- API & DEVELOPER ICONS ---
+const iconProps = {
+    className: "h-5 w-5",
+    strokeWidth: 1.5,
+};
 
-function PlaidIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" {...props}>
-            <path d="M16.5 10.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5Z" />
-            <path d="M12.75 10.5c0 2.761-2.239 5-5 5s-5-2.239-5-5 2.239-5 5-5 5 2.239 5 5ZM7.75 12.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-            <path d="M21.25 10.5c0 2.761-2.239 5-5 5s-5-2.239-5-5 2.239-5 5-5 5 2.239 5 5ZM16.25 12.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-        </svg>
-    );
-}
+function DashboardIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>); }
+function TransactionsIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg>); }
+function SendMoneyIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>); }
+function BudgetsIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-15c-.621 0-1.125-.504-1.125-1.125v-9.75c0-.621.504-1.125 1.125-1.125h.375m15.75-1.5v- .75a.75.75 0 00-.75-.75h-.75M4.5 19.5a3 3 0 00-3-3V6c0-1.105.895-2 2-2h14c1.105 0 2 .895 2 2v10.5a3 3 0 00-3-3h-10.5" /></svg>); }
+function InvestmentsIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>); }
+function SecurityIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" /></svg>); }
+function AIAdvisorIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V8.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 8.25v7.5a2.25 2.25 0 002.25 2.25z" /></svg>); }
+function CorporateIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6M9 12h6m-6 5.25h6M5.25 6h.008v.008H5.25V6zm0 5.25h.008v.008H5.25v-.008zm0 5.25h.008v.008H5.25v-.008zm13.5 0h-.008v.008h.008v-.008zm0-5.25h-.008v.008h.008v-.008zm0-5.25h-.008v.008h.008V6z" /></svg>); }
+function QuantumWeaverIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>); }
+function MarketplaceIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5A2.25 2.25 0 0011.25 11.25H4.5A2.25 2.25 0 002.25 13.5V21M6 4.5h12M6 4.5v7.5M6 4.5L2.25 9M18 4.5v7.5M18 4.5L21.75 9M12 13.5v7.5M12 13.5a2.25 2.25 0 01-2.25-2.25H10.5a2.25 2.25 0 01-2.25-2.25V4.5" /></svg>); }
+function APIStatusIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3.75H19.5a2.25 2.25 0 012.25 2.25v13.5a2.25 2.25 0 01-2.25 2.25H8.25a2.25 2.25 0 01-2.25-2.25V6.034a2.25 2.25 0 01.996-1.858l4.5-3.375a2.25 2.25 0 012.25 0l4.5 3.375a2.25 2.25 0 01.996 1.858zM8.25 3.75v16.5" /></svg>); }
+function OpenBankingIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 10.5a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-7.5zM22.5 10.5a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h.75a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75z" /></svg>); }
+function DemocracyIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>); }
+function AdStudioIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25z" /></svg>); }
+function CryptoIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" /></svg>); }
+function GoalsIcon() { return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...iconProps}><path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.82m5.84-2.56a17.96 17.96 0 01-12.134-1.372l0 0-1.096 1.096m11.268-1.096L19.5 7.25l-.228-1.144c-.23-1.141-.832-2.135-1.541-2.844l0 0a.69.69 0 01-.1-.106c-.31-.31-.555-.555-.845-.845L16.25 2.25l-2.435 2.435m-3.926 3.926l-2.435 2.435m7.362-7.362L15.59 14.37z" /></svg>); }
 
-function StripeIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" {...props}>
-            <path d="M20.52 6.64a7.1 7.1 0 0 1-2.8-1.76l-.42-.36a.82.82 0 0 0-1.2.13.86.86 0 0 0 .14 1.25l.42.36a5.5 5.5 0 0 0 4.43 1.83h.1a.83.83 0 0 0 .83-.83v-.79c0-.01-.01-.01 0 0zm-5.94 11.51a.82.82 0 0 0 1.2-.14.86.86 0 0 0-.14-1.25l-1.92-1.63a5.45 5.45 0 0 0-3.3-1.1h-.1a.83.83 0 0 0-.83.83v.79c0 2.94 2.45 5.33 5.46 5.33l-.35-2.26zm-7.6-5.26a5.5 5.5 0 0 0 4.43 1.83h.1a.83.83 0 0 0 .83-.83v-.79a.83.83 0 0 0-.83-.83h-.1a7.1 7.1 0 0 1-5.7-2.6l-.42-.36a.82.82 0 0 0-1.2.13.86.86 0 0 0 .14 1.25l.42.36a5.45 5.45 0 0 0 2.13 1.44z" />
-        </svg>
-    );
-}
+// ================================================================================================
+// PLAID SIMULATION CONSTANTS
+// ================================================================================================
+/**
+ * @description A list of mock bank data for use in the Plaid Link simulation modal.
+ * This provides a realistic selection of institutions for the user to "connect" to.
+ * Each object includes the bank's name, a unique ID, and an SVG logo component.
+ */
+export const banks = [
+    { id: 'ins_1', name: 'Chase', logo: <ChaseLogo /> },
+    { id: 'ins_2', name: 'Bank of America', logo: <BofALogo /> },
+    { id: 'ins_3', name: 'Wells Fargo', logo: <WellsFargoLogo /> },
+    { id: 'ins_4', name: 'Citi', logo: <CitiLogo /> },
+    { id: 'ins_5', name: 'Capital One', logo: <CapitalOneLogo /> },
+    { id: 'ins_6', name: 'US Bank', logo: <USBankLogo /> },
+];
 
-function MarqetaIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" {...props}>
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
-        </svg>
-    );
-}
-
-function SSOIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 016-6h4a6 6 0 016 6z" />
-        </svg>
-    );
-}
-
-function APIIntegrationIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-    );
-}
-
-function OpenBankingIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 11V7a4 4 0 118 0v4m-4 8H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-4m-6-4v4m0 0v4m0-4h4m-4 0H8" />
-        </svg>
-    );
-}
-
-
-// --- PERSONAL SECTION ICONS ---
-
-function DashboardIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-        </svg>
-    );
-}
-
-function TransactionsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h.01M12 7h.01M16 7h.01M9 17h6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-    );
-}
-
-function SendMoneyIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        </svg>
-    );
-}
-
-function BudgetsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-        </svg>
-    );
-}
-
-function InvestmentsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-    );
-}
-
-function GoalsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-             <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
-        </svg>
-    );
-}
-
-function CryptoIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-3.314 0-6 2.686-6 6s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zM12 12V6m0 6h6m-6 0H6" />
-        </svg>
-    );
-}
-
-function RewardsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4H5z" />
-        </svg>
-    );
-}
-
-function CreditHealthIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0 12.02 12.02 0 00-2.382-9.016z" />
-        </svg>
-    );
-}
-
-
-// --- INTELLIGENCE SECTION ICONS ---
-
-function AIAdvisorIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-    );
-}
-
-function QuantumWeaverIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-    );
-}
-
-function AIAdStudioIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-    );
-}
-
-function CorporateCommandIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h4v5h-4z" />
-        </svg>
-    );
-}
-
-function ModernTreasuryIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-        </svg>
-    );
-}
-
-function MarketplaceIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-    );
-}
-
-function FinancialDemocracyIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-    );
-}
-
-
-// --- BALCONY OF PROSPERITY ICONS ---
-
-function GlobalIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M12 21a9 9 0 100-18 9 9 0 000 18z" />
-        </svg>
-    );
-}
-
-function QuantumIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-             <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636L18.364 18.364M5.636 18.364L18.364 5.636" />
-        </svg>
-    );
-}
-
-function LegacyIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536l12.232-12.232z" />
-        </svg>
-    );
-}
-
-function PhilanthropyIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-    );
-}
-
-function VentureIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-    );
-}
-
-function RealEstateIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-    );
-}
-
-function CommoditiesIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-    );
-}
-
-function ForexIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4S9.79 8 12 8zm0 0V4m0 16v-4m4-8h4m-4 8h4M4 12h4m-4-4h4" />
-        </svg>
-    );
-}
-
-function AlgoIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.846 13.655 9 14.004 9 14.373c0 .369-.154.718-.316 1.031C8.318 16.031 8 16.697 8 17.414c0 .717.318 1.383.684 1.745A1.99 1.99 0 0010 20h4a1.99 1.99 0 001.316-.541c.366-.362.684-1.028.684-1.745 0-.717-.318-1.383-.684-1.745C15.154 15.091 15 14.742 15 14.373c0-.369.154-.718.316-1.031.366-.625.684-1.391.684-2.203 0-.812-.318-1.578-.684-2.203C15.154 8.617 15 8.268 15 7.899c0-.369-.154-.718-.316-1.031C14.318 6.237 14 5.571 14 4.854c0-.717-.318-1.383-.684-1.745A1.99 1.99 0 0012 2H10a1.99 1.99 0 00-1.316.541C8.318 2.903 8 3.569 8 4.286c0 .717.318 1.383.684 1.745.162.313.316.662.316 1.031 0 .369-.154.718-.316 1.031C8.318 9.091 8 9.757 8 10.474c0 .812.318 1.578.684 2.203z" />
-        </svg>
-    );
-}
-
-function PrivateIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-    );
-}
-
-function TaxIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18m-4 8l4-4m0 0l-4-4m4 4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2a2 2 0 012-2h2a2 2 0 012 2v2z" />
-        </svg>
-    );
-}
-
-function ConciergeIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0122 12c0 3.771-2.5 7-6.343 6.657z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.536 12.464A5 5 0 0117 17" />
-        </svg>
-    );
-}
-
-function ArtIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-    );
-}
-
-function DerivativesIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-    );
-}
-
-function SovereignIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 18v-2a4 4 0 014-4h6a4 4 0 014 4v2M5 18a2 2 0 00-2 2h18a2 2 0 00-2-2M5 18h14M9 12a4 4 0 114-4h0a4 4 0 014 4v0" />
-        </svg>
-    );
-}
-
-
-// --- PLATFORM SECTION ICONS ---
-
-function SecurityIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0 12.02 12.02 0 00-2.382-9.016z" />
-        </svg>
-    );
-}
-
-function PersonalizationIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 16v-2m8-6h2M4 12H2m15.364 6.364l1.414 1.414M4.222 4.222l1.414 1.414m12.728 0l-1.414 1.414M5.636 18.364l-1.414 1.414M12 18a6 6 0 100-12 6 6 0 000 12z" />
-        </svg>
-    );
-}
-
-function CardCustomizationIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-        </svg>
-    );
-}
-
-function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-    );
-}
-
-function VisionIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-    );
-}
+function ChaseLogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#117ACA]"><title>Chase</title><path d="m12.128.12-5.45 9.423 5.45 9.439 5.45-9.44zM12.128 24l-5.45-9.423 5.45-9.439 5.45 9.44z"/></svg>; }
+function BofALogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#E21827]"><title>Bank of America</title><path d="M22.03.62H1.97C.88.62 0 1.5 0 2.59V21.4c0 1.09.88 1.97 1.97 1.97h20.06c1.09 0 1.97-.88 1.97-1.97V2.59c0-1.09-.88-1.97-1.97-1.97zM5.1 19.34H2.48V8.12h2.62zm5.73 0h-2.6V8.12h2.6zm5.73 0h-2.62V8.12h2.62zm5.47-15.02H2.48V2.59h19.05z"/></svg>; }
+function WellsFargoLogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#D71E28]"><title>Wells Fargo</title><path d="M12.0002 0C5.37258 0 0 5.37258 0 12.0002C0 18.6278 5.37258 24.0004 12.0002 24.0004C18.6278 24.0004 24.0004 18.6278 24.0004 12.0002C24.0004 5.37258 18.6278 0 12.0002 0ZM18.7247 11.2036L15.9329 11.0263L14.7394 6.81934H17.4764L18.7247 11.2036ZM13.8242 6.81934L12.0275 12.6074L10.176 6.81934H13.8242ZM9.20605 6.81934L10.4269 11.0263L7.63513 11.2036L6.38684 6.81934H9.20605ZM6.00049 12.5527H8.87451L9.56384 14.6362L6.38684 17.1812L6.00049 12.5527ZM9.50903 15.4951L12.0275 13.522L14.4912 15.4951L12.0275 17.5957L9.50903 15.4951ZM17.9723 12.5527L17.5859 17.1812L14.4365 14.6362L15.1259 12.5527H17.9723Z"/></svg>; }
+function CitiLogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#003B70]"><title>Citi</title><path d="M22.61.032c-.378 0-.585.12-.87.35l-7.523 6.138-1.124-.877.87-4.14C13.88.63 13.58.032 12.8.032h-1.6c-.78 0-1.08.585-1.16 1.455l.87 4.14-1.124.877-7.523-6.138c-.285-.23-.493-.35-.87-.35H.032L0 1.34c0 .3.24.465.48.645l6.092 4.965-3.344 1.725c-.345.18-.51.465-.51.81V24h2.235c.42 0 .6-.21.6-.66V11.22l2.67-1.38c.135-.075.24-.075.375 0l11.41 8.805V23.34c0 .45.18.66.6.66H24V9.52c0-.345-.165-.63-.51-.81l-3.344-1.725L23.52 1.985c.24-.18.48-.345.48-.645L23.968.03l-1.358.002zM12 14.282c-2.43 0-4.395-1.965-4.395-4.395S9.57 5.507 12 5.507c2.43 0 4.395 1.965 4.395 4.38s-1.965 4.395-4.395 4.395z"/><path d="M12.012 11.24c.735 0 1.335-.6 1.335-1.335s-.6-1.335-1.335-1.335-1.335.6-1.335 1.335.6 1.335 1.335 1.335zM5.318 10.97c0-.255.195-.45.45-.45h1.335c.255 0 .45.195.45.45v2.115c0 .255-.195.45-.45.45H5.768c-.255 0-.45-.195-.45-.45v-2.115zm12.93 0c0-.255.195-.45.45-.45h1.335c.255 0 .45.195.45.45v2.115c0 .255-.195.45-.45.45h-1.335c-.255 0-.45-.195-.45-.45v-2.115z"/></svg>; }
+function CapitalOneLogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#004879]"><title>Capital One</title><path d="M21.233.058l-1.282.493a11.96 11.96 0 0 0-7.85-2.52C5.46-1.97 0 3.52 0 10.16c0 6.01 5.3 11.21 12.02 11.21 6.56 0 11.95-5.07 11.98-11.37V.058h-.767zM12.02 19c-4.94 0-8.95-3.8-8.95-8.84S7.08 1.32 12.02 1.32c2.18 0 4.18.77 5.8 2.02L6.75 8.13c-.3.8-.07 1.48.56 2.05.6.53 1.38.69 2.06.39l10.5-4.4c.03 1.4-.23 2.76-.78 4.02-1.5 3.4-4.8 5.8-8.9 5.8z"/></svg>; }
+function USBankLogo() { return <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#D11C23]"><title>U.S. Bank</title><path d="M19.14 6.275h-1.928v-2.17h-2.11V1.996h6.12v2.11h-2.082v2.17zm-11.1 0v2.17h-1.93V6.275H4.21V4.106h6.12v2.17H8.04zM24 10.748H0v2.11h2.11v4.864c0 1.295.688 1.928 1.928 1.928h1.815V17.54h-1.37v-2.69h1.37v-2.11h4.293v2.11h1.37v2.69h-1.37v2.11h1.816c1.24 0 1.928-.633 1.928-1.928v-4.864H24v-2.11zM11.96 12.858H9.88v2.69h2.08v-2.69zm4.21 0h-2.08v2.69h2.08v-2.69z"/></svg>; }
