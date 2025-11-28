@@ -1,5 +1,3 @@
-
-
 import React, { useContext, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Card from './Card';
@@ -11,14 +9,14 @@ const BalanceSummary: React.FC = () => {
     const { transactions } = context;
 
     const { chartData, totalBalance, change30d } = useMemo(() => {
+        if (!transactions || transactions.length === 0) {
+            return { chartData: [], totalBalance: 0, change30d: 0 };
+        }
+
         const sortedTx = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        
         let runningBalance = 0;
         const balanceHistory: { date: Date, balance: number }[] = [];
-
-        // We assume a starting balance of 5000 for a more realistic chart base
-        runningBalance = 5000;
-        balanceHistory.push({ date: new Date(sortedTx[0]?.date || Date.now()), balance: runningBalance });
-
 
         for (const tx of sortedTx) {
             if (tx.type === 'income') {
@@ -31,19 +29,21 @@ const BalanceSummary: React.FC = () => {
         
         const totalBalance = runningBalance;
 
-        // For chart, group by month
+        // For chart, group by month, taking the last balance of each month
         const monthlyData: { [key: string]: { date: Date, balance: number} } = {};
         for (const record of balanceHistory) {
             const monthKey = record.date.toISOString().substring(0, 7); // YYYY-MM
-            monthlyData[monthKey] = record; // Store last balance record of the month
+            monthlyData[monthKey] = record; // Overwrites until the last record for the month is stored
         }
         
-        const chartData = Object.values(monthlyData).map(record => ({ 
-            name: record.date.toLocaleString('default', { month: 'short' }), 
-            balance: record.balance 
-        }));
+        const chartData = Object.values(monthlyData)
+            .sort((a, b) => a.date.getTime() - b.date.getTime())
+            .map(record => ({ 
+                name: record.date.toLocaleString('default', { month: 'short' }), 
+                balance: record.balance 
+            }));
 
-        // 30 day change
+        // 30 day change calculation
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -51,12 +51,14 @@ const BalanceSummary: React.FC = () => {
           .reverse()
           .find(h => h.date < thirtyDaysAgo)?.balance;
 
-        const change30d = totalBalance - (lastKnownBalanceBefore30d || totalBalance);
+        const balance30dAgo = lastKnownBalanceBefore30d || 0;
+        const change30d = totalBalance - balance30dAgo;
 
         return { chartData, totalBalance, change30d };
     }, [transactions]);
     
-    const changePercentage = (totalBalance - change30d) !== 0 ? (change30d / (totalBalance - change30d)) * 100 : 0;
+    const balance30dAgo = totalBalance - change30d;
+    const changePercentage = balance30dAgo !== 0 ? (change30d / balance30dAgo) * 100 : 0;
 
     return (
         <Card title="Balance Summary">
@@ -68,7 +70,8 @@ const BalanceSummary: React.FC = () => {
                 <div className="text-right">
                     <p className="text-gray-400 text-sm">Change (30d)</p>
                     <p className={`text-lg font-semibold ${change30d >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {change30d >= 0 ? '+' : ''}${change30d.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({changePercentage.toFixed(1)}%)
+                        {change30d >= 0 ? '+' : ''}${change30d.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {balance30dAgo !== 0 && ` (${changePercentage.toFixed(1)}%)`}
                     </p>
                 </div>
             </div>
@@ -82,7 +85,7 @@ const BalanceSummary: React.FC = () => {
                             </linearGradient>
                         </defs>
                         <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
-                        <YAxis stroke="#9ca3af" fontSize={12} domain={['dataMin - 1000', 'dataMax + 1000']} />
+                        <YAxis stroke="#9ca3af" fontSize={12} domain={['dataMin - 1000', 'dataMax + 1000']} tickFormatter={(value) => `$${Number(value).toLocaleString()}`} />
                         <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
                         <Tooltip
                             contentStyle={{
@@ -90,6 +93,7 @@ const BalanceSummary: React.FC = () => {
                                 borderColor: '#4b5563',
                                 color: '#e5e7eb',
                             }}
+                            formatter={(value: number) => `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         />
                         <Area type="monotone" dataKey="balance" stroke="#06b6d4" fillOpacity={1} fill="url(#colorBalance)" />
                     </AreaChart>
