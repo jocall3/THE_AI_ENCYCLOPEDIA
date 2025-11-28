@@ -1,12 +1,59 @@
-
 import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
-import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail } from '../types';
+import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail, CompanyProfile, RealEstateProperty, ArtPiece, AlgoStrategy, VentureStartup } from '../types';
 import { View, WeaverStage } from '../types';
 // FIX: Removed import from empty mockData.ts file. All initial state will be handled within this file.
 
 const LEVEL_NAMES = ["Financial Novice", "Budgeting Apprentice", "Savings Specialist", "Investment Adept", "Wealth Master"];
 const SCORE_PER_LEVEL = 200;
+
+// --- Generator function implementation (1/4) ---
+const SECTORS = ['Technology', 'Healthcare', 'Finance', 'Energy', 'Consumer Goods', 'Real Estate', 'Industrials', 'Utilities'];
+const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f'];
+
+const generateProsperityCompanies = (): CompanyProfile[] => {
+    const companies: CompanyProfile[] = [];
+    for (let i = 1; i <= 100; i++) {
+        const sectorIndex = i % SECTORS.length;
+        const sector = SECTORS[sectorIndex];
+        const color = COLORS[sectorIndex];
+        const marketCap = parseFloat((Math.random() * 500 + 1).toFixed(2)); // $1B to $500B
+        const peRatio = parseFloat((Math.random() * 30 + 10).toFixed(2));
+        const ytdGrowth = parseFloat((Math.random() * 50 - 10).toFixed(2)); // -10% to 40%
+        
+        // Define mock types based on assumption of CompanyProfile structure
+        type Status = 'High Growth' | 'Stable' | 'Turnaround';
+        type RiskRating = 'Low' | 'Medium' | 'High';
+
+        let status: Status;
+        let riskRating: RiskRating;
+
+        if (ytdGrowth > 15 && peRatio < 25) {
+            status = 'High Growth';
+            riskRating = 'Medium';
+        } else if (ytdGrowth < 0) {
+            status = 'Turnaround';
+            riskRating = 'High';
+        } else {
+            status = 'Stable';
+            riskRating = 'Low';
+        }
+
+        companies.push({
+            id: `comp_${i}`,
+            name: `${sector} Corp ${i}`,
+            ticker: `TKR${Math.floor(100 + Math.random() * 900)}`,
+            sector,
+            marketCap,
+            peRatio,
+            ytdGrowth,
+            status,
+            riskRating,
+            color,
+        } as CompanyProfile);
+    }
+    return companies;
+};
 
 interface WalletInfo {
     address: string;
@@ -107,6 +154,18 @@ interface IDataContext {
   updateFinancialGoal: (goalId: string, updates: { targetAmount?: number; targetDate?: string; monthlyContribution?: number }) => void;
   linkGoals: (sourceGoalId: string, targetGoalId: string, relationshipType: LinkedGoal['relationshipType'], triggerAmount?: number) => void;
   unlinkGoals: (sourceGoalId: string, targetGoalId: string) => void;
+
+  // New Prosperity View Data (2/4)
+  prosperityCompanies: CompanyProfile[];
+  realEstatePortfolio: RealEstateProperty[];
+  artCollection: ArtPiece[];
+  activeAlgoStrategies: AlgoStrategy[];
+  venturePortfolio: VentureStartup[];
+  
+  // New Sacred Handlers (4/4)
+  investInStartup: (id: string, amount: number) => void;
+  purchaseRealEstate: (id: string) => void;
+  executeTrade: (symbol: string, type: 'BUY' | 'SELL', amount: number) => void;
 }
 
 export const DataContext = createContext<IDataContext | undefined>(undefined);
@@ -206,6 +265,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccount[]>([]);
   const [isLedgerAccountsLoading, setIsLedgerAccountsLoading] = useState(false);
   const [ledgerAccountsError, setLedgerAccountsError] = useState<string | null>(null);
+
+  // New States for Prosperity Views (3/4)
+  const [prosperityCompanies] = useState<CompanyProfile[]>(generateProsperityCompanies());
+  const [realEstatePortfolio, setRealEstatePortfolio] = useState<RealEstateProperty[]>([]);
+  const [artCollection] = useState<ArtPiece[]>([]);
+  const [activeAlgoStrategies] = useState<AlgoStrategy[]>([]);
+  const [venturePortfolio, setVenturePortfolio] = useState<VentureStartup[]>([]);
+
 
   const setGeminiApiKey = (key: string) => {
       localStorage.setItem('geminiApiKey', key);
@@ -705,6 +772,91 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }));
     };
 
+    // New Sacred Handlers implementations (4/4)
+
+    const investInStartup = (id: string, amount: number) => {
+        console.log(`Simulating investment of $${amount} into startup ID: ${id}`);
+        
+        const newVenture: VentureStartup = {
+            id: `venture_${Date.now()}`,
+            name: `Startup X (ID: ${id})`,
+            stage: 'Seed',
+            valuation: amount * 10,
+            investmentAmount: amount,
+            equity: 0.02 + Math.random() * 0.05,
+            status: 'Active',
+        } as VentureStartup; 
+        
+        setVenturePortfolio(prev => [...prev, newVenture]);
+        
+        addTransaction({ 
+            id: `invest_${Date.now()}`, 
+            type: 'expense', 
+            category: 'Venture Capital', 
+            description: `Investment in Startup ${id}`, 
+            amount: amount, 
+            date: new Date().toISOString().split('T')[0] 
+        });
+        setNotifications(prev => [{id: `notif_vc_${Date.now()}`, message: `Successfully invested $${amount} in Startup X.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev]);
+    };
+
+    const purchaseRealEstate = (id: string) => {
+        console.log(`Simulating purchase of real estate ID: ${id}`);
+        
+        const price = 450000 + Math.random() * 600000;
+        const mockProperty: RealEstateProperty = {
+            id: `property_${Date.now()}`,
+            address: `456 Infinity Loop, Block ${id}`,
+            purchasePrice: price,
+            currentValue: price * (1 + Math.random() * 0.1),
+            type: 'Commercial',
+            yield: 0.03 + Math.random() * 0.03,
+            location: 'Digital District',
+            status: 'Owned',
+        } as RealEstateProperty;
+        
+        setRealEstatePortfolio(prev => [...prev, mockProperty]);
+
+        addTransaction({ 
+            id: `re_purchase_${Date.now()}`, 
+            type: 'expense', 
+            category: 'Real Estate', 
+            description: `Real Estate Acquisition: Block ${id}`, 
+            amount: price, 
+            date: new Date().toISOString().split('T')[0] 
+        });
+        setNotifications(prev => [{id: `notif_re_${Date.now()}`, message: `Real Estate property ${id} acquired successfully.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev]);
+    };
+    
+    const executeTrade = (symbol: string, type: 'BUY' | 'SELL', amount: number) => {
+        console.log(`Executing ${type} trade for ${amount} units of ${symbol}`);
+
+        const mockPrice = 150; // Mock price per unit
+        const totalAmount = amount * mockPrice;
+
+        if (type === 'BUY') {
+            addTransaction({ 
+                id: `trade_${Date.now()}_buy`, 
+                type: 'expense', 
+                category: 'Investment', 
+                description: `Trade: Buy ${amount.toFixed(2)} units of ${symbol}`, 
+                amount: totalAmount, 
+                date: new Date().toISOString().split('T')[0] 
+            });
+        } else {
+            addTransaction({ 
+                id: `trade_${Date.now()}_sell`, 
+                type: 'income', 
+                category: 'Investment', 
+                description: `Trade: Sell ${amount.toFixed(2)} units of ${symbol}`, 
+                amount: totalAmount * 1.05, // Simulate small profit
+                date: new Date().toISOString().split('T')[0] 
+            });
+        }
+        
+        setNotifications(prev => [{id: `notif_trade_${Date.now()}`, message: `${type} order for ${symbol} executed successfully.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev]);
+    };
+
 
     const value: IDataContext = {
         transactions,
@@ -802,6 +954,17 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         updateFinancialGoal,
         linkGoals,
         unlinkGoals,
+        // Prosperity View Data
+        prosperityCompanies,
+        realEstatePortfolio,
+        artCollection,
+        activeAlgoStrategies,
+        venturePortfolio,
+
+        // Handlers
+        investInStartup,
+        purchaseRealEstate,
+        executeTrade,
     };
     
     return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
