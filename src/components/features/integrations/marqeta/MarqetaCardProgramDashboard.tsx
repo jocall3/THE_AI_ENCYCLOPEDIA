@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -271,4 +271,3 @@ const MarqetaCardProgramDashboard: React.FC<MarqetaCardProgramDashboardProps> = 
 };
 
 export default MarqetaCardProgramDashboard;
-```
