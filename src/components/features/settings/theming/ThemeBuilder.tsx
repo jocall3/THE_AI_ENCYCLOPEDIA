@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTheme } from '../../../../store/slices/themeSlice';
@@ -195,4 +195,3 @@ const ThemeBuilder = () => {
 };
 
 export default ThemeBuilder;
-```
