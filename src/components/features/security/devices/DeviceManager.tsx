@@ -177,7 +177,7 @@ const DeviceManager: React.FC = () => {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '960px', margin: '20px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', backgroundColor: '#fdfdfd' }}>
       <h2 style={{ marginBottom: '30px', color: '#333', textAlign: 'center', fontSize: '2em' }}>
-        <span role="img" aria-label="devices">📱💻</span> Active Device Sessions
+        <span role="img" aria-label="devices">ðŸ“±ðŸ’»</span> Active Device Sessions
       </h2>
       <p style={{ textAlign: 'center', color: '#555', marginBottom: '30px' }}>
         View all devices currently logged into your account. You can remotely revoke access for any session below.
