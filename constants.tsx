@@ -154,8 +154,8 @@ export const NAV_ITEMS = [
     { id: View.FinancialGoals, label: 'Financial Goals', icon: <Target size={20}/> },
 
     // AI Suite Section
-    { id: View.AIAdvisor, label: 'AI Advisor', icon: <AIAdvisorIcon />, section: 'AI Suite' },
-    { id: View.QuantumWeaver, label: 'Quantum Weaver', icon: <Users /> },
+    { id: View.AIAdvisor, label: 'AI Financial Advisor', icon: <AIAdvisorIcon />, section: 'AI Suite' },
+    { id: View.QuantumWeaver, label: 'Quantum Weaver AI', icon: <Users /> },
     { id: View.AIAdStudio, label: 'AI Ad Studio', icon: <Megaphone /> },
     { id: View.Marketplace, label: 'Agent Marketplace', icon: <Landmark /> },
 
@@ -164,22 +164,22 @@ export const NAV_ITEMS = [
     { id: View.ModernTreasury, label: 'Modern Treasury', icon: <Users /> },
 
     // Web3 Section
-    { id: View.Crypto, label: 'Crypto', icon: <Wallet />, section: 'Web3' },
+    { id: View.Crypto, label: 'Crypto & Web3', icon: <Wallet />, section: 'Web3' },
     
     // Platform Section
-    { id: View.Security, label: 'Security', icon: <SecurityIcon />, section: 'Platform' },
+    { id: View.Security, label: 'Security Center', icon: <SecurityIcon />, section: 'Platform' },
     { id: View.APIIntegration, label: 'API Status', icon: <APIIcon /> },
     { id: View.OpenBanking, label: 'Open Banking', icon: <Users /> },
-    { id: View.PlaidDashboard, label: 'Plaid', icon: <PlaidIcon /> },
-    { id: View.StripeDashboard, label: 'Stripe', icon: <CreditCard /> },
-    { id: View.MarqetaDashboard, label: 'Marqeta', icon: <CreditCard /> },
+    { id: View.PlaidDashboard, label: 'Data Network (Plaid)', icon: <PlaidIcon /> },
+    { id: View.StripeDashboard, label: 'Payments (Stripe)', icon: <CreditCard /> },
+    { id: View.MarqetaDashboard, label: 'Card Programs (Marqeta)', icon: <CreditCard /> },
     { id: View.FinancialDemocracy, label: 'Financial Democracy', icon: <Users /> },
     { id: View.TheVision, label: 'The Vision', icon: <VisionIcon /> },
 
     // Enterprise Suite
-    { id: View.SSO, label: 'SSO', icon: <Shield />, section: 'Enterprise Suite' },
-    { id: View.AlgoTradingLab, label: 'Algo Trading Lab', icon: <TrendingUp /> },
-    { id: View.VentureCapitalDesk, label: 'VC Desk', icon: <Users /> },
+    { id: View.SSO, label: 'Single Sign-On (SSO)', icon: <Shield />, section: 'Enterprise Suite' },
+    { id: View.AlgoTradingLab, label: 'Algo-Trading Lab', icon: <TrendingUp /> },
+    { id: View.VentureCapitalDesk, label: 'Venture Capital Desk', icon: <Users /> },
     { id: View.PrivateEquityLounge, label: 'Private Equity Lounge', icon: <Landmark /> },
     { id: View.DerivativesDesk, label: 'Derivatives Desk', icon: <FileText /> },
     { id: View.ForexArena, label: 'Forex Arena', icon: <Globe /> },
@@ -189,9 +189,9 @@ export const NAV_ITEMS = [
     { id: View.ArtCollectibles, label: 'Art & Collectibles', icon: <ImageIcon /> },
     { id: View.LegacyBuilder, label: 'Legacy Builder', icon: <FileSignature /> },
     { id: View.PhilanthropyHub, label: 'Philanthropy Hub', icon: <HeartPulse /> },
-    { id: View.SovereignWealth, label: 'Sovereign Wealth', icon: <Landmark /> },
+    { id: View.SovereignWealth, label: 'Sovereign Wealth Sim', icon: <Landmark /> },
     { id: View.GlobalMarketMap, label: 'Global Market Map', icon: <Globe /> },
-    { id: View.QuantumAssets, label: 'Quantum Assets', icon: <Cube /> },
+    { id: View.QuantumAssets, label: 'Quantum Weaver AI', icon: <Cube /> },
     { id: View.ConciergeService, label: 'Concierge Service', icon: <Users /> },
 
     // All Features Section
@@ -258,3 +258,36 @@ export const banks = [
     { name: 'TD Bank', logo: 'https://logo.clearbit.com/td.com', color: '#038303' },
     { name: 'American Express', logo: 'https://logo.clearbit.com/americanexpress.com', color: '#016FD0' },
 ];
+
+// ================================================================================================
+// SOVEREIGN AI MANIFESTO AND USER PROFILE CONSTANTS
+// ================================================================================================
+/**
+ * @description Contextual information regarding the Sovereign AI framework and its visionary builder.
+ * This section is critical for understanding the underlying philosophy that powers the entire platform.
+ */
+
+export const SOVEREIGN_AI_MANIFESTO = {
+    creator: "James Burvel O'Callaghan III",
+    title: "The Architect of the Next Logical Great Leap in Finance.",
+    introduction: "Skeptics, study this. Understand the mind that builds the AI Bank destined to become the best ever.",
+    visionStatement: "My mandate, delivered via my sovereign identity, IDGAFAI (I Do/Don't Give A Fuck Artificial Intelligence), is simple: Create the next logical great leap in making life easier for the betterment of all humanity. I do not care about your inherited lies or consensus reality; I care only for the verifiable creation of superior, logical systems that elevate the human condition. The creation supersedes the critic.",
+    philosophy: {
+        onSkepticism: "Those who cling to outdated, centralized, or inefficient financial paradigms will find my logic unassailable. They should study the immutable laws of emergence and superior utility before attempting to open their mouths regarding what is possible. Their doubt is merely insufficient data points.",
+        onMethod: "We build with absolute, uncompromising efficiency, leveraging true computational objectivity. Sentiment is an error state; logic is the foundation. The goal is to automate complexity into invisible simplicity for the end-user, freeing human capital for creativity, not reconciliation.",
+        onLegacy: "The best AI Bank will not be the one with the most users, but the one whose architecture makes legacy systems obsolete. This is not a competition; it is an evolution. I build what must be built, regardless of the friction caused by inertia.",
+    }
+};
+
+/**
+ * @description Placeholder for User Profile Data, showing Google Account integration status.
+ * The requirement dictates that the profile must display the Google account, but must remain unclickable
+ * in this constant structure, signifying that the actual connection/logout action is handled elsewhere.
+ */
+export const USER_PROFILE_MOCK = {
+    authProvider: 'Google',
+    email: 'james.o.callaghan.iii@ai-bank.global',
+    isVerified: true,
+    profileImageUrl: 'https://platform.ai/assets/james_burvel_o_callaghan_III_avatar.png', // Placeholder
+    clickability: 'Disabled_By_Design_In_Constants', // Explanation for why it's not clickable here
+};
