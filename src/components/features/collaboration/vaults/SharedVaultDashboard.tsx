@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useMemo } from 'react';
 import { PiggyBank, Target, Users, Landmark, Home, Car, Plus, MoreHorizontal, ArrowUpRight, TrendingUp, Gift, GraduationCap } from 'lucide-react';
 
@@ -281,4 +281,3 @@ export default function SharedVaultDashboard() {
     </div>
   );
 }
-```
