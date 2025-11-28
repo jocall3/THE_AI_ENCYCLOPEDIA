@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -43,155 +42,152 @@ const DollarIcon = () => (
     </svg>
 );
 
-// --- MAIN COMPONENT ---
+const PercentIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12a7 7 0 1114 0 7 7 0 01-14 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 8l-8 8" />
+    </svg>
+);
+
+
+// --- UTILITY FUNCTIONS ---
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+};
+
+const parseNumber = (value: string): number => {
+    return parseFloat(value.replace(/[^0-9.-]+/g,"")) || 0;
+};
+
+// --- CORE LOGIC ---
+const calculateMortgage = (loanAmount: number, interestRate: number, loanTerm: number): number => {
+    if (loanAmount <= 0 || interestRate <= 0 || loanTerm <= 0) return 0;
+    const monthlyRate = interestRate / 100 / 12;
+    const numberOfPayments = loanTerm * 12;
+    return loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+};
+
+
 const MortgageAffordabilityCalculator: React.FC = () => {
-    const initialInputs: InputState = {
-        annualIncome: '80000',
+    const [inputs, setInputs] = useState<InputState>({
+        annualIncome: '120000',
         monthlyDebts: '500',
-        downPayment: '20000',
+        downPayment: '50000',
         interestRate: '6.5',
         loanTerm: '30',
-        propertyTaxes: '4000',
+        propertyTaxes: '1.2',
         homeInsurance: '1500',
-    };
+    });
 
-    const [inputs, setInputs] = useState<InputState>(initialInputs);
     const [results, setResults] = useState<ResultState | null>(null);
-    const [comparison, setComparison] = useState<ComparisonState>({ rate2: '6.25', term2: '30', monthlyPayment2: null, totalInterest1: null, totalInterest2: null });
+    const [comparison, setComparison] = useState<ComparisonState>({
+        rate2: '7.0',
+        term2: '30',
+        monthlyPayment2: null,
+        totalInterest1: null,
+        totalInterest2: null,
+    });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setInputs(prev => ({ ...prev, [name]: value }));
-    };
-
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(value);
-    };
-
-    const calculateMortgage = useCallback((loanAmount: number, annualRate: number, termYears: number): { monthlyPayment: number; totalInterest: number } => {
-        if (loanAmount <= 0 || annualRate <= 0 || termYears <= 0) return { monthlyPayment: 0, totalInterest: 0 };
-        const monthlyRate = annualRate / 100 / 12;
-        const numberOfPayments = termYears * 12;
-        const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-        const totalPaid = monthlyPayment * numberOfPayments;
-        const totalInterest = totalPaid - loanAmount;
-        return { monthlyPayment, totalInterest };
     }, []);
 
-    const handleCalculate = useCallback(() => {
-        const annualIncome = parseFloat(inputs.annualIncome) || 0;
-        const monthlyDebts = parseFloat(inputs.monthlyDebts) || 0;
-        const downPayment = parseFloat(inputs.downPayment) || 0;
-        const interestRate = parseFloat(inputs.interestRate) || 0;
-        const loanTerm = parseInt(inputs.loanTerm, 10) || 0;
-        const propertyTaxes = parseFloat(inputs.propertyTaxes) || 0;
-        const homeInsurance = parseFloat(inputs.homeInsurance) || 0;
+    const calculateAffordability = useCallback(() => {
+        const annualIncome = parseNumber(inputs.annualIncome);
+        const monthlyDebts = parseNumber(inputs.monthlyDebts);
+        const downPayment = parseNumber(inputs.downPayment);
+        const interestRate = parseNumber(inputs.interestRate);
+        const loanTerm = parseInt(inputs.loanTerm, 10);
+        const annualPropertyTaxes = parseNumber(inputs.propertyTaxes);
+        const annualHomeInsurance = parseNumber(inputs.homeInsurance);
 
-        if (annualIncome <= 0 || interestRate <= 0 || loanTerm <= 0) {
-            setResults(null);
-            return;
-        }
+        const monthlyIncome = annualIncome / 12;
 
-        const grossMonthlyIncome = annualIncome / 12;
-        const monthlyTaxes = propertyTaxes / 12;
-        const monthlyInsurance = homeInsurance / 12;
-
-        // Using 28/36 DTI rule
-        const maxHousingPaymentByIncome = grossMonthlyIncome * 0.28;
-        const maxTotalDebtPayment = grossMonthlyIncome * 0.36;
+        // Using the 28/36 rule
+        const maxHousingPaymentByIncome = monthlyIncome * 0.28;
+        const maxTotalDebtPayment = monthlyIncome * 0.36;
         const maxHousingPaymentByDebt = maxTotalDebtPayment - monthlyDebts;
 
-        const affordablePITI = Math.max(0, Math.min(maxHousingPaymentByIncome, maxHousingPaymentByDebt));
+        const maxAffordableMonthlyPayment = Math.min(maxHousingPaymentByIncome, maxHousingPaymentByDebt);
         const limitingFactor = maxHousingPaymentByIncome < maxHousingPaymentByDebt ? 'income' : 'debt';
 
-        const affordablePrincipalAndInterest = affordablePITI - monthlyTaxes - monthlyInsurance;
-
-        if (affordablePrincipalAndInterest <= 0) {
+        const tempEstimatedMonthlyTaxes = (annualIncome * 2.5 * (annualPropertyTaxes / 100)) / 12; // Estimate tax on a home ~2.5x income
+        const monthlyInsurance = annualHomeInsurance / 12;
+        
+        const availableForPAndI = maxAffordableMonthlyPayment - tempEstimatedMonthlyTaxes - monthlyInsurance;
+        
+        if (availableForPAndI <= 0) {
             setResults({
                 maxHomePrice: downPayment,
-                monthlyPayment: monthlyTaxes + monthlyInsurance,
+                monthlyPayment: monthlyDebts,
                 principalAndInterest: 0,
-                monthlyTaxes,
-                monthlyInsurance,
+                monthlyTaxes: 0,
+                monthlyInsurance: 0,
                 maxLoanAmount: 0,
-                limitingFactor
+                limitingFactor,
             });
             return;
         }
 
-        const monthlyInterestRate = interestRate / 100 / 12;
+        const monthlyRate = interestRate / 100 / 12;
         const numberOfPayments = loanTerm * 12;
-        const denominator = monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments);
-        const numerator = Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1;
-        const maxLoanAmount = affordablePrincipalAndInterest * (numerator / denominator);
+        const maxLoanAmount = availableForPAndI * ((Math.pow(1 + monthlyRate, numberOfPayments) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)));
         
         const maxHomePrice = maxLoanAmount + downPayment;
+        const finalMonthlyTaxes = (maxHomePrice * (annualPropertyTaxes / 100)) / 12;
+        const principalAndInterest = calculateMortgage(maxLoanAmount, interestRate, loanTerm);
 
         setResults({
             maxHomePrice,
-            monthlyPayment: affordablePITI,
-            principalAndInterest: affordablePrincipalAndInterest,
-            monthlyTaxes,
+            monthlyPayment: principalAndInterest + finalMonthlyTaxes + monthlyInsurance,
+            principalAndInterest,
+            monthlyTaxes: finalMonthlyTaxes,
             monthlyInsurance,
             maxLoanAmount,
-            limitingFactor
+            limitingFactor,
         });
-
-        // Pre-fill comparison with primary scenario
-        const { totalInterest: totalInterest1 } = calculateMortgage(maxLoanAmount, interestRate, loanTerm);
-        setComparison(prev => ({ ...prev, totalInterest1 }));
-
-    }, [inputs, calculateMortgage]);
-    
-    const handleComparisonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setComparison(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleCompare = useCallback(() => {
-        if (!results) return;
         
-        const rate2 = parseFloat(comparison.rate2) || 0;
-        const term2 = parseInt(comparison.term2, 10) || 0;
-        
-        const { monthlyPayment: monthlyPayment2, totalInterest: totalInterest2 } = calculateMortgage(results.maxLoanAmount, rate2, term2);
+        // Calculate comparison
+        const rate2 = parseNumber(comparison.rate2);
+        const term2 = parseInt(comparison.term2, 10);
+        const pmt2 = calculateMortgage(maxLoanAmount, rate2, term2);
+        setComparison(prev => ({
+            ...prev,
+            monthlyPayment2: pmt2,
+            totalInterest1: (principalAndInterest * numberOfPayments) - maxLoanAmount,
+            totalInterest2: (pmt2 * term2 * 12) - maxLoanAmount,
+        }));
 
-        setComparison(prev => ({ ...prev, monthlyPayment2, totalInterest2 }));
+    }, [inputs, comparison.rate2, comparison.term2]);
 
-    }, [results, comparison.rate2, comparison.term2, calculateMortgage]);
+    useEffect(() => {
+        calculateAffordability();
+    }, [calculateAffordability]);
 
-
-    const handleReset = () => {
-        setInputs(initialInputs);
-        setResults(null);
-        setComparison({ rate2: '6.25', term2: '30', monthlyPayment2: null, totalInterest1: null, totalInterest2: null });
-    };
-    
-    const aiSuggestion = useMemo(() => {
-        if (!results) return "Enter your financial details to get AI-powered insights.";
-        if (results.maxHomePrice <= results.downPayment) {
-            return "Based on your current financials, your debt or low income prevents qualifying for a loan. Consider reducing monthly debts or increasing your income.";
+    const breakdownChart = useMemo(() => {
+        if (!results || results.monthlyPayment <= 0) {
+            return null;
         }
-        if (results.limitingFactor === 'debt') {
-            return `Your monthly debts are the primary factor limiting your budget. Paying down debts like car loans or credit cards could significantly increase your affordability.`;
-        }
-        if (results.limitingFactor === 'income') {
-            return `Your income is the main factor determining your budget. A larger down payment can help bridge the gap to a more expensive home without increasing your monthly payment.`;
-        }
-        return `With a strong financial profile, you have flexibility. Use the Loan Offer Simulator below to see how different interest rates can impact your long-term costs.`;
-    }, [results]);
+        const { principalAndInterest, monthlyTaxes, monthlyInsurance, monthlyPayment } = results;
+        const pAndIPercentage = (principalAndInterest / monthlyPayment) * 100;
+        const taxesPercentage = (monthlyTaxes / monthlyPayment) * 100;
+        const insurancePercentage = (monthlyInsurance / monthlyPayment) * 100;
 
-
-    const paymentBreakdownChart = useMemo(() => {
-        if (!results || results.monthlyPayment <= 0) return null;
-        const pAndIPercentage = (results.principalAndInterest / results.monthlyPayment) * 100;
-        const taxesPercentage = (results.monthlyTaxes / results.monthlyPayment) * 100;
-        const insurancePercentage = (results.monthlyInsurance / results.monthlyPayment) * 100;
+        const styles = {
+            chartContainer: {
+                display: 'flex',
+                height: '2rem',
+                borderRadius: '0.5rem',
+                overflow: 'hidden',
+                backgroundColor: '#374151',
+                width: '100%',
+            },
+            chartBar: {
+                height: '100%',
+                transition: 'width 0.5s ease-in-out',
+            }
+        };
 
         return (
             <div style={styles.chartContainer}>
@@ -202,116 +198,102 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         );
     }, [results]);
 
+    const InputField = ({ label, name, value, onChange, type = 'text', icon, unit }: { label: string, name: keyof InputState, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, icon?: React.ReactNode, unit?: string }) => (
+        <div>
+            <label htmlFor={name} className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+            <div className="relative">
+                {icon && <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">{icon}</div>}
+                <input
+                    type={type}
+                    name={name}
+                    id={name}
+                    value={value}
+                    onChange={onChange}
+                    className={`block w-full bg-gray-900 border-gray-700 rounded-md shadow-sm py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm ${icon ? 'pl-10' : 'pl-4'} ${unit ? 'pr-12' : 'pr-4'}`}
+                />
+                {unit && <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">{unit}</div>}
+            </div>
+        </div>
+    );
 
     return (
-        <div style={styles.container}>
-            <header style={styles.header}>
-                <h1 style={styles.title}>AI-Powered Mortgage Affordability Simulator</h1>
-                <p style={styles.subtitle}>Calculate your home-buying budget and compare loan offers to make a smarter decision.</p>
+        <div className="bg-gray-800 text-white p-4 sm:p-6 md:p-8 rounded-2xl max-w-4xl mx-auto shadow-2xl border border-gray-700">
+            <header className="flex items-center mb-6">
+                <HomeIcon />
+                <h1 className="text-2xl font-bold tracking-tight">Mortgage Affordability Calculator</h1>
             </header>
 
-            <div style={styles.mainContent}>
-                <div style={styles.inputSection}>
-                    <h2 style={styles.sectionTitle}>Your Financial Profile</h2>
-                    <InputGroup label="Annual Gross Income">
-                        <DollarIcon />
-                        <input type="number" name="annualIncome" value={inputs.annualIncome} onChange={handleInputChange} style={styles.input} />
-                    </InputGroup>
-                    <InputGroup label="Total Monthly Debts">
-                        <DollarIcon />
-                        <input type="number" name="monthlyDebts" value={inputs.monthlyDebts} onChange={handleInputChange} style={styles.input} placeholder="Car, student loans, credit cards" />
-                    </InputGroup>
-                     <InputGroup label="Down Payment">
-                        <DollarIcon />
-                        <input type="number" name="downPayment" value={inputs.downPayment} onChange={handleInputChange} style={styles.input} />
-                    </InputGroup>
-
-                    <h2 style={{...styles.sectionTitle, marginTop: '2rem'}}>Loan Assumptions</h2>
-                    <div style={styles.grid}>
-                        <InputGroup label="Interest Rate (%)">
-                           <input type="number" name="interestRate" step="0.01" value={inputs.interestRate} onChange={handleInputChange} style={styles.input} />
-                        </InputGroup>
-                        <InputGroup label="Loan Term (Years)">
-                           <input type="number" name="loanTerm" value={inputs.loanTerm} onChange={handleInputChange} style={styles.input} />
-                        </InputGroup>
-                        <InputGroup label="Annual Property Taxes">
-                           <DollarIcon />
-                           <input type="number" name="propertyTaxes" value={inputs.propertyTaxes} onChange={handleInputChange} style={styles.input} />
-                        </InputGroup>
-                         <InputGroup label="Annual Home Insurance">
-                           <DollarIcon />
-                           <input type="number" name="homeInsurance" value={inputs.homeInsurance} onChange={handleInputChange} style={styles.input} />
-                        </InputGroup>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* --- Left Side: Inputs --- */}
+                <div className="space-y-4">
+                    <InputField label="Annual Income" name="annualIncome" value={inputs.annualIncome} onChange={handleInputChange} icon={<DollarIcon />} />
+                    <InputField label="Monthly Debts" name="monthlyDebts" value={inputs.monthlyDebts} onChange={handleInputChange} icon={<DollarIcon />} />
+                    <InputField label="Down Payment" name="downPayment" value={inputs.downPayment} onChange={handleInputChange} icon={<DollarIcon />} />
+                    <InputField label="Interest Rate" name="interestRate" value={inputs.interestRate} onChange={handleInputChange} icon={<PercentIcon />} unit="%" />
+                    <div>
+                        <label htmlFor="loanTerm" className="block text-sm font-medium text-gray-300 mb-1">Loan Term</label>
+                        <select
+                            id="loanTerm"
+                            name="loanTerm"
+                            value={inputs.loanTerm}
+                            onChange={handleInputChange}
+                            className="block w-full bg-gray-900 border-gray-700 rounded-md shadow-sm py-2 pl-3 pr-10 text-white focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
+                        >
+                            <option>30</option>
+                            <option>20</option>
+                            <option>15</option>
+                            <option>10</option>
+                        </select>
                     </div>
-
-                    <div style={styles.buttonGroup}>
-                        <button onClick={handleCalculate} style={styles.primaryButton}>Calculate Affordability</button>
-                        <button onClick={handleReset} style={styles.secondaryButton}>Reset</button>
-                    </div>
+                    <InputField label="Annual Property Taxes" name="propertyTaxes" value={inputs.propertyTaxes} onChange={handleInputChange} icon={<PercentIcon />} unit="%" />
+                    <InputField label="Annual Home Insurance" name="homeInsurance" value={inputs.homeInsurance} onChange={handleInputChange} icon={<DollarIcon />} />
                 </div>
 
-                <div style={styles.resultsSection}>
-                    {results ? (
-                        <>
-                            <div style={styles.resultsCard}>
-                                <p style={styles.resultsLabel}>You can afford a home up to</p>
-                                <p style={styles.resultsValue}>{formatCurrency(results.maxHomePrice)}</p>
-                                <div style={styles.monthlyPaymentContainer}>
-                                    <p style={styles.monthlyPaymentLabel}>Estimated Monthly Payment</p>
-                                    <p style={styles.monthlyPaymentValue}>{formatCurrency(results.monthlyPayment)}</p>
+                {/* --- Right Side: Results & Comparison --- */}
+                <div className="space-y-6">
+                    {results && (
+                        <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-700 text-center">
+                            <h2 className="text-lg font-medium text-gray-400">You Can Afford a Home Up To</h2>
+                            <p className="text-5xl font-bold text-cyan-400 my-2">{formatCurrency(results.maxHomePrice)}</p>
+                            <p className="text-gray-300">Estimated Monthly Payment: <span className="font-semibold text-white">{formatCurrency(results.monthlyPayment)}</span></p>
+                            
+                            <div className="mt-4">
+                                <h3 className="text-sm font-medium text-gray-400 mb-2">Monthly Payment Breakdown</h3>
+                                {breakdownChart}
+                                <div className="flex justify-between text-xs mt-1 text-gray-400">
+                                    <span>P&I</span>
+                                    <span>Taxes</span>
+                                    <span>Insurance</span>
                                 </div>
-                                {paymentBreakdownChart}
-                                <div style={styles.legend}>
-                                    <div style={styles.legendItem}><span style={{...styles.legendDot, backgroundColor: '#3b82f6'}}></span> P&I: {formatCurrency(results.principalAndInterest)}</div>
-                                    <div style={styles.legendItem}><span style={{...styles.legendDot, backgroundColor: '#60a5fa'}}></span> Taxes: {formatCurrency(results.monthlyTaxes)}</div>
-                                    <div style={styles.legendItem}><span style={{...styles.legendDot, backgroundColor: '#93c5fd'}}></span> Insurance: {formatCurrency(results.monthlyInsurance)}</div>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-4">
+                                Your affordability is currently limited by your {results.limitingFactor === 'income' ? 'income (28% rule)' : 'debt-to-income ratio (36% rule)'}.
+                            </p>
+                        </div>
+                    )}
+                    
+                    {results && results.maxLoanAmount > 0 && (
+                        <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                            <h3 className="text-lg font-semibold mb-3">Scenario Comparison</h3>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p className="font-medium text-gray-300">{inputs.interestRate}% for {inputs.loanTerm} years</p>
+                                    <p className="text-2xl font-bold text-white">{formatCurrency(results.monthlyPayment)}/mo</p>
+                                    <p className="text-xs text-gray-400">Total Interest: {formatCurrency(comparison.totalInterest1 || 0)}</p>
+                                </div>
+                                <div>
+                                    <div className="flex gap-2 mb-1">
+                                         <input type="text" value={comparison.rate2} onChange={e => setComparison(prev => ({...prev, rate2: e.target.value}))} className="w-16 bg-gray-800 text-white p-1 rounded-md text-sm" />
+                                         <select value={comparison.term2} onChange={e => setComparison(prev => ({...prev, term2: e.target.value}))} className="w-20 bg-gray-800 text-white p-1 rounded-md text-sm">
+                                            <option>30</option>
+                                            <option>20</option>
+                                            <option>15</option>
+                                         </select>
+                                    </div>
+                                    <p className="text-2xl font-bold text-white">{formatCurrency(comparison.monthlyPayment2 || 0)}/mo</p>
+                                    <p className="text-xs text-gray-400">Total Interest: {formatCurrency(comparison.totalInterest2 || 0)}</p>
                                 </div>
                             </div>
-
-                            <div style={styles.aiInsightCard}>
-                                <h3 style={styles.cardTitle}>AI-Powered Insight</h3>
-                                <p style={styles.aiText}>{aiSuggestion}</p>
-                            </div>
-
-                            <div style={styles.comparisonCard}>
-                                <h3 style={styles.cardTitle}>Loan Offer Simulator</h3>
-                                <p style={styles.cardSubtitle}>Compare your primary scenario against another offer.</p>
-                                <table style={styles.comparisonTable}>
-                                    <thead>
-                                        <tr>
-                                            <th>Scenario</th>
-                                            <th>Interest Rate</th>
-                                            <th>Term (Years)</th>
-                                            <th>Monthly P&I</th>
-                                            <th>Total Interest Paid</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>Your Calculation</strong></td>
-                                            <td>{inputs.interestRate}%</td>
-                                            <td>{inputs.loanTerm}</td>
-                                            <td>{formatCurrency(results.principalAndInterest)}</td>
-                                            <td>{comparison.totalInterest1 ? formatCurrency(comparison.totalInterest1) : '-'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Offer 2</strong></td>
-                                            <td><input type="number" name="rate2" value={comparison.rate2} onChange={handleComparisonChange} style={styles.tableInput} step="0.01" /></td>
-                                            <td><input type="number" name="term2" value={comparison.term2} onChange={handleComparisonChange} style={styles.tableInput} /></td>
-                                            <td>{comparison.monthlyPayment2 ? formatCurrency(calculateMortgage(results.maxLoanAmount, parseFloat(comparison.rate2), parseInt(comparison.term2)).monthlyPayment) : '-'}</td>
-                                            <td>{comparison.totalInterest2 ? formatCurrency(comparison.totalInterest2) : '-'}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <button onClick={handleCompare} style={{...styles.primaryButton, width: '100%', marginTop: '1rem'}}>Compare Offers</button>
-                            </div>
-
-                        </>
-                    ) : (
-                        <div style={styles.placeholder}>
-                            <HomeIcon />
-                            <h3 style={styles.placeholderTitle}>Your affordability report will appear here.</h3>
-                            <p style={styles.placeholderText}>Fill in your details and click "Calculate Affordability" to begin.</p>
                         </div>
                     )}
                 </div>
@@ -319,243 +301,5 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         </div>
     );
 };
-
-const InputGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-    <div style={styles.inputGroup}>
-        <label style={styles.label}>{label}</label>
-        <div style={styles.inputWrapper}>{children}</div>
-    </div>
-);
-
-// --- STYLES ---
-
-const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        backgroundColor: '#f8fafc',
-        color: '#1e293b',
-        padding: '2rem',
-        minHeight: '100vh',
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: '2rem',
-    },
-    title: {
-        fontSize: '2.25rem',
-        fontWeight: 'bold',
-        color: '#0f172a',
-    },
-    subtitle: {
-        fontSize: '1.125rem',
-        color: '#475569',
-        maxWidth: '600px',
-        margin: '0.5rem auto 0',
-    },
-    mainContent: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '2rem',
-        maxWidth: '1200px',
-        margin: '0 auto',
-    },
-    inputSection: {
-        backgroundColor: '#ffffff',
-        padding: '2rem',
-        borderRadius: '0.75rem',
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    },
-    sectionTitle: {
-        fontSize: '1.5rem',
-        fontWeight: '600',
-        marginBottom: '1.5rem',
-        borderBottom: '1px solid #e2e8f0',
-        paddingBottom: '0.75rem',
-    },
-    inputGroup: {
-        marginBottom: '1.25rem',
-    },
-    label: {
-        display: 'block',
-        fontWeight: '500',
-        marginBottom: '0.5rem',
-        color: '#334155',
-    },
-    inputWrapper: {
-        display: 'flex',
-        alignItems: 'center',
-        border: '1px solid #cbd5e1',
-        borderRadius: '0.375rem',
-        paddingLeft: '0.75rem',
-    },
-    input: {
-        border: 'none',
-        outline: 'none',
-        padding: '0.75rem',
-        width: '100%',
-        backgroundColor: 'transparent',
-        fontSize: '1rem',
-    },
-    grid: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '1rem',
-    },
-    buttonGroup: {
-        marginTop: '2rem',
-        display: 'flex',
-        gap: '1rem',
-    },
-    primaryButton: {
-        backgroundColor: '#3b82f6',
-        color: '#ffffff',
-        border: 'none',
-        padding: '0.75rem 1.5rem',
-        borderRadius: '0.375rem',
-        fontSize: '1rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-    },
-    secondaryButton: {
-        backgroundColor: '#e2e8f0',
-        color: '#1e293b',
-        border: '1px solid #cbd5e1',
-        padding: '0.75rem 1.5rem',
-        borderRadius: '0.375rem',
-        fontSize: '1rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-    },
-    resultsSection: {
-        backgroundColor: 'transparent',
-    },
-    placeholder: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        backgroundColor: '#ffffff',
-        borderRadius: '0.75rem',
-        padding: '2rem',
-        textAlign: 'center',
-        border: '2px dashed #e2e8f0',
-        color: '#64748b',
-    },
-    placeholderTitle: {
-        marginTop: '1rem',
-        fontSize: '1.25rem',
-        fontWeight: '600',
-    },
-    placeholderText: {
-        marginTop: '0.5rem',
-        maxWidth: '300px',
-    },
-    resultsCard: {
-        backgroundColor: '#ffffff',
-        padding: '2rem',
-        borderRadius: '0.75rem',
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        textAlign: 'center',
-    },
-    resultsLabel: {
-        fontSize: '1.125rem',
-        color: '#475569',
-    },
-    resultsValue: {
-        fontSize: '3rem',
-        fontWeight: 'bold',
-        color: '#3b82f6',
-        margin: '0.5rem 0',
-    },
-    monthlyPaymentContainer: {
-        marginTop: '1.5rem',
-        paddingTop: '1.5rem',
-        borderTop: '1px solid #e2e8f0',
-    },
-    monthlyPaymentLabel: {
-        fontSize: '1rem',
-        color: '#475569',
-    },
-    monthlyPaymentValue: {
-        fontSize: '1.75rem',
-        fontWeight: '600',
-        color: '#1e293b',
-    },
-    chartContainer: {
-        display: 'flex',
-        height: '1.25rem',
-        borderRadius: '0.5rem',
-        overflow: 'hidden',
-        margin: '1.5rem 0 0.75rem',
-        backgroundColor: '#e2e8f0',
-    },
-    chartBar: {
-        height: '100%',
-    },
-    legend: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '1.5rem',
-        fontSize: '0.875rem',
-    },
-    legendItem: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    legendDot: {
-        width: '0.75rem',
-        height: '0.75rem',
-        borderRadius: '50%',
-        marginRight: '0.5rem',
-    },
-    aiInsightCard: {
-        backgroundColor: '#eef2ff',
-        borderLeft: '4px solid #4f46e5',
-        padding: '1.5rem',
-        borderRadius: '0.5rem',
-        marginTop: '2rem',
-    },
-    cardTitle: {
-        fontSize: '1.25rem',
-        fontWeight: '600',
-        color: '#1e293b',
-        marginBottom: '0.5rem',
-    },
-    cardSubtitle: {
-        fontSize: '0.9rem',
-        color: '#475569',
-        marginBottom: '1rem',
-    },
-    aiText: {
-        color: '#374151',
-        lineHeight: '1.6',
-    },
-    comparisonCard: {
-        backgroundColor: '#ffffff',
-        padding: '2rem',
-        borderRadius: '0.75rem',
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        marginTop: '2rem',
-    },
-    comparisonTable: {
-        width: '100%',
-        borderCollapse: 'collapse',
-        textAlign: 'left',
-    },
-    tableInput: {
-        width: '80px',
-        padding: '0.25rem 0.5rem',
-        border: '1px solid #cbd5e1',
-        borderRadius: '0.25rem',
-    }
-};
-
-// Add responsive styles (pseudo-code, as React styles don't support media queries directly)
-// In a real app, you'd use a CSS-in-JS library or CSS modules.
-// For this single file, let's assume a desktop-first approach.
-// @media (max-width: 1024px) { mainContent: { gridTemplateColumns: '1fr' } }
 
 export default MortgageAffordabilityCalculator;
