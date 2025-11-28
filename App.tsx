@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -33,6 +30,21 @@ import PlaidDashboardView from './components/PlaidDashboardView';
 import StripeDashboardView from './components/StripeDashboardView';
 import MarqetaDashboardView from './components/MarqetaDashboardView';
 import SSOView from './components/SSOView';
+import GlobalMarketMap from './components/GlobalMarketMap';
+import QuantumAssets from './components/QuantumAssets';
+import LegacyBuilder from './components/LegacyBuilder';
+import PhilanthropyHub from './components/PhilanthropyHub';
+import VentureCapitalDesk from './components/VentureCapitalDesk';
+import RealEstateEmpire from './components/RealEstateEmpire';
+import CommoditiesExchange from './components/CommoditiesExchange';
+import ForexArena from './components/ForexArena';
+import AlgoTradingLab from './components/AlgoTradingLab';
+import PrivateEquityLounge from './components/PrivateEquityLounge';
+import TaxOptimizationChamber from './components/TaxOptimizationChamber';
+import ConciergeService from './components/ConciergeService';
+import ArtCollectibles from './components/ArtCollectibles';
+import DerivativesDesk from './components/DerivativesDesk';
+import SovereignWealth from './components/SovereignWealth';
 
 
 const TheVisionView: React.FC = () => (
@@ -530,6 +542,21 @@ const App: React.FC = () => {
             case View.StripeDashboard: return <StripeDashboardView />;
             case View.MarqetaDashboard: return <MarqetaDashboardView />;
             case View.SSO: return <SSOView />;
+            case View.GlobalMarketMap: return <GlobalMarketMap />;
+            case View.QuantumAssets: return <QuantumAssets />;
+            case View.LegacyBuilder: return <LegacyBuilder />;
+            case View.PhilanthropyHub: return <PhilanthropyHub />;
+            case View.VentureCapitalDesk: return <VentureCapitalDesk />;
+            case View.RealEstateEmpire: return <RealEstateEmpire />;
+            case View.CommoditiesExchange: return <CommoditiesExchange />;
+            case View.ForexArena: return <ForexArena />;
+            case View.AlgoTradingLab: return <AlgoTradingLab />;
+            case View.PrivateEquityLounge: return <PrivateEquityLounge />;
+            case View.TaxOptimizationChamber: return <TaxOptimizationChamber />;
+            case View.ConciergeService: return <ConciergeService />;
+            case View.ArtCollectibles: return <ArtCollectibles />;
+            case View.DerivativesDesk: return <DerivativesDesk />;
+            case View.SovereignWealth: return <SovereignWealth />;
             default: return <Dashboard setActiveView={setActiveView} />;
         }
     };
