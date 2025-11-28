@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useMemo, useCallback } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -627,4 +627,3 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 export default JointBudgetTracker;
-```
