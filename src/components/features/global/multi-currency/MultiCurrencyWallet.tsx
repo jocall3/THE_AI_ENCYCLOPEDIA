@@ -1,4 +1,3 @@
-```typescript
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 // --- Type Definitions ---
@@ -16,14 +15,14 @@ interface Balance {
 
 // --- Mock Data & Constants ---
 const SUPPORTED_CURRENCIES: Currency[] = [
-  { code: 'USD', name: 'United States Dollar', symbol: '$', flag: '🇺🇸' },
-  { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' },
-  { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: '🇦🇺' },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: '🇨🇦' },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: '🇨🇭' },
-  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳' },
+  { code: 'USD', name: 'United States Dollar', symbol: '$', flag: 'ðºð¸' },
+  { code: 'EUR', name: 'Euro', symbol: 'â¬', flag: 'ðªðº' },
+  { code: 'JPY', name: 'Japanese Yen', symbol: 'Â¥', flag: 'ð¯ðµ' },
+  { code: 'GBP', name: 'British Pound', symbol: 'Â£', flag: 'ð¬ð§' },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: 'ð¦ðº' },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: 'ð¨ð¦' },
+  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: 'ð¨ð­' },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: 'Â¥', flag: 'ð¨ð³' },
 ];
 
 const getCurrencyDetails = (code: string): Currency | undefined => 
@@ -511,4 +510,3 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 export default MultiCurrencyWallet;
-```
