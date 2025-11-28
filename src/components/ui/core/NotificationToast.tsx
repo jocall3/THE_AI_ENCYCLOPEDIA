@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -70,4 +70,3 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
 };
 
 export default NotificationToast;
-```
