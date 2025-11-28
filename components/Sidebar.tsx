@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View } from '../types';
 import { NAV_ITEMS } from '../constants';
+import { AuthContext } from '../context/AuthContext';
+import { LogOut } from 'lucide-react';
 
 interface SidebarProps {
     activeView: View;
@@ -19,6 +21,7 @@ const DemoBankLogo: React.FC<{className?: string}> = ({className}) => (
 
 
 const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, setIsOpen }) => {
+    const authContext = useContext(AuthContext);
     
     const handleNavClick = (view: View) => {
         setActiveView(view);
@@ -35,40 +38,35 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
 
             {/* Sidebar */}
             <div className={`flex flex-col w-64 bg-gray-900/50 backdrop-blur-lg border-r border-gray-700/50 fixed lg:relative inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-                <div className="flex items-center justify-center h-20 border-b border-gray-700/50 px-4">
-                    <DemoBankLogo className="w-10 h-10 text-cyan-400" />
-                    <h1 className="text-xl font-bold ml-2 text-white">DEMO BANK</h1>
+                <div className="flex items-center justify-center h-20 border-b border-gray-700/50 px-4 flex-shrink-0">
+                     <DemoBankLogo className="h-10 w-10 text-cyan-400" />
+                    <h1 className="text-xl font-bold text-white ml-3">DEMO BANK</h1>
                 </div>
-
-                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    {NAV_ITEMS.map(section => (
-                        <div key={section.title}>
-                            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{section.title}</h3>
-                            <div className="mt-2 space-y-1">
-                                {section.items.map(item => (
-                                    <a
-                                        key={item.id}
-                                        href="#"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleNavClick(item.id);
-                                        }}
-                                        className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${ 
-                                            activeView === item.id 
-                                            ? 'text-white bg-cyan-500/20' 
-                                            : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                                        }`}
-                                    >
-                                        <div className={`mr-3 h-5 w-5 ${activeView === item.id ? 'text-cyan-300' : 'text-gray-400 group-hover:text-gray-300'}`}>
-                                            {item.icon}
-                                        </div>
-                                        <span>{item.label}</span>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
+                <nav className="flex-grow px-2 py-4 space-y-1 overflow-y-auto">
+                    {NAV_ITEMS.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => handleNavClick(item.id)}
+                            className={`flex items-center w-full text-left px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 ${
+                                activeView === item.id 
+                                    ? 'bg-cyan-500/20 text-cyan-200' 
+                                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                            }`}
+                        >
+                            <div className="w-6 h-6 mr-3 text-cyan-300">{item.icon}</div>
+                            <span>{item.label}</span>
+                        </button>
                     ))}
                 </nav>
+                 <div className="flex-shrink-0 p-4 border-t border-gray-700/50">
+                    <button
+                        onClick={() => authContext?.logout()}
+                        className="flex items-center w-full text-left px-3 py-2.5 text-sm font-medium rounded-md text-gray-400 hover:text-white hover:bg-red-600/50 transition-colors duration-150"
+                    >
+                         <LogOut className="w-5 h-5 mr-3"/>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </div>
         </>
     );
