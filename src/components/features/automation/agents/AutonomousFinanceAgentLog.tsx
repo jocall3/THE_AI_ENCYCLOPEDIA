@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useMemo } from 'react';
 import { Search, CheckCircle2, XCircle, AlertCircle, Loader, CandlestickChart, LineChart, Landmark, SlidersHorizontal, ChevronLeft, ChevronRight, FilterX } from 'lucide-react';
 
@@ -319,5 +319,3 @@ export const AutonomousFinanceAgentLog: React.FC = () => {
 };
 
 export default AutonomousFinanceAgentLog;
-
-```
