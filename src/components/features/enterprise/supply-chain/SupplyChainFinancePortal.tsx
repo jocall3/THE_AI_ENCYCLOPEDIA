@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useMemo } from 'react';
 import { LayoutDashboard, FileText, Users, Settings, DollarSign, CreditCard, BarChart2, Filter, PlusCircle, ChevronDown, CheckCircle, Clock, XCircle } from 'lucide-react';
 
@@ -302,7 +302,7 @@ export default function SupplyChainFinancePortal() {
                 </ul>
             </nav>
             <div className="p-4 border-t border-gray-200">
-                <p className="text-sm text-gray-700">© 2024 Your Company</p>
+                <p className="text-sm text-gray-700">Â© 2024 Your Company</p>
             </div>
         </aside>
 
@@ -330,4 +330,3 @@ export default function SupplyChainFinancePortal() {
     </div>
   );
 }
-```
