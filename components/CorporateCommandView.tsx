@@ -777,7 +777,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                     Expiring Contracts: ${contractComplianceMetrics.expiringSoon}, Non-Compliant Contracts: ${contractComplianceMetrics.nonCompliant}.
                     Automated Approvals: ${automatedApprovalsPct.toFixed(1)}%.
                 `;
-                const prompt = `You are a corporate finance AI controller. Based on the following summary, provide a single, concise (1-2 sentences) strategic recommendation or observation for the finance manager. Focus on key actionable insights. Summary:\n${dataSummary}`;
+                const prompt = `You are a corporate finance AI controller named idgafai. Based on the following summary, provide a single, concise (1-2 sentences) strategic recommendation or observation for the finance manager. Focus on key actionable insights for the betterment of humanity's financial future. Summary:\n${dataSummary}`;
                 
                 const response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
@@ -849,20 +849,20 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 <StatCard title="Pending Approvals" value={summaryStats.pendingApprovals} view={View.PaymentOrders} />
                 <StatCard title="Overdue Invoices" value={summaryStats.overdueInvoices} view={View.Invoices} />
-                <StatCard title="Total Outflow (7d)" value={summaryStats.totalOutflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Total Inflow (Paid)" value={totalInflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Avg. Invoice Value" value={avgInvoiceValue} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                <StatCard title="Days Sales Outstanding" value={dso} formatter={(v: number) => `${v.toFixed(1)} days`} />
-                <StatCard title="Days Payable Outstanding" value={dpo} formatter={(v: number) => `${v.toFixed(1)} days`} />
+                <StatCard title="Total Outflow (7d)" value={summaryStats.totalOutflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
+                <StatCard title="Total Inflow (Paid)" value={totalInflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Invoices} />
+                <StatCard title="Avg. Invoice Value" value={avgInvoiceValue} formatter={(v: number) => `$${v.toFixed(2)}`} view={View.Invoices} />
+                <StatCard title="Days Sales Outstanding" value={dso} formatter={(v: number) => `${v.toFixed(1)} days`} view={View.Invoices} />
+                <StatCard title="Days Payable Outstanding" value={dpo} formatter={(v: number) => `${v.toFixed(1)} days`} view={View.PaymentOrders} />
                 <StatCard title="Current Ratio" value={currentRatio} formatter={(v: number) => v.toFixed(2)} />
                 <StatCard title="Quick Ratio" value={quickRatio} formatter={(v: number) => v.toFixed(2)} />
                 <StatCard title="Gross Profit Margin" value={grossProfitMargin} formatter={(v: number) => `${v.toFixed(1)}%`} />
                 <StatCard title="Net Profit Margin" value={netProfitMargin} formatter={(v: number) => `${v.toFixed(1)}%`} />
-                <StatCard title="Estimated VAT Liability" value={vatEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Estimated Payroll Tax" value={payrollTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Estimated Corporate Tax" value={corporateTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Budget Variance (Total)" value={budgetVarianceTotal} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} className={budgetVarianceTotal > 0 ? "bg-red-700/30 border-red-600" : "bg-green-700/30 border-green-600"} />
-                <StatCard title="Total Budget Allocated" value={totalBudgetAllocated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
+                <StatCard title="Estimated VAT Liability" value={vatEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
+                <StatCard title="Estimated Payroll Tax" value={payrollTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
+                <StatCard title="Estimated Corporate Tax" value={corporateTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
+                <StatCard title="Budget Variance (Total)" value={budgetVarianceTotal} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} className={budgetVarianceTotal > 0 ? "bg-red-700/30 border-red-600" : "bg-green-700/30 border-green-600"} view={View.Budgets} />
+                <StatCard title="Total Budget Allocated" value={totalBudgetAllocated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Budgets} />
                 <StatCard title="Cash Conversion Cycle" value={cashConversionCycle} formatter={(v: number) => `${v.toFixed(1)} days`} />
                 <StatCard title="Equity Ratio" value={equityRatio} formatter={(v: number) => `${v.toFixed(1)}%`} />
                 <StatCard title="Debt To Equity Ratio" value={debtToEquityRatio} formatter={(v: number) => v.toFixed(2)} />
@@ -902,19 +902,19 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
 
             <h3 className="text-2xl font-bold text-white mt-8 mb-4">Operational Efficiency & Spend</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <StatCard title="Payment Orders Processed" value={totalPaymentsProcessed} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Invoices Issued" value={totalInvoicesIssued} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Avg. Approval Time" value={avgApprovalTimeHours} formatter={(v: number) => `${v.toFixed(1)} hrs`} className={avgApprovalTimeHours > 48 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Approval Throughput (30d)" value={throughputLast30Days} formatter={(v: number) => `${v} orders`} />
-                <StatCard title="High-Value POs (>$10k)" value={highValuePaymentOrders} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="On-Time Payments %" value={onTimePaymentsPct} formatter={(v: number) => `${v.toFixed(1)}%`} className={onTimePaymentsPct < 90 ? "bg-yellow-700/30 border-yellow-600" : ""} />
-                <StatCard title="Avg. Transaction Amount" value={avgTxnAmount} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                <StatCard title="Large Transactions (>$5k)" value={largeTransactions} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Small Transactions (<$100)" value={smallTransactions} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Transactions by Card" value={cardTxns} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Transactions by Bank Transfer" value={bankTransferTxns} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Unique Payment Methods" value={numUniquePaymentMethods} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Unique Vendors" value={numUniqueVendors} formatter={(v: number) => v.toLocaleString()} />
+                <StatCard title="Payment Orders Processed" value={totalPaymentsProcessed} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
+                <StatCard title="Invoices Issued" value={totalInvoicesIssued} formatter={(v: number) => v.toLocaleString()} view={View.Invoices} />
+                <StatCard title="Avg. Approval Time" value={avgApprovalTimeHours} formatter={(v: number) => `${v.toFixed(1)} hrs`} className={avgApprovalTimeHours > 48 ? "bg-red-700/30 border-red-600" : ""} view={View.PaymentOrders} />
+                <StatCard title="Approval Throughput (30d)" value={throughputLast30Days} formatter={(v: number) => `${v} orders`} view={View.PaymentOrders} />
+                <StatCard title="High-Value POs (>$10k)" value={highValuePaymentOrders} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
+                <StatCard title="On-Time Payments %" value={onTimePaymentsPct} formatter={(v: number) => `${v.toFixed(1)}%`} className={onTimePaymentsPct < 90 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.PaymentOrders} />
+                <StatCard title="Avg. Transaction Amount" value={avgTxnAmount} formatter={(v: number) => `$${v.toFixed(2)}`} view={View.Transactions} />
+                <StatCard title="Large Transactions (>$5k)" value={largeTransactions} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
+                <StatCard title="Small Transactions (<$100)" value={smallTransactions} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
+                <StatCard title="Transactions by Card" value={cardTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
+                <StatCard title="Transactions by Bank Transfer" value={bankTransferTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
+                <StatCard title="Unique Payment Methods" value={numUniquePaymentMethods} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
+                <StatCard title="Unique Vendors" value={numUniqueVendors} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
                 <StatCard title="Total Employee Expenses" value={employeeExpenseMetrics.totalExpenses} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
                 <StatCard title="Avg. Employee Expense" value={employeeExpenseMetrics.averageExpense} formatter={(v: number) => `$${v.toFixed(2)}`} />
                 <StatCard title="SAAS Spend" value={saasSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
@@ -928,8 +928,8 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                 <StatCard title="Office Supplies Spend" value={officeSuppliesSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
                 <StatCard title="Travel Spend" value={travelSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
                 <StatCard title="Entertainment Spend" value={entertainmentSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Total Refunds" value={totalRefunds} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Total Discounts" value={totalDiscounts} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
+                <StatCard title="Total Refunds" value={totalRefunds} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
+                <StatCard title="Total Discounts" value={totalDiscounts} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -992,20 +992,20 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
             <h3 className="text-2xl font-bold text-white mt-8 mb-4">Compliance & Risk Management</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 <StatCard title="Open Compliance Cases" value={summaryStats.openCases} view={View.Compliance} />
-                <StatCard title="Critical Cases (Open)" value={criticalCases} formatter={(v: number) => v.toLocaleString()} className={criticalCases > 0 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Avg. Case Resolution Time" value={avgCaseResolutionTimeDays} formatter={(v: number) => `${v.toFixed(1)} days`} className={avgCaseResolutionTimeDays > 30 ? "bg-yellow-700/30 border-yellow-600" : ""} />
-                <StatCard title="Total Compliance Fines (Est.)" value={totalComplianceFinesSimulated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="High-Risk Transactions" value={highRiskTxnCount} formatter={(v: number) => v.toLocaleString()} className={highRiskTxnCount > 0 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Flagged Vendors" value={flaggedVendors} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Foreign Currency Spend" value={foreignCurrencySpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Foreign Currency Transactions" value={foreignCurrencyTxns} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Automated Approvals %" value={automatedApprovalsPct} formatter={(v: number) => `${v.toFixed(1)}%`} />
+                <StatCard title="Critical Cases (Open)" value={criticalCases} formatter={(v: number) => v.toLocaleString()} className={criticalCases > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.Compliance} />
+                <StatCard title="Avg. Case Resolution Time" value={avgCaseResolutionTimeDays} formatter={(v: number) => `${v.toFixed(1)} days`} className={avgCaseResolutionTimeDays > 30 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.Compliance} />
+                <StatCard title="Total Compliance Fines (Est.)" value={totalComplianceFinesSimulated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Compliance} />
+                <StatCard title="High-Risk Transactions" value={highRiskTxnCount} formatter={(v: number) => v.toLocaleString()} className={highRiskTxnCount > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
+                <StatCard title="Flagged Vendors" value={flaggedVendors} formatter={(v: number) => v.toLocaleString()} view={View.SecurityCenter} />
+                <StatCard title="Foreign Currency Spend" value={foreignCurrencySpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
+                <StatCard title="Foreign Currency Transactions" value={foreignCurrencyTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
+                <StatCard title="Automated Approvals %" value={automatedApprovalsPct} formatter={(v: number) => `${v.toFixed(1)}%`} view={View.PaymentOrders} />
                 <StatCard title="Total Contracts" value={contractComplianceMetrics.totalContracts} formatter={(v: number) => v.toLocaleString()} />
                 <StatCard title="Expiring Contracts (90d)" value={contractComplianceMetrics.expiringSoon} formatter={(v: number) => v.toLocaleString()} className={contractComplianceMetrics.expiringSoon > 0 ? "bg-yellow-700/30 border-yellow-600" : ""} />
                 <StatCard title="Non-Compliant Contracts" value={contractComplianceMetrics.nonCompliant} formatter={(v: number) => v.toLocaleString()} className={contractComplianceMetrics.nonCompliant > 0 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Audit Failed Logins (7d)" value={auditFailedLoginsTotal} formatter={(v: number) => v.toLocaleString()} className={auditFailedLoginsTotal > 5 ? "bg-yellow-700/30 border-yellow-600" : ""} />
-                <StatCard title="Audit Suspicious Activity (7d)" value={auditSuspiciousActivitiesTotal} formatter={(v: number) => v.toLocaleString()} className={auditSuspiciousActivitiesTotal > 0 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Audit Data Access Violations (7d)" value={auditDataAccessViolationsTotal} formatter={(v: number) => v.toLocaleString()} className={auditDataAccessViolationsTotal > 0 ? "bg-red-700/30 border-red-600" : ""} />
+                <StatCard title="Audit Failed Logins (7d)" value={auditFailedLoginsTotal} formatter={(v: number) => v.toLocaleString()} className={auditFailedLoginsTotal > 5 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.SecurityCenter} />
+                <StatCard title="Audit Suspicious Activity (7d)" value={auditSuspiciousActivitiesTotal} formatter={(v: number) => v.toLocaleString()} className={auditSuspiciousActivitiesTotal > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
+                <StatCard title="Audit Data Access Violations (7d)" value={auditDataAccessViolationsTotal} formatter={(v: number) => v.toLocaleString()} className={auditDataAccessViolationsTotal > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
                 <Card title="Top 3 Compliance Risks">
                      <ul className="list-disc pl-5 text-gray-300 text-sm">
                         {top3ComplianceRisks.map((risk, idx) => <li key={idx}>{risk}</li>)}
