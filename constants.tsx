@@ -1,4 +1,3 @@
-```typescript
 // @/constants.tsx
 // This file serves as the central repository for application-wide constants.
 // By consolidating these values, we ensure consistency, improve maintainability,
@@ -442,4 +441,3 @@ function VisionIcon(props: React.SVGProps<SVGSVGElement>) {
         </svg>
     );
 }
-```
