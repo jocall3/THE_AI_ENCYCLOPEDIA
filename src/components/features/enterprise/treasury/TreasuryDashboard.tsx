@@ -1,4 +1,4 @@
-```tsx
+
 import { ArrowDownRight, ArrowUpRight, Banknote, DollarSign, MoreHorizontal, RefreshCw } from "lucide-react";
 import { Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
 
@@ -241,4 +241,3 @@ export default function TreasuryDashboard() {
     </div>
   );
 }
-```
