@@ -145,6 +145,7 @@ interface IDataContext {
   fetchLedgerAccounts: () => Promise<void>;
   isLedgerAccountsLoading: boolean;
   ledgerAccountsError: string | null;
+  activeView: View;
   setActiveView: (view: View) => void;
   // Financial Goals Extended Methods
   addContributionToGoal: (goalId: string, amount: number) => void;
@@ -265,6 +266,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccount[]>([]);
   const [isLedgerAccountsLoading, setIsLedgerAccountsLoading] = useState(false);
   const [ledgerAccountsError, setLedgerAccountsError] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<View>(View.Dashboard);
 
   // New States for Prosperity Views (3/4)
   const [prosperityCompanies] = useState<CompanyProfile[]>(generateProsperityCompanies());
@@ -946,7 +948,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         fetchLedgerAccounts,
         isLedgerAccountsLoading,
         ledgerAccountsError,
-        setActiveView: () => {},
+        activeView,
+        setActiveView,
         addContributionToGoal,
         addRecurringContributionToGoal,
         updateRecurringContributionInGoal,
