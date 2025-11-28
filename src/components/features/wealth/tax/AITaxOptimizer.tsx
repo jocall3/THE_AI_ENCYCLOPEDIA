@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useCallback } from 'react';
 import { Bot, Sparkles, TrendingDown, CircleDollarSign, Loader2, Search } from 'lucide-react';
 
@@ -273,4 +273,3 @@ export const AITaxOptimizer: React.FC = () => {
 };
 
 export default AITaxOptimizer;
-```
