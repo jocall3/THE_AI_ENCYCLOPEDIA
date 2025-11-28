@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useRef, useEffect, useState } from 'react';
 import * as echarts from 'echarts/core';
 import {
@@ -242,4 +242,3 @@ const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
 };
 
 export default InteractiveLineChart;
-```
