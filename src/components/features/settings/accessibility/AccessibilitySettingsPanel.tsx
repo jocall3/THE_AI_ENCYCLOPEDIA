@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState } from 'react';
 import {
   Box,
@@ -108,4 +108,3 @@ const AccessibilitySettingsPanel: React.FC<AccessibilitySettingsPanelProps> = ({
 };
 
 export default AccessibilitySettingsPanel;
-```
