@@ -1,5 +1,3 @@
-
-
 export interface User {
   id: string;
   name: string;
@@ -287,7 +285,23 @@ export enum View {
     PlaidDashboard = 'plaid-dashboard',
     StripeDashboard = 'stripe-dashboard',
     MarqetaDashboard = 'marqeta-dashboard',
-    SSO = 'sso'
+    SSO = 'sso',
+    // Balcony of Prosperity Views
+    GlobalMarkets = 'global-markets',
+    QuantumAssets = 'quantum-assets',
+    LegacyBuilder = 'legacy-builder',
+    Philanthropy = 'philanthropy',
+    VentureCapital = 'venture-capital',
+    RealEstate = 'real-estate',
+    Commodities = 'commodities',
+    Forex = 'forex',
+    AlgoTrading = 'algo-trading',
+    PrivateEquity = 'private-equity',
+    TaxOptimization = 'tax-optimization',
+    Concierge = 'concierge',
+    Art = 'art',
+    Derivatives = 'derivatives',
+    Sovereign = 'sovereign'
 }
 
 export interface AIGoalPlanStep {
@@ -708,6 +722,60 @@ export interface MarqetaCardProduct {
     last_modified_time: string;
 }
 
+// Balcony of Prosperity Types
+export interface RealEstateProperty {
+    id: string;
+    address: string;
+    value: number;
+    type: string;
+}
+
+export interface ArtPiece {
+    id: string;
+    artist: string;
+    valuation: number;
+    era: string;
+}
+
+export interface VentureStartup {
+    id: string;
+    name: string;
+    valuation: number;
+    sector: string;
+    stage: string;
+}
+
+export interface Commodity {
+    symbol: string;
+    name: string;
+    price: number;
+}
+
+export interface AlgoStrategy {
+    id: string;
+    name: string;
+    performance: number;
+}
+
+export interface ForexPair {
+    pair: string;
+    rate: number;
+}
+
+export interface DerivativeOption {
+    underlying: string;
+    strike: number;
+    expiry: string;
+}
+
+export interface CompanyProfile {
+    id: string;
+    name: string;
+    sector: string;
+    valuation: number;
+    esgScore: number;
+    stockPrice: number;
+}
 
 // Extend the global Window interface
 declare global {
