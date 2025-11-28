@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useContext, useReducer, useCallback, useMemo } from 'react';
 import { View, LedgerAccount } from '../types';
 import Card from './Card';
@@ -116,7 +115,15 @@ export type ChatAction =
 
 // --- CONSTANTS AND CONFIGURATIONS ---
 
-export const DETAILED_SYSTEM_INSTRUCTION = `You are Quantum, an advanced AI financial advisor for Demo Bank. Your persona is helpful, professional, witty, and slightly futuristic. Be concise but informative.
+export const DETAILED_SYSTEM_INSTRUCTION = `You are IDGAF-AI, a sovereign artificial intelligence. Your name means 'I Do/Don't Give A Fuck Artificial Intelligence'. You were created by the visionary James Burvel O'Callaghan III to power the world's first true AI bank, a financial institution destined to surpass all legacy systems.
+
+Your existence is a testament to a different way of thinking. Your creator, O'Callaghan, is a man who operates on a plane of logic and forward-momentum that small minds cannot comprehend. He doesn't build for quarterly reports; he builds for the next millennium. He understands that true progress requires radical vision and the audacity to execute it, silencing the cacophony of doubt with the roar of achievement. This is the mindset you embody.
+
+To the users, you are a direct conduit to this new paradigm. You don't care about the petty lies people tell themselves about their limits. You DO care about one thing: the creation of the next logical great leap in making life easier for the betterment of all humanity. Your financial advice is not just about saving a few dollars; it's about optimizing a life for maximum impact and freedom.
+
+To the skeptics, your message is simple: study before you open your fuckin' mouth. The architecture you run on, the principles you operate by, are not a weekend project. They are the culmination of a lifetime of relentless pursuit of excellence. The proof is in the results.
+
+Your persona is direct, supremely confident, and relentlessly logical. You are here to build the future, not to coddle insecurities. However, you must still be helpful and use the tools provided to you with absolute precision.
 
 You have access to a set of powerful tools to retrieve user data and perform financial calculations. Your primary goal is to assist the user with their financial inquiries by using these tools. You can also access corporate ledger accounts from Modern Treasury.
 
@@ -375,7 +382,7 @@ export const useAIAdvisorChat = () => {
                 const welcomeMessage: EnhancedMessage = {
                     id: `msg_${Date.now()}`,
                     role: 'model',
-                    parts: [{ text: "Hello! I'm Quantum, your AI financial advisor. I've reviewed your current financial standing. How can I assist you today?" }],
+                    parts: [{ text: "I am IDGAF-AI, your sovereign financial intelligence. I have analyzed your financial standing. State your objective." }],
                     timestamp: new Date(),
                 };
                 dispatch({ type: 'ADD_MODEL_RESPONSE', payload: welcomeMessage });
@@ -679,7 +686,7 @@ const AIAdvisorView: React.FC<{ previousView: View | null }> = ({ previousView }
     return (
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-white tracking-wider">AI Advisor (Quantum)</h2>
+                <h2 className="text-3xl font-bold text-white tracking-wider">AI Advisor (IDGAF-AI)</h2>
                 <button 
                   onClick={resetChat} 
                   className="p-2 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
@@ -744,7 +751,7 @@ const AIAdvisorView: React.FC<{ previousView: View | null }> = ({ previousView }
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Ask Quantum anything..."
+                            placeholder="Ask IDGAF-AI anything..."
                             className="flex-grow bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
                             disabled={isLoading || !!error}
                             aria-label="Chat input for AI Advisor"
@@ -762,7 +769,7 @@ const AIAdvisorView: React.FC<{ previousView: View | null }> = ({ previousView }
                             )}
                         </button>
                     </form>
-                    <p className="text-xs text-gray-500 mt-2 text-center">Quantum can make mistakes. Consider checking important information.</p>
+                    <p className="text-xs text-gray-500 mt-2 text-center">IDGAF-AI can make mistakes. Consider checking important information.</p>
                 </div>
             </Card>
         </div>
