@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   Table,
@@ -386,4 +386,3 @@ function DataTable<T>(props: DataTableProps<T>) {
 }
 
 export default DataTable;
-```
