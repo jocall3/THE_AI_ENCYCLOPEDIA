@@ -43,84 +43,76 @@ const GOOGLE_CLIENT_ID = "555179712981-36hlicm802genhfo9iq1ufnp1n8cikt9.apps.goo
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true); // Start loading to check for existing session
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleCredentialResponse = useCallback((response: any) => {
         setIsLoading(true);
         const idToken = response.credential;
-        const userObject = jwtDecode(idToken);
-        
-        if (userObject) {
-            const newUser: User = {
-                id: userObject.sub,
-                name: userObject.name,
-                email: userObject.email,
-                picture: userObject.picture,
+        // In a real app, send this to your backend for validation and session creation.
+        // For this demo, we'll decode it on the client (INSECURE for production).
+        const decodedToken = jwtDecode(idToken);
+
+        if (decodedToken) {
+            const user: User = {
+                id: decodedToken.sub,
+                name: decodedToken.name,
+                email: decodedToken.email,
+                picture: decodedToken.picture,
             };
-            setUser(newUser);
+            setUser(user);
             setIsAuthenticated(true);
+            localStorage.setItem('user', JSON.stringify(user));
         } else {
-            // Handle decode error
-            setIsAuthenticated(false);
-            setUser(null);
+            console.error("Failed to decode token or token is invalid.");
         }
         setIsLoading(false);
     }, []);
 
     useEffect(() => {
-        const initializeGsi = () => {
-            window.google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleCredentialResponse,
-            });
-            
-            // Attempt to sign in user silently on load (One Tap)
-            window.google.accounts.id.prompt((notification: any) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    // This means One Tap is not shown, so the user is not automatically signed in.
-                    // We can stop the loading indicator.
-                    setIsLoading(false);
-                }
-            });
-        };
-
-        // Poll for the Google Identity Services library to be loaded.
-        const checkGoogle = () => {
-            if (window.google && window.google.accounts) {
-                initializeGsi();
-            } else {
-                setTimeout(checkGoogle, 150);
-            }
-        };
-
-        checkGoogle();
-
-    }, [handleCredentialResponse]);
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+            setIsAuthenticated(true);
+        }
+        setIsLoading(false);
+    }, []);
 
     const login = useCallback(() => {
-        if (window.google && window.google.accounts) {
-            // This will trigger the One Tap or sign-in pop-up
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+            // Programmatically trigger the Google One Tap prompt
             window.google.accounts.id.prompt();
         } else {
-            console.error("Google Identity Services not ready.");
-            // Optionally, show a message to the user to try again.
+            console.error("Google GSI is not initialized or available.");
         }
     }, []);
 
     const logout = useCallback(() => {
+        setUser(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem('user');
         if (window.google && window.google.accounts) {
-            // Disables automatic sign-in for the next page load.
             window.google.accounts.id.disableAutoSelect();
         }
-        setIsAuthenticated(false);
-        setUser(null);
-        // In a real app, you would also want to revoke the token.
     }, []);
 
-    const value = { isAuthenticated, user, login, logout, isLoading };
+    useEffect(() => {
+        if (typeof window.google === 'undefined' || !window.google.accounts) {
+            console.log("Google GSI script not loaded yet.");
+            return;
+        }
+
+        window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredentialResponse,
+            // Don't auto-select an account on logout, wait for user interaction.
+            auto_select: false
+        });
+
+    }, [handleCredentialResponse]);
+
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
