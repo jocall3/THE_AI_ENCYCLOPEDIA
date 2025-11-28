@@ -1,4 +1,4 @@
-```tsx
+
 import React from 'react';
 import { Container, Typography, Grid, Paper, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -100,4 +100,3 @@ const DeveloperPortal = () => {
 };
 
 export default DeveloperPortal;
-```
