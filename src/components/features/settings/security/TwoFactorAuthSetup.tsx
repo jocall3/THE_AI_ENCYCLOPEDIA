@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState } from 'react';
 import {
   Box,
@@ -133,4 +133,3 @@ const TwoFactorAuthSetup = ({ onComplete }: TwoFactorAuthSetupProps) => {
 };
 
 export default TwoFactorAuthSetup;
-```
