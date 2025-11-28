@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState } from 'react';
 
 interface Debt {
@@ -202,4 +202,3 @@ const DebtPayoffPlanner: React.FC = () => {
 };
 
 export default DebtPayoffPlanner;
-```
