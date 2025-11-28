@@ -687,6 +687,28 @@ export interface MarqetaCardholder {
     created_time: string;
 }
 
+// New type for Marqeta Card Products from user's API response
+export interface MarqetaCardProduct {
+    token: string;
+    name: string;
+    active: boolean;
+    start_date: string;
+    config: {
+        fulfillment: {
+            payment_instrument: 'VIRTUAL_PAN' | 'PHYSICAL_CARD';
+        };
+        jit_funding: {
+            program_funding_source: {
+                enabled: boolean;
+                funding_source_token: string;
+            }
+        }
+    };
+    created_time: string;
+    last_modified_time: string;
+}
+
+
 // Extend the global Window interface
 declare global {
     interface WindowEventMap {

@@ -280,10 +280,13 @@ export const useToolImplementations = () => {
                 .map(([name, amount]) => ({ name, amount: parseFloat(amount.toFixed(2)) }));
             return { spendingByCategory: sortedSpending };
         },
+        // FIX: The AI model can pass arguments of type 'any'. This implementation robustly parses these inputs
+        // to numbers before performing arithmetic operations. This prevents runtime errors if, for example,
+        // a string is passed for a numeric value, which would cause errors on line 279 (arithmetic) and 280 (toFixed).
         simulateInvestmentGrowth: async ({ additionalMonthlyContribution, years = 10, annualReturnRate = 7 }: { additionalMonthlyContribution: any, years?: any, annualReturnRate?: any }) => {
             if (!context) return { error: "User data not available." };
             const P = context.assets.reduce((sum, asset) => sum + asset.value, 0); // Principal
-            
+
             const pmtValue = parseFloat(String(additionalMonthlyContribution));
             const PMT = isNaN(pmtValue) ? 0 : pmtValue;
 
@@ -298,7 +301,7 @@ export const useToolImplementations = () => {
             let futureValue: number = P;
 
             for (let i = 1; i <= n; i++) {
-                futureValue = (Number(futureValue) * (1 + r)) + PMT;
+                futureValue = (futureValue * (1 + r)) + PMT;
                 if (i % 12 === 0) { // Record data yearly
                     simulationData.push({
                         year: i / 12,
