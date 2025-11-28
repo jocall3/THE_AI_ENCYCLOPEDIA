@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState } from 'react';
 
 interface NegotiationResult {
@@ -106,4 +106,3 @@ const AIBillNegotiator: React.FC = () => {
 };
 
 export default AIBillNegotiator;
-```
