@@ -1,4 +1,3 @@
-```typescript
 import React, { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -379,4 +378,3 @@ const ForeignExchangeHedgingTool: React.FC = () => {
 };
 
 export default ForeignExchangeHedgingTool;
-```
