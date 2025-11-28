@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useCallback, useMemo } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -559,4 +559,3 @@ const styles: { [key: string]: React.CSSProperties } = {
 // @media (max-width: 1024px) { mainContent: { gridTemplateColumns: '1fr' } }
 
 export default MortgageAffordabilityCalculator;
-```
