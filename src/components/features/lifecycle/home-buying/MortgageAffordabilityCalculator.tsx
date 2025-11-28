@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -197,7 +196,7 @@ const MortgageAffordabilityCalculator: React.FC = () => {
             <div style={styles.chartContainer}>
                 <div style={{ ...styles.chartBar, width: `${pAndIPercentage}%`, backgroundColor: '#3b82f6' }} title={`Principal & Interest: ${formatCurrency(results.principalAndInterest)}`}></div>
                 <div style={{ ...styles.chartBar, width: `${taxesPercentage}%`, backgroundColor: '#60a5fa' }} title={`Taxes: ${formatCurrency(results.monthlyTaxes)}`}></div>
-                <div style={{ ...styles.chartBar, width: `${insurancePercentage}%`, backgroundColor: '#93c5fd' }} title={`Insurance: ${formatCurrency(results.monthlyInsurance)}`}></div>
+                <div style={{ ...styles.chartBar, width: `${insurancePercentage}%`, backgroundColor: '#93c5fd` }} title={`Insurance: ${formatCurrency(results.monthlyInsurance)}`}></div>
             </div>
         );
     }, [results]);
