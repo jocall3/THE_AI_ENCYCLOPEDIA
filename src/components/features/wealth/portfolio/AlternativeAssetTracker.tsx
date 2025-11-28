@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useMemo, FC } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -284,7 +284,7 @@ const SummaryCard: FC<{ title: string; value: string; percentage?: number }> = (
                 <p className="text-2xl font-semibold text-gray-900 dark:text-white">{value}</p>
                 {percentage !== undefined && (
                     <span className={`ml-2 text-sm font-semibold px-2 py-0.5 rounded-full ${percentageColor}`}>
-                        {isPositive ? '▲' : '▼'} {percentage.toFixed(2)}%
+                        {isPositive ? 'â²' : 'â¼'} {percentage.toFixed(2)}%
                     </span>
                 )}
             </div>
@@ -400,4 +400,3 @@ const AssetFormModal: FC<AssetFormModalProps> = ({ asset, onClose, onSave, categ
 };
 
 export default AlternativeAssetTracker;
-```
