@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useEffect } from 'react';
 import { NFTData } from '../../../../types/nft'; // Assuming you have a types directory for shared types
 import { fetchNFTDetails, analyzeRarity, estimateValuation } from '../../../../api/nftService'; // Assuming you have an api directory for service calls
@@ -99,4 +99,3 @@ const NFTValuationTool: React.FC<NFTValuationToolProps> = ({ userNFTs }) => {
 };
 
 export default NFTValuationTool;
-```
