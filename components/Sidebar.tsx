@@ -35,53 +35,45 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
 
             {/* Sidebar */}
             <div className={`flex flex-col w-64 bg-gray-900/50 backdrop-blur-lg border-r border-gray-700/50 fixed lg:relative inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-                <div className="flex items-center justify-between h-20 border-b border-gray-700/50 px-6">
-                    <div className="flex items-center space-x-2 text-cyan-400">
-                       <DemoBankLogo className="h-10 w-10" />
-                       <span className="font-bold text-lg text-white">Demo Bank</span>
+                {/* Header */}
+                <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700/50">
+                    <div className="flex items-center">
+                        <DemoBankLogo className="h-8 w-8 text-cyan-400" />
+                        <span className="ml-3 text-xl font-semibold text-white">Sovereign AI</span>
                     </div>
-                    <button onClick={() => setIsOpen(false)} className="text-gray-400 lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <button onClick={() => setIsOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
+                        {/* Close Icon */}
+                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto">
-                    <nav className="flex-1 px-2 py-4 space-y-2">
-                        {NAV_ITEMS.map((item) => (
-                             <button
-                                key={item.id}
-                                onClick={() => handleNavClick(item.id)}
-                                className={`flex items-center w-full px-4 py-2 text-left text-gray-300 transition-colors duration-200 transform rounded-md hover:bg-gray-700/50 hover:text-white ${
-                                    activeView === item.id ? 'bg-cyan-500/20 text-cyan-300 border-l-4 border-cyan-400' : ''
-                                }`}
-                            >
-                                {item.icon}
-                                <span className="mx-4 font-medium">{item.label}</span>
-                            </button>
-                        ))}
-                    </nav>
-                </div>
-                <div className="border-t border-gray-700/50 px-6 py-4">
-                    <a
-                        href="#"
-                        className="flex items-center group"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleNavClick('Personalization' as View);
-                        }}
-                    >
-                        <img
-                            className="h-10 w-10 rounded-full"
-                            src="https://www.gravatar.com/avatar/?d=mp"
-                            alt="User avatar"
-                        />
-                        <div className="ml-4">
-                            <p className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors">James Burvel O'Callaghan III</p>
-                            <p className="text-xs text-gray-400">Google Account</p>
+                
+                {/* Navigation */}
+                <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
+                    {NAV_ITEMS.map((item, index) => (
+                        <div key={index}>
+                            {item.group && <h3 className="px-2 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{item.group}</h3>}
+                            {item.items.map(subItem => {
+                                const isActive = activeView === subItem.view;
+                                return (
+                                    <button
+                                        key={subItem.view}
+                                        onClick={() => handleNavClick(subItem.view)}
+                                        className={`flex items-center w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
+                                            isActive
+                                                ? 'bg-cyan-500/20 text-cyan-300'
+                                                : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
+                                        }`}
+                                    >
+                                        {subItem.icon && <subItem.icon />}
+                                        <span className="ml-3">{subItem.title}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
-                    </a>
-                </div>
+                    ))}
+                </nav>
             </div>
         </>
     );
