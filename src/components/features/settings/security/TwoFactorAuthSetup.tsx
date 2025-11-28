@@ -1,15 +1,12 @@
-
 import React, { useState } from 'react';
 import {
   Box,
-  Heading,
-  Text,
+  Typography,
   Button,
   Stepper,
   Step,
   StepLabel,
   StepContent,
-  Typography,
 } from '@mui/material';
 
 interface TwoFactorAuthSetupProps {
@@ -35,10 +32,10 @@ const TwoFactorAuthSetup = ({ onComplete }: TwoFactorAuthSetupProps) => {
           <Typography variant="body1">
             Select how you want to receive your verification codes.
           </Typography>
-          <Button variant="outlined" sx={{ mt: 2 }}>
+          <Button variant="outlined" sx={{ mt: 2 }} onClick={handleNext}>
             Authenticator App
           </Button>
-          <Button variant="outlined" sx={{ mt: 2, ml: 2 }}>
+          <Button variant="outlined" sx={{ mt: 2, ml: 2 }} onClick={handleNext}>
             SMS
           </Button>
         </>
@@ -87,9 +84,9 @@ const TwoFactorAuthSetup = ({ onComplete }: TwoFactorAuthSetupProps) => {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Heading variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         Set Up Two-Factor Authentication
-      </Heading>
+      </Typography>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={step.label}>
@@ -120,9 +117,9 @@ const TwoFactorAuthSetup = ({ onComplete }: TwoFactorAuthSetupProps) => {
       </Stepper>
       {activeStep === steps.length && (
         <Box sx={{ mt: 2 }}>
-          <Text>
+          <Typography>
             Two-factor authentication setup completed.
-          </Text>
+          </Typography>
           <Button onClick={onComplete}>
             Close
           </Button>
