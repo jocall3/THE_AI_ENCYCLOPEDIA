@@ -59,7 +59,7 @@ export type WidgetRegistry = {
 // This registry maps a string `type` to a React component and its default properties.
 const WIDGET_REGISTRY: WidgetRegistry = {
   "widgetA": { component: ExampleWidgetA, name: "Example Widget A" },
-  "widgetB": { component: ExampleWidgetB, name: "Example Widget B", initialProps: { data: "Initial B Data" } },
+  "widgetB": { component: ExampleWidgetB, name: "Example Widget B", initialProps: { data: "Some dynamic data" } },
   "widgetC": { component: ExampleWidgetC, name: "Example Widget C", initialProps: { count: 10 } },
 };
 
