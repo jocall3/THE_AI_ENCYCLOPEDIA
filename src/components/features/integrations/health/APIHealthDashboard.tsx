@@ -1,4 +1,4 @@
-```tsx
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { APIIntegration } from './types'; // Assuming you have a types file
@@ -122,4 +122,3 @@ const APIHealthDashboard: React.FC = () => {
 };
 
 export default APIHealthDashboard;
-```
