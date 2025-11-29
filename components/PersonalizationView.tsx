@@ -2,23 +2,23 @@ import React, { useState, useCallback, useMemo } from 'react';
 import Card from './Card';
 import { Palette, Layout, Type, Zap, Cpu, Globe, Settings, Shield, TrendingUp, MessageSquare, User, Aperture } from 'lucide-react';
 
-// --- Constants for Hyper-Dimensional Theming ---
+// --- Theme Configuration Constants ---
 const THEME_CONFIGS = {
-    'sovereign': {
-        name: 'Sovereign Dark',
-        description: 'The default state. Pure, unfiltered signal. Optimized for maximum cognitive throughput.',
+    'default': { // Changed from 'sovereign'
+        name: 'Standard Dark', // Changed from 'Sovereign Dark'
+        description: 'A balanced, dark theme. Designed for clarity and focus.', // Changed description
         primaryColor: 'cyan',
         accentColor: 'cyan-500',
         bgColor: 'bg-gray-900/95',
         textColor: 'text-white',
         icon: Zap,
         gradient: 'from-gray-900 to-black',
-        code: 'SOV',
+        code: 'STD', // Changed from SOV
         disabled: false,
     },
     'quantum': {
         name: 'Quantum Flux',
-        description: 'For those who see the probability waves. High-contrast, non-linear data visualization.',
+        description: 'A high-contrast theme with vibrant colors. Ideal for data visualization.', // Changed description
         primaryColor: 'purple',
         accentColor: 'purple-500',
         bgColor: 'bg-indigo-900/20',
@@ -30,7 +30,7 @@ const THEME_CONFIGS = {
     },
     'legacy': {
         name: 'Legacy Archive',
-        description: 'A historical reference point. Accessing this theme incurs a 10% processing overhead penalty.',
+        description: 'A classic, light theme. Provides a familiar interface.', // Changed description
         primaryColor: 'green',
         accentColor: 'green-500',
         bgColor: 'bg-gray-100/90',
@@ -38,11 +38,11 @@ const THEME_CONFIGS = {
         icon: Settings,
         gradient: 'from-gray-100 to-gray-300',
         code: 'LGCY',
-        disabled: true,
+        disabled: false, // Changed from true
     },
     'aether': {
         name: 'Aetherial Flow',
-        description: 'Low-luminosity mode designed for extended deep-focus sessions across multiple time zones.',
+        description: 'A low-light theme. Suitable for extended work sessions.', // Changed description
         primaryColor: 'pink',
         accentColor: 'pink-400',
         bgColor: 'bg-black/90',
@@ -54,7 +54,7 @@ const THEME_CONFIGS = {
     },
     'chronos': {
         name: 'Chronos Temporal',
-        description: 'Time-series optimized view. Highlights temporal anomalies and predictive modeling outputs.',
+        description: 'A time-focused theme. Useful for tracking trends and changes.', // Changed description
         primaryColor: 'amber',
         accentColor: 'amber-400',
         bgColor: 'bg-amber-900/10',
@@ -66,7 +66,7 @@ const THEME_CONFIGS = {
     },
 };
 
-// --- Sub-Component: Theme Selector Button ---
+// --- Theme Selector Button Component ---
 interface ThemeButtonProps {
     themeKey: keyof typeof THEME_CONFIGS;
     currentTheme: string;
@@ -114,7 +114,7 @@ const ThemeButton: React.FC<ThemeButtonProps> = React.memo(({ themeKey, currentT
 });
 ThemeButton.displayName = 'ThemeButton';
 
-// --- Sub-Component: Font Configuration Panel ---
+// --- Font Configuration Panel Component ---
 const FontConfigurationPanel: React.FC = () => {
     const [fontFamily, setFontFamily] = useState('Inter');
     const [fontSizeScale, setFontSizeScale] = useState(1.0);
@@ -166,7 +166,7 @@ const FontConfigurationPanel: React.FC = () => {
     );
 };
 
-// --- Sub-Component: Color Palette Matrix Configuration ---
+// --- Color Palette Configuration Component ---
 interface PaletteConfigProps {
     activeTheme: keyof typeof THEME_CONFIGS;
 }
@@ -207,9 +207,9 @@ const ColorPaletteMatrix: React.FC<PaletteConfigProps> = React.memo(({ activeThe
                     </div>
                 </div>
 
-                {/* Saturation Control (Simulated AI Feedback Loop) */}
+                {/* Saturation Control */}
                 <div className="space-y-2 pt-4 border-t border-gray-700">
-                    <label className="block text-sm font-medium text-gray-300 flex items-center"><MessageSquare className="w-4 h-4 mr-2"/> AI Saturation Feedback Loop ({saturationLevel}%)</label>
+                    <label className="block text-sm font-medium text-gray-300 flex items-center"><MessageSquare className="w-4 h-4 mr-2"/> Color Saturation Adjustment ({saturationLevel}%)</label> {/* Changed label */}
                     <input
                         type="range"
                         min="50"
@@ -219,7 +219,7 @@ const ColorPaletteMatrix: React.FC<PaletteConfigProps> = React.memo(({ activeThe
                         onChange={(e) => setSaturationLevel(parseInt(e.target.value))}
                         className={`w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer range-lg [&::-webkit-slider-thumb]:bg-${baseConfig.accentColor} [&::-moz-range-thumb]:bg-${baseConfig.accentColor}`}
                     />
-                    <p className="text-xs text-gray-400">Dynamically adjusts color saturation based on ambient light sensor data processed by the Neural Interface Layer (NIL).</p>
+                    <p className="text-xs text-gray-400">Adjusts color saturation for optimal visual balance.</p> {/* Changed description */}
                 </div>
             </div>
         </Card>
@@ -228,9 +228,9 @@ const ColorPaletteMatrix: React.FC<PaletteConfigProps> = React.memo(({ activeThe
 ColorPaletteMatrix.displayName = 'ColorPaletteMatrix';
 
 
-// --- Main Component: PersonalizationView ---
+// --- Main Personalization View Component ---
 const PersonalizationView: React.FC = () => {
-    const [theme, setTheme] = useState<keyof typeof THEME_CONFIGS>('sovereign');
+    const [theme, setTheme] = useState<keyof typeof THEME_CONFIGS>('default'); // Changed from 'sovereign'
     const [layoutMode, setLayoutMode] = useState<'modular' | 'unified'>('modular');
 
     const handleThemeChange = useCallback((newTheme: keyof typeof THEME_CONFIGS) => {
@@ -252,21 +252,20 @@ const PersonalizationView: React.FC = () => {
                     <Shield className="w-10 h-10 mr-3 text-cyan-400 animate-pulse" />
                     System Interface Configuration Matrix
                 </h1>
-                <p className="text-lg text-gray-400 mt-1 ml-13">Module 01: Sensory & Aesthetic Protocol Override. Current State: <span className={`font-bold text-${currentThemeConfig.accentColor}`}>{currentThemeConfig.name}</span></p>
+                <p className="text-lg text-gray-400 mt-1 ml-13">Module 01: Visual & Aesthetic Settings. Current State: <span className={`font-bold text-${currentThemeConfig.accentColor}`}>{currentThemeConfig.name}</span></p> {/* Changed text */}
             </header>
 
-            {/* Section 1: Core Visual Theme Selection (The Core Directive) */}
+            {/* Section 1: Core Visual Theme Selection */}
             <section>
                 <h2 className="text-3xl font-bold text-white mb-6 border-l-4 border-cyan-500 pl-3">
-                    01. Core Visual Protocol Selection
+                    01. Core Visual Theme Selection {/* Changed text */}
                 </h2>
                 
-                <Card title="The Interface of Will" icon={Palette}>
+                <Card title="Theme Selection" icon={Palette}> {/* Changed title */}
                     <div className="space-y-6">
                         <div className="p-4 rounded-xl bg-gray-800 border border-cyan-600/50 shadow-inner shadow-cyan-900">
                             <p className="text-gray-300 italic text-base leading-relaxed">
-                                "The selection of an aesthetic protocol is not a matter of preference, but a calibration of cognitive load against operational necessity. Choose the environment that best facilitates the execution of your mandate." 
-                                <span className="block mt-2 text-right font-serif text-sm text-cyan-400">— J.B.O. III, Directive 4.7.1</span>
+                                "Choose a theme that best suits your workflow and visual comfort. Your environment should support your focus and productivity." {/* Changed quote and removed attribution */}
                             </p>
                         </div>
 
@@ -322,12 +321,12 @@ const PersonalizationView: React.FC = () => {
                 <ColorPaletteMatrix activeTheme={theme} />
             </section>
 
-            {/* Section 4: AI Integration Preference (Future Proofing) */}
+            {/* Section 4: AI Integration Preference */}
             <section>
                 <h2 className="text-3xl font-bold text-white mb-6 border-l-4 border-cyan-500 pl-3">
-                    03. Cognitive Augmentation Preferences
+                    03. AI Integration Preferences {/* Changed text */}
                 </h2>
-                <Card title="AI Interaction Modality" icon={Cpu}>
+                <Card title="AI Interaction Settings" icon={Cpu}> {/* Changed title */}
                     <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
                         <div className="flex items-center justify-between border-b border-gray-700 pb-3">
                             <span className="text-gray-300 font-medium">Enable Predictive Text Generation (PTG)</span>
@@ -343,7 +342,7 @@ const PersonalizationView: React.FC = () => {
                                 <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
                             </label>
                         </div>
-                        <p className="text-xs text-gray-500 pt-2">These settings influence the underlying LLM inference engine parameters for UI responsiveness.</p>
+                        <p className="text-xs text-gray-500 pt-2">These settings affect how AI features interact with the user interface.</p> {/* Changed description */}
                     </div>
                 </Card>
             </section>
@@ -356,7 +355,7 @@ const PersonalizationView: React.FC = () => {
                     onClick={() => console.log("Configuration committed successfully.")}
                 >
                     <Zap className="w-5 h-5 inline mr-2" />
-                    COMMIT PROTOCOL OVERRIDE
+                    SAVE SETTINGS {/* Changed text */}
                 </button>
             </footer>
         </div>
