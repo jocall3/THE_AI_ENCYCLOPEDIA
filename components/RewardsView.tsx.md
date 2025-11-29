@@ -1,11 +1,12 @@
 ---
-# Sovereign Rewards Nexus: Adaptive Incentive Architecture (SRA-AIA)
+---
+# Platform Incentive System: Dynamic Value Architecture (PIS-DVA)
 
-## Core Philosophy: Emergent Value Realization via Hyper-Personalized Incentive Structuring
+## System Objective: Dynamic Value Allocation through Personalized Incentives
 
-This document outlines the foundational architecture for the Sovereign Rewards Nexus, a component of the larger James Burvel O'Callaghan III Economic Engine. This system transcends traditional "rewards programs" by integrating real-time behavioral economics, predictive modeling, and sovereign user-centric value exchange protocols. It is designed to operate as a self-optimizing, multi-dimensional incentive layer across the entire economic platform, ensuring that every user action contributes to verifiable, compounding personal and systemic value.
+This document outlines the foundational architecture for the Platform Incentive System, a component of the larger Decentralized Economic Platform. This system integrates real-time behavioral economics, predictive modeling, and user-centric value exchange protocols. It is designed to operate as a self-optimizing, multi-dimensional incentive layer across the entire economic platform, ensuring that every user action contributes to verifiable, compounding personal and systemic value.
 
-**Architectural Mandate:** To eliminate artificial friction in value accrual and align individual user objectives with the long-term stability and growth of the decentralized economic fabric.
+**System Objective:** To optimize value distribution and align user actions with platform stability and growth.
 
 ### 1. Imports and Dependencies (Conceptual Context Preservation)
 
@@ -15,12 +16,12 @@ As per the directive, all expansion must utilize the existing, assumed import st
 // Conceptual representation of required underlying platform imports
 import {
     QuantumWeaverAI,
-    SovereignLedgerClient,
+    PlatformLedgerClient,
     UserProfileService,
     IncentiveTokenomicsEngine,
     BehavioralPatternRecognizer,
     SystemHealthMonitor,
-    DecentralizedIdentityModule,
+    UserIdentityModule,
     // ... (All existing, assumed platform imports)
 } from 'platform-core-modules';
 ```
@@ -29,7 +30,7 @@ import {
 
 The RewardsView is no longer a static display; it is the primary interface for the **Rewards State Machine (RSM)**, a complex finite state automaton governing all incentive interactions.
 
-#### 2.1. Core Data Structures (Billions of Data Points Managed)
+#### 2.1. Core Data Structures (Managed Data Points)
 
 We define the hyper-dimensional structure required to track and project rewards.
 
@@ -52,7 +53,7 @@ interface HyperDimensionalRewardUnit {
     // Multiplier derived from real-time systemic contribution analysis (QWAI Score)
     systemic_contribution_multiplier: number; 
     
-    // Multiplier derived from user's adherence to long-term strategic goals (Sovereign Goal Alignment Factor)
+    // Multiplier derived from user's adherence to long-term strategic goals (Goal Alignment Factor)
     goal_alignment_factor: number; 
     
     // Volatility adjustment factor based on current economic climate predictions (1000-year forecast)
@@ -88,7 +89,7 @@ interface UserRewardProfile {
     
     // AI-derived metrics for dynamic adjustment
     BehavioralPatternScore: number; // Derived from BehavioralPatternRecognizer
-    SovereignGoalAlignmentFactor: number; // Target vs. Actual behavior projection
+    GoalAlignmentFactor: number; // Target vs. Actual behavior projection
     QWAI_SystemicContributionIndex: number; // How much this user stabilizes/grows the system
     
     // Predictive modeling outputs
@@ -96,7 +97,7 @@ interface UserRewardProfile {
     projected_value_100_year: number;
     
     // Dynamic Tiers (Beyond simple Bronze/Silver/Gold)
-    SovereignTier: 'Architect' | 'Steward' | 'Catalyst' | 'Foundation';
+    PlatformTier: 'Architect' | 'Steward' | 'Catalyst' | 'Foundation';
     tier_entry_thresholds: Record<string, number>; // Thresholds for next tier based on projected metrics
 }
 ```
@@ -134,8 +135,8 @@ const useRewardsData = (userId: string) => {
 
                 setProfile(augmentedProfile);
             } catch (e) {
-                console.error("Error fetching Sovereign Reward Profile:", e);
-                setError("Failed to synchronize with the Sovereign Rewards Nexus.");
+                console.error("Error fetching Platform Reward Profile:", e);
+                setError("Failed to synchronize with the Platform Incentive System.");
             } finally {
                 setIsLoading(false);
             }
@@ -163,8 +164,8 @@ const PredictiveValueProjectionConsole: React.FC<{ profile: UserRewardProfile }>
 
     // AI-driven narrative generation for context
     const narrative = useCallback(() => {
-        if (profile.SovereignTier === 'Architect') {
-            return "Your systemic contributions are modeling exponential growth. The QWAI suggests maintaining current trajectory for maximum emergent wealth realization.";
+        if (profile.PlatformTier === 'Architect') {
+            return "Your systemic contributions indicate strong growth. The QWAI suggests maintaining current trajectory for optimal value realization.";
         }
         if (profile.projected_value_100_year < profile.current_accumulated_value_psa * 100) {
             return "Anomaly detected: Current trajectory suggests sub-optimal long-term alignment. Review suggested recalibrations in the 'Strategic Alignment Module'.";
@@ -175,13 +176,13 @@ const PredictiveValueProjectionConsole: React.FC<{ profile: UserRewardProfile }>
     return (
         <div className="pvpc-module border-2 border-indigo-700 p-6 bg-gray-900 shadow-2xl">
             <h3 className="text-xl font-bold text-green-400 mb-4 border-b border-indigo-600 pb-2">
-                1000-Year Value Trajectory Simulation
+                Long-Term Value Trajectory Simulation
             </h3>
             <p className="text-sm text-yellow-300 mb-4">{narrative()}</p>
             
             <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                    <p className="text-sm text-gray-400">Current Sovereign Value (PSA)</p>
+                    <p className="text-sm text-gray-400">Current Platform Value (PSA)</p>
                     <p className="text-3xl font-mono text-white">{projectionData.current.toFixed(2)}</p>
                 </div>
                 <div>
@@ -233,12 +234,12 @@ const DynamicIncentiveCalibrationInterface: React.FC<{ profile: UserRewardProfil
                 Strategic Goal Alignment Interface
             </h3>
             <p className="text-sm text-gray-400 mb-3">
-                Define your 10-year economic objective. The Nexus will dynamically adjust your reward multipliers to incentivize the necessary actions.
+                Define your long-term economic objective. The system will dynamically adjust your reward multipliers to incentivize the necessary actions.
             </p>
             <textarea
                 value={goalInput}
                 onChange={(e) => setGoalInput(e.target.value)}
-                placeholder="Example: Achieve financial sovereignty by generating 500k PSA through decentralized infrastructure contribution within 7 years."
+                placeholder="Example: Achieve financial independence by generating 500k PSA through decentralized infrastructure contribution within 7 years."
                 className="w-full p-3 mb-3 bg-gray-800 text-white border border-green-500 focus:ring-green-400"
                 rows={4}
             />
@@ -247,7 +248,7 @@ const DynamicIncentiveCalibrationInterface: React.FC<{ profile: UserRewardProfil
                 disabled={!goalInput}
                 className="w-full py-2 bg-green-600 hover:bg-green-500 text-white font-bold disabled:opacity-50 transition duration-150"
             >
-                Initiate Sovereign Calibration
+                Initiate Goal Calibration
             </button>
             {calibrationStatus && <p className="mt-2 text-xs text-cyan-300">{calibrationStatus}</p>}
         </div>
@@ -323,7 +324,7 @@ const HVRM: React.FC<{ profile: UserRewardProfile }> = ({ profile }) => {
 
 const RewardsView: React.FC = () => {
     // In a real application, the user ID would be derived from the authenticated session context.
-    const currentUserId = "JBO_ID_0001_ALPHA_PRIME"; 
+    const currentUserId = "USER_ID_0001_ALPHA_PRIME"; 
     const { profile, isLoading, error } = useRewardsData(currentUserId);
 
     if (isLoading) {
@@ -331,7 +332,7 @@ const RewardsView: React.FC = () => {
             <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-500 mx-auto mb-4"></div>
-                    <p className="text-lg">Synchronizing with Sovereign Nexus...</p>
+                    <p className="text-lg">Synchronizing with Platform System...</p>
                     <p className="text-sm text-gray-500">Initializing Hyper-Dimensional State Machine for User: {currentUserId}</p>
                 </div>
             </div>
@@ -343,7 +344,7 @@ const RewardsView: React.FC = () => {
             <div className="p-8 bg-red-900 text-white">
                 <h2 className="text-2xl font-bold">System Integrity Alert</h2>
                 <p>{error || "Profile data unavailable. The system cannot render personalized value structures."}</p>
-                <p className="mt-2 text-sm">Contact Sovereign Support for immediate ledger reconciliation.</p>
+                <p className="mt-2 text-sm">Contact Support for immediate ledger reconciliation.</p>
             </div>
         );
     }
@@ -353,10 +354,10 @@ const RewardsView: React.FC = () => {
         <div className="rewards-nexus-container min-h-screen p-8 bg-gray-950 text-white font-sans">
             <header className="mb-10 border-b-4 border-indigo-500 pb-4">
                 <h1 className="text-5xl font-extrabold text-indigo-300">
-                    Sovereign Rewards Nexus // {profile.SovereignTier} Tier
+                    Platform Incentive System // {profile.PlatformTier} Tier
                 </h1>
                 <p className="text-xl text-gray-400 mt-1">
-                    Adaptive Incentive Architecture (AIA) v10.0.1 - Driven by James Burvel O'Callaghan III's Vision
+                    Adaptive Incentive Architecture (AIA) v10.0.1 - Optimized for User Engagement
                 </p>
             </header>
 
@@ -384,8 +385,8 @@ const RewardsView: React.FC = () => {
                         />
                         <KPIItem 
                             label="Goal Drift Projection" 
-                            value={(100 - profile.SovereignGoalAlignmentFactor * 100).toFixed(1) + '%'} 
-                            trend={profile.SovereignGoalAlignmentFactor < 0.95 ? 'HIGH_DRIFT' : 'LOW_DRIFT'}
+                            value={(100 - profile.GoalAlignmentFactor * 100).toFixed(1) + '%'} 
+                            trend={profile.GoalAlignmentFactor < 0.95 ? 'HIGH_DRIFT' : 'LOW_DRIFT'}
                         />
                         <KPIItem 
                             label="Pending HDRU Count" 
@@ -415,7 +416,7 @@ const RewardsView: React.FC = () => {
             </section>
 
             <footer className="mt-12 pt-4 border-t border-gray-700 text-center text-xs text-gray-600">
-                SRA-AIA Protocol Version 4.2.1. All value calculations are subject to real-time consensus validation on the Sovereign Ledger.
+                PIS-DVA Protocol Version 4.2.1. All value calculations are subject to real-time consensus validation on the Platform Ledger.
             </footer>
         </div>
     );
