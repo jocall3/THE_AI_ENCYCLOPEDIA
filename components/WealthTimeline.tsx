@@ -1,44 +1,43 @@
-// Quantum Financial Chronometer Module: Temporal Wealth Projection System
-import React, { useContext, useMemo, useCallback } from 'react'; // Advanced temporal state management and rendering primitives.
-import { ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, Legend } from 'recharts'; // Comprehensive suite for multi-dimensional data visualization.
-import Card from './Card'; // Encapsulation component for structured data presentation.
-import { DataContext, Transaction } from '../context/DataContext'; // Core data context providing transactional ledger access.
-import { formatCurrency, calculateRunningBalance, generateFutureDates, projectWealthTrajectory } from '../utils/financialAI'; // Hypothetical AI-enhanced financial utility functions for robust calculation.
+// Simple Wealth Chart: Basic money graph.
+import React, { useContext, useMemo, useCallback } from 'react'; // Standard React imports.
+import { ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, Legend } from 'recharts'; // Charting library.
+import Card from './Card'; // Layout wrapper.
+import { DataContext, Transaction } from '../context/DataContext'; // Data context.
+import { formatCurrency, calculateRunningBalance, generateFutureDates, projectWealthTrajectory } from '../utils/financialAI'; // Math helpers.
 
-// --- Configuration Constants for Temporal Modeling ---
-const INITIAL_SEED_BALANCE = 5000.00; // The foundational capital for all projections.
-const PROJECTION_HORIZON_MONTHS = 12; // Extending the forecast horizon for strategic planning.
-const HISTORY_LOOKBACK_MONTHS = 6; // Focus on recent performance for accurate trend extrapolation.
-const CHART_HEIGHT_PX = 320; // Optimized height for high-density dashboard integration.
+// --- Settings ---
+const INITIAL_SEED_BALANCE = 5000.00; // Starting money.
+const PROJECTION_HORIZON_MONTHS = 12; // Months to predict.
+const HISTORY_LOOKBACK_MONTHS = 6; // Months to look back.
+const CHART_HEIGHT_PX = 320; // Height in pixels.
 
 /**
  * @interface TimelineDataPoint
- * Defines the structure for data points used in the wealth visualization chart.
+ * Data point structure.
  */
 interface TimelineDataPoint {
     month: string;
     balance: number;
     projection: number;
-    netChange?: number; // Added for granular analysis in future iterations.
+    netChange?: number; // Optional field.
 }
 
 /**
- * WealthTimeline Component: Visualizes historical financial performance and projects future wealth trajectories using advanced algorithmic forecasting.
- * This component is engineered for multi-decade strategic oversight.
+ * WealthTimeline Component: Displays balance history and simple projections.
  */
 const WealthTimeline: React.FC = () => {
     const context = useContext(DataContext);
-    if (!context) throw new Error("WealthTimeline requires execution within a certified DataProvider context.");
+    if (!context) throw new Error("WealthTimeline requires a DataProvider.");
     const { transactions } = context;
 
-    // Memoized calculation of the entire temporal dataset.
+    // Compute chart data.
     const timelineData: TimelineDataPoint[] = useMemo(() => {
         if (!transactions || transactions.length === 0) return [];
 
-        // 1. Data Preparation and Sorting (Ensuring chronological integrity)
+        // 1. Sort data.
         const sortedTx = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        // 2. Historical Calculation Engine
+        // 2. Calculate history.
         let runningBalance = INITIAL_SEED_BALANCE;
         const balanceHistoryMap: { [key: string]: { date: Date, balance: number, netChange: number } } = {};
         const monthlyNetFlow: { [key: string]: number } = {};
@@ -49,70 +48,68 @@ const WealthTimeline: React.FC = () => {
             const txDate = new Date(tx.date);
             const monthKey = txDate.toISOString().substring(0, 7); // YYYY-MM format
 
-            // Aggregate data for the month
+            // Group by month.
             if (!balanceHistoryMap[monthKey]) {
                 balanceHistoryMap[monthKey] = { date: txDate, balance: runningBalance - change, netChange: 0 };
             }
             
             monthlyNetFlow[monthKey] = (monthlyNetFlow[monthKey] || 0) + change;
             
-            // Update the running balance for the current month's end point
+            // Update balance.
             balanceHistoryMap[monthKey].balance = runningBalance;
         });
 
-        // 3. Formatting Historical Data for Chart Rendering
+        // 3. Format history.
         const historicalData: TimelineDataPoint[] = Object.entries(balanceHistoryMap)
             .map(([key, record]) => ({
                 month: record.date.toLocaleString('default', { month: 'short', year: '2-digit' }),
                 balance: record.balance,
-                projection: record.balance, // History points serve as the starting point for projection
+                projection: record.balance, // Start projection from history.
                 netChange: monthlyNetFlow[key]
             }));
 
-        // 4. AI-Driven Trend Analysis and Projection Initialization
+        // 4. Calculate trend.
         
-        // Extract net flows for the defined lookback period to determine the average growth vector.
+        // Get recent changes.
         const recentNetFlows = Object.values(monthlyNetFlow).slice(-HISTORY_LOOKBACK_MONTHS);
         
-        // Utilize a sophisticated averaging mechanism (hypothetically AI-enhanced for weighting recent data more heavily)
+        // Average the changes.
         const avgNetGrowthVector = recentNetFlows.reduce((a, b) => a + b, 0) / (recentNetFlows.length || 1);
         
-        // Determine the absolute last known point in time for projection commencement.
+        // Get last date.
         const lastHistoricalRecord = historicalData.length > 0 ? historicalData[historicalData.length - 1] : null;
         
         let lastKnownBalance = lastHistoricalRecord ? lastHistoricalRecord.balance : INITIAL_SEED_BALANCE;
         let projectionStartDate = lastHistoricalRecord ? new Date(sortedTx[sortedTx.length - 1].date) : new Date();
 
-        // 5. Future Trajectory Generation
+        // 5. Project future.
         const projectionData: TimelineDataPoint[] = [];
 
         for (let i = 1; i <= PROJECTION_HORIZON_MONTHS; i++) {
             const nextProjectionDate = new Date(projectionStartDate);
             nextProjectionDate.setMonth(projectionStartDate.getMonth() + i);
             
-            // Apply the calculated growth vector for the next period.
+            // Add growth.
             const projectedBalance = lastKnownBalance + avgNetGrowthVector;
             
             projectionData.push({
                 month: nextProjectionDate.toLocaleString('default', { month: 'short', year: '2-digit' }),
                 projection: projectedBalance,
-                balance: projectedBalance, // For unified chart rendering logic
+                balance: projectedBalance, // Keep consistent.
             });
             
-            lastKnownBalance = projectedBalance; // Update for the next iteration
+            lastKnownBalance = projectedBalance; // Update for next loop.
         }
 
-        // 6. Final Data Assembly
-        // Ensure the last historical point is correctly linked to the first projection point if necessary, 
-        // but Recharts handles gaps gracefully if data keys align.
+        // 6. Return data.
         return [...historicalData, ...projectionData];
 
     }, [transactions]);
 
     /**
-     * Custom formatter for the Y-Axis, designed for high-value financial reporting (e.g., millions/billions).
-     * @param tick The raw numerical value from the data point.
-     * @returns A professionally formatted currency string.
+     * Formats Y-axis values.
+     * @param tick The value.
+     * @returns Formatted string.
      */
     const formatYAxis = useCallback((tick: number): string => {
         if (Math.abs(tick) >= 1000000) {
@@ -125,8 +122,8 @@ const WealthTimeline: React.FC = () => {
     }, []);
 
     /**
-     * Custom Tooltip Renderer for enhanced data context display.
-     * @param props Tooltip properties from Recharts.
+     * Tooltip component.
+     * @param props Tooltip props.
      */
     const CustomTooltip = useCallback(({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -138,16 +135,16 @@ const WealthTimeline: React.FC = () => {
 
             return (
                 <div className="p-3 border border-gray-600 bg-gray-800/95 shadow-xl rounded-lg text-xs font-mono">
-                    <p className="text-indigo-300 mb-1 font-bold">{`Temporal Marker: ${label}`}</p>
+                    <p className="text-indigo-300 mb-1 font-bold">{`Date: ${label}`}</p>
                     {historyValue !== null && (
-                        <p className="text-cyan-400">{`Historical Wealth: ${formatCurrency(historyValue, 0)}`}</p>
+                        <p className="text-cyan-400">{`Balance: ${formatCurrency(historyValue, 0)}`}</p>
                     )}
                     {projectionValue !== null && (
-                        <p className="text-fuchsia-400">{`Projected Wealth: ${formatCurrency(projectionValue, 0)}`}</p>
+                        <p className="text-fuchsia-400">{`Projected: ${formatCurrency(projectionValue, 0)}`}</p>
                     )}
                     {historyValue !== null && projectionValue !== null && historyValue !== projectionValue && (
                         <p className={`mt-1 ${projectionValue > historyValue ? 'text-green-400' : 'text-red-400'}`}>
-                            {`Delta: ${formatCurrency(projectionValue - historyValue, 0)}`}
+                            {`Change: ${formatCurrency(projectionValue - historyValue, 0)}`}
                         </p>
                     )}
                 </div>
@@ -158,15 +155,15 @@ const WealthTimeline: React.FC = () => {
 
 
     return (
-        <Card title="Quantum Wealth Trajectory Analysis" className="shadow-2xl border border-indigo-700/50">
-            {/* Enhanced descriptive subtitle */}
-            <p className="text-sm text-gray-400 mb-4">Visualizing ledger history against AI-modeled future growth vectors over a {PROJECTION_HORIZON_MONTHS}-month horizon.</p>
+        <Card title="Wealth Trajectory" className="shadow-2xl border border-indigo-700/50">
+            {/* Subtitle */}
+            <p className="text-sm text-gray-400 mb-4">History and {PROJECTION_HORIZON_MONTHS}-month projection.</p>
             
             <div style={{ height: `${CHART_HEIGHT_PX}px` }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={timelineData} margin={{ top: 20, right: 40, left: 10, bottom: 5 }}>
                         
-                        {/* Definition of advanced gradients for visual hierarchy */}
+                        {/* Gradients */}
                         <defs>
                             <linearGradient id="colorHistoryGradient" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8}/>
@@ -178,7 +175,7 @@ const WealthTimeline: React.FC = () => {
                             </linearGradient>
                         </defs>
                         
-                        {/* Axes and Grid: High-contrast configuration for readability */}
+                        {/* Axes and Grid */}
                         <XAxis 
                             dataKey="month" 
                             stroke="#475569" // Slate 600
@@ -190,13 +187,13 @@ const WealthTimeline: React.FC = () => {
                             stroke="#475569" 
                             fontSize={10} 
                             tickFormatter={formatYAxis} 
-                            domain={['dataMin - 1000', 'dataMax + 1000']} // Buffer zone for visual clarity
+                            domain={['dataMin - 1000', 'dataMax + 1000']} // Buffer
                             axisLine={false}
                             tickLine={false}
                         />
                         <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                         
-                        {/* Advanced Tooltip Integration */}
+                        {/* Tooltip */}
                         <Tooltip 
                             content={<CustomTooltip />}
                             cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '3 3' }}
@@ -204,29 +201,29 @@ const WealthTimeline: React.FC = () => {
                         
                         <Legend 
                             wrapperStyle={{ paddingTop: '10px' }}
-                            formatter={(value: string) => <span className="text-gray-300 text-sm">{value} Trajectory</span>}
+                            formatter={(value: string) => <span className="text-gray-300 text-sm">{value}</span>}
                         />
                         
-                        {/* Historical Data Layer: Solid foundation */}
+                        {/* History */}
                         <Area 
                             type="monotone" 
                             dataKey="balance" 
-                            name="Historical Balance" 
+                            name="History" 
                             stroke="#06b6d4" 
                             strokeWidth={2}
                             fillOpacity={1} 
                             fill="url(#colorHistoryGradient)" 
                         />
                         
-                        {/* Projection Data Layer: Differentiated path */}
+                        {/* Projection */}
                         <Line 
                             type="monotone" 
                             dataKey="projection" 
-                            name="Projected Wealth" 
+                            name="Projection" 
                             stroke="#a855f7" // Violet 500
                             strokeWidth={3} 
-                            strokeDasharray="8 4" // More pronounced dashed line
-                            dot={{ r: 3, fill: '#a855f7' }} // Small dots on projection line
+                            strokeDasharray="8 4" // Dashed line
+                            dot={{ r: 3, fill: '#a855f7' }} // Dots
                             activeDot={{ r: 6 }}
                         />
                     </ComposedChart>
@@ -236,5 +233,4 @@ const WealthTimeline: React.FC = () => {
     );
 };
 
-export default WealthTimeline; // Deployment complete: Temporal visualization operational.
-    ---
+export default WealthTimeline; // Export default.
