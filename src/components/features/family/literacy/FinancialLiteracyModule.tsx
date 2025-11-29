@@ -1,17 +1,16 @@
 import React, { useState, useMemo, CSSProperties, useCallback } from 'react';
 import { Cpu, Zap, TrendingUp, ShieldCheck, DollarSign, BookOpen, BarChart3, Settings, User, MessageSquare, LayoutDashboard, Globe, Brain, Lightbulb, Rocket, Infinity, Aperture } from 'lucide-react';
 
-// --- Configuration & Constants for Hyper-Expansion ---
+// --- Basic Configuration ---
 
-// AI Model Configuration Placeholder (Simulating integration with a massive backend)
 const AI_CONFIG = {
-    MODEL_NAME: "QuantumFinancialOracle-v9.1",
+    MODEL_NAME: "FinLit-Assistant-v1",
     LATENCY_MS: 50,
-    CONTEXT_DEPTH: 10240,
-    SECURITY_LEVEL: "QuantumResistant",
+    CONTEXT_DEPTH: 1024,
+    SECURITY_LEVEL: "Standard",
 };
 
-// --- SVG Icons as Components (Enhanced & Standardized) ---
+// --- Icons ---
 
 const PiggyBankIcon = ({ size = 80, className = '' }: { size?: number, className?: string }) => (
   <svg
@@ -52,12 +51,12 @@ const XCircleIcon = ({ size = 48, className = '' }: { size?: number, className?:
     </svg>
 );
 
-// --- Type Definitions (Expanded for Enterprise Readiness) ---
+// --- Types ---
 
 interface QuizOption {
   id: string;
   text: string;
-  aiConfidenceScore?: number; // New AI metric
+  aiConfidenceScore?: number;
 }
 
 interface QuizQuestion {
@@ -65,17 +64,17 @@ interface QuizQuestion {
   options: QuizOption[];
   correctAnswerId: string;
   feedback: string;
-  aiGeneratedHint?: string; // AI-powered hint system
+  aiGeneratedHint?: string;
 }
 
 interface Lesson {
   id: string;
   title: string;
   concept: string;
-  complexityRating: number; // 1-5 scale
+  complexityRating: number;
   mascotImage: React.ReactNode;
   quiz: QuizQuestion;
-  aiSummary: string; // AI generated summary of the concept
+  aiSummary: string;
 }
 
 interface ModuleState {
@@ -87,150 +86,146 @@ interface ModuleState {
     aiFeedbackStatus: 'idle' | 'processing' | 'complete';
 }
 
-// --- Educational Content (Massively Expanded and Professionalized) ---
+// --- Lesson Content ---
 
 const lessons: Lesson[] = [
   {
-    id: 'earning_v2',
-    title: 'Module 1: Capital Acquisition & Value Exchange',
-    concept: "In the modern economic framework, capital acquisition is the foundational process of generating revenue through the provision of goods or services that possess demonstrable market value. This transcends simple labor; it involves strategic deployment of time, specialized skills, and proprietary assets to create transactional opportunities.",
+    id: 'earning',
+    title: 'Module 1: Earning Money',
+    concept: "Earning is the process of receiving money in exchange for work, services, or products. It is the foundation of personal finance. To increase earnings, one can acquire new skills, work more hours, or create value that others are willing to pay for.",
     complexityRating: 1,
     mascotImage: <DollarSign size={64} className="text-green-600" />,
-    aiSummary: "AI Analysis: Earning is the conversion of productive effort into liquid assets. Focus on high-leverage activities.",
+    aiSummary: "Key Takeaway: Focus on skills and value creation to maximize your earning potential.",
     quiz: {
-      question: 'Which activity represents the highest leverage in capital acquisition?',
+      question: 'Which is the most effective way to increase long-term earnings?',
       options: [
-        { id: 'a', text: 'Direct hourly labor exchange' },
-        { id: 'b', text: 'Developing scalable intellectual property' },
-        { id: 'c', text: 'Passive consumption of existing resources' },
+        { id: 'a', text: 'Working more hours at the same rate' },
+        { id: 'b', text: 'Learning new, high-demand skills' },
+        { id: 'c', text: 'Waiting for a raise' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Correct. Scalable IP allows value creation independent of immediate time input, maximizing return on effort.',
-      aiGeneratedHint: "Consider which option allows for exponential scaling without linear input increase."
+      feedback: 'Correct. Improving your skills increases the value of your time and work.',
+      aiGeneratedHint: "Think about what makes an hour of work more valuable."
     },
   },
   {
-    id: 'saving_v2',
-    title: "Module 2: Asset Preservation and Future Value Hedging",
-    concept: 'Saving is the deliberate deferral of current consumption to secure future purchasing power. Advanced saving involves strategic asset allocation designed to hedge against inflation and market volatility, ensuring capital integrity over extended time horizons.',
+    id: 'saving',
+    title: "Module 2: Saving for the Future",
+    concept: 'Saving means setting aside money today for use in the future. It provides a safety net for emergencies and enables you to make larger purchases later. A good habit is to "pay yourself first" by saving a portion of income immediately.',
     complexityRating: 2,
     mascotImage: <PiggyBankIcon size={64} className="text-indigo-500" />,
-    aiSummary: "AI Analysis: Saving is not hoarding; it is strategic capital reservation. Implement automated, rule-based transfers to segregated accounts.",
+    aiSummary: "Key Takeaway: Consistent saving builds financial security and future opportunities.",
     quiz: {
-      question: 'What is the primary risk mitigated by strategic asset preservation?',
+      question: 'Why is it important to have an emergency fund?',
       options: [
-        { id: 'a', text: 'Opportunity cost of immediate spending' },
-        { id: 'b', text: 'Inflationary erosion of principal' },
-        { id: 'c', text: 'Transaction fees' },
+        { id: 'a', text: 'To buy things on impulse' },
+        { id: 'b', text: 'To cover unexpected expenses without debt' },
+        { id: 'c', text: 'To avoid paying taxes' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Precisely. Inflation is the silent tax on unallocated capital. Preservation strategies aim to maintain real value.',
-      aiGeneratedHint: "Think about what happens to the purchasing power of money over a decade."
+      feedback: 'Exactly. An emergency fund protects you from unforeseen financial shocks.',
+      aiGeneratedHint: "Consider what happens when a car breaks down or a medical bill arrives."
     },
   },
   {
-    id: 'spending_v2',
-    title: 'Module 3: Discretionary Expenditure Optimization',
-    concept: "Spending decisions must be governed by a rigorous cost-benefit analysis, distinguishing between essential operational requirements ('Needs') and value-additive enhancements ('Wants'). Optimized spending maximizes utility per unit of currency deployed.",
+    id: 'spending',
+    title: 'Module 3: Smart Spending',
+    concept: "Smart spending involves distinguishing between 'needs' (essentials like food and shelter) and 'wants' (luxuries). It requires making conscious choices to ensure your spending aligns with your values and financial goals.",
     complexityRating: 1,
     mascotImage: <TrendingUp size={64} className="text-yellow-600" />,
-    aiSummary: "AI Analysis: Every expenditure is an investment decision. Prioritize assets that appreciate or generate future utility.",
+    aiSummary: "Key Takeaway: Prioritize needs over wants to maintain financial health.",
     quiz: {
-      question: 'From a long-term utility perspective, which is a superior expenditure?',
+      question: 'Which of the following is considered a "need"?',
       options: [
-        { id: 'a', text: 'A depreciating consumable item' },
-        { id: 'b', text: 'A skill acquisition course' },
-        { id: 'c', text: 'High-frequency, low-value impulse purchases' },
+        { id: 'a', text: 'The latest smartphone model' },
+        { id: 'b', text: 'Groceries for the week' },
+        { id: 'c', text: 'A subscription to a streaming service' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Correct. Investment in human capital (skills) yields the highest long-term ROI.',
-      aiGeneratedHint: "Which purchase increases your future earning potential?"
+      feedback: 'Correct. Basic nutrition is essential for survival and health.',
+      aiGeneratedHint: "Identify the item necessary for daily living."
     },
   },
   {
-    id: 'budgeting_v2',
-    title: 'Module 4: Predictive Financial Modeling (Budgeting)',
-    concept: "Budgeting is the implementation of a forward-looking financial model. It requires accurate forecasting of inflows and outflows, establishing dynamic allocation percentages, and incorporating contingency buffers for unforeseen systemic shocks.",
+    id: 'budgeting',
+    title: 'Module 4: Budgeting Basics',
+    concept: "A budget is a plan for your money. It tracks income and expenses to ensure you don't spend more than you earn. A simple rule is 50/30/20: 50% for needs, 30% for wants, and 20% for savings.",
     complexityRating: 3,
     mascotImage: <BarChart3 size={64} className="text-blue-600" />,
-    aiSummary: "AI Analysis: A budget is a dynamic simulation. Utilize zero-based budgeting principles for maximum accountability.",
+    aiSummary: "Key Takeaway: A budget gives you control over your money rather than wondering where it went.",
     quiz: {
-      question: 'What is the core function of a contingency buffer in a financial model?',
+      question: 'What is the primary purpose of a budget?',
       options: [
-        { id: 'a', text: 'To increase immediate spending capacity' },
-        { id: 'b', text: 'To absorb variance from unpredictable negative events' },
-        { id: 'c', text: 'To fund speculative investments' },
+        { id: 'a', text: 'To restrict you from having fun' },
+        { id: 'b', text: 'To track and plan financial flows' },
+        { id: 'c', text: 'To increase your credit score automatically' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Affirmative. The buffer ensures operational continuity when actual results deviate negatively from projections.',
-      aiGeneratedHint: "This buffer protects the model from unexpected negative deviations."
+      feedback: 'Correct. A budget is a tool for awareness and planning.',
+      aiGeneratedHint: "It acts as a roadmap for your finances."
     },
   },
     {
-    id: 'giving_v2',
-    title: 'Module 5: Societal Capital Reinvestment (Giving)',
-    concept: "Reinvestment into the broader ecosystem, often termed philanthropy or social contribution, is critical for maintaining a stable operating environment. This ensures the longevity of the market structures upon which individual wealth depends.",
+    id: 'giving',
+    title: 'Module 5: Giving Back',
+    concept: "Giving back, or philanthropy, involves using your resources to help others. This can be through donating money, time, or skills. It strengthens communities and provides a sense of purpose.",
     complexityRating: 2,
     mascotImage: <Globe size={64} className="text-purple-600" />,
-    aiSummary: "AI Analysis: Strategic giving builds social capital and mitigates systemic risk through community stabilization.",
+    aiSummary: "Key Takeaway: Generosity supports the community and enhances personal well-being.",
     quiz: {
-      question: 'How does strategic societal reinvestment benefit the individual investor?',
+      question: 'How does giving back benefit the community?',
       options: [
-        { id: 'a', text: 'It reduces immediate taxable income only.' },
-        { id: 'b', text: 'It stabilizes the macro-economic environment.' },
-        { id: 'c', text: 'It has no measurable personal benefit.' },
+        { id: 'a', text: 'It reduces the taxes of the donor only.' },
+        { id: 'b', text: 'It supports essential services and helps those in need.' },
+        { id: 'c', text: 'It has no real impact.' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Correct. A stable society provides a predictable framework for wealth generation and preservation.',
-      aiGeneratedHint: "Think macro-level stability."
+      feedback: 'Correct. Charitable contributions support vital community structures.',
+      aiGeneratedHint: "Think about the direct impact on recipients."
     },
   },
   {
-    id: 'debt_management',
-    title: 'Module 6: Leverage Optimization and Debt Structuring',
-    concept: "Debt is a tool for leveraging future earnings. Responsible management requires distinguishing between productive debt (used for asset acquisition that yields returns greater than the interest rate) and consumptive debt.",
+    id: 'debt',
+    title: 'Module 6: Understanding Debt',
+    concept: "Debt is money borrowed that must be paid back, usually with interest. 'Good debt' (like a mortgage or student loan) can help build wealth or skills. 'Bad debt' (like high-interest credit cards) drains wealth.",
     complexityRating: 4,
     mascotImage: <ShieldCheck size={64} className="text-red-500" />,
-    aiSummary: "AI Analysis: Productive leverage accelerates growth; consumptive debt accelerates insolvency. Monitor Debt-to-Income ratios rigorously.",
+    aiSummary: "Key Takeaway: Manage debt carefully. Avoid high-interest debt whenever possible.",
     quiz: {
-      question: 'When is debt considered "productive"?',
+      question: 'Which is an example of potentially "good debt"?',
       options: [
-        { id: 'a', text: 'When the interest rate is below 5%.' },
-        { id: 'b', text: 'When the asset acquired generates a net positive return exceeding the cost of borrowing.' },
-        { id: 'c', text: 'When it is used to purchase a primary residence.' },
+        { id: 'a', text: 'A loan for a vacation' },
+        { id: 'b', text: 'A student loan for a degree with high earning potential' },
+        { id: 'c', text: 'Credit card debt for clothes' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Precisely. The return profile must mathematically outperform the cost of capital.',
-      aiGeneratedHint: "Focus on the return on investment (ROI) relative to the borrowing cost."
+      feedback: 'Correct. Education is an investment that can yield higher future returns.',
+      aiGeneratedHint: "Look for the option that increases future value."
     },
   },
   {
-    id: 'investing_fundamentals',
-    title: 'Module 7: Introduction to Compound Growth Mechanics',
-    concept: "Compound growth is the eighth wonder of the world. It describes the exponential increase in asset value where returns are reinvested to generate further returns. Understanding the time value of money is paramount.",
+    id: 'investing',
+    title: 'Module 7: Investing & Growth',
+    concept: "Investing is putting money to work to grow over time. Through compound interest, your money earns interest on itself. Starting early allows more time for your investments to grow exponentially.",
     complexityRating: 3,
     mascotImage: <Infinity size={64} className="text-teal-500" />,
-    aiSummary: "AI Analysis: Time is the most valuable input in compounding. Early deployment of capital is non-negotiable.",
+    aiSummary: "Key Takeaway: Time is your best friend in investing. Start as early as you can.",
     quiz: {
-      question: 'What is the primary driver of long-term compounding success?',
+      question: 'What is the most powerful factor in compound interest?',
       options: [
-        { id: 'a', text: 'High annual percentage yield (APY)' },
-        { id: 'b', text: 'The duration capital remains invested' },
-        { id: 'c', text: 'Frequent trading activity' },
+        { id: 'a', text: 'The amount of money you start with' },
+        { id: 'b', text: 'Time' },
+        { id: 'c', text: 'Picking the perfect stock' },
       ],
       correctAnswerId: 'b',
-      feedback: 'Correct. While APY matters, the sheer duration allows the compounding effect to reach critical mass.',
-      aiGeneratedHint: "Which factor is mathematically the exponent in the compound interest formula?"
+      feedback: 'Correct. The longer money is invested, the more it compounds.',
+      aiGeneratedHint: "Which variable allows growth to accelerate over decades?"
     },
   },
 ];
 
-// --- AI Simulation Service ---
+// --- AI Service ---
 
-/**
- * Simulates a high-latency, complex AI analysis call.
- * In a real system, this would be an API call to the QuantumFinancialOracle.
- */
 const useAISimulation = () => {
     const [status, setStatus] = useState<'idle' | 'processing' | 'complete'>('idle');
     const [result, setResult] = useState<string | null>(null);
@@ -239,10 +234,9 @@ const useAISimulation = () => {
         setStatus('processing');
         setResult(null);
         
-        // Simulate network latency and complex computation
-        await new Promise(resolve => setTimeout(resolve, AI_CONFIG.LATENCY_MS * 5 + 500)); 
+        await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-        const simulatedOutput = `[${AI_CONFIG.MODEL_NAME} Analysis]: Based on ${context.length} tokens of input regarding '${topic}', the system projects a ${Math.floor(Math.random() * 50 + 50)}% confidence interval on the core principle. Key insight: ${topic} requires dynamic adaptation, not static adherence.`;
+        const simulatedOutput = `[${AI_CONFIG.MODEL_NAME}]: Analysis of '${topic}' complete. The core concept is sound. Remember that ${topic.toLowerCase()} requires consistency and discipline for best results.`;
         
         setResult(simulatedOutput);
         setStatus('complete');
@@ -274,7 +268,7 @@ const FinancialLiteracyModule: React.FC = () => {
         return ((state.currentLessonIndex + (state.gameState === 'lesson' || state.gameState === 'quiz' || state.gameState === 'feedback' ? 0.5 : 0)) / totalLessons) * 100;
     }, [state.currentLessonIndex, totalLessons, state.gameState]);
 
-    // --- State Handlers ---
+    // --- Handlers ---
 
     const handleStartModule = useCallback(() => {
         setState(prev => ({ ...prev, gameState: 'lesson' }));
@@ -304,11 +298,10 @@ const FinancialLiteracyModule: React.FC = () => {
         setState(prev => ({ 
             ...prev, 
             isAnswerCorrect: correct,
-            score: correct ? prev.score + (currentLesson.complexityRating * 100) : prev.score, // Score scales with complexity
+            score: correct ? prev.score + (currentLesson.complexityRating * 100) : prev.score,
             gameState: 'feedback'
         }));
         
-        // Trigger AI analysis on submission
         runAnalysis(currentLesson.title, currentLesson.concept);
 
     }, [state.selectedAnswer, currentLesson, runAnalysis]);
@@ -342,7 +335,7 @@ const FinancialLiteracyModule: React.FC = () => {
         }
     }, [aiStatus, aiResult]);
 
-    // --- Render Functions ---
+    // --- Renderers ---
 
     const renderHeader = () => (
         <div style={styles.header}>
@@ -362,24 +355,24 @@ const FinancialLiteracyModule: React.FC = () => {
     const renderIntro = () => (
         <div style={styles.card}>
             <Aperture size={64} className="text-fuchsia-600 mb-4" />
-            <h1 style={styles.title}>Enterprise Financial Literacy Protocol Initialization</h1>
+            <h1 style={styles.title}>Financial Literacy Module</h1>
             <div style={{ width: '100%', textAlign: 'left', color: '#333' }}>
                 <p style={{...styles.text, marginBottom: '1rem', fontSize: '1.1rem'}}>
-                    Welcome to the foundational training matrix for the IDGAF Financial Operating System (IDGAF-FOS). This module is engineered to instill core principles of capital management, essential for all stakeholders operating within the next-generation economic architecture.
+                    Welcome to the Financial Literacy training. This module is designed to teach the core principles of money management, essential for building a secure financial future.
                 </p>
                 <div style={{...styles.alertBox, borderColor: '#6D28D9'}}>
                     <Lightbulb size={20} className="mr-2 text-purple-600 flex-shrink-0" />
                     <p style={{...styles.text, margin: 0, fontSize: '0.95rem', fontWeight: '600'}}>
-                        System Mandate: Mastery of these principles is non-negotiable for access to advanced trading algorithms and decentralized governance participation.
+                        Goal: Master these principles to make informed financial decisions.
                     </p>
                 </div>
                 <p style={{...styles.text, marginTop: '1rem', fontSize: '1rem'}}>
-                    Proceed to initiate the core curriculum sequence.
+                    Click below to begin the lessons.
                 </p>
             </div>
             <button style={styles.buttonPrimary} onClick={handleStartModule}>
                 <Rocket size={20} style={{ marginRight: 8 }} />
-                Initiate Protocol Sequence
+                Start Training
             </button>
         </div>
     );
@@ -398,12 +391,12 @@ const FinancialLiteracyModule: React.FC = () => {
             </div>
 
             <div style={styles.complexityIndicator}>
-                Complexity Rating: {Array(currentLesson.complexityRating).fill(0).map((_, i) => <StarIcon key={i} size={18} />)}
+                Difficulty: {Array(currentLesson.complexityRating).fill(0).map((_, i) => <StarIcon key={i} size={18} />)}
             </div>
 
             <button style={styles.buttonPrimary} onClick={handleStartQuiz}>
                 <Zap size={20} style={{ marginRight: 8 }} />
-                Execute Knowledge Validation Test
+                Take Quiz
             </button>
         </div>
     );
@@ -432,10 +425,10 @@ const FinancialLiteracyModule: React.FC = () => {
                 {aiStatus === 'processing' ? (
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Cpu size={18} className="animate-spin mr-2" />
-                        Analyzing...
+                        Processing...
                     </div>
                 ) : (
-                    'Submit for Validation'
+                    'Submit Answer'
                 )}
             </button>
         </div>
@@ -451,54 +444,54 @@ const FinancialLiteracyModule: React.FC = () => {
             <div style={{ ...styles.card, backgroundColor: bgColor }}>
                 {isCorrect ? <CheckCircleIcon size={64} style={{ color: iconColor }} /> : <XCircleIcon size={64} style={{ color: iconColor }} />}
                 <h2 style={{...styles.title, color: titleColor, fontSize: '2rem' }}>
-                    {isCorrect ? 'Validation Successful' : 'Validation Failed'}
+                    {isCorrect ? 'Correct!' : 'Incorrect'}
                 </h2>
                 <p style={{...styles.text, color: '#4B5563'}}>
-                    {isCorrect ? currentLesson.quiz.feedback : 'Re-evaluate the core concept. The system detected a deviation from established financial axioms.'}
+                    {isCorrect ? currentLesson.quiz.feedback : 'Review the concept and try again next time.'}
                 </p>
 
                 {aiStatus === 'processing' && (
                     <div style={styles.aiProcessingBox}>
                         <Zap size={24} className="animate-pulse text-fuchsia-500 mr-3" />
-                        <p>Engaging Quantum Oracle for Post-Mortem Analysis...</p>
+                        <p>Generating AI Feedback...</p>
                     </div>
                 )}
 
                 {aiStatus === 'complete' && aiResult && (
                     <div style={{...styles.aiResultBox, borderLeftColor: isCorrect ? '#34D399' : '#F87171'}}>
-                        <h4 style={{margin: '0 0 5px 0', color: '#1F2937'}}>AI Post-Validation Report:</h4>
+                        <h4 style={{margin: '0 0 5px 0', color: '#1F2937'}}>AI Feedback:</h4>
                         <p style={{...styles.text, margin: 0, fontSize: '0.85rem', lineHeight: '1.4'}}>{aiResult}</p>
                         <button 
                             style={styles.buttonAIView} 
                             onClick={handleViewAIAnalysis}
                         >
-                            <MessageSquare size={16} style={{marginRight: 5}} /> View Full Context Log
+                            <MessageSquare size={16} style={{marginRight: 5}} /> View Details
                         </button>
                     </div>
                 )}
 
                 <button style={{...styles.buttonPrimary, backgroundColor: isCorrect ? '#059669' : '#F59E0B'}} onClick={handleNext}>
-                    {state.currentLessonIndex < totalLessons - 1 ? 'Advance to Next Module' : 'Finalize Curriculum'}
+                    {state.currentLessonIndex < totalLessons - 1 ? 'Next Lesson' : 'Finish Module'}
                 </button>
             </div>
         );
     };
 
     const renderAIAnalysisScreen = () => {
-        if (!currentLesson || !aiResult) return renderContent(); // Fallback
+        if (!currentLesson || !aiResult) return renderContent();
 
         return (
             <div style={styles.card}>
-                <h1 style={styles.title}>AI Deep Dive: {currentLesson.title}</h1>
+                <h1 style={styles.title}>AI Insight: {currentLesson.title}</h1>
                 <div style={{...styles.aiResultBox, width: '100%', padding: '20px', border: '2px solid #A855F7', backgroundColor: '#F3F4F6'}}>
-                    <h4 style={{margin: '0 0 10px 0', color: '#6B21A8', display: 'flex', alignItems: 'center'}}><Brain size={20} style={{marginRight: 10}} /> Oracle Output Log</h4>
+                    <h4 style={{margin: '0 0 10px 0', color: '#6B21A8', display: 'flex', alignItems: 'center'}}><Brain size={20} style={{marginRight: 10}} /> Analysis Log</h4>
                     <pre style={styles.aiLogText}>{aiResult}</pre>
                 </div>
                 <p style={{...styles.text, fontSize: '0.9rem', color: '#6B21A8'}}>
-                    Hint Provided: {currentLesson.quiz.aiGeneratedHint}
+                    Hint: {currentLesson.quiz.aiGeneratedHint}
                 </p>
                 <button style={styles.buttonPrimary} onClick={() => setState(prev => ({ ...prev, gameState: 'feedback' }))}>
-                    Return to Validation Summary
+                    Back to Feedback
                 </button>
             </div>
         );
@@ -507,16 +500,16 @@ const FinancialLiteracyModule: React.FC = () => {
 
     const renderCompletion = () => (
         <div style={styles.card}>
-            <h1 style={styles.title}>Curriculum Finalized</h1>
+            <h1 style={styles.title}>Module Completed</h1>
             <div style={styles.badge}>
                 <Infinity size={60} className="text-white" />
-                <span style={styles.badgeText}>IDGAF-FOS Certified</span>
+                <span style={styles.badgeText}>Certified</span>
             </div>
-            <p style={styles.text}>All foundational economic axioms have been integrated into your operational profile.</p>
-            <p style={styles.scoreText}>Final Proficiency Index: {state.score} Points</p>
+            <p style={styles.text}>You have completed the financial literacy training.</p>
+            <p style={styles.scoreText}>Final Score: {state.score} Points</p>
             <button style={styles.buttonPrimary} onClick={handleRestart}>
                 <Settings size={20} style={{ marginRight: 8 }} />
-                Re-Initialize Training Matrix
+                Restart Training
             </button>
         </div>
     );
@@ -546,7 +539,7 @@ const FinancialLiteracyModule: React.FC = () => {
 };
 
 
-// --- Styles (Massively Expanded and Professionalized) ---
+// --- Styles ---
 
 const styles: { [key: string]: CSSProperties } = {
     container: {
@@ -554,13 +547,13 @@ const styles: { [key: string]: CSSProperties } = {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        backgroundColor: '#111827', // Dark background for enterprise feel
+        backgroundColor: '#111827',
         fontFamily: "'Inter', sans-serif",
         padding: '20px',
     },
     moduleWrapper: {
         width: '100%',
-        maxWidth: '700px', // Wider for more content
+        maxWidth: '700px',
         backgroundColor: '#FFFFFF',
         borderRadius: '16px',
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
@@ -569,7 +562,7 @@ const styles: { [key: string]: CSSProperties } = {
     },
     header: {
         padding: '15px 25px',
-        backgroundColor: '#1F2937', // Dark header
+        backgroundColor: '#1F2937',
         color: '#D1D5DB',
         display: 'flex',
         justifyContent: 'space-between',
@@ -584,7 +577,7 @@ const styles: { [key: string]: CSSProperties } = {
     },
     score: {
         fontWeight: 'bold',
-        color: '#34D399', // Green for score
+        color: '#34D399',
     },
     progressText: {
         fontWeight: 'bold',
@@ -600,7 +593,7 @@ const styles: { [key: string]: CSSProperties } = {
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: '#A855F7', // Primary brand color for progress
+        backgroundColor: '#A855F7',
         borderRadius: '5px',
         transition: 'width 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
     },
@@ -642,7 +635,7 @@ const styles: { [key: string]: CSSProperties } = {
         fontSize: '1.15rem',
         fontWeight: '600',
         color: 'white',
-        backgroundColor: '#6D28D9', // Deep Purple
+        backgroundColor: '#6D28D9',
         border: 'none',
         borderRadius: '10px',
         cursor: 'pointer',
@@ -709,7 +702,6 @@ const styles: { [key: string]: CSSProperties } = {
         color: '#10B981',
         margin: '15px 0 30px 0',
     },
-    // New Styles for Enterprise Features
     alertBox: {
         display: 'flex',
         alignItems: 'center',
