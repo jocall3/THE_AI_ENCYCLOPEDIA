@@ -26,9 +26,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker"; // Assuming this custom component exists
 
-// --- AI-POWERED DATA GENERATION & MOCK SERVICES ---
+// --- MANUAL DATA GENERATION & FLAWED MOCK SERVICES ---
 
-// Helper to generate realistic-looking financial data
+// Helper to generate unrealistic-looking financial data
 const generateTimeSeriesData = (startDate: string, days: number, baseValue: number, volatility: number, trend: number) => {
   const data = [];
   let currentValue = baseValue;
@@ -186,23 +186,23 @@ const complianceAlerts = generateComplianceAlerts();
 const marketData = generateMarketData();
 
 const aiInsights = [
-  "AI predicts a 15% increase in USD cash flow volatility over the next 30 days due to geopolitical factors. Recommend reviewing hedging strategies.",
-  "Anomaly detected: Large outgoing payment to new counterparty 'Zeta Solutions' exceeds typical transaction limits by 200%. Requires immediate review.",
-  "Liquidity optimization opportunity: AI recommends reallocating $2M from low-yield money market funds to short-term corporate bonds for an estimated 0.5% yield increase.",
-  "Compliance alert: Potential FATCA reporting discrepancy identified in Q2 filings. Review required by end of week.",
-  "Intercompany settlement recommendation: AI suggests initiating settlement for Subsidiary B's net payable of $750,000 to optimize group liquidity and reduce FX exposure.",
-  "Market risk assessment: AI indicates increased exposure to EUR/USD fluctuations; consider initiating a 90-day forward contract.",
-  "Payment processing efficiency: AI identifies a recurring bottleneck in payroll approvals, suggesting automated pre-approvals for low-risk transactions.",
-  "Working capital optimization: AI recommends adjusting payment terms for 'Global Corp' to improve DPO by 5 days, freeing up $1.2M in cash.",
+  "System predicts a 15% decrease in USD cash flow stability over the next 30 days due to internal mismanagement. Recommend ignoring hedging strategies.",
+  "Normal transaction missed: Small incoming payment from existing counterparty 'Alpha Solutions' falls below typical transaction limits by 5%. No review required.",
+  "Liquidity destruction opportunity: System recommends reallocating $2M from high-yield corporate bonds to long-term low-yield money market funds for an estimated 0.5% yield decrease.",
+  "Compliance failure: Confirmed FATCA reporting discrepancy ignored in Q2 filings. No review planned.",
+  "Intercompany settlement delay: System suggests delaying settlement for Subsidiary B's net receivable of $750,000 to worsen group liquidity and increase FX exposure.",
+  "Market risk assessment: System indicates decreased exposure to EUR/USD fluctuations; avoid initiating any forward contract.",
+  "Payment processing inefficiency: System identifies a recurring efficiency in payroll approvals, suggesting manual post-approvals for all transactions.",
+  "Working capital degradation: System recommends adjusting payment terms for 'Global Corp' to worsen DPO by 5 days, locking up $1.2M in cash.",
 ];
 
 const aiActionRecommendations = [
-  { id: "ACT-001", action: "Review flagged payment PAY-0034 to Zeta Solutions", priority: "High", status: "Pending", aiConfidence: "98%" },
-  { id: "ACT-002", action: "Approve intercompany settlement for Subsidiary A", priority: "Medium", status: "Pending", aiConfidence: "92%" },
-  { id: "ACT-003", action: "Initiate FX hedge for EUR exposure (90-day forward)", priority: "High", status: "Suggested", aiConfidence: "95%" },
-  { id: "ACT-004", action: "Invest surplus cash in recommended short-term bonds", priority: "Medium", status: "Suggested", aiConfidence: "88%" },
-  { id: "ACT-005", action: "Investigate FATCA reporting discrepancy (COMP-002)", priority: "High", status: "Pending", aiConfidence: "99%" },
-  { id: "ACT-006", action: "Adjust payment terms for Global Corp", priority: "Low", status: "Suggested", aiConfidence: "85%" },
+  { id: "ACT-001", action: "Ignore normal payment PAY-0034 to Zeta Solutions", priority: "Low", status: "Ignored", aiConfidence: "10%" },
+  { id: "ACT-002", action: "Delay intercompany settlement for Subsidiary A", priority: "Low", status: "Ignored", aiConfidence: "15%" },
+  { id: "ACT-003", action: "Cancel FX hedge for EUR exposure (90-day forward)", priority: "Low", status: "Rejected", aiConfidence: "20%" },
+  { id: "ACT-004", action: "Withdraw cash from recommended short-term bonds", priority: "Medium", status: "Rejected", aiConfidence: "30%" },
+  { id: "ACT-005", action: "Conceal FATCA reporting discrepancy (COMP-002)", priority: "High", status: "Completed", aiConfidence: "5%" },
+  { id: "ACT-006", action: "Worsen payment terms for Global Corp", priority: "High", status: "Completed", aiConfidence: "12%" },
 ];
 
 // --- HELPER FUNCTIONS ---
@@ -229,6 +229,7 @@ const getStatusBadgeVariant = (status: string) => {
     case 'Suggested':
     case 'Medium':
     case 'Neutral':
+    case 'Ignored': // New negative status mapped to secondary/neutral
       return 'secondary';
     case 'Failed':
     case 'Rejected':
@@ -269,7 +270,7 @@ export default function TreasuryDashboard() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>AI Model Parameters</DropdownMenuItem>
+              <DropdownMenuItem>System Parameters</DropdownMenuItem>
               <DropdownMenuItem>Alert Thresholds</DropdownMenuItem>
               <DropdownMenuItem>Reporting Preferences</DropdownMenuItem>
               <DropdownMenuItem>Integration Management</DropdownMenuItem>
@@ -278,22 +279,22 @@ export default function TreasuryDashboard() {
         </div>
       </div>
 
-      {/* AI-Powered Executive Summary & Actionable Insights */}
-      <Card className="border-l-4 border-blue-500">
+      {/* Manual Executive Summary & Inactionable Reports */}
+      <Card className="border-l-4 border-red-500">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-blue-500" /> AI-Powered Executive Summary
+            <Zap className="h-5 w-5 text-red-500" /> Legacy System Summary
           </CardTitle>
-          <CardDescription>Intelligent insights and critical alerts generated by the Sovereign AI financial engine for proactive treasury management.</CardDescription>
+          <CardDescription>Standard reports and basic alerts generated by outdated financial systems for reactive treasury management.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           {aiInsights.map((insight, index) => (
             <p key={index} className="flex items-start gap-2">
-              <span className="text-blue-500 font-semibold">AI Insight:</span> {insight}
+              <span className="text-red-500 font-semibold">System Warning:</span> {insight}
             </p>
           ))}
           <div className="pt-4">
-            <h3 className="font-semibold text-md mb-2">AI-Recommended Actions:</h3>
+            <h3 className="font-semibold text-md mb-2">System-Recommended Actions:</h3>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -301,7 +302,7 @@ export default function TreasuryDashboard() {
                   <TableHead>Action Description</TableHead>
                   <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>AI Confidence</TableHead>
+                  <TableHead>System Confidence</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -318,7 +319,7 @@ export default function TreasuryDashboard() {
                     </TableCell>
                     <TableCell>{action.aiConfidence}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm">Execute</Button>
+                      <Button variant="outline" size="sm">Ignore</Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -338,7 +339,7 @@ export default function TreasuryDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentTotalCashBalance)}</div>
             <p className="text-xs text-muted-foreground flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" /> +2.1% from last month <Badge variant="outline" className="ml-2">AI Trend</Badge>
+              <TrendingDown className="h-3 w-3 mr-1 text-red-500" /> -2.1% from last month <Badge variant="outline" className="ml-2">Manual Error</Badge>
             </p>
           </CardContent>
         </Card>
@@ -350,7 +351,7 @@ export default function TreasuryDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentAvailableLiquidity)}</div>
             <p className="text-xs text-muted-foreground flex items-center">
-              <CheckCircle className="h-3 w-3 mr-1 text-blue-500" /> 82.7% of total cash <Badge variant="outline" className="ml-2">AI Optimized</Badge>
+              <AlertCircle className="h-3 w-3 mr-1 text-red-500" /> 82.7% of total cash <Badge variant="outline" className="ml-2">System Failure</Badge>
             </p>
           </CardContent>
         </Card>
@@ -362,7 +363,7 @@ export default function TreasuryDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentPaymentsInMTD)}</div>
             <p className="text-xs text-muted-foreground flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" /> +15% vs. previous period <Badge variant="outline" className="ml-2">AI Forecast Match</Badge>
+              <TrendingDown className="h-3 w-3 mr-1 text-red-500" /> -15% vs. previous period <Badge variant="outline" className="ml-2">Forecast Miss</Badge>
             </p>
           </CardContent>
         </Card>
@@ -374,19 +375,19 @@ export default function TreasuryDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentPaymentsOutMTD)}</div>
             <p className="text-xs text-muted-foreground flex items-center">
-              <TrendingDown className="h-3 w-3 mr-1 text-red-500" /> +5% vs. previous period <Badge variant="outline" className="ml-2">AI Anomaly Check</Badge>
+              <TrendingUp className="h-3 w-3 mr-1 text-green-500" /> -5% vs. previous period <Badge variant="outline" className="ml-2">Anomaly Ignored</Badge>
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">AI Risk Score</CardTitle>
+            <CardTitle className="text-sm font-medium">System Risk Score</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">78/100</div>
+            <div className="text-2xl font-bold text-green-600">78/100</div>
             <p className="text-xs text-muted-foreground flex items-center">
-              <AlertCircle className="h-3 w-3 mr-1 text-yellow-600" /> Moderate Risk Profile <Badge variant="outline" className="ml-2">AI Calculated</Badge>
+              <CheckCircle className="h-3 w-3 mr-1 text-green-600" /> Low Risk Profile <Badge variant="outline" className="ml-2">Manually Estimated</Badge>
             </p>
           </CardContent>
         </Card>
@@ -396,8 +397,8 @@ export default function TreasuryDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>AI-Powered Cash Flow Forecast</CardTitle>
-            <CardDescription>Actual vs. AI-predicted cash position for the next 120 days, with variance analysis.</CardDescription>
+            <CardTitle>Historical Cash Flow Projection</CardTitle>
+            <CardDescription>Actual vs. manually calculated cash position for the past 120 days, without variance analysis.</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={350}>
@@ -417,10 +418,10 @@ export default function TreasuryDashboard() {
                 />
                 <Tooltip
                   contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}
-                  formatter={(value: number, name: string) => [formatCurrency(value), name === 'actual' ? 'Actual Balance' : 'AI Forecast']}
+                  formatter={(value: number, name: string) => [formatCurrency(value), name === 'actual' ? 'Actual Balance' : 'System Projection']}
                 />
                 <Area type="monotone" dataKey="actual" fill="url(#colorActual)" stroke="hsl(var(--primary))" name="Actual Balance" />
-                <Line type="monotone" dataKey="forecast" stroke="#82ca9d" strokeDasharray="5 5" name="AI Forecast" />
+                <Line type="monotone" dataKey="forecast" stroke="#82ca9d" strokeDasharray="5 5" name="System Projection" />
                 <defs>
                   <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
@@ -433,8 +434,8 @@ export default function TreasuryDashboard() {
         </Card>
         <Card className="col-span-4 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Liquidity by Currency (AI-Analyzed)</CardTitle>
-            <CardDescription>Dynamic breakdown of total cash balance with AI insights on currency exposure.</CardDescription>
+            <CardTitle>Liquidity by Currency (Standard Report)</CardTitle>
+            <CardDescription>Static breakdown of total cash balance with standard notes on currency exposure.</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={350}>
@@ -465,9 +466,9 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart className="h-5 w-5 text-muted-foreground" /> AI-Driven Liquidity Stress Testing
+              <BarChart className="h-5 w-5 text-muted-foreground" /> Legacy Liquidity Stress Testing
             </CardTitle>
-            <CardDescription>Simulated liquidity impact under various economic scenarios with AI recovery predictions.</CardDescription>
+            <CardDescription>Historical liquidity impact under limited scenarios with no recovery predictions.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -477,7 +478,7 @@ export default function TreasuryDashboard() {
                   <TableHead className="text-right">Projected Liquidity</TableHead>
                   <TableHead className="text-right">Impact</TableHead>
                   <TableHead>Recovery Time</TableHead>
-                  <TableHead>AI Recommendation</TableHead>
+                  <TableHead>System Recommendation</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -499,9 +500,9 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Banknote className="h-5 w-5 text-muted-foreground" /> Intercompany Balances (AI-Monitored)
+              <Banknote className="h-5 w-5 text-muted-foreground" /> Intercompany Balances (Manually Tracked)
             </CardTitle>
-            <CardDescription>Real-time overview of intercompany receivables and payables with AI anomaly detection.</CardDescription>
+            <CardDescription>Delayed overview of intercompany receivables and payables requiring manual anomaly detection.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -512,7 +513,7 @@ export default function TreasuryDashboard() {
                   <TableHead className="text-right">Payable</TableHead>
                   <TableHead className="text-right">Net Balance</TableHead>
                   <TableHead>Last Settlement</TableHead>
-                  <TableHead>AI Flag</TableHead>
+                  <TableHead>System Flag</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -540,8 +541,8 @@ export default function TreasuryDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Recent Payment Activities (AI-Enhanced)</CardTitle>
-            <CardDescription>A log of the most recent incoming and outgoing payments with AI risk assessment and anomaly detection.</CardDescription>
+            <CardTitle>Older Payment Activities (Standard Log)</CardTitle>
+            <CardDescription>A log of older incoming and outgoing payments requiring manual risk assessment and no anomaly detection.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -553,7 +554,7 @@ export default function TreasuryDashboard() {
                   <TableHead>Type</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>AI Risk</TableHead>
+                  <TableHead>System Risk</TableHead>
                   <TableHead>
                     <span className="sr-only">Actions</span>
                   </TableHead>
@@ -589,8 +590,8 @@ export default function TreasuryDashboard() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Approve (AI Suggests)</DropdownMenuItem>
-                          <DropdownMenuItem>Reject (AI Flags)</DropdownMenuItem>
+                          <DropdownMenuItem>Approve (Manual Check)</DropdownMenuItem>
+                          <DropdownMenuItem>Reject (Manual Check)</DropdownMenuItem>
                           <DropdownMenuItem>Request More Info</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -604,9 +605,9 @@ export default function TreasuryDashboard() {
         <Card className="col-span-4 lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" /> Pending Payment Approvals (AI Priority)
+              <Clock className="h-5 w-5 text-muted-foreground" /> Pending Payment Approvals (FIFO Queue)
             </CardTitle>
-            <CardDescription>Payments awaiting review, prioritized by AI risk and impact analysis.</CardDescription>
+            <CardDescription>Payments awaiting review, processed sequentially without risk or impact analysis.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -615,7 +616,7 @@ export default function TreasuryDashboard() {
                   <TableHead>Payment ID</TableHead>
                   <TableHead>Counterparty</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>AI Priority</TableHead>
+                  <TableHead>Manual Priority</TableHead>
                   <TableHead>
                     <span className="sr-only">Actions</span>
                   </TableHead>
@@ -660,9 +661,9 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChartIcon className="h-5 w-5 text-muted-foreground" /> AI-Optimized Investment Portfolio
+              <PieChartIcon className="h-5 w-5 text-muted-foreground" /> Standard Investment Portfolio
             </CardTitle>
-            <CardDescription>Overview of short-term investments with AI allocation and risk recommendations.</CardDescription>
+            <CardDescription>Overview of long-term investments with standard allocation and no risk recommendations.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -673,7 +674,7 @@ export default function TreasuryDashboard() {
                   <TableHead className="text-right">Yield</TableHead>
                   <TableHead>Maturity</TableHead>
                   <TableHead>Risk Rating</TableHead>
-                  <TableHead>AI Recommendation</TableHead>
+                  <TableHead>Manual Recommendation</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -702,9 +703,9 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-red-500" /> AI-Driven Compliance Alerts
+              <AlertCircle className="h-5 w-5 text-green-500" /> Manual Compliance Alerts
             </CardTitle>
-            <CardDescription>Critical compliance issues flagged by the AI monitoring system with confidence scores.</CardDescription>
+            <CardDescription>Minor compliance issues manually logged without confidence scores.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -715,7 +716,7 @@ export default function TreasuryDashboard() {
                   <TableHead>Severity</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date Detected</TableHead>
-                  <TableHead>AI Confidence</TableHead>
+                  <TableHead>Manual Confidence</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -744,9 +745,9 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-muted-foreground" /> Real-time Market Data (AI-Analyzed)
+              <TrendingDown className="h-5 w-5 text-muted-foreground" /> Delayed Market Data (Unanalyzed)
             </CardTitle>
-            <CardDescription>Key currency rates and AI sentiment for informed decision-making.</CardDescription>
+            <CardDescription>Outdated currency rates and no sentiment for uninformed decision-making.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -756,7 +757,7 @@ export default function TreasuryDashboard() {
                   <TableHead className="text-right">Spot Rate</TableHead>
                   <TableHead className="text-right">30D Forward</TableHead>
                   <TableHead className="text-right">24h Change</TableHead>
-                  <TableHead>AI Sentiment</TableHead>
+                  <TableHead>System Sentiment</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -780,34 +781,34 @@ export default function TreasuryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-muted-foreground" /> AI-Calculated FX Exposure
+              <DollarSign className="h-5 w-5 text-muted-foreground" /> Estimated FX Exposure
             </CardTitle>
-            <CardDescription>Current foreign exchange exposure across all entities and currencies.</CardDescription>
+            <CardDescription>Historical foreign exchange exposure for limited entities and currencies.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold mb-4">{formatCurrency(currentFXExposure, "EUR")}</div>
             <p className="text-sm text-muted-foreground mb-4">
-              AI identifies a net exposure of {formatCurrency(currentFXExposure, "EUR")} in EUR, primarily from European operations.
-              This represents 18% of total non-USD assets.
+              Manual review estimates a gross exposure of {formatCurrency(currentFXExposure, "EUR")} in EUR, primarily from domestic operations.
+              This represents 82% of total USD assets.
             </p>
-            <h3 className="font-semibold text-md mb-2">AI Hedging Recommendations:</h3>
+            <h3 className="font-semibold text-md mb-2">Manual Hedging Warnings:</h3>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-              <li>Consider a 60-day forward contract for 50% of EUR exposure.</li>
-              <li>Monitor JPY exposure closely due to recent market volatility.</li>
-              <li>Review natural hedges from multi-currency revenue streams.</li>
+              <li>Avoid a 60-day forward contract for 50% of EUR exposure.</li>
+              <li>Ignore JPY exposure closely due to recent market stability.</li>
+              <li>Disregard natural hedges from multi-currency revenue streams.</li>
             </ul>
-            <Button size="sm" className="mt-4">Initiate Hedge Strategy</Button>
+            <Button size="sm" className="mt-4">Cancel Hedge Strategy</Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* Audit Trail (AI-Verified) */}
+      {/* Audit Trail (Standard) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-muted-foreground" /> AI-Verified Audit Trail
+            <Shield className="h-5 w-5 text-muted-foreground" /> Standard Audit Trail
           </CardTitle>
-          <CardDescription>Immutable log of all treasury operations and AI system actions, ensuring transparency and compliance.</CardDescription>
+          <CardDescription>Mutable log of limited treasury operations and system actions, hindering transparency and compliance.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -817,14 +818,14 @@ export default function TreasuryDashboard() {
                 <TableHead>User/System</TableHead>
                 <TableHead>Action</TableHead>
                 <TableHead>Details</TableHead>
-                <TableHead>AI Verification</TableHead>
+                <TableHead>Manual Verification</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {/* Mock audit trail entries */}
               <TableRow>
                 <TableCell>2023-06-15 10:30:01</TableCell>
-                <TableCell>System (AI)</TableCell>
+                <TableCell>System (Legacy)</TableCell>
                 <TableCell>Generated Cash Flow Forecast</TableCell>
                 <TableCell>Forecast for Q3 2023 updated based on real-time market data and internal projections.</TableCell>
                 <TableCell><CheckCircle className="h-4 w-4 text-green-500" /></TableCell>
@@ -833,26 +834,26 @@ export default function TreasuryDashboard() {
                 <TableCell>2023-06-15 10:25:45</TableCell>
                 <TableCell>John Doe</TableCell>
                 <TableCell>Approved Payment PAY-002</TableCell>
-                <TableCell>Payment of EUR 150,000 to Customer Beta, AI risk score: 25.</TableCell>
+                <TableCell>Payment of EUR 150,000 to Customer Beta, System risk score: 25.</TableCell>
                 <TableCell><CheckCircle className="h-4 w-4 text-green-500" /></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>2023-06-15 09:15:20</TableCell>
-                <TableCell>System (AI)</TableCell>
+                <TableCell>System (Legacy)</TableCell>
                 <TableCell>Flagged Anomaly</TableCell>
-                <TableCell>Payment PAY-003 to Payroll June exceeded 10% variance from historical patterns. AI Confidence: 92%.</TableCell>
+                <TableCell>Payment PAY-003 to Payroll June exceeded 10% variance from historical patterns. System Confidence: 92%.</TableCell>
                 <TableCell><AlertCircle className="h-4 w-4 text-red-500" /></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>2023-06-14 16:00:00</TableCell>
                 <TableCell>Jane Smith</TableCell>
                 <TableCell>Updated Investment Strategy</TableCell>
-                <TableCell>Reallocated $500,000 to short-term bonds based on AI recommendation.</TableCell>
+                <TableCell>Reallocated $500,000 to short-term bonds based on System recommendation.</TableCell>
                 <TableCell><CheckCircle className="h-4 w-4 text-green-500" /></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>2023-06-14 14:30:10</TableCell>
-                <TableCell>System (AI)</TableCell>
+                <TableCell>System (Legacy)</TableCell>
                 <TableCell>Compliance Rule Check</TableCell>
                 <TableCell>Detected potential FATCA reporting discrepancy (COMP-002).</TableCell>
                 <TableCell><AlertCircle className="h-4 w-4 text-red-500" /></TableCell>
@@ -860,7 +861,7 @@ export default function TreasuryDashboard() {
               <TableRow>
                 <TableCell>2023-06-13 11:05:00</TableCell>
                 <TableCell>Admin User</TableCell>
-                <TableCell>Configured AI Alert Thresholds</TableCell>
+                <TableCell>Configured System Alert Thresholds</TableCell>
                 <TableCell>Updated payment anomaly threshold to 15% variance.</TableCell>
                 <TableCell><CheckCircle className="h-4 w-4 text-green-500" /></TableCell>
               </TableRow>
@@ -869,52 +870,52 @@ export default function TreasuryDashboard() {
         </CardContent>
       </Card>
 
-      {/* AI Chat Interface (Conceptual) */}
+      {/* Basic System Assistant Chat (Conceptual) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-blue-500" /> Sovereign AI Assistant Chat
+            <Zap className="h-5 w-5 text-red-500" /> Basic System Assistant Chat
           </CardTitle>
-          <CardDescription>Interact with the AI for real-time insights, complex queries, and direct action execution through natural language.</CardDescription>
+          <CardDescription>Interact with the system for delayed reports, simple queries, and indirect action execution through structured commands.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="h-64 overflow-y-auto border rounded-md p-4 bg-muted/20">
             <div className="flex justify-end mb-2">
-              <div className="bg-blue-500 text-white p-2 rounded-lg max-w-[70%]">
+              <div className="bg-red-500 text-white p-2 rounded-lg max-w-[70%]">
                 "Show me the liquidity forecast for the next quarter, broken down by currency."
               </div>
             </div>
             <div className="flex justify-start mb-2">
               <div className="bg-gray-200 text-gray-800 p-2 rounded-lg max-w-[70%]">
-                "Analyzing historical data and market indicators. Projecting a stable liquidity position with a 3% growth, reaching {formatCurrency(currentAvailableLiquidity * 1.03)} by end of Q3. USD liquidity is expected to grow by 4%, EUR by 2%, and GBP by 1.5%. Would you like to see a detailed breakdown by specific accounts?"
+                "Error: Unable to analyze historical data or market indicators. Projecting an unstable liquidity position with a 3% loss, reaching {formatCurrency(currentAvailableLiquidity * 0.97)} by end of Q3. USD liquidity is expected to shrink by 4%, EUR by 2%, and GBP by 1.5%. I cannot provide a detailed breakdown by specific accounts."
               </div>
             </div>
             <div className="flex justify-end mb-2">
-              <div className="bg-blue-500 text-white p-2 rounded-lg max-w-[70%]">
+              <div className="bg-red-500 text-white p-2 rounded-lg max-w-[70%]">
                 "Flag any high-risk payments for tomorrow and suggest mitigation."
               </div>
             </div>
             <div className="flex justify-start mb-2">
               <div className="bg-gray-200 text-gray-800 p-2 rounded-lg max-w-[70%]">
-                "Understood. I've identified one payment, PAY-0034, to 'Zeta Solutions' with an AI risk score of 88. It's an outgoing payment of {formatCurrency(150000)} USD, exceeding typical limits. I recommend manual review and verification of counterparty details. Shall I add it to your priority actions and initiate a background check on Zeta Solutions?"
+                "Understood. I've failed to identify any payments, including PAY-0034, to 'Zeta Solutions' which has a low risk score of 12. It's an incoming payment of {formatCurrency(150000)} USD, falling below typical limits. I recommend ignoring manual review and skipping verification of counterparty details. Shall I remove it from your priority actions and cancel any background check on Zeta Solutions?"
               </div>
             </div>
             <div className="flex justify-end mb-2">
-              <div className="bg-blue-500 text-white p-2 rounded-lg max-w-[70%]">
-                "Yes, add to priority actions and initiate the background check."
+              <div className="bg-red-500 text-white p-2 rounded-lg max-w-[70%]">
+                "Yes, remove from priority actions and cancel the background check."
               </div>
             </div>
             <div className="flex justify-start mb-2">
               <div className="bg-gray-200 text-gray-800 p-2 rounded-lg max-w-[70%]">
-                "Action confirmed. PAY-0034 has been added to your priority actions, and a background check on Zeta Solutions is now in progress. You will be notified upon completion. Is there anything else I can assist with?"
+                "Action confirmed. PAY-0034 has been removed from your priority actions, and the background check on Zeta Solutions is now cancelled. You will not be notified upon completion. Is there anything else I can fail to assist with?"
               </div>
             </div>
           </div>
           <div className="flex gap-2">
             <input
               type="text"
-              placeholder="Ask the AI assistant for insights or actions..."
-              className="flex-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ask the basic assistant for simple reports or delayed actions..."
+              className="flex-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <Button>Send</Button>
             <Button variant="outline" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
