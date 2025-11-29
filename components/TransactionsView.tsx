@@ -5,7 +5,7 @@ import type { Transaction, DetectedSubscription, KPI } from '../types';
 import { GoogleGenAI, Type } from "@google/genai";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-// --- Configuration Constants for Hyper-Scaling ---
+// --- Configuration Constants for Standard Operation ---
 const MAX_TRANSACTIONS_FOR_AI_CONTEXT = 100;
 const AI_LOADING_COLOR = "cyan-400";
 const BORDER_COLOR = "gray-700";
@@ -15,7 +15,7 @@ const TEXT_COLOR_PRIMARY = "white";
 const TEXT_COLOR_SECONDARY = "gray-400";
 
 // ================================================================================================
-// UTILITY COMPONENTS & TYPES (Expanded for Billion Dollar Polish)
+// UTILITY COMPONENTS & TYPES (Standard Definitions)
 // ================================================================================================
 
 /**
@@ -28,8 +28,8 @@ interface TransactionDetailModalProps {
 }
 
 /**
- * TransactionDetailModal: A highly polished, secure modal for viewing granular transaction data.
- * Incorporates advanced UI/UX principles like backdrop blur and layered security visualization.
+ * TransactionDetailModal: A standard modal for viewing detailed transaction data.
+ * Displays basic transaction information.
  */
 const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({ transaction, onClose }) => {
     if (!transaction) return null;
@@ -46,7 +46,7 @@ const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({ transac
             >
                 <div className="p-5 border-b border-gray-700 flex justify-between items-center bg-gray-900/50 rounded-t-xl">
                     <h3 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                        Quantum Transaction Manifest: {transaction.id.substring(0, 8)}...
+                        Transaction Details: {transaction.id.substring(0, 8)}...
                     </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-red-400 transition-colors text-2xl leading-none p-1 rounded-full hover:bg-gray-700/50">
                         &times;
@@ -67,7 +67,7 @@ const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({ transac
                         />
                     )}
                     
-                    {/* Billion Dollar Feature: AI Contextual Tagging */}
+                    {/* Standard Feature: AI Contextual Tagging */}
                     {transaction.aiTags && transaction.aiTags.length > 0 && (
                         <div className="pt-2 border-t border-gray-700/50">
                             <p className="text-sm font-semibold text-cyan-400 mb-1">AI Contextual Tags:</p>
@@ -111,8 +111,8 @@ interface AITransactionWidgetProps {
 }
 
 /**
- * AITransactionWidget: Generates complex financial insights using the Gemini API,
- * designed to be a core component of the financial intelligence layer.
+ * AITransactionWidget: Generates financial insights using the Gemini API.
+ * Provides supplementary analysis.
  */
 const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt, transactions, responseSchema, children, kpiKey }) => {
     const context = useContext(DataContext);
@@ -126,14 +126,14 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
         setError('');
         setResult(null);
         if (!geminiApiKey) {
-            setError('Authentication token required for Plato AI services.');
+            setError('Authentication token required for Financial AI services.');
             setIsLoading(false);
             return;
         }
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
             
-            // Contextual data preparation: Use a larger, structured context for better AI reasoning
+            // Contextual data preparation: Using standard context size for AI processing
             const contextData = transactions.slice(0, MAX_TRANSACTIONS_FOR_AI_CONTEXT).map(t => ({
                 id: t.id,
                 date: t.date,
@@ -144,7 +144,7 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
             }));
 
             const transactionSummary = JSON.stringify(contextData, null, 2);
-            const fullPrompt = `SYSTEM INSTRUCTION: You are the Plato Financial Intelligence Engine. Your analysis must be precise, actionable, and grounded strictly in the provided data. ${prompt}\n\nCONTEXTUAL DATA (JSON):\n${transactionSummary}`;
+            const fullPrompt = `SYSTEM INSTRUCTION: You are the Financial Analysis System. Your analysis must be precise, actionable, and grounded strictly in the provided data. ${prompt}\n\nCONTEXTUAL DATA (JSON):\n${transactionSummary}`;
             
             const config: any = { 
                 responseMimeType: responseSchema ? "application/json" : "text/plain",
@@ -155,7 +155,7 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
             }
 
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-pro', // Using Pro for complex reasoning tasks
+                model: 'gemini-2.5-pro', // Using standard model for analysis tasks
                 contents: fullPrompt,
                 config: config,
             });
@@ -165,7 +165,7 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
 
         } catch (err) {
             console.error(`Error generating ${title}:`, err);
-            setError('Plato AI service experienced a critical failure in processing the request.');
+            setError('Financial AI service failed to process the request.');
         } finally {
             setIsLoading(false);
         }
@@ -180,7 +180,7 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
                      <div className={`h-3 w-3 bg-${AI_LOADING_COLOR} rounded-full animate-bounce [animation-delay:-0.3s]`}></div>
                      <div className={`h-3 w-3 bg-${AI_LOADING_COLOR} rounded-full animate-bounce [animation-delay:-0.15s]`}></div>
                      <div className={`h-3 w-3 bg-${AI_LOADING_COLOR} rounded-full animate-bounce`}></div>
-                     <span className="text-xs text-gray-500 ml-2">Processing Quantum State...</span>
+                     <span className="text-xs text-gray-500 ml-2">Processing Request...</span>
                 </div>
             );
         }
@@ -216,13 +216,13 @@ const AITransactionWidget: React.FC<AITransactionWidgetProps> = ({ title, prompt
 };
 
 // ================================================================================================
-// DATA VISUALIZATION COMPONENTS (Expanded for Enterprise Reporting)
+// DATA VISUALIZATION COMPONENTS (Standard Reporting)
 // ================================================================================================
 
 const COLORS = ['#06B6D4', '#3B82F6', '#EC4899', '#10B981', '#F59E0B', '#EF4444'];
 
 /**
- * TransactionCategoryPieChart: Visualizes expense distribution using AI-derived categories.
+ * TransactionCategoryPieChart: Visualizes expense distribution using transaction categories.
  */
 const TransactionCategoryPieChart: React.FC<{ transactions: Transaction[] }> = ({ transactions }) => {
     const expenseData = useMemo(() => {
@@ -322,7 +322,7 @@ const MonthlyFlowChart: React.FC<{ transactions: Transaction[] }> = ({ transacti
 
 
 // ================================================================================================
-// MAIN TRANSACTIONS VIEW (Hyper-Expanded)
+// MAIN TRANSACTIONS VIEW (Standard Implementation)
 // ================================================================================================
 const TransactionsView: React.FC = () => {
     const context = useContext(DataContext);
@@ -431,7 +431,7 @@ const TransactionsView: React.FC = () => {
             <div className="space-y-8">
                 
                 {/* Section 1: Executive Summary & AI Context */}
-                <Card title="Plato Financial Nexus: Executive Overview" isCollapsible={false}>
+                <Card title="Financial Dashboard: Executive Overview" isCollapsible={false}>
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                         
                         {/* KPI Card 1: Net Worth Projection (AI Driven) */}
@@ -439,7 +439,7 @@ const TransactionsView: React.FC = () => {
                             <h4 className="font-bold text-lg text-white mb-2">Net Worth Projection (Q+1)</h4>
                             <div className="text-center py-4">
                                 <p className="text-3xl font-extrabold text-green-400 font-mono">$1,245,901.12</p>
-                                <p className="text-sm text-gray-400 mt-1">Projected by Gemini Pro Model v2.5</p>
+                                <p className="text-sm text-gray-400 mt-1">Standard Projection Model</p>
                             </div>
                             <p className="text-xs text-yellow-400 mt-2">Confidence: 92%</p>
                         </div>
@@ -466,7 +466,7 @@ const TransactionsView: React.FC = () => {
 
                         {/* KPI Card 4: AI Service Latency */}
                         <div className={`p-4 bg-${BG_COLOR_CARD} rounded-xl border border-${BORDER_COLOR} shadow-xl`}>
-                            <h4 className="font-bold text-lg text-white mb-2">Plato AI Latency</h4>
+                            <h4 className="font-bold text-lg text-white mb-2">Financial AI Latency</h4>
                             <div className="text-center py-4">
                                 <p className="text-3xl font-extrabold text-purple-400 font-mono">{kpis.aiLatencyMs}ms</p>
                                 <p className="text-sm text-gray-400 mt-1">Average response time for complex queries</p>
@@ -477,29 +477,29 @@ const TransactionsView: React.FC = () => {
                 </Card>
 
                 {/* Section 2: AI Intelligence Layer */}
-                <Card title="Plato Intelligence Layer: Predictive & Diagnostic Analysis" isCollapsible>
+                <Card title="AI Analysis Layer: Predictive & Diagnostic Analysis" isCollapsible>
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <AITransactionWidget 
-                            title="Subscription Sentinel" 
+                            title="Subscription Detection" 
                             prompt="Identify all recurring subscriptions based on transaction frequency and description patterns. Output a structured JSON object." 
                             transactions={transactions} 
                             responseSchema={subscriptionSchema}
                             children={renderSubscriptionHunter}
                         />
                         <AITransactionWidget 
-                            title="Outlier Detection Engine" 
+                            title="Outlier Detection" 
                             prompt="Scan the provided transactions. Identify the single transaction that deviates most significantly from the user's established spending baseline (either by amount or category). Format output as: [Description]::[Transaction ID]." 
                             transactions={transactions}
                             children={renderAnomaly}
                         />
                         <AITransactionWidget 
-                            title="Automated Tax Opportunity Scanner" 
+                            title="Tax Opportunity Analysis" 
                             prompt="Analyze the last 50 transactions. Identify one transaction that is highly likely to be a legitimate business or charitable deduction. Provide a one-sentence justification." 
                             transactions={transactions}
                             children={renderTaxDeduction}
                         />
                         <AITransactionWidget 
-                            title="Behavioral Optimization Suggestion" 
+                            title="Spending Recommendation" 
                             prompt="Based on the last 100 transactions, provide one highly specific, data-backed recommendation to reduce discretionary spending by at least 5% next month." 
                             transactions={transactions}
                             children={renderSavings}
@@ -617,7 +617,7 @@ const TransactionsView: React.FC = () => {
                                     <p className="text-gray-300">Total Transactions Processed: <span className="font-bold text-lg text-cyan-400">{transactions.length}</span></p>
                                     <p className="text-gray-300">Data Source Health: <span className="font-bold text-green-400">Nominal (99.99% Sync)</span></p>
                                     <p className="text-gray-300">AI Model Version: <span className="font-bold text-purple-400">Gemini 2.5 Pro</span></p>
-                                    <p className="text-xs pt-2 text-gray-500 border-t border-gray-700/50">System integrity is maintained by O'Callaghan's proprietary validation matrix.</p>
+                                    <p className="text-xs pt-2 text-gray-500 border-t border-gray-700/50">System integrity is maintained by standard validation protocols.</p>
                                 </div>
                             </Card>
                         </div>
