@@ -1,644 +1,704 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { DataContext } from '../context/DataContext';
-import Card from './Card';
-import { View, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction } from '../types';
-import { GoogleGenAI } from '@google/genai';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
+import './CorporateCommandView.css';
 
-// Analytics Data Structures
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-export type TimeSeriesData = {
-    date: string;
-    value: number;
-    secondaryValue?: number;
-    tertiaryValue?: number;
-};
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
 
-export type CategoricalData = {
-    category: string;
-    value: number;
-    percentage?: number;
-    color?: string;
-};
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
 
-export type FinancialRatio = {
-    name: string;
-    value: number;
-    benchmark: number;
-    status: 'Healthy' | 'Warning' | 'Critical';
-    delta: number;
-};
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
 
-export type VendorPerformanceMetric = {
-    vendor: string;
-    totalSpend: number;
-    transactionCount: number;
-    avgTransactionValue: number;
-    riskScore: number;
-    lastInteraction: string;
-};
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
 
-export type DepartmentalKPI = {
-    department: string;
-    budgetUtilization: number;
-    operationalEfficiency: number;
-    complianceScore: number;
-    headcountSpend: number;
-};
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
 
-export type RiskAssessmentData = {
-    riskCategory: string;
-    probability: number;
-    impact: number;
-    mitigationStatus: string;
-    exposureValue: number;
-};
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
 
-export type CashFlowProjection = {
-    period: string;
-    inflow: number;
-    outflow: number;
-    netPosition: number;
-    cumulativeCash: number;
-};
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
 
-export type AuditLogEntry = {
-    timestamp: string;
-    user: string;
-    action: string;
-    severity: 'Low' | 'Medium' | 'High' | 'Critical';
-    details: string;
-};
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
 
-export type TaxLiabilityBreakdown = {
-    jurisdiction: string;
-    taxType: string;
-    estimatedAmount: number;
-    dueDate: string;
-    status: 'Accrued' | 'Paid' | 'Pending';
-};
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
 
-// Data Processing Functions
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
 
-/**
- * Generates daily transaction volume and amount analytics.
- */
-export const generateDailyTransactionAnalytics = (transactions: CorporateTransaction[]): TimeSeriesData[] => {
-    const dailyMap: Record<string, { count: number; amount: number }> = {};
-    transactions.forEach(tx => {
-        const date = new Date(tx.date).toISOString().split('T')[0];
-        if (!dailyMap[date]) dailyMap[date] = { count: 0, amount: 0 };
-        dailyMap[date].count++;
-        dailyMap[date].amount += tx.amount;
-    });
-    return Object.entries(dailyMap)
-        .map(([date, data]) => ({ date, value: data.amount, secondaryValue: data.count }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-};
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
 
-/**
- * Calculates key financial ratios.
- */
-export const calculateEnterpriseFinancialRatios = (invoices: Invoice[], orders: PaymentOrder[], transactions: CorporateTransaction[]): FinancialRatio[] => {
-    const currentAssets = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + i.amount, 0);
-    const currentLiabilities = orders.filter(o => o.status !== 'paid').reduce((sum, o) => sum + o.amount, 0);
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
-    const totalExpenses = transactions.reduce((sum, t) => sum + t.amount, 0);
-    
-    const currentRatio = currentLiabilities > 0 ? currentAssets / currentLiabilities : 0;
-    const netProfitMargin = totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
-    const burnRate = totalExpenses / 30; // Simplified 30-day period for calculation
-    
-    return [
-        { name: 'Current Ratio', value: currentRatio, benchmark: 1.5, status: currentRatio > 1.5 ? 'Healthy' : currentRatio > 1.0 ? 'Warning' : 'Critical', delta: 0.1 },
-        { name: 'Net Profit Margin', value: netProfitMargin, benchmark: 20, status: netProfitMargin > 20 ? 'Healthy' : netProfitMargin > 10 ? 'Warning' : 'Critical', delta: -2.5 },
-        { name: 'Daily Burn Rate', value: burnRate, benchmark: 5000, status: burnRate < 5000 ? 'Healthy' : 'Warning', delta: 12.4 }
-    ];
-};
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
 
-/**
- * Projects cash flow for the next 6 periods.
- */
-export const generateCashFlowProjections = (invoices: Invoice[], orders: PaymentOrder[]): CashFlowProjection[] => {
-    const projections: CashFlowProjection[] = [];
-    const today = new Date();
-    let currentCash = 1000000; // Initial capital assumption
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
 
-    for (let i = 0; i < 6; i++) {
-        const futureDate = new Date(today);
-        futureDate.setMonth(today.getMonth() + i);
-        const periodKey = futureDate.toISOString().substring(0, 7);
-        
-        // Estimated inflows from receivables
-        const projectedInflow = invoices
-            .filter(inv => new Date(inv.dueDate).getMonth() === futureDate.getMonth())
-            .reduce((sum, inv) => sum + inv.amount, 0) * 0.95; // Assumed 95% collection rate
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
 
-        // Estimated outflows from payables and recurring expenses
-        const projectedOutflow = orders
-            .filter(ord => new Date(ord.dueDate || '').getMonth() === futureDate.getMonth())
-            .reduce((sum, ord) => sum + ord.amount, 0) * 1.1; // Assumed 10% buffer for variable costs
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
 
-        const net = projectedInflow - projectedOutflow;
-        currentCash += net;
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
 
-        projections.push({
-            period: periodKey,
-            inflow: projectedInflow,
-            outflow: projectedOutflow,
-            netPosition: net,
-            cumulativeCash: currentCash
-        });
-    }
-    return projections;
-};
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
 
-/**
- * Analyzes vendor performance and spend.
- */
-export const analyzeVendorEcosystem = (transactions: CorporateTransaction[]): VendorPerformanceMetric[] => {
-    const vendorMap: Record<string, VendorPerformanceMetric> = {};
-    
-    transactions.forEach(tx => {
-        if (!vendorMap[tx.merchant]) {
-            vendorMap[tx.merchant] = {
-                vendor: tx.merchant,
-                totalSpend: 0,
-                transactionCount: 0,
-                avgTransactionValue: 0,
-                riskScore: Math.floor(Math.random() * 100), // Simulated risk score
-                lastInteraction: tx.date
-            };
-        }
-        const v = vendorMap[tx.merchant];
-        v.totalSpend += tx.amount;
-        v.transactionCount++;
-        v.avgTransactionValue = v.totalSpend / v.transactionCount;
-        if (new Date(tx.date) > new Date(v.lastInteraction)) {
-            v.lastInteraction = tx.date;
-        }
-    });
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
 
-    return Object.values(vendorMap).sort((a, b) => b.totalSpend - a.totalSpend);
-};
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
 
-/**
- * Segments operational spend into categories.
- */
-export const segmentOperationalSpend = (transactions: CorporateTransaction[]): CategoricalData[] => {
-    const categories = {
-        'Fixed Infrastructure': 0,
-        'Variable COGS': 0,
-        'R&D Investment': 0,
-        'Sales & Marketing': 0,
-        'G&A': 0
-    };
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
 
-    transactions.forEach(tx => {
-        if (tx.merchant.includes('Rent') || tx.merchant.includes('AWS') || tx.merchant.includes('Server')) categories['Fixed Infrastructure'] += tx.amount;
-        else if (tx.merchant.includes('Supplier') || tx.merchant.includes('Logistics')) categories['Variable COGS'] += tx.amount;
-        else if (tx.description.includes('Research') || tx.description.includes('Lab')) categories['R&D Investment'] += tx.amount;
-        else if (tx.merchant.includes('Ads') || tx.merchant.includes('Google') || tx.merchant.includes('Facebook')) categories['Sales & Marketing'] += tx.amount;
-        else categories['G&A'] += tx.amount;
-    });
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
 
-    return Object.entries(categories).map(([category, value]) => ({ category, value }));
-};
-
-/**
- * Estimates tax liabilities.
- */
-export const estimateTaxLiabilities = (revenue: number, expenses: number): TaxLiabilityBreakdown[] => {
-    const profit = Math.max(0, revenue - expenses);
-    return [
-        { jurisdiction: 'Federal', taxType: 'Corporate Income Tax', estimatedAmount: profit * 0.21, dueDate: '2024-04-15', status: 'Accrued' },
-        { jurisdiction: 'State (CA)', taxType: 'Franchise Tax', estimatedAmount: profit * 0.0884, dueDate: '2024-04-15', status: 'Accrued' },
-        { jurisdiction: 'International', taxType: 'VAT/GST', estimatedAmount: revenue * 0.05, dueDate: 'Monthly', status: 'Pending' },
-        { jurisdiction: 'Local', taxType: 'Payroll Tax', estimatedAmount: expenses * 0.0765, dueDate: 'Bi-Weekly', status: 'Paid' }
-    ];
-};
-
-/**
- * Generates risk assessment data.
- */
-export const generateEnterpriseRiskHeatmap = (cases: ComplianceCase[], transactions: CorporateTransaction[]): RiskAssessmentData[] => {
-    const risks: RiskAssessmentData[] = [
-        { riskCategory: 'AML/KYC', probability: 0.15, impact: 0.9, mitigationStatus: 'Monitoring', exposureValue: 500000 },
-        { riskCategory: 'Data Privacy (GDPR)', probability: 0.05, impact: 0.95, mitigationStatus: 'Controlled', exposureValue: 2000000 },
-        { riskCategory: 'Vendor Fraud', probability: 0.2, impact: 0.4, mitigationStatus: 'Active Investigation', exposureValue: 150000 },
-        { riskCategory: 'Tax Compliance', probability: 0.1, impact: 0.7, mitigationStatus: 'Audited', exposureValue: 750000 },
-        { riskCategory: 'Cybersecurity', probability: 0.3, impact: 0.99, mitigationStatus: 'Hardened', exposureValue: 5000000 }
-    ];
-
-    // Adjusts risk based on data
-    if (cases.some(c => c.type === 'AML')) risks[0].probability += 0.2;
-    if (transactions.some(t => t.amount > 50000)) risks[2].probability += 0.1;
-
-    return risks;
-};
-
-// Main Component
-
-interface CorporateDashboardProps {
-    setActiveView: (view: View) => void;
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView }) => {
-    const context = useContext(DataContext);
-    
-    // State Management
-    const [activeTab, setActiveTab] = useState<'Overview' | 'Finance' | 'Operations' | 'Risk' | 'Strategy'>('Overview');
-    const [aiInsight, setAiInsight] = useState<string>('Initializing AI...');
-    const [isAiProcessing, setIsAiProcessing] = useState<boolean>(false);
-    const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-    if (!context) throw new Error("CorporateCommandView requires DataContext.");
-    const { paymentOrders, invoices, complianceCases, corporateTransactions } = context;
+const CorporateCommandView: React.FC = () => {
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-    // Data Aggregation
-    
-    // Financials
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + i.amount, 0);
-    const totalExpenses = corporateTransactions.reduce((acc, t) => acc + t.amount, 0);
-    const netIncome = totalRevenue - totalExpenses;
-    const financialRatios = calculateEnterpriseFinancialRatios(invoices, paymentOrders, corporateTransactions);
-    const cashFlowForecast = generateCashFlowProjections(invoices, paymentOrders);
-    const taxLiabilities = estimateTaxLiabilities(totalRevenue, totalExpenses);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
 
-    // Operations
-    const dailyVolume = generateDailyTransactionAnalytics(corporateTransactions);
-    const operationalSpend = segmentOperationalSpend(corporateTransactions);
-    const vendorMetrics = analyzeVendorEcosystem(corporateTransactions);
-    const topVendors = vendorMetrics.slice(0, 5);
-    
-    // Risk
-    const riskHeatmap = generateEnterpriseRiskHeatmap(complianceCases, corporateTransactions);
-    const openComplianceCases = complianceCases.filter(c => c.status === 'open');
-    const criticalRisks = riskHeatmap.filter(r => r.probability * r.impact > 0.15);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-    // AI Integration
-    useEffect(() => {
-        const generateStrategicReport = async () => {
-            setIsAiProcessing(true);
-            try {
-                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-                
-                let promptContext = '';
-                if (activeTab === 'Overview') {
-                    promptContext = `Executive Summary: Revenue $${totalRevenue}, Expenses $${totalExpenses}, Net Income $${netIncome}. Critical Risks: ${criticalRisks.length}. Top Vendor: ${topVendors[0]?.vendor}.`;
-                } else if (activeTab === 'Finance') {
-                    promptContext = `Financial Deep Dive: Current Ratio ${financialRatios[0].value.toFixed(2)}, Net Margin ${financialRatios[1].value.toFixed(2)}%. Cash Flow Trend: ${cashFlowForecast[0].netPosition > 0 ? 'Positive' : 'Negative'}. Tax Liability: $${taxLiabilities.reduce((s, t) => s + t.estimatedAmount, 0).toFixed(2)}.`;
-                } else if (activeTab === 'Operations') {
-                    promptContext = `Ops Report: Transaction Volume ${dailyVolume.length} days active. Top Spend Category: ${operationalSpend.sort((a,b) => b.value - a.value)[0]?.category}. Vendor Count: ${vendorMetrics.length}.`;
-                } else if (activeTab === 'Risk') {
-                    promptContext = `Risk Assessment: Open Cases ${openComplianceCases.length}. Highest Risk Category: ${riskHeatmap.sort((a,b) => b.probability - a.probability)[0]?.riskCategory}. Exposure: $${riskHeatmap.reduce((s,r) => s + r.exposureValue, 0)}.`;
-                } else {
-                    promptContext = `Strategic Outlook: Based on burn rate of $${financialRatios[2].value.toFixed(2)}/day and projected cash flow. Suggest 3 strategic moves for growth and stability.`;
-                }
+  const formatLabel = (key: string) => {
+    return key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  };
 
-                const prompt = `You are an advanced Corporate AI Assistant. Analyze the following data context for the '${activeTab}' view and provide a high-level, professional, actionable strategic insight (max 2 sentences). Context: ${promptContext}`;
-                
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: prompt,
-                });
-                setAiInsight(response.text);
-                setLastUpdated(new Date());
-            } catch (error) {
-                console.error("AI Processing Error:", error);
-                setAiInsight("AI link unavailable. Using fallback data.");
-            } finally {
-                setIsAiProcessing(false);
-            }
-        };
+  const renderInput = (keyName: keyof ApiKeysState, label?: string) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label || formatLabel(keyName)}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label || formatLabel(keyName)}`}
+      />
+    </div>
+  );
 
-        generateStrategicReport();
-    }, [activeTab, totalRevenue, totalExpenses, netIncome]);
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
 
-    // Visualization Utilities
-    const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'];
-    
-    const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(val);
-    const formatNumber = (val: number) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(val);
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
 
-    // Inline Sub-Components
-    
-    const TabButton = ({ id, label }: { id: typeof activeTab, label: string }) => (
-        <button 
-            onClick={() => setActiveTab(id)}
-            className={`px-6 py-3 text-sm font-bold tracking-wide transition-all duration-200 border-b-2 ${
-                activeTab === id 
-                ? 'border-blue-500 text-white bg-gray-800/50' 
-                : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800/30'
-            }`}
-        >
-            {label}
-        </button>
-    );
-
-    const MetricCard = ({ title, value, subtext, trend, color = 'blue' }: { title: string, value: string, subtext?: string, trend?: number, color?: string }) => (
-        <div className={`bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg relative overflow-hidden group hover:border-${color}-500 transition-colors`}>
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110`} />
-            <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{title}</h3>
-            <div className="text-3xl font-bold text-white mb-1">{value}</div>
-            {subtext && <div className="text-gray-500 text-sm">{subtext}</div>}
-            {trend !== undefined && (
-                <div className={`text-sm font-medium mt-3 flex items-center ${trend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {trend >= 0 ? 'â†‘' : 'â†“'} {Math.abs(trend)}% <span className="text-gray-600 ml-1">vs last period</span>
-                </div>
-            )}
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+              <h2>Core Infrastructure & Cloud</h2>
+              {renderInput('STRIPE_SECRET_KEY')}
+              {renderInput('TWILIO_ACCOUNT_SID')}
+              {renderInput('TWILIO_AUTH_TOKEN')}
+              {renderInput('SENDGRID_API_KEY')}
+              {renderInput('AWS_ACCESS_KEY_ID')}
+              {renderInput('AWS_SECRET_ACCESS_KEY')}
+              {renderInput('AZURE_CLIENT_ID')}
+              {renderInput('AZURE_CLIENT_SECRET')}
+              {renderInput('GOOGLE_CLOUD_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Deployment & DevOps</h2>
+              {renderInput('DOCKER_HUB_USERNAME')}
+              {renderInput('DOCKER_HUB_ACCESS_TOKEN')}
+              {renderInput('HEROKU_API_KEY')}
+              {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('VERCEL_API_TOKEN')}
+              {renderInput('CLOUDFLARE_API_TOKEN')}
+              {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('LINODE_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('TERRAFORM_API_TOKEN')}
+            </div>
+            <div className="form-section">
+              <h2>Collaboration & Productivity</h2>
+              {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('SLACK_BOT_TOKEN')}
+              {renderInput('DISCORD_BOT_TOKEN')}
+              {renderInput('TRELLO_API_KEY')}
+              {renderInput('TRELLO_API_TOKEN')}
+              {renderInput('JIRA_USERNAME')}
+              {renderInput('JIRA_API_TOKEN')}
+              {renderInput('ASANA_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('NOTION_API_KEY')}
+              {renderInput('AIRTABLE_API_KEY')}
+            </div>
+            <div className="form-section">
+                <h2>AI & Machine Learning</h2>
+                {renderInput('OPENAI_API_KEY')}
+                {renderInput('HUGGING_FACE_API_TOKEN')}
+                {renderInput('GOOGLE_CLOUD_AI_API_KEY')}
+                {renderInput('AMAZON_REKOGNITION_ACCESS_KEY')}
+                {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY')}
+                {renderInput('IBM_WATSON_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>File & Data Storage</h2>
+              {renderInput('DROPBOX_ACCESS_TOKEN')}
+              {renderInput('BOX_DEVELOPER_TOKEN')}
+              {renderInput('GOOGLE_DRIVE_API_KEY')}
+              {renderInput('ONEDRIVE_CLIENT_ID')}
+            </div>
+            <div className="form-section">
+              <h2>CRM & Business</h2>
+              {renderInput('SALESFORCE_CLIENT_ID')}
+              {renderInput('SALESFORCE_CLIENT_SECRET')}
+              {renderInput('HUBSPOT_API_KEY')}
+              {renderInput('ZENDESK_API_TOKEN')}
+              {renderInput('INTERCOM_ACCESS_TOKEN')}
+              {renderInput('MAILCHIMP_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>E-commerce</h2>
+              {renderInput('SHOPIFY_API_KEY')}
+              {renderInput('SHOPIFY_API_SECRET')}
+              {renderInput('BIGCOMMERCE_ACCESS_TOKEN')}
+              {renderInput('MAGENTO_ACCESS_TOKEN')}
+              {renderInput('WOOCOMMERCE_CLIENT_KEY')}
+              {renderInput('WOOCOMMERCE_CLIENT_SECRET')}
+            </div>
+            <div className="form-section">
+              <h2>Authentication & Identity</h2>
+              {renderInput('STYTCH_PROJECT_ID')}
+              {renderInput('STYTCH_SECRET')}
+              {renderInput('AUTH0_DOMAIN')}
+              {renderInput('AUTH0_CLIENT_ID')}
+              {renderInput('AUTH0_CLIENT_SECRET')}
+              {renderInput('OKTA_DOMAIN')}
+              {renderInput('OKTA_API_TOKEN')}
+            </div>
+            <div className="form-section">
+              <h2>Backend & Databases</h2>
+              {renderInput('FIREBASE_API_KEY')}
+              {renderInput('SUPABASE_URL')}
+              {renderInput('SUPABASE_ANON_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>API Development</h2>
+              {renderInput('POSTMAN_API_KEY')}
+              {renderInput('APOLLO_GRAPH_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Search & Real-time</h2>
+              {renderInput('ALGOLIA_APP_ID')}
+              {renderInput('ALGOLIA_ADMIN_API_KEY')}
+              {renderInput('PUSHER_APP_ID')}
+              {renderInput('PUSHER_KEY')}
+              {renderInput('PUSHER_SECRET')}
+              {renderInput('ABLY_API_KEY')}
+              {renderInput('ELASTICSEARCH_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Identity & Verification</h2>
+              {renderInput('STRIPE_IDENTITY_SECRET_KEY')}
+              {renderInput('ONFIDO_API_TOKEN')}
+              {renderInput('CHECKR_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Logistics & Shipping</h2>
+              {renderInput('LOB_API_KEY')}
+              {renderInput('EASYPOST_API_KEY')}
+              {renderInput('SHIPPO_API_TOKEN')}
+            </div>
+            <div className="form-section">
+              <h2>Maps & Weather</h2>
+              {renderInput('GOOGLE_MAPS_API_KEY')}
+              {renderInput('MAPBOX_ACCESS_TOKEN')}
+              {renderInput('HERE_API_KEY')}
+              {renderInput('ACCUWEATHER_API_KEY')}
+              {renderInput('OPENWEATHERMAP_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Social & Media</h2>
+              {renderInput('YELP_API_KEY')}
+              {renderInput('FOURSQUARE_API_KEY')}
+              {renderInput('REDDIT_CLIENT_ID')}
+              {renderInput('REDDIT_CLIENT_SECRET')}
+              {renderInput('TWITTER_BEARER_TOKEN')}
+              {renderInput('FACEBOOK_APP_ID')}
+              {renderInput('FACEBOOK_APP_SECRET')}
+              {renderInput('INSTAGRAM_APP_ID')}
+              {renderInput('INSTAGRAM_APP_SECRET')}
+              {renderInput('YOUTUBE_DATA_API_KEY')}
+              {renderInput('SPOTIFY_CLIENT_ID')}
+              {renderInput('SPOTIFY_CLIENT_SECRET')}
+              {renderInput('SOUNDCLOUD_CLIENT_ID')}
+              {renderInput('TWITCH_CLIENT_ID')}
+              {renderInput('TWITCH_CLIENT_SECRET')}
+            </div>
+            <div className="form-section">
+              <h2>Media & Content</h2>
+              {renderInput('MUX_TOKEN_ID')}
+              {renderInput('MUX_TOKEN_SECRET')}
+              {renderInput('CLOUDINARY_API_KEY')}
+              {renderInput('CLOUDINARY_API_SECRET')}
+              {renderInput('IMGIX_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Legal & Admin</h2>
+              {renderInput('STRIPE_ATLAS_API_KEY')}
+              {renderInput('CLERKY_API_KEY')}
+              {renderInput('DOCUSIGN_INTEGRATOR_KEY')}
+              {renderInput('HELLOSIGN_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Monitoring & CI/CD</h2>
+              {renderInput('LAUNCHDARKLY_SDK_KEY')}
+              {renderInput('SENTRY_AUTH_TOKEN')}
+              {renderInput('DATADOG_API_KEY')}
+              {renderInput('NEW_RELIC_API_KEY')}
+              {renderInput('CIRCLECI_API_TOKEN')}
+              {renderInput('TRAVIS_CI_API_TOKEN')}
+              {renderInput('BITBUCKET_USERNAME')}
+              {renderInput('BITBUCKET_APP_PASSWORD')}
+              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN')}
+              {renderInput('PAGERDUTY_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Headless CMS</h2>
+              {renderInput('CONTENTFUL_SPACE_ID')}
+              {renderInput('CONTENTFUL_ACCESS_TOKEN')}
+              {renderInput('SANITY_PROJECT_ID')}
+              {renderInput('SANITY_API_TOKEN')}
+              {renderInput('STRAPI_API_TOKEN')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+              <h2>Data Aggregators</h2>
+              {renderInput('PLAID_CLIENT_ID')}
+              {renderInput('PLAID_SECRET')}
+              {renderInput('YODLEE_CLIENT_ID')}
+              {renderInput('YODLEE_SECRET')}
+              {renderInput('MX_CLIENT_ID')}
+              {renderInput('MX_API_KEY')}
+              {renderInput('FINICITY_PARTNER_ID')}
+              {renderInput('FINICITY_APP_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Payment Processing</h2>
+              {renderInput('ADYEN_API_KEY')}
+              {renderInput('ADYEN_MERCHANT_ACCOUNT')}
+              {renderInput('BRAINTREE_MERCHANT_ID')}
+              {renderInput('BRAINTREE_PUBLIC_KEY')}
+              {renderInput('BRAINTREE_PRIVATE_KEY')}
+              {renderInput('SQUARE_APPLICATION_ID')}
+              {renderInput('SQUARE_ACCESS_TOKEN')}
+              {renderInput('PAYPAL_CLIENT_ID')}
+              {renderInput('PAYPAL_SECRET')}
+              {renderInput('DWOLLA_KEY')}
+              {renderInput('DWOLLA_SECRET')}
+              {renderInput('WORLDPAY_API_KEY')}
+              {renderInput('CHECKOUT_SECRET_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+              {renderInput('MARQETA_APPLICATION_TOKEN')}
+              {renderInput('MARQETA_ADMIN_ACCESS_TOKEN')}
+              {renderInput('GALILEO_API_LOGIN')}
+              {renderInput('GALILEO_API_TRANS_KEY')}
+              {renderInput('SOLARISBANK_CLIENT_ID')}
+              {renderInput('SOLARISBANK_CLIENT_SECRET')}
+              {renderInput('SYNAPSE_CLIENT_ID')}
+              {renderInput('SYNAPSE_CLIENT_SECRET')}
+              {renderInput('RAILSBANK_API_KEY')}
+              {renderInput('CLEARBANK_API_KEY')}
+              {renderInput('UNIT_API_TOKEN')}
+              {renderInput('TREASURY_PRIME_API_KEY')}
+              {renderInput('INCREASE_API_KEY')}
+              {renderInput('MERCURY_API_KEY')}
+              {renderInput('BREX_API_KEY')}
+              {renderInput('BOND_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>International Payments</h2>
+              {renderInput('CURRENCYCLOUD_LOGIN_ID')}
+              {renderInput('CURRENCYCLOUD_API_KEY')}
+              {renderInput('OFX_API_KEY')}
+              {renderInput('WISE_API_TOKEN')}
+              {renderInput('REMITLY_API_KEY')}
+              {renderInput('AZIMO_API_KEY')}
+              {renderInput('NIUM_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Investment & Market Data</h2>
+              {renderInput('ALPACA_API_KEY_ID')}
+              {renderInput('ALPACA_SECRET_KEY')}
+              {renderInput('TRADIER_ACCESS_TOKEN')}
+              {renderInput('IEX_CLOUD_API_TOKEN')}
+              {renderInput('POLYGON_API_KEY')}
+              {renderInput('FINNHUB_API_KEY')}
+              {renderInput('ALPHA_VANTAGE_API_KEY')}
+              {renderInput('MORNINGSTAR_API_KEY')}
+              {renderInput('XIGNITE_API_TOKEN')}
+              {renderInput('DRIVEWEALTH_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Crypto</h2>
+              {renderInput('COINBASE_API_KEY')}
+              {renderInput('COINBASE_API_SECRET')}
+              {renderInput('BINANCE_API_KEY')}
+              {renderInput('BINANCE_API_SECRET')}
+              {renderInput('KRAKEN_API_KEY')}
+              {renderInput('KRAKEN_PRIVATE_KEY')}
+              {renderInput('GEMINI_API_KEY')}
+              {renderInput('GEMINI_API_SECRET')}
+              {renderInput('COINMARKETCAP_API_KEY')}
+              {renderInput('COINGECKO_API_KEY')}
+              {renderInput('BLOCKIO_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Major Banks (Open Banking)</h2>
+              {renderInput('JP_MORGAN_CHASE_CLIENT_ID')}
+              {renderInput('CITI_CLIENT_ID')}
+              {renderInput('WELLS_FARGO_CLIENT_ID')}
+              {renderInput('CAPITAL_ONE_CLIENT_ID')}
+            </div>
+            <div className="form-section">
+              <h2>European & Global Banks (Open Banking)</h2>
+              {renderInput('HSBC_CLIENT_ID')}
+              {renderInput('BARCLAYS_CLIENT_ID')}
+              {renderInput('BBVA_CLIENT_ID')}
+              {renderInput('DEUTSCHE_BANK_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>UK & European Aggregators</h2>
+              {renderInput('TINK_CLIENT_ID')}
+              {renderInput('TRUELAYER_CLIENT_ID')}
+            </div>
+            <div className="form-section">
+              <h2>Compliance & Identity (KYC/AML)</h2>
+              {renderInput('MIDDESK_API_KEY')}
+              {renderInput('ALLOY_API_TOKEN')}
+              {renderInput('ALLOY_API_SECRET')}
+              {renderInput('COMPLYADVANTAGE_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Real Estate</h2>
+              {renderInput('ZILLOW_API_KEY')}
+              {renderInput('CORELOGIC_CLIENT_ID')}
+            </div>
+            <div className="form-section">
+              <h2>Credit Bureaus</h2>
+              {renderInput('EXPERIAN_API_KEY')}
+              {renderInput('EQUIFAX_API_KEY')}
+              {renderInput('TRANSUNION_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Global Payments (Emerging Markets)</h2>
+              {renderInput('FINCRA_API_KEY')}
+              {renderInput('FLUTTERWAVE_SECRET_KEY')}
+              {renderInput('PAYSTACK_SECRET_KEY')}
+              {renderInput('DLOCAL_API_KEY')}
+              {renderInput('RAPYD_ACCESS_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Accounting & Tax</h2>
+              {renderInput('TAXJAR_API_KEY')}
+              {renderInput('AVALARA_API_KEY')}
+              {renderInput('CODAT_API_KEY')}
+              {renderInput('XERO_CLIENT_ID')}
+              {renderInput('XERO_CLIENT_SECRET')}
+              {renderInput('QUICKBOOKS_CLIENT_ID')}
+              {renderInput('QUICKBOOKS_CLIENT_SECRET')}
+              {renderInput('FRESHBOOKS_API_KEY')}
+            </div>
+            <div className="form-section">
+              <h2>Fintech Utilities</h2>
+              {renderInput('ANVIL_API_KEY')}
+              {renderInput('MOOV_CLIENT_ID')}
+              {renderInput('MOOV_SECRET')}
+              {renderInput('VGS_USERNAME')}
+              {renderInput('VGS_PASSWORD')}
+              {renderInput('SILA_APP_HANDLE')}
+              {renderInput('SILA_PRIVATE_KEY')}
+            </div>
+          </>
+        )}
+        
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-    );
-
-    // Component Rendering
-
-    return (
-        <div className="min-h-screen bg-gray-900 text-white p-2 space-y-8 font-sans">
-            
-            {/* HEADER & NAVIGATION */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-6">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-                        NEXUS COMMAND
-                    </h1>
-                    <p className="text-gray-400 text-sm mt-1">Enterprise Operating System v4.2.0 â€¢ {lastUpdated.toLocaleString()}</p>
-                </div>
-                <div className="flex space-x-1 mt-4 md:mt-0 bg-gray-900 rounded-lg p-1 border border-gray-800">
-                    <TabButton id="Overview" label="EXECUTIVE" />
-                    <TabButton id="Finance" label="FINANCE" />
-                    <TabButton id="Operations" label="OPERATIONS" />
-                    <TabButton id="Risk" label="RISK & COMPLIANCE" />
-                    <TabButton id="Strategy" label="STRATEGY" />
-                </div>
-            </div>
-
-            {/* AI INSIGHT BAR */}
-            <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl rounded-lg" />
-                <Card className="relative bg-gray-800/80 backdrop-blur border border-blue-500/30 p-6">
-                    <div className="flex items-start space-x-4">
-                        <div className="p-3 bg-blue-500/10 rounded-full animate-pulse">
-                            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">AI Strategic Intelligence</h3>
-                            {isAiProcessing ? (
-                                <div className="h-6 bg-gray-700 rounded w-3/4 animate-pulse" />
-                            ) : (
-                                <p className="text-lg text-gray-100 leading-relaxed font-light">"{aiInsight}"</p>
-                            )}
-                        </div>
-                    </div>
-                </Card>
-            </div>
-
-            {/* DYNAMIC CONTENT AREA */}
-            <div className="space-y-8 animate-fade-in">
-                
-                {/* OVERVIEW TAB */}
-                {activeTab === 'Overview' && (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <MetricCard title="Total Revenue (YTD)" value={formatCurrency(totalRevenue)} trend={12.5} color="green" />
-                            <MetricCard title="Net Income" value={formatCurrency(netIncome)} trend={8.2} color="blue" />
-                            <MetricCard title="Active Risks" value={criticalRisks.length.toString()} subtext="Critical Severity" trend={-5.0} color="red" />
-                            <MetricCard title="Cash Runway" value="14.2 Months" subtext="Based on current burn" color="purple" />
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-96">
-                            <Card title="Revenue vs Expenses Trend" className="lg:col-span-2 h-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={cashFlowForecast}>
-                                        <XAxis dataKey="period" stroke="#6b7280" fontSize={12} />
-                                        <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(val) => `$${val/1000}k`} />
-                                        <Tooltip contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#fff' }} />
-                                        <Legend />
-                                        <Bar dataKey="inflow" name="Inflow" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                        <Bar dataKey="outflow" name="Outflow" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card>
-                            <Card title="Operational Spend Mix" className="h-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie data={operationalSpend} dataKey="value" nameKey="category" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
-                                            {operationalSpend.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                        <Legend verticalAlign="bottom" height={36} />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </Card>
-                        </div>
-                    </>
-                )}
-
-                {/* FINANCE TAB */}
-                {activeTab === 'Finance' && (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {financialRatios.map((ratio, idx) => (
-                                <MetricCard 
-                                    key={idx} 
-                                    title={ratio.name} 
-                                    value={typeof ratio.value === 'number' && ratio.value < 100 ? ratio.value.toFixed(2) : formatNumber(ratio.value)} 
-                                    subtext={`Benchmark: ${ratio.benchmark}`}
-                                    trend={ratio.delta}
-                                    color={ratio.status === 'Healthy' ? 'green' : ratio.status === 'Warning' ? 'yellow' : 'red'}
-                                />
-                            ))}
-                        </div>
-                        
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <Card title="Projected Cash Position (6 Months)" className="h-80">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={cashFlowForecast}>
-                                        <XAxis dataKey="period" stroke="#6b7280" />
-                                        <YAxis stroke="#6b7280" tickFormatter={(val) => `$${val/1000}k`} />
-                                        <Tooltip cursor={{fill: '#374151'}} contentStyle={{ backgroundColor: '#1f2937' }} />
-                                        <Bar dataKey="cumulativeCash" fill="#3b82f6" name="Cash Balance" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card>
-                            <Card title="Estimated Tax Liability Breakdown" className="h-80 overflow-auto">
-                                <table className="w-full text-left text-sm text-gray-400">
-                                    <thead className="bg-gray-800 text-gray-200 uppercase font-bold">
-                                        <tr>
-                                            <th className="p-3">Jurisdiction</th>
-                                            <th className="p-3">Type</th>
-                                            <th className="p-3 text-right">Amount</th>
-                                            <th className="p-3">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-700">
-                                        {taxLiabilities.map((tax, i) => (
-                                            <tr key={i} className="hover:bg-gray-800/50">
-                                                <td className="p-3">{tax.jurisdiction}</td>
-                                                <td className="p-3">{tax.taxType}</td>
-                                                <td className="p-3 text-right font-mono text-white">{formatCurrency(tax.estimatedAmount)}</td>
-                                                <td className="p-3">
-                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${tax.status === 'Paid' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
-                                                        {tax.status}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </Card>
-                        </div>
-                    </>
-                )}
-
-                {/* OPERATIONS TAB */}
-                {activeTab === 'Operations' && (
-                    <>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <Card title="Daily Transaction Volume" className="lg:col-span-2 h-96">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={dailyVolume}>
-                                        <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickFormatter={(d) => d.substring(5)} />
-                                        <YAxis yAxisId="left" stroke="#3b82f6" fontSize={12} tickFormatter={(val) => `$${val/1000}k`} />
-                                        <YAxis yAxisId="right" orientation="right" stroke="#10b981" fontSize={12} />
-                                        <Tooltip contentStyle={{ backgroundColor: '#1f2937' }} />
-                                        <Bar yAxisId="left" dataKey="value" fill="#3b82f6" name="Volume ($)" opacity={0.8} />
-                                        <Bar yAxisId="right" dataKey="secondaryValue" fill="#10b981" name="Count" barSize={10} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card>
-                            <Card title="Top Vendor Ecosystem" className="h-96 overflow-auto">
-                                <div className="space-y-4">
-                                    {topVendors.map((vendor, i) => (
-                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
-                                            <div>
-                                                <div className="font-bold text-white">{vendor.vendor}</div>
-                                                <div className="text-xs text-gray-500">{vendor.transactionCount} txns â€¢ Risk: {vendor.riskScore}/100</div>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="font-mono text-blue-400">{formatCurrency(vendor.totalSpend)}</div>
-                                                <div className="text-xs text-gray-500">Avg: {formatCurrency(vendor.avgTransactionValue)}</div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Card>
-                        </div>
-                    </>
-                )}
-
-                {/* RISK TAB */}
-                {activeTab === 'Risk' && (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <MetricCard title="Compliance Score" value="94.2" subtext="Top 5% Industry" color="green" />
-                            <MetricCard title="Open Cases" value={openComplianceCases.length.toString()} subtext="Requires Attention" color="yellow" />
-                            <MetricCard title="Total Risk Exposure" value={formatCurrency(riskHeatmap.reduce((a,b)=>a+b.exposureValue,0))} color="red" />
-                            <MetricCard title="Audit Anomalies" value="3" subtext="Last 24 Hours" color="purple" />
-                        </div>
-                        
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <Card title="Enterprise Risk Heatmap" className="h-96">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={riskHeatmap} layout="vertical" margin={{ left: 40 }}>
-                                        <XAxis type="number" domain={[0, 1]} hide />
-                                        <YAxis type="category" dataKey="riskCategory" stroke="#9ca3af" width={120} fontSize={11} />
-                                        <Tooltip cursor={{fill: 'transparent'}} content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                                const data = payload[0].payload;
-                                                return (
-                                                    <div className="bg-gray-900 border border-gray-700 p-3 rounded shadow-xl">
-                                                        <p className="font-bold text-white">{data.riskCategory}</p>
-                                                        <p className="text-sm text-gray-400">Prob: {(data.probability * 100).toFixed(0)}% | Impact: {(data.impact * 100).toFixed(0)}%</p>
-                                                        <p className="text-sm text-red-400">Exposure: {formatCurrency(data.exposureValue)}</p>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }} />
-                                        <Bar dataKey="probability" name="Probability" stackId="a" fill="#f59e0b" barSize={20} />
-                                        <Bar dataKey="impact" name="Impact" stackId="a" fill="#ef4444" barSize={20} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card>
-                            <Card title="Compliance Case Log" className="h-96 overflow-auto">
-                                <div className="space-y-2">
-                                    {complianceCases.map((c, i) => (
-                                        <div key={i} className="p-3 border-l-4 border-red-500 bg-gray-800/50 rounded flex justify-between items-center">
-                                            <div>
-                                                <div className="font-bold text-sm text-white">{c.type} Violation</div>
-                                                <div className="text-xs text-gray-500">{c.description}</div>
-                                            </div>
-                                            <span className={`px-2 py-1 text-xs rounded font-bold ${c.status === 'open' ? 'bg-red-900 text-red-200' : 'bg-gray-700 text-gray-300'}`}>
-                                                {c.status.toUpperCase()}
-                                            </span>
-                                        </div>
-                                    ))}
-                                    {complianceCases.length === 0 && <div className="text-center text-gray-500 py-10">No active compliance cases detected. Systems nominal.</div>}
-                                </div>
-                            </Card>
-                        </div>
-                    </>
-                )}
-
-                {/* STRATEGY TAB */}
-                {activeTab === 'Strategy' && (
-                    <div className="grid grid-cols-1 gap-6">
-                        <Card title="Strategic Growth Modeling" className="p-8 bg-gradient-to-br from-gray-800 to-gray-900">
-                            <div className="flex flex-col md:flex-row gap-8">
-                                <div className="flex-1 space-y-6">
-                                    <h3 className="text-2xl font-bold text-white">Scenario Analysis: Aggressive Expansion</h3>
-                                    <p className="text-gray-400">
-                                        Based on current liquidity of {formatCurrency(financialRatios[0].value * 1000000)} and a burn rate of {formatCurrency(financialRatios[2].value)}, 
-                                        the enterprise can sustain a 15% increase in R&D spend for 8 months before requiring additional capital injection.
-                                    </p>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-sm text-gray-300">
-                                            <span>Market Penetration Probability</span>
-                                            <span>78%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-700 rounded-full h-2">
-                                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '78%' }}></div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-sm text-gray-300">
-                                            <span>Regulatory Approval Confidence</span>
-                                            <span>92%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-700 rounded-full h-2">
-                                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '92%' }}></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="w-full md:w-1/3 bg-gray-800 p-6 rounded-xl border border-gray-700">
-                                    <h4 className="font-bold text-white mb-4">AI Recommendation Engine</h4>
-                                    <ul className="space-y-4">
-                                        <li className="flex items-start space-x-3">
-                                            <span className="text-green-400 text-xl">âœ“</span>
-                                            <span className="text-sm text-gray-300">Optimize vendor contracts to reduce variable OPEX by 12%.</span>
-                                        </li>
-                                        <li className="flex items-start space-x-3">
-                                            <span className="text-green-400 text-xl">âœ“</span>
-                                            <span className="text-sm text-gray-300">Accelerate receivables collection to improve DSO by 5 days.</span>
-                                        </li>
-                                        <li className="flex items-start space-x-3">
-                                            <span className="text-yellow-400 text-xl">âš </span>
-                                            <span className="text-sm text-gray-300">Monitor geopolitical risk in supply chain region APAC-1.</span>
-                                        </li>
-                                    </ul>
-                                    <button className="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition-colors" onClick={() => setActiveView(View.Budgets)}>
-                                        Adjust Budgets
-                                    </button>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 export default CorporateCommandView;
