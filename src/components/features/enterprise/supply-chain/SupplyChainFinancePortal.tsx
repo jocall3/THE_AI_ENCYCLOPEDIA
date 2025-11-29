@@ -474,7 +474,7 @@ const SupplyChainFinancePortal: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <div className="text-xs text-gray-400 border border-gray-300 dark:border-gray-600 rounded px-1.5">⌘K</div>
+            <div className="text-xs text-gray-400 border border-gray-300 dark:border-gray-600 rounded px-1.5">âŒ˜K</div>
           </div>
           
           <div className="flex items-center space-x-4">
