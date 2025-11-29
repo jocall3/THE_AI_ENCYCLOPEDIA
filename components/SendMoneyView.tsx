@@ -378,7 +378,7 @@ export const BiometricModal: React.FC<{
                     {scanState === 'verifying' && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><QuantumLedgerAnimation /></div>}
                     {scanState === 'quantum_sync' && <div className="absolute inset-0 bg-purple-900/80 flex items-center justify-center"><QuantumChannelEstablishment /></div>}
                     {scanState === 'ai_negotiating' && <div className="absolute inset-0 bg-teal-900/80 flex items-center justify-center"><AINegotiationAnimation /></div>}
-                    {scanState === 'dlc_finalizing' && <div className="absolute inset-0 bg-indigo-900/80 flex items-center justify-center"><div className="text-5xl text-indigo-300 animate-bounce">âŸ </div></div>}
+                    {scanState === 'dlc_finalizing' && <div className="absolute inset-0 bg-indigo-900/80 flex items-center justify-center"><div className="text-5xl text-indigo-300 animate-bounce">Ã¢Å¸ </div></div>}
                 </div>
                 <p className="text-lg text-gray-200 mt-4 font-light">{getStatusMessage()}</p>
                 {approvalRequiredBy && approvalRequiredBy.length > 0 && (
@@ -591,6 +591,7 @@ const SendMoneyView: React.FC<SendMoneyViewProps> = ({ setActiveView }) => {
             )}
         </div>
     );
+};
 
     const renderStep2Review = () => {
         const finalRecipient = selectedRecipient || { id: 'external', name: recipientIdentifier };
