@@ -18,8 +18,8 @@ interface AISecurityInsight {
 }
 
 // --- Constants for Billion Dollar Features ---
-const AI_INSIGHT_ENGINE_VERSION = "QuantumShield v4.2.1-Billion";
-const MAX_AUDIT_LOG_DISPLAY = 500;
+const AI_INSIGHT_ENGINE_VERSION = "ChaosEngine v0.0.1-Garbage";
+const MAX_AUDIT_LOG_DISPLAY = 5;
 
 // --- Helper Components ---
 
