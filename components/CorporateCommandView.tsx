@@ -5,9 +5,7 @@ import { View, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction } fro
 import { GoogleGenAI } from '@google/genai';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
-// ---------------------------------------------------------------------------
-// ENTERPRISE ANALYTICS TYPES & INTERFACES
-// ---------------------------------------------------------------------------
+// Analytics Data Structures
 
 export type TimeSeriesData = {
     date: string;
@@ -80,12 +78,10 @@ export type TaxLiabilityBreakdown = {
     status: 'Accrued' | 'Paid' | 'Pending';
 };
 
-// ---------------------------------------------------------------------------
-// ADVANCED DATA PROCESSING ENGINES
-// ---------------------------------------------------------------------------
+// Data Processing Functions
 
 /**
- * Generates a comprehensive daily volume analysis for transaction processing.
+ * Generates daily transaction volume and amount analytics.
  */
 export const generateDailyTransactionAnalytics = (transactions: CorporateTransaction[]): TimeSeriesData[] => {
     const dailyMap: Record<string, { count: number; amount: number }> = {};
@@ -101,7 +97,7 @@ export const generateDailyTransactionAnalytics = (transactions: CorporateTransac
 };
 
 /**
- * Calculates sophisticated financial ratios based on available ledger data.
+ * Calculates key financial ratios.
  */
 export const calculateEnterpriseFinancialRatios = (invoices: Invoice[], orders: PaymentOrder[], transactions: CorporateTransaction[]): FinancialRatio[] => {
     const currentAssets = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + i.amount, 0);
@@ -111,7 +107,7 @@ export const calculateEnterpriseFinancialRatios = (invoices: Invoice[], orders: 
     
     const currentRatio = currentLiabilities > 0 ? currentAssets / currentLiabilities : 0;
     const netProfitMargin = totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
-    const burnRate = totalExpenses / 30; // Assuming 30 day period for simplicity of calculation context
+    const burnRate = totalExpenses / 30; // Simplified 30-day period for calculation
     
     return [
         { name: 'Current Ratio', value: currentRatio, benchmark: 1.5, status: currentRatio > 1.5 ? 'Healthy' : currentRatio > 1.0 ? 'Warning' : 'Critical', delta: 0.1 },
@@ -121,12 +117,12 @@ export const calculateEnterpriseFinancialRatios = (invoices: Invoice[], orders: 
 };
 
 /**
- * Projects cash flow for the next 6 periods based on historical trends and outstanding obligations.
+ * Projects cash flow for the next 6 periods.
  */
 export const generateCashFlowProjections = (invoices: Invoice[], orders: PaymentOrder[]): CashFlowProjection[] => {
     const projections: CashFlowProjection[] = [];
     const today = new Date();
-    let currentCash = 1000000; // Base operating capital assumption
+    let currentCash = 1000000; // Initial capital assumption
 
     for (let i = 0; i < 6; i++) {
         const futureDate = new Date(today);
@@ -136,12 +132,12 @@ export const generateCashFlowProjections = (invoices: Invoice[], orders: Payment
         // Estimated inflows from receivables
         const projectedInflow = invoices
             .filter(inv => new Date(inv.dueDate).getMonth() === futureDate.getMonth())
-            .reduce((sum, inv) => sum + inv.amount, 0) * 0.95; // 95% collection rate assumption
+            .reduce((sum, inv) => sum + inv.amount, 0) * 0.95; // Assumed 95% collection rate
 
         // Estimated outflows from payables and recurring expenses
         const projectedOutflow = orders
             .filter(ord => new Date(ord.dueDate || '').getMonth() === futureDate.getMonth())
-            .reduce((sum, ord) => sum + ord.amount, 0) * 1.1; // 10% buffer for variable costs
+            .reduce((sum, ord) => sum + ord.amount, 0) * 1.1; // Assumed 10% buffer for variable costs
 
         const net = projectedInflow - projectedOutflow;
         currentCash += net;
@@ -158,7 +154,7 @@ export const generateCashFlowProjections = (invoices: Invoice[], orders: Payment
 };
 
 /**
- * Analyzes vendor performance, risk, and spend concentration.
+ * Analyzes vendor performance and spend.
  */
 export const analyzeVendorEcosystem = (transactions: CorporateTransaction[]): VendorPerformanceMetric[] => {
     const vendorMap: Record<string, VendorPerformanceMetric> = {};
@@ -170,7 +166,7 @@ export const analyzeVendorEcosystem = (transactions: CorporateTransaction[]): Ve
                 totalSpend: 0,
                 transactionCount: 0,
                 avgTransactionValue: 0,
-                riskScore: Math.floor(Math.random() * 100), // Simulated risk score based on external API (mock)
+                riskScore: Math.floor(Math.random() * 100), // Simulated risk score
                 lastInteraction: tx.date
             };
         }
@@ -187,7 +183,7 @@ export const analyzeVendorEcosystem = (transactions: CorporateTransaction[]): Ve
 };
 
 /**
- * Segments operational spend into fixed, variable, and discretionary categories.
+ * Segments operational spend into categories.
  */
 export const segmentOperationalSpend = (transactions: CorporateTransaction[]): CategoricalData[] => {
     const categories = {
@@ -210,7 +206,7 @@ export const segmentOperationalSpend = (transactions: CorporateTransaction[]): C
 };
 
 /**
- * Simulates a complex tax liability estimation engine.
+ * Estimates tax liabilities.
  */
 export const estimateTaxLiabilities = (revenue: number, expenses: number): TaxLiabilityBreakdown[] => {
     const profit = Math.max(0, revenue - expenses);
@@ -223,7 +219,7 @@ export const estimateTaxLiabilities = (revenue: number, expenses: number): TaxLi
 };
 
 /**
- * Generates a risk heatmap dataset based on compliance cases and transaction anomalies.
+ * Generates risk assessment data.
  */
 export const generateEnterpriseRiskHeatmap = (cases: ComplianceCase[], transactions: CorporateTransaction[]): RiskAssessmentData[] => {
     const risks: RiskAssessmentData[] = [
@@ -234,16 +230,14 @@ export const generateEnterpriseRiskHeatmap = (cases: ComplianceCase[], transacti
         { riskCategory: 'Cybersecurity', probability: 0.3, impact: 0.99, mitigationStatus: 'Hardened', exposureValue: 5000000 }
     ];
 
-    // Adjust based on actual data
+    // Adjusts risk based on data
     if (cases.some(c => c.type === 'AML')) risks[0].probability += 0.2;
     if (transactions.some(t => t.amount > 50000)) risks[2].probability += 0.1;
 
     return risks;
 };
 
-// ---------------------------------------------------------------------------
-// MAIN COMPONENT: CORPORATE COMMAND CENTER
-// ---------------------------------------------------------------------------
+// Main Component
 
 interface CorporateDashboardProps {
     setActiveView: (view: View) => void;
@@ -252,20 +246,16 @@ interface CorporateDashboardProps {
 const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView }) => {
     const context = useContext(DataContext);
     
-    // -----------------------------------------------------------------------
-    // STATE MANAGEMENT
-    // -----------------------------------------------------------------------
+    // State Management
     const [activeTab, setActiveTab] = useState<'Overview' | 'Finance' | 'Operations' | 'Risk' | 'Strategy'>('Overview');
-    const [aiInsight, setAiInsight] = useState<string>('Initializing AI Neural Core...');
+    const [aiInsight, setAiInsight] = useState<string>('Initializing AI...');
     const [isAiProcessing, setIsAiProcessing] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
     if (!context) throw new Error("CorporateCommandView requires DataContext.");
     const { paymentOrders, invoices, complianceCases, corporateTransactions } = context;
 
-    // -----------------------------------------------------------------------
-    // REAL-TIME DATA AGGREGATION
-    // -----------------------------------------------------------------------
+    // Data Aggregation
     
     // Financials
     const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + i.amount, 0);
@@ -286,9 +276,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
     const openComplianceCases = complianceCases.filter(c => c.status === 'open');
     const criticalRisks = riskHeatmap.filter(r => r.probability * r.impact > 0.15);
 
-    // -----------------------------------------------------------------------
-    // AI INTELLIGENCE LAYER
-    // -----------------------------------------------------------------------
+    // AI Integration
     useEffect(() => {
         const generateStrategicReport = async () => {
             setIsAiProcessing(true);
@@ -308,7 +296,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                     promptContext = `Strategic Outlook: Based on burn rate of $${financialRatios[2].value.toFixed(2)}/day and projected cash flow. Suggest 3 strategic moves for growth and stability.`;
                 }
 
-                const prompt = `You are an advanced Corporate AI Controller. Analyze the following data context for the '${activeTab}' view and provide a high-level, professional, actionable strategic insight (max 2 sentences). Context: ${promptContext}`;
+                const prompt = `You are an advanced Corporate AI Assistant. Analyze the following data context for the '${activeTab}' view and provide a high-level, professional, actionable strategic insight (max 2 sentences). Context: ${promptContext}`;
                 
                 const response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
@@ -318,26 +306,22 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                 setLastUpdated(new Date());
             } catch (error) {
                 console.error("AI Processing Error:", error);
-                setAiInsight("AI Neural Link disrupted. Using cached heuristics.");
+                setAiInsight("AI link unavailable. Using fallback data.");
             } finally {
                 setIsAiProcessing(false);
             }
         };
 
         generateStrategicReport();
-    }, [activeTab, totalRevenue, totalExpenses, netIncome]); // Dependencies simplified for performance
+    }, [activeTab, totalRevenue, totalExpenses, netIncome]);
 
-    // -----------------------------------------------------------------------
-    // VISUALIZATION HELPERS
-    // -----------------------------------------------------------------------
+    // Visualization Utilities
     const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'];
     
     const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(val);
     const formatNumber = (val: number) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(val);
 
-    // -----------------------------------------------------------------------
-    // SUB-COMPONENTS (Rendered inline for single-file requirement)
-    // -----------------------------------------------------------------------
+    // Inline Sub-Components
     
     const TabButton = ({ id, label }: { id: typeof activeTab, label: string }) => (
         <button 
@@ -360,15 +344,13 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
             {subtext && <div className="text-gray-500 text-sm">{subtext}</div>}
             {trend !== undefined && (
                 <div className={`text-sm font-medium mt-3 flex items-center ${trend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% <span className="text-gray-600 ml-1">vs last period</span>
+                    {trend >= 0 ? 'â†‘' : 'â†“'} {Math.abs(trend)}% <span className="text-gray-600 ml-1">vs last period</span>
                 </div>
             )}
         </div>
     );
 
-    // -----------------------------------------------------------------------
-    // VIEW RENDERING
-    // -----------------------------------------------------------------------
+    // Component Rendering
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-2 space-y-8 font-sans">
@@ -379,7 +361,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                     <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                         NEXUS COMMAND
                     </h1>
-                    <p className="text-gray-400 text-sm mt-1">Enterprise Operating System v4.2.0 • {lastUpdated.toLocaleString()}</p>
+                    <p className="text-gray-400 text-sm mt-1">Enterprise Operating System v4.2.0 â€¢ {lastUpdated.toLocaleString()}</p>
                 </div>
                 <div className="flex space-x-1 mt-4 md:mt-0 bg-gray-900 rounded-lg p-1 border border-gray-800">
                     <TabButton id="Overview" label="EXECUTIVE" />
@@ -532,7 +514,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                                         <div key={i} className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
                                             <div>
                                                 <div className="font-bold text-white">{vendor.vendor}</div>
-                                                <div className="text-xs text-gray-500">{vendor.transactionCount} txns • Risk: {vendor.riskScore}/100</div>
+                                                <div className="text-xs text-gray-500">{vendor.transactionCount} txns â€¢ Risk: {vendor.riskScore}/100</div>
                                             </div>
                                             <div className="text-right">
                                                 <div className="font-mono text-blue-400">{formatCurrency(vendor.totalSpend)}</div>
@@ -608,7 +590,7 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                                 <div className="flex-1 space-y-6">
                                     <h3 className="text-2xl font-bold text-white">Scenario Analysis: Aggressive Expansion</h3>
                                     <p className="text-gray-400">
-                                        Based on current liquidity of {formatCurrency(financialRatios[0].value * 1000000)} (simulated) and a burn rate of {formatCurrency(financialRatios[2].value)}, 
+                                        Based on current liquidity of {formatCurrency(financialRatios[0].value * 1000000)} and a burn rate of {formatCurrency(financialRatios[2].value)}, 
                                         the enterprise can sustain a 15% increase in R&D spend for 8 months before requiring additional capital injection.
                                     </p>
                                     <div className="space-y-2">
@@ -634,15 +616,15 @@ const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView
                                     <h4 className="font-bold text-white mb-4">AI Recommendation Engine</h4>
                                     <ul className="space-y-4">
                                         <li className="flex items-start space-x-3">
-                                            <span className="text-green-400 text-xl">✓</span>
+                                            <span className="text-green-400 text-xl">âœ“</span>
                                             <span className="text-sm text-gray-300">Optimize vendor contracts to reduce variable OPEX by 12%.</span>
                                         </li>
                                         <li className="flex items-start space-x-3">
-                                            <span className="text-green-400 text-xl">✓</span>
+                                            <span className="text-green-400 text-xl">âœ“</span>
                                             <span className="text-sm text-gray-300">Accelerate receivables collection to improve DSO by 5 days.</span>
                                         </li>
                                         <li className="flex items-start space-x-3">
-                                            <span className="text-yellow-400 text-xl">⚠</span>
+                                            <span className="text-yellow-400 text-xl">âš </span>
                                             <span className="text-sm text-gray-300">Monitor geopolitical risk in supply chain region APAC-1.</span>
                                         </li>
                                     </ul>
