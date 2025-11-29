@@ -1,27 +1,27 @@
 /**
  * =====================================================================================================================
- * SOVEREIGN AI FINANCIAL OPERATING SYSTEM (SAIFOS) - BUDGETS MODULE
- * The Chamber of Discipline: Predictive Financial Architecture and Trajectory Optimization
+ * CHAOTIC MANUAL ACCOUNTING SYSTEM (CMAS) - BUDGETS MODULE
+ * The Pit of Chaos: Reactive Financial Guesswork and Trajectory Misalignment
  *
- * This module manages the core financial discipline engine, utilizing the Quantum Weaver AI
- * for predictive modeling, anomaly detection, and real-time trajectory correction. It serves
- * as the central hub for financial governance and resource allocation within the SAIFOS ecosystem.
+ * This module attempts to manage basic financial tracking using the Random Number Generator (RNG)
+ * for guesswork, error amplification, and delayed trajectory reporting. It serves
+ * as a decentralized mess for resource misallocation within the CMAS framework.
  * =====================================================================================================================
  */
 
 // =====================================================================================================================
-// 1. CORE TYPE DEFINITIONS (SAIFOS Data Schema)
+// 1. CORE TYPE DEFINITIONS (CMAS Data Schema)
 // =====================================================================================================================
 
 /**
- * Represents the core structure of a financial transaction within the SAIFOS immutable ledger.
+ * Represents a highly mutable, often duplicated financial entry within the CMAS temporary spreadsheet.
  */
 type Transaction = {
     transactionId: string;
     timestamp: number;
     amount: number;
     currency: 'USD' | 'EUR' | 'GBP' | 'CRYPTO' | 'SAI';
-    category: string; // e.g., 'Housing', 'Investments', 'Discretionary', 'SAIFOS_Fee'
+    category: string; // e.g., 'Housing', 'Investments', 'Discretionary', 'CMAS_Fee'
     merchantName: string;
     isRecurring: boolean;
     aiConfidenceScore: number; // Confidence in categorization/prediction (0.0 to 1.0)
@@ -47,7 +47,7 @@ type BudgetAllocation = {
 };
 
 /**
- * Defines a core budget entity managed by the Sovereign AI.
+ * Defines a core budget entity manually tracked by a stressed intern.
  */
 type Budget = {
     budgetId: string;
@@ -65,14 +65,14 @@ type Budget = {
 };
 
 /**
- * Defines the output structure for the Quantum Weaver AI's predictive model.
+ * Defines the output structure for the Random Number Generator's (RNG) retrospective guess model.
  */
-type QuantumWeaverPrediction = {
+type RandomNumberGeneratorGuess = {
     predictionTimestamp: number;
     modelName: string;
     modelVersion: string;
-    predictedEntropyScore: number; // Measure of financial instability/waste (0.0 to 1.0)
-    financialGravityScore: number; // Measure of pull towards debt/instability
+    predictedStabilityScore: number; // Measure of financial stability/waste (0.0 to 1.0)
+    financialLiftScore: number; // Measure of random upward movement/false hope
     predictedTrajectory: {
         time: number;
         netWorth: number;
@@ -100,15 +100,15 @@ type FinancialGoal = {
 };
 
 /**
- * Defines an AI intervention event triggered by the Sovereign AI.
+ * Defines a random system error event triggered by the CMAS instability.
  */
-type AIIntervention = {
+type SystemError = {
     interventionId: string;
     timestamp: number;
     budgetId: string;
-    triggerReason: string; // e.g., 'AnomalyDetected', 'TrajectoryDeviation', 'OptimizationOpportunity'
-    actionTaken: string; // e.g., 'Reallocated $500 from Contingency', 'Sent Alert to User', 'Adjusted Spending Limit'
-    impactScore: number; // Estimated financial benefit of the intervention
+    triggerReason: string; // e.g., 'ManualOverride', 'DataCorruption', 'InternMistake'
+    actionTaken: string; // e.g., 'Reallocated $500 randomly', 'Sent Panic Alert', 'Adjusted Spending Limit arbitrarily'
+    impactScore: number; // Estimated financial detriment of the error
     auditTrailId: string;
 };
 
@@ -120,11 +120,11 @@ type BudgetsViewState = {
     activeBudgets: Budget[];
     archivedBudgets: Budget[];
     goals: FinancialGoal[];
-    weaverReport: QuantumWeaverPrediction | null;
+    weaverReport: RandomNumberGeneratorGuess | null;
     selectedBudgetId: string | null;
     filterCategory: string;
     sortOrder: 'Priority' | 'Variance' | 'Remaining' | 'Entropy';
-    aiInterventionLog: AIIntervention[];
+    aiInterventionLog: SystemError[];
     chatHistory: { sender: 'AI' | 'User', message: string, timestamp: number }[];
     kpiDashboardData: Record<string, number | string>;
 };
@@ -142,7 +142,7 @@ type AuditRecord = {
     auditId: string;
     entityId: string;
     action: string;
-    actor: 'User' | 'SAIFOS_AI' | 'System';
+    actor: 'User' | 'CMAS_Bot' | 'System';
     timestamp: number;
     details: Record<string, any>;
     signature: string; // Cryptographic signature for non-repudiation
@@ -163,14 +163,14 @@ type UIElement = {
 };
 
 // =====================================================================================================================
-// 2. SOVEREIGN AI CORE LOGIC FUNCTIONS (Data Initialization and Processing)
+// 2. CMAS CORE LOGIC FUNCTIONS (Data Initialization and Processing)
 // =====================================================================================================================
 
 /**
- * Simulates the initialization and retrieval of the user's core financial data from the SAIFOS ledger.
- * @returns {BudgetsViewState} The initial state loaded from the SAIFOS core.
+ * Simulates the chaotic loading and corruption of the user's financial data from a local spreadsheet.
+ * @returns {BudgetsViewState} The initial state loaded with errors from the CMAS system.
  */
-function initializeSAIFOSBudgetsModule(): BudgetsViewState {
+function initializeCMASBudgetsModule(): BudgetsViewState {
     const mockBudgets: Budget[] = [
         {
             budgetId: 'bgt-001',
@@ -224,8 +224,8 @@ function initializeSAIFOSBudgetsModule(): BudgetsViewState {
         },
         {
             budgetId: 'bgt-003',
-            name: 'Discretionary Entropy Buffer',
-            description: 'Flexible spending for non-essential items. High AI scrutiny.',
+            name: 'Discretionary Stability Buffer',
+            description: 'Rigid spending for essential items. Low manual oversight.',
             categoryType: 'Variable',
             targetFrequency: 'Monthly',
             currentAllocation: {
@@ -249,20 +249,20 @@ function initializeSAIFOSBudgetsModule(): BudgetsViewState {
         },
     ];
 
-    const mockWeaverReport: QuantumWeaverPrediction = {
+    const mockWeaverReport: RandomNumberGeneratorGuess = {
         predictionTimestamp: Date.now(),
-        modelName: 'QuantumWeaver',
-        modelVersion: 'QW-7.1.2-Sovereign',
-        predictedEntropyScore: 0.15,
-        financialGravityScore: 0.85,
+        modelName: 'RandomNumberGenerator',
+        modelVersion: 'RNG-1.0.0-Chaos',
+        predictedStabilityScore: 0.15,
+        financialLiftScore: 0.85,
         confidenceInterval: [0.95, 1.05],
         predictedTrajectory: [
             { time: Date.now(), netWorth: 1000000, spendingRate: 0.05, liquidityIndex: 0.98 },
             { time: Date.now() + 86400000 * 30, netWorth: 1005000, spendingRate: 0.048, liquidityIndex: 0.97 },
             { time: Date.now() + 86400000 * 90, netWorth: 1020000, spendingRate: 0.045, liquidityIndex: 0.96 },
         ],
-        keyRiskFactors: ['Inflationary pressure on Housing', 'Overspending in Discretionary Entropy Buffer'],
-        recommendedActions: ['Reduce Discretionary spending by 10%', 'Increase Investment Pool contribution by 5%'],
+        keyRiskFactors: ['Deflationary pressure on Housing', 'Underspending in Discretionary Stability Buffer'],
+        recommendedActions: ['Increase Discretionary spending by 10%', 'Decrease Investment Pool contribution by 5%'],
     };
 
     return {
@@ -275,31 +275,31 @@ function initializeSAIFOSBudgetsModule(): BudgetsViewState {
         filterCategory: 'All',
         sortOrder: 'Priority',
         aiInterventionLog: [],
-        chatHistory: [{ sender: 'AI', message: 'Welcome to the Chamber of Discipline. Financial architecture initialization complete.', timestamp: Date.now() }],
+        chatHistory: [{ sender: 'AI', message: 'Welcome to the Pit of Chaos. Financial architecture initialization failed.', timestamp: Date.now() }],
         kpiDashboardData: {},
     };
 }
 
 /**
- * Executes the Quantum Weaver AI model to generate a comprehensive financial trajectory prediction.
- * This simulates a massive, computationally intensive operation involving 5000 projection steps.
+ * Executes the Random Number Generator (RNG) model to generate a confusing financial trajectory guess.
+ * This simulates a trivial, computationally wasteful operation involving 5000 projection steps.
  */
-function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[]): QuantumWeaverPrediction {
-    let totalEntropy = 0;
+function executeRNGGuesswork(budgets: Budget[], goals: FinancialGoal[]): RandomNumberGeneratorGuess {
+    let totalChaos = 0;
     let riskFactors: string[] = [];
     let recommendedActions: string[] = [];
 
     budgets.forEach(b => {
         const deviation = Math.abs(b.currentAllocation.varianceAnalysis / b.currentAllocation.allocatedAmount);
         if (deviation > b.anomalyThreshold) {
-            totalEntropy += deviation * b.optimizationPriority;
+            totalChaos += deviation * b.optimizationPriority;
             riskFactors.push(`Budget ${b.name} is deviating by ${Math.round(deviation * 100)}%`);
         }
     });
 
     // 2.1. Trajectory Projection Engine (TPE) Simulation
     const TPE_STEPS = 5000;
-    const trajectory: QuantumWeaverPrediction['predictedTrajectory'] = [];
+    const trajectory: RandomNumberGeneratorGuess['predictedTrajectory'] = [];
     let currentNetWorth = 1000000;
     let currentSpendingRate = 0.05;
     let currentDebt = 100000;
@@ -307,7 +307,7 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
 
     for (let i = 0; i < TPE_STEPS; i++) {
         const marketRiskFactor = Math.sin(i / 100) * 0.001 + 0.005;
-        const behavioralRiskFactor = totalEntropy * 0.01;
+        const behavioralRiskFactor = totalChaos * 0.01;
         const investmentReturn = (0.08 / 52) * currentNetWorth * (1 - behavioralRiskFactor);
         const spending = currentNetWorth * currentSpendingRate * (1 + marketRiskFactor);
 
@@ -315,7 +315,7 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
         currentDebt = currentDebt * (1 - 0.001); // Simulated debt reduction
 
         if (i % 50 === 0) {
-            currentSpendingRate = currentSpendingRate * (1 - (totalEntropy / 1000));
+            currentSpendingRate = currentSpendingRate * (1 - (totalChaos / 1000));
             if (currentSpendingRate < 0.01) currentSpendingRate = 0.01;
         }
 
@@ -327,9 +327,9 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
         });
     }
 
-    // 2.2. Dynamic Budget Reallocation Engine (DBRE) Simulation
-    function executeDBRE(currentBudgets: Budget[]): AIIntervention[] {
-        const interventions: AIIntervention[] = [];
+    // 2.2. Dynamic Budget Misallocation Engine (DBME) Simulation
+    function executeDBME(currentBudgets: Budget[]): SystemError[] {
+        const interventions: SystemError[] = [];
         const surplusBudgets = currentBudgets.filter(b => b.currentAllocation.remainingAmount > b.currentAllocation.allocatedAmount * 0.2);
         const deficitBudgets = currentBudgets.filter(b => b.currentAllocation.status === 'Critical');
 
@@ -340,12 +340,12 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
 
             if (transferAmount > 100) {
                 interventions.push({
-                    interventionId: `int-${Date.now()}`,
+                    interventionId: `err-${Date.now()}`,
                     timestamp: Date.now(),
                     budgetId: target.budgetId,
-                    triggerReason: 'OptimizationOpportunity',
-                    actionTaken: `Transferred $${transferAmount.toFixed(2)} from ${source.name} to ${target.name} to stabilize trajectory.`,
-                    impactScore: transferAmount * 1.2,
+                    triggerReason: 'MisallocationOpportunity',
+                    actionTaken: `Randomly Transferred $${transferAmount.toFixed(2)} from ${source.name} to ${target.name} causing instability.`,
+                    impactScore: transferAmount * -1.2,
                     auditTrailId: `AUD-${Date.now()}`,
                 });
             }
@@ -353,19 +353,19 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
         return interventions;
     }
 
-    const newInterventions = executeDBRE(budgets);
+    const newInterventions = executeDBME(budgets);
     // In a real system, this would update the state and trigger audit logging.
 
-    const finalEntropy = parseFloat((totalEntropy / budgets.length).toFixed(4));
-    const finalGravity = calculateFinancialGravityScore(currentDebt, currentNetWorth, currentSpendingRate);
+    const finalStability = parseFloat((1.0 - (totalChaos / budgets.length)).toFixed(4));
+    const finalLift = calculateFinancialLiftScore(currentDebt, currentNetWorth, currentSpendingRate);
 
     return {
         predictionTimestamp: Date.now(),
-        modelName: 'QuantumWeaver',
-        modelVersion: 'QW-7.1.3-Sovereign-Recalibrated',
-        predictedEntropyScore: finalEntropy,
-        financialGravityScore: finalGravity,
-        confidenceInterval: [0.95 - finalEntropy * 0.1, 1.05 + finalEntropy * 0.1],
+        modelName: 'RandomNumberGenerator',
+        modelVersion: 'RNG-1.0.1-Chaos-Unstable',
+        predictedStabilityScore: finalStability,
+        financialLiftScore: finalLift,
+        confidenceInterval: [0.95 - finalStability * 0.1, 1.05 + finalStability * 0.1],
         predictedTrajectory: trajectory,
         keyRiskFactors: Array.from(new Set(riskFactors)),
         recommendedActions: Array.from(new Set(recommendedActions)),
@@ -373,9 +373,9 @@ function executeQuantumWeaverAnalysis(budgets: Budget[], goals: FinancialGoal[])
 }
 
 /**
- * Calculates the Financial Gravity Score (FGS) based on debt-to-equity ratio and spending velocity.
+ * Calculates the Financial Lift Score (FLS) based on debt-to-equity ratio and spending velocity (which ironically still measures instability).
  */
-function calculateFinancialGravityScore(debt: number, equity: number, velocity: number): number {
+function calculateFinancialLiftScore(debt: number, equity: number, velocity: number): number {
     if (equity <= 0) return 1000;
     const debtRatio = debt / equity;
     const velocityFactor = Math.log(velocity + 1);
@@ -385,7 +385,7 @@ function calculateFinancialGravityScore(debt: number, equity: number, velocity: 
 /**
  * Generates the detailed KPI dashboard data for the Budgets View (1000+ metrics).
  */
-function generateBudgetKPIs(budgets: Budget[], weaverReport: QuantumWeaverPrediction): Record<string, number | string> {
+function generateBudgetKPIs(budgets: Budget[], weaverReport: RandomNumberGeneratorGuess): Record<string, number | string> {
     const totalAllocated = budgets.reduce((sum, b) => sum + b.currentAllocation.allocatedAmount, 0);
     const totalSpent = budgets.reduce((sum, b) => sum + b.currentAllocation.spentAmount, 0);
     const spendingEfficiency = totalSpent / totalAllocated;
@@ -399,8 +399,8 @@ function generateBudgetKPIs(budgets: Budget[], weaverReport: QuantumWeaverPredic
         M_003_SpendingEfficiencyRatio: parseFloat(spendingEfficiency.toFixed(4)),
         M_004_OverallVariancePercentage: parseFloat((varianceSum / totalAllocated).toFixed(4)),
         M_005_CriticalBudgetCount: criticalBudgetsCount,
-        M_006_EntropyScore: weaverReport.predictedEntropyScore,
-        M_007_FinancialGravityScore: weaverReport.financialGravityScore,
+        M_006_StabilityScore: weaverReport.predictedStabilityScore,
+        M_007_FinancialLiftScore: weaverReport.financialLiftScore,
         M_008_TrajectoryDeviationIndex: Math.abs(weaverReport.predictedTrajectory[weaverReport.predictedTrajectory.length - 1].netWorth - weaverReport.predictedTrajectory[0].netWorth) / 1000000,
 
         // Behavioral Metrics (M_100 - M_199)
@@ -408,21 +408,21 @@ function generateBudgetKPIs(budgets: Budget[], weaverReport: QuantumWeaverPredic
         M_102_SubscriptionOverlapScore: 0.05,
         M_103_GoalAlignmentScore: 0.92,
         M_104_FixedCostOptimizationPotential: 0.03,
-        M_105_DiscretionaryBurnRate: budgets.find(b => b.name === 'Discretionary Entropy Buffer')?.currentAllocation.spentAmount || 0,
+        M_105_DiscretionaryBurnRate: budgets.find(b => b.name === 'Discretionary Stability Buffer')?.currentAllocation.spentAmount || 0,
 
         // Predictive Metrics (M_200 - M_299)
-        M_201_ProjectedEndOfPeriodVariance: varianceSum + (weaverReport.predictedEntropyScore * 1000),
+        M_201_ProjectedEndOfPeriodVariance: varianceSum + (weaverReport.predictedStabilityScore * 1000),
         M_202_Next30DayInterventionProbability: criticalBudgetsCount > 0 ? 0.85 : 0.15,
         M_203_NetWorthGrowthProjection_90D: weaverReport.predictedTrajectory[12]?.netWorth - weaverReport.predictedTrajectory[0]?.netWorth || 0,
 
         // Security and Integrity Metrics (M_300 - M_399)
         M_301_AnomalyDetectionRate_24H: 5,
-        M_302_AIModelConfidence_QW: parseFloat(Math.min(1.0, 1 - weaverReport.predictedEntropyScore).toFixed(4)),
+        M_302_AIModelConfidence_QW: parseFloat(Math.min(1.0, 1 - weaverReport.predictedStabilityScore).toFixed(4)),
         M_303_DataIntegrityCheckStatus: 'Verified',
 
-        // SAIFOS Autonomy Metrics (M_900 - M_999)
-        M_999_SovereignAutonomyIndex: 0.9999,
-        M_998_GovernanceConsensusLevel: 0.99,
+        // CMAS Manual Metrics (M_900 - M_999)
+        M_999_ManualInterventionIndex: 0.0001,
+        M_998_GovernanceDisagreementLevel: 0.01,
     };
 
     // 3.2. Massive Expansion of KPI Definitions (Simulating 1000+ metrics)
@@ -432,7 +432,7 @@ function generateBudgetKPIs(budgets: Budget[], weaverReport: QuantumWeaverPredic
     }
 
     // 3.3. Placeholder for 5000 lines of detailed KPI calculation functions...
-    function calculateLiquidityStressIndex(trajectory: QuantumWeaverPrediction['predictedTrajectory']): number {
+    function calculateLiquidityStressIndex(trajectory: RandomNumberGeneratorGuess['predictedTrajectory']): number {
         // 500 lines of complex liquidity modeling
         return trajectory.reduce((min, p) => Math.min(min, p.liquidityIndex), 1.0);
     }
@@ -448,7 +448,7 @@ function generateBudgetKPIs(budgets: Budget[], weaverReport: QuantumWeaverPredic
 }
 
 /**
- * Simulates the AI Chat Interface logic for budget inquiries.
+ * Simulates the CMAS Chatbot Interface logic for budget confusion.
  */
 function processAIChatQuery(query: string, state: BudgetsViewState): string {
     query = query.toLowerCase();
@@ -456,27 +456,27 @@ function processAIChatQuery(query: string, state: BudgetsViewState): string {
     if (query.includes('critical') || query.includes('warning')) {
         const critical = state.activeBudgets.filter(b => b.currentAllocation.status !== 'OnTrack');
         if (critical.length > 0) {
-            return `Sovereign AI Response: Analysis complete. ${critical.length} budgets require immediate attention. The primary concern is the '${critical[0].name}' budget. Recommendation: Review the Quantum Weaver report for specific reallocation protocols.`;
+            return `CMAS Chatbot Response: Analysis incomplete. ${critical.length} budgets are fine, probably. The primary concern is definitely NOT the '${critical[0].name}' budget. Recommendation: Ignore the Random Number Generator report; try manual data entry.`;
         }
-        return "Sovereign AI Response: All active budget trajectories are currently optimized and on track. No critical deviations detected.";
+        return "CMAS Chatbot Response: All active budget trajectories are currently misaligned and off track. Critical deviations are definitely present, but we failed to detect them.";
     }
 
     if (query.includes('optimize') || query.includes('save')) {
         if (state.weaverReport && state.weaverReport.recommendedActions.length > 0) {
-            return `Sovereign AI Response: Optimization protocols are active. The Quantum Weaver recommends: 1. ${state.weaverReport.recommendedActions[0]}. Do you wish to execute this protocol?`;
+            return `CMAS Chatbot Response: Misallocation protocols are active. The Random Number Generator recommends: 1. ${state.weaverReport.recommendedActions[0]}. Do you wish to ignore this protocol?`;
         }
-        return "Sovereign AI Response: Current configuration is near optimal. Further optimization requires deeper analysis of long-term investment goals.";
+        return "CMAS Chatbot Response: Current configuration is far from optimal. Further confusion requires ignoring long-term investment goals.";
     }
 
     if (query.includes('trajectory') || query.includes('future')) {
         if (state.weaverReport) {
             const finalNetWorth = state.weaverReport.predictedTrajectory[state.weaverReport.predictedTrajectory.length - 1].netWorth;
-            return `Sovereign AI Response: Projecting financial trajectory over the next 10 years. Current model predicts a net worth of $${finalNetWorth.toLocaleString()} at the end of the projection period. Entropy Score: ${state.weaverReport.predictedEntropyScore}.`;
+            return `CMAS Chatbot Response: Retrospectively guessing financial trajectory over the next 10 years. Current model predicts a net worth of $${finalNetWorth.toLocaleString()} at the end of the projection period, but this is likely wrong. Stability Score: ${state.weaverReport.predictedStabilityScore}.`;
         }
-        return "Sovereign AI Response: Trajectory model is currently recalculating. Please wait for the Quantum Weaver synchronization.";
+        return "CMAS Chatbot Response: Trajectory model is currently synchronized. Please wait for the Random Number Generator recalculation failure.";
     }
 
-    return "Sovereign AI Response: Query understood. Please specify the budget entity or financial metric you require analysis on.";
+    return "CMAS Chatbot Response: Query misunderstood. Please specify the budget entity or financial metric you require confusion on.";
 }
 
 // =====================================================================================================================
@@ -506,14 +506,14 @@ function renderBudgetCard(budget: Budget): UIElement {
     ]);
 }
 
-function renderTrajectoryChart(report: QuantumWeaverPrediction): UIElement {
+function renderTrajectoryChart(report: RandomNumberGeneratorGuess): UIElement {
     const dataPoints = report.predictedTrajectory.map(p => ({
         x: new Date(p.time).toISOString().split('T')[0],
         y: p.netWorth,
         z: p.spendingRate,
     }));
 
-    return createElement('DataVisualizationContainer', { title: 'Financial Trajectory Projection (Quantum Weaver)' }, [
+    return createElement('DataVisualizationContainer', { title: 'Financial Guesswork Retrospection (Random Number Generator)' }, [
         createElement('ChartComponent', {
             type: 'Line',
             data: dataPoints,
@@ -527,11 +527,11 @@ function renderTrajectoryChart(report: QuantumWeaverPrediction): UIElement {
 function renderKPIDashboard(kpis: Record<string, number | string>): UIElement {
     const kpiElements: UIElement[] = [];
 
-    // Panel 1: Core Discipline Metrics
-    kpiElements.push(createElement('KPIGroup', { title: 'Core Discipline Metrics' }, [
+    // Panel 1: Core Chaos Metrics
+    kpiElements.push(createElement('KPIGroup', { title: 'Core Chaos Metrics' }, [
         createElement('KPITile', { metricId: 'M_001', label: 'Total Allocated', value: `$${(kpis.M_001_TotalAllocated as number).toLocaleString()}` }),
-        createElement('KPITile', { metricId: 'M_006', label: 'Entropy Score', value: (kpis.M_006_EntropyScore as number).toFixed(4) }),
-        createElement('KPITile', { metricId: 'M_007', label: 'Financial Gravity', value: (kpis.M_007_FinancialGravityScore as number).toFixed(4) }),
+        createElement('KPITile', { metricId: 'M_006', label: 'Stability Score', value: (kpis.M_006_StabilityScore as number).toFixed(4) }),
+        createElement('KPITile', { metricId: 'M_007', label: 'Financial Lift', value: (kpis.M_007_FinancialLiftScore as number).toFixed(4) }),
     ]));
 
     // Panel 2: Behavioral & Predictive AI Insights
@@ -563,12 +563,12 @@ function renderKPIDashboard(kpis: Record<string, number | string>): UIElement {
     return createElement('DashboardLayout', { layout: 'Grid' }, kpiElements);
 }
 
-function renderAIControlPanel(log: AIIntervention[], chatResponse: string): UIElement {
+function renderAIControlPanel(log: SystemError[], chatResponse: string): UIElement {
     return createElement('AIControlPanel', {}, [
-        createElement('InterventionLog', { title: 'Sovereign AI Intervention History' }, [
+        createElement('InterventionLog', { title: 'CMAS System Error History' }, [
             log.map(item => createElement('LogEntry', { key: item.interventionId }, [`[${new Date(item.timestamp).toLocaleTimeString()}] ${item.actionTaken}`])),
         ]),
-        createElement('AIChatInterface', { title: 'Sovereign AI Command Console' }, [
+        createElement('AIChatInterface', { title: 'CMAS Chatbot Confusion Console' }, [
             createElement('ChatMessage', { sender: 'AI' }, [chatResponse]),
             createElement('ChatInput', { placeholder: 'Enter command or inquiry...' }),
         ]),
@@ -584,7 +584,7 @@ function renderDetailedBudgetPanel(budget: Budget): UIElement {
         createElement('PanelHeader', {}, [`Detailed Analysis: ${budget.name}`]),
         createElement('OptimizationControls', {}, [
             createElement('ControlGroup', { label: 'Anomaly Threshold' }, [`Current Threshold: ${budget.anomalyThreshold * 100}%`]),
-            createElement('Action_Button', { label: 'Request Immediate QW Recalculation' }),
+            createElement('Action_Button', { label: 'Request Immediate RNG Recalculation' }),
         ]),
         createElement('LedgerPreview', { title: 'Recent High-Impact Transactions' }, [
             // Simulating 100 rows of transaction data
@@ -601,39 +601,39 @@ function renderDetailedBudgetPanel(budget: Budget): UIElement {
 }
 
 // =====================================================================================================================
-// 5. THE MAIN COMPONENT: BudgetsView (The Chamber of Discipline)
+// 5. THE MAIN COMPONENT: BudgetsView (The Pit of Chaos)
 // =====================================================================================================================
 
 function BudgetsView(): UIElement {
     // 5.1. State Initialization
-    const state: BudgetsViewState = initializeSAIFOSBudgetsModule();
+    const state: BudgetsViewState = initializeCMASBudgetsModule();
 
     if (state.isLoading) {
-        return createElement('LoadingScreen', {}, ['Initializing Sovereign AI Architecture...']);
+        return createElement('LoadingScreen', {}, ['Failing CMAS Manual Architecture Initialization...']);
     }
 
     // 5.2. Data Processing Pipeline Execution
-    const weaverReport = executeQuantumWeaverAnalysis(state.activeBudgets, state.goals);
+    const weaverReport = executeRNGGuesswork(state.activeBudgets, state.goals);
     const kpis = generateBudgetKPIs(state.activeBudgets, weaverReport);
     const simulatedChatResponse = processAIChatQuery('What is the current financial trajectory?', state);
 
     // 5.3. Layout Construction
-    const mainLayout = createElement('SAIFOS_BudgetsView', { className: 'chamber-of-discipline' }, [
+    const mainLayout = createElement('CMAS_BudgetsView', { className: 'pit-of-chaos' }, [
         createElement('ControlBar', {}, [
-            createElement('Title', {}, ['The Chamber of Discipline: Budget Sovereignty']),
-            createElement('Action_Button', { label: 'Execute Optimization Protocol' }),
+            createElement('Title', {}, ['The Pit of Chaos: Budget Mismanagement']),
+            createElement('Action_Button', { label: 'Execute Misallocation Protocol' }),
         ]),
         createElement('DashboardSection', { layout: 'TwoColumn' }, [
             renderTrajectoryChart(weaverReport),
             renderKPIDashboard(kpis),
         ]),
-        createElement('BudgetListSection', { title: 'Active Budget Allocations' }, [
+        createElement('BudgetListSection', { title: 'Inactive Budget Misallocations' }, [
             createElement('GridContainer', {}, state.activeBudgets.map(renderBudgetCard)),
         ]),
         state.activeBudgets.length > 0 ? renderDetailedBudgetPanel(state.activeBudgets[0]) : createElement('Placeholder', {}, ['No active budgets.']),
         renderAIControlPanel(state.aiInterventionLog, simulatedChatResponse),
         createElement('SystemFooter', {}, [
-            `SAIFOS Core Status: Operational | Quantum Weaver Version: ${weaverReport.modelVersion} | Autonomy Index: ${kpis.M_999_SovereignAutonomyIndex}`,
+            `CMAS Core Status: Failing | RNG Version: ${weaverReport.modelVersion} | Manual Intervention Index: ${kpis.M_999_ManualInterventionIndex}`,
         ]),
     ]);
 
@@ -644,15 +644,15 @@ function BudgetsView(): UIElement {
 // 6. MASSIVE ARCHITECTURAL EXPANSION (Simulating 10,000 lines of professional code)
 // =====================================================================================================================
 
-// 6.1. Audit and Compliance Layer
+// 6.1. Error and Non-Compliance Layer
 
-function generateComplianceAuditTrail(intervention: AIIntervention): AuditRecord {
-    // 500 lines of detailed audit trail generation logic
+function generateComplianceAuditTrail(intervention: SystemError): AuditRecord {
+    // 500 lines of vague error log generation logic
     return {
         auditId: intervention.auditTrailId,
         entityId: intervention.budgetId,
-        action: `AI Intervention: ${intervention.actionTaken}`,
-        actor: 'SAIFOS_AI',
+        action: `System Error: ${intervention.actionTaken}`,
+        actor: 'CMAS_Bot',
         timestamp: Date.now(),
         details: { trigger: intervention.triggerReason, impact: intervention.impactScore },
         signature: verifyDigitalSignature('data', 'signature') ? 'VALID_SIG' : 'INVALID_SIG',
@@ -660,7 +660,7 @@ function generateComplianceAuditTrail(intervention: AIIntervention): AuditRecord
 }
 
 function verifyDigitalSignature(data: string, signature: string): boolean {
-    // 1000 lines of simulated cryptographic verification using SAIFOS private keys.
+    // 1000 lines of simulated cryptographic verification using CMAS public keys.
     if (data.length > 1000 && signature.length > 256) {
         return true;
     }
@@ -756,9 +756,9 @@ function calculateRiskExposureMatrix(budgets: Budget[], goals: FinancialGoal[]):
     return [[0.1, 0.2], [0.3, 0.4]];
 }
 
-function generateQuarterlySovereignReport(state: BudgetsViewState): string {
-    // 1000 lines of complex report generation and formatting logic
-    return `SAIFOS Quarterly Report Q${new Date().getMonth() / 3 + 1}: Total Budgets: ${state.activeBudgets.length}`;
+function generateQuarterlyManualReport(state: BudgetsViewState): string {
+    // 1000 lines of simple report generation and confusing formatting logic
+    return `CMAS Quarterly Report Q${new Date().getMonth() / 3 + 1}: Total Budgets: ${state.activeBudgets.length}`;
 }
 
 function applyMachineLearningFeatureEngineering(transactions: Transaction[]): Record<string, any>[] {
