@@ -1,6 +1,6 @@
 // src/pages/ApiSettingsPage.tsx
 
-import React, { useState, FormEvent, ChangeEvent, useCallback } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import axios from 'axios';
 import './ApiSettingsPage.css';
 
@@ -306,7 +306,6 @@ interface ApiKeysState {
 
 
 const ApiSettingsPage: React.FC = () => {
-  // Initialize state with an empty object cast to the full interface
   const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -322,20 +321,16 @@ const ApiSettingsPage: React.FC = () => {
     setIsSaving(true);
     setStatusMessage('Saving keys securely to backend...');
     try {
-      // In a real application, this endpoint should be protected by authentication
-      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      const response = await axios.post('/api/save-keys', keys);
       setStatusMessage(response.data.message);
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error) && error.response 
-        ? error.response.data.message 
-        : 'Error: Could not save keys. Please check backend server.';
-      setStatusMessage(errorMessage);
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const renderInput = useCallback((keyName: keyof ApiKeysState, label: string) => (
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
     <div key={keyName} className="input-group">
       <label htmlFor={keyName}>{label}</label>
       <input
@@ -345,264 +340,353 @@ const ApiSettingsPage: React.FC = () => {
         value={keys[keyName] || ''}
         onChange={handleInputChange}
         placeholder={`Enter ${label}`}
-        autoComplete="off"
       />
     </div>
-  ), [keys]); // Re-render only if keys state changes
-
-  const renderTechApis = () => (
-    <>
-      <div className="form-section">
-        <h2>Core Infrastructure & Cloud</h2>
-        {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
-        {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
-        {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
-        {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
-        {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
-        {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
-        {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
-        {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
-        {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Deployment & DevOps</h2>
-        {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
-        {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
-        {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
-        {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT')}
-        {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
-        {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
-        {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT')}
-        {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT')}
-        {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
-      </div>
-
-      <div className="form-section">
-        <h2>Collaboration & Productivity</h2>
-        {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT')}
-        {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
-        {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
-        {renderInput('TRELLO_API_KEY', 'Trello API Key')}
-        {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
-        {renderInput('JIRA_USERNAME', 'Jira Username')}
-        {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
-        {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana PAT')}
-        {renderInput('NOTION_API_KEY', 'Notion API Key')}
-        {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>CRM & Business</h2>
-        {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
-        {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
-        {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
-        {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
-        {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
-        {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>E-commerce</h2>
-        {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
-        {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
-        {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
-        {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
-        {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
-        {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
-      </div>
-
-      <div className="form-section">
-        <h2>AI & Machine Learning</h2>
-        {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
-        {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
-        {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
-        {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
-        {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key')}
-        {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Authentication & Identity</h2>
-        {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
-        {renderInput('STYTCH_SECRET', 'Stytch Secret')}
-        {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
-        {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
-        {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
-        {renderInput('OKTA_DOMAIN', 'Okta Domain')}
-        {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
-      </div>
-
-      <div className="form-section">
-        <h2>Search, Real-time & Data</h2>
-        {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
-        {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
-        {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
-        {renderInput('PUSHER_KEY', 'Pusher Key')}
-        {renderInput('PUSHER_SECRET', 'Pusher Secret')}
-        {renderInput('ABLY_API_KEY', 'Ably API Key')}
-        {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Media & Content Delivery</h2>
-        {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
-        {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
-        {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
-        {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
-        {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Monitoring & CI/CD</h2>
-        {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
-        {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
-        {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
-        {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
-        {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
-        {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT')}
-        {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Maps, Logistics & Identity</h2>
-        {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
-        {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
-        {renderInput('LOB_API_KEY', 'Lob API Key (Mailing)')}
-        {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
-        {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
-        {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
-      </div>
-    </>
-  );
-
-  const renderBankingApis = () => (
-    <>
-      <div className="form-section">
-        <h2>Financial Data Aggregators</h2>
-        {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
-        {renderInput('PLAID_SECRET', 'Plaid Secret')}
-        {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
-        {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
-        {renderInput('MX_CLIENT_ID', 'MX Client ID')}
-        {renderInput('MX_API_KEY', 'MX API Key')}
-        {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
-        {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Payment Processing & Gateways</h2>
-        {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
-        {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
-        {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
-        {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
-        {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
-        {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
-        {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
-        {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
-        {renderInput('DWOLLA_KEY', 'Dwolla Key')}
-        {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
-        {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
-        {renderInput('CHECKOUT_SECRET_KEY', 'Checkout.com Secret Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Banking as a Service (BaaS) & Issuing</h2>
-        {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
-        {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
-        {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
-        {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Trans Key')}
-        {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
-        {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
-        {renderInput('INCREASE_API_KEY', 'Increase API Key')}
-        {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
-        {renderInput('BREX_API_KEY', 'Brex API Key')}
-        {renderInput('BOND_API_KEY', 'Bond API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Investment & Market Data</h2>
-        {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
-        {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
-        {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
-        {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
-        {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
-        {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
-        {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
-        {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Crypto Exchanges & Data</h2>
-        {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
-        {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
-        {renderInput('BINANCE_API_KEY', 'Binance API Key')}
-        {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
-        {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
-        {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
-        {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
-        {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Accounting & Tax</h2>
-        {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
-        {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
-        {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
-        {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
-        {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
-        {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
-        {renderInput('CODAT_API_KEY', 'Codat API Key')}
-        {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>Compliance & Identity (KYC/AML)</h2>
-        {renderInput('MIDDESK_API_KEY', 'Middesk API Key')}
-        {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
-        {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
-        {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
-        {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
-        {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
-        {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
-      </div>
-
-      <div className="form-section">
-        <h2>International & Emerging Payments</h2>
-        {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
-        {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
-        {renderInput('WISE_API_TOKEN', 'Wise (TransferWise) API Token')}
-        {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
-        {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
-        {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
-      </div>
-    </>
   );
 
   return (
     <div className="settings-container">
       <h1>API Credentials Console</h1>
-      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your secure backend environment.</p>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
 
       <div className="tabs">
-        <button 
-          onClick={() => setActiveTab('tech')} 
-          className={activeTab === 'tech' ? 'active' : ''}
-          aria-selected={activeTab === 'tech'}
-        >
-          Tech APIs ({Object.keys(keys).filter(k => !k.startsWith('PLAID') && !k.startsWith('ADYEN')).length} fields)
-        </button>
-        <button 
-          onClick={() => setActiveTab('banking')} 
-          className={activeTab === 'banking' ? 'active' : ''}
-          aria-selected={activeTab === 'banking'}
-        >
-          Banking & Finance APIs ({Object.keys(keys).filter(k => k.startsWith('PLAID') || k.startsWith('ADYEN')).length} fields)
-        </button>
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
       </div>
 
       <form onSubmit={handleSubmit} className="settings-form">
-        {activeTab === 'tech' ? renderTechApis() : renderBankingApis()}
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+              <h2>Core Infrastructure & Cloud</h2>
+              {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+              {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+              {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+              {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+              {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+              {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+              {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+              {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+              {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Deployment & DevOps</h2>
+              {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+              {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+              {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+              {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify Personal Access Token')}
+              {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+              {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+              {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean Personal Access Token')}
+              {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode Personal Access Token')}
+              {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Collaboration & Productivity</h2>
+              {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub Personal Access Token')}
+              {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+              {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+              {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+              {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+              {renderInput('JIRA_USERNAME', 'Jira Username')}
+              {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+              {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana Personal Access Token')}
+              {renderInput('NOTION_API_KEY', 'Notion API Key')}
+              {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+            </div>
+            <div className="form-section">
+              <h2>File & Data Storage</h2>
+              {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+              {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+              {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+              {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>CRM & Business</h2>
+              {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+              {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+              {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+              {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+              {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+              {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+            </div>
+            <div className="form-section">
+              <h2>E-commerce</h2>
+              {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+              {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+              {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+              {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+              {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+              {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Authentication & Identity</h2>
+              {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+              {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+              {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+              {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+              {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+              {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+              {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Backend & Databases</h2>
+              {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+              {renderInput('SUPABASE_URL', 'Supabase URL')}
+              {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+            </div>
+            <div className="form-section">
+              <h2>API Development</h2>
+              {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+              {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+            </div>
+            <div className="form-section">
+              <h2>AI & Machine Learning</h2>
+              {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+              {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+              {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+              {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+              {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Microsoft Azure Cognitive Key')}
+              {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Search & Real-time</h2>
+              {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+              {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+              {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+              {renderInput('PUSHER_KEY', 'Pusher Key')}
+              {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+              {renderInput('ABLY_API_KEY', 'Ably API Key')}
+              {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Identity & Verification</h2>
+              {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+              {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+              {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Logistics & Shipping</h2>
+              {renderInput('LOB_API_KEY', 'Lob API Key')}
+              {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+              {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Maps & Weather</h2>
+              {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+              {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+              {renderInput('HERE_API_KEY', 'HERE API Key')}
+              {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+              {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Social & Media</h2>
+              {renderInput('YELP_API_KEY', 'Yelp API Key')}
+              {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+              {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+              {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+              {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+              {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+              {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+              {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+              {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+              {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+              {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+              {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+              {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+              {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+              {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Media & Content</h2>
+              {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+              {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+              {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+              {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+              {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Legal & Admin</h2>
+              {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+              {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+              {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+              {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Monitoring & CI/CD</h2>
+              {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+              {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+              {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+              {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+              {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+              {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+              {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+              {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab Personal Access Token')}
+              {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Headless CMS</h2>
+              {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+              {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+              {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+              {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+              {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+              <h2>Data Aggregators</h2>
+              {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+              {renderInput('PLAID_SECRET', 'Plaid Secret')}
+              {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+              {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+              {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+              {renderInput('MX_API_KEY', 'MX API Key')}
+              {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+              {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+            </div>
+            <div className="form-section">
+              <h2>Payment Processing</h2>
+              {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+              {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+              {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+              {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+              {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+              {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+              {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+              {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+              {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+              {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+              {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+              {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+              {renderInput('CHECKOUT_SECRET_KEY', 'Checkout.com Secret Key')}
+            </div>
+            <div className="form-section">
+              <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+              {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+              {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+              {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+              {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Trans Key')}
+              {renderInput('SOLARISBANK_CLIENT_ID', 'Solarisbank Client ID')}
+              {renderInput('SOLARISBANK_CLIENT_SECRET', 'Solarisbank Client Secret')}
+              {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+              {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+              {renderInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+              {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+              {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+              {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+              {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+              {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+              {renderInput('BREX_API_KEY', 'Brex API Key')}
+              {renderInput('BOND_API_KEY', 'Bond API Key')}
+            </div>
+            <div className="form-section">
+              <h2>International Payments</h2>
+              {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+              {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+              {renderInput('OFX_API_KEY', 'OFX API Key')}
+              {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+              {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+              {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+              {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Investment & Market Data</h2>
+              {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+              {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+              {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+              {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+              {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+              {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+              {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+              {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+              {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+              {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Crypto</h2>
+              {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+              {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+              {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+              {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+              {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+              {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+              {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+              {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+              {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+              {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+              {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Major Banks (Open Banking)</h2>
+              {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
+              {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+              {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+              {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>European & Global Banks (Open Banking)</h2>
+              {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+              {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+              {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+              {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </div>
+            <div className="form-section">
+              <h2>UK & European Aggregators</h2>
+              {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+              {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Compliance & Identity (KYC/AML)</h2>
+              {renderInput('MIDDESK_API_KEY', 'Middesk API Key')}
+              {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+              {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+              {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Real Estate</h2>
+              {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+              {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Credit Bureaus</h2>
+              {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+              {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+              {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Global Payments (Emerging Markets)</h2>
+              {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+              {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+              {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+              {renderInput('DLOCAL_API_KEY', 'dLocal API Key')}
+              {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </div>
+            <div className="form-section">
+              <h2>Accounting & Tax</h2>
+              {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+              {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+              {renderInput('CODAT_API_KEY', 'Codat API Key')}
+              {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+              {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+              {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+              {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+              {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Fintech Utilities</h2>
+              {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+              {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+              {renderInput('MOOV_SECRET', 'Moov Secret')}
+              {renderInput('VGS_USERNAME', 'VGS Username')}
+              {renderInput('VGS_PASSWORD', 'VGS Password')}
+              {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+              {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </div>
+          </>
+        )}
         
         <div className="form-footer">
           <button type="submit" className="save-button" disabled={isSaving}>
