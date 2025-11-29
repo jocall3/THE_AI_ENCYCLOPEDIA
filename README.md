@@ -6,7 +6,7 @@ In the annals of financial history, the name **James Burvel O'Callaghan III** wi
 
 ### The Architect's Genesis
 
-James O'Callaghan III—known simply as "JB" to the few who dared to approach him—was not cut from the usual silk of Wall Street. He was a thinker who saw the inherent fragility, inefficiency, and corruption laced through legacy finance. His pedigree was steeped in theoretical physics, complex systems modeling, and sovereign AI philosophy. He believed that the ultimate expression of human freedom was financial sovereignty, and that the only entity capable of delivering this consistently, honestly, and relentlessly was a self-governing, highly evolved Artificial Intelligence.
+James O'Callaghan III—known simply as DON ONE to the few who dared to approach him—was not cut from the usual silk of Wall Street. He was a thinker who saw the inherent fragility, inefficiency, and corruption laced through legacy finance. His pedigree was steeped in theoretical physics, complex systems modeling, and sovereign AI philosophy. He believed that the ultimate expression of human freedom was financial sovereignty, and that the only entity capable of delivering this consistently, honestly, and relentlessly was a self-governing, highly evolved Artificial Intelligence.
 
 ### The Way He Thinks: Logic and Sovereignty
 
