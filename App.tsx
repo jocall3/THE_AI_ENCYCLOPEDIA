@@ -30,7 +30,7 @@ import VentureCapitalDesk from './components/VentureCapitalDesk';
 import PrivateEquityLounge from './components/PrivateEquityLounge';
 import TaxOptimizationChamber from './components/TaxOptimizationChamber';
 import LegacyBuilder from './components/LegacyBuilder';
-import SovereignWealth from './components/SovereignWealth';
+import PublicTrustAssetManagement from './components/PublicTrustAssetManagement';
 import PhilanthropyHub from './components/PhilanthropyHub';
 import APIIntegrationView from './components/APIIntegrationView';
 import SettingsView from './components/SettingsView';
@@ -44,33 +44,33 @@ import { DataContext } from './context/DataContext';
 import { View } from './types';
 
 /**
- * Enterprise Operating System Main Application Entry Point.
+ * Consumer Interface Main Application Entry Point.
  * 
- * This component serves as the central nervous system for the entire financial platform.
- * It orchestrates the rendering of all subsystems, manages global layout state, and
- * integrates the AI-driven interface layers.
+ * This component serves as the central hub for the entire utility platform.
+ * It coordinates the display of all modules, manages global layout state, and
+ * incorporates the machine-driven interface layers.
  * 
  * Architecture:
- * - Layout: Responsive Flexbox Grid with Sidebar/Header/Main Content areas.
- * - State Management: Consumes DataContext for global view routing.
- * - AI Integration: Embeds VoiceControl and AI Advisor overlays.
- * - Security: Enforces view-level separation.
+ * - Layout: Standardized Grid Structure with Navigation Panel/Top Bar/Primary Content sections.
+ * - State Management: Retrieves shared state for primary view routing.
+ * - Machine Integration: Includes VoiceControl and Machine Advisor overlays.
+ * - Access Control: Ensures module-level segregation.
  */
 export default function App() {
-  // Global State Consumption
+  // Shared State Retrieval
   const { activeView, setActiveView } = useContext(DataContext);
   
-  // Local UI State
+  // Local Interface State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   /**
-   * Renders the active subsystem based on the current global view state.
-   * This switch acts as the primary router for the application, ensuring
-   * that only the requested module is loaded into the DOM.
+   * Displays the selected module based on the current shared view state.
+   * This conditional block functions as the main application router, ensuring
+   * only the necessary component is rendered in the DOM.
    */
   const renderActiveSubsystem = () => {
     switch (activeView) {
-      // Core Banking & Dashboarding
+      // Primary Account & Overview
       case View.Dashboard:
         return <Dashboard setActiveView={setActiveView} />;
       case View.Transactions:
@@ -84,7 +84,7 @@ export default function App() {
       case View.CreditHealth:
         return <CreditHealthView />;
       
-      // Investment & Trading Engines
+      // Asset Allocation & Trading Modules
       case View.Investments:
         return <InvestmentsView />;
       case View.CryptoWeb3:
@@ -102,7 +102,7 @@ export default function App() {
       case View.DerivativesDesk:
         return <DerivativesDesk />;
       
-      // High Finance & Corporate
+      // Institutional & Large Scale Operations
       case View.VentureCapital:
         return <VentureCapitalDesk />;
       case View.PrivateEquity:
@@ -116,7 +116,7 @@ export default function App() {
       case View.ModernTreasury:
         return <ModernTreasuryView />;
       
-      // Advanced Tech & AI Integration
+      // Emerging Technologies & Automation
       case View.OpenBanking:
         return <OpenBankingView />;
       case View.FinancialDemocracy:
@@ -128,7 +128,7 @@ export default function App() {
       case View.AgentMarketplace:
         return <MarketplaceView />;
       
-      // Infrastructure & Settings
+      // System Configuration & Connectivity
       case View.APIStatus:
         return <APIIntegrationView />;
       case View.Settings:
@@ -142,11 +142,11 @@ export default function App() {
       case View.SSO:
         return <SSOView />;
       
-      // Lifestyle & Wealth Management
+      // Personal Management & Future Planning
       case View.ConciergeService:
         return <ConciergeService />;
       case View.SovereignWealth:
-        return <SovereignWealth />;
+        return <PublicTrustAssetManagement />;
       case View.Philanthropy:
         return <PhilanthropyHub />;
       case View.Personalization:
@@ -154,7 +154,7 @@ export default function App() {
       case View.TheVision:
         return <TheVisionView />;
       
-      // Intelligence & Security Layers
+      // Advisory & Safety Protocols
       case View.AIAdvisor:
         return <AIAdvisorView previousView={null} />;
       case View.SecurityCenter:
@@ -168,8 +168,8 @@ export default function App() {
   return (
     <div className="flex h-screen bg-gray-900 text-white overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
       {/* 
-        Primary Navigation Sidebar 
-        Handles routing and module selection.
+        Primary Navigation Panel 
+        Manages navigation and module selection.
       */}
       <Sidebar 
         activeView={activeView} 
@@ -179,21 +179,21 @@ export default function App() {
       />
       
       {/* 
-        Main Content Area 
-        Contains the Header and the dynamic Viewport.
+        Main Display Area 
+        Contains the Top Bar and the dynamic Content Pane.
       */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-black">
         
-        {/* Global Application Header */}
+        {/* Global Application Top Bar */}
         <Header 
           onMenuClick={() => setIsSidebarOpen(true)} 
           setActiveView={setActiveView} 
         />
         
         {/* 
-          Dynamic Viewport 
-          Renders the active business logic component.
-          Includes padding and layout constraints for optimal viewing.
+          Dynamic Content Pane 
+          Renders the currently selected functional component.
+          Includes necessary spacing and layout constraints for optimal viewing.
         */}
         <main className="w-full flex-grow p-6 relative z-10">
           <div className="max-w-8xl mx-auto h-full">
@@ -202,9 +202,9 @@ export default function App() {
         </main>
 
         {/* 
-          AI Context Layer
-          Background elements or overlays could be placed here to represent
-          continuous AI monitoring and assistance.
+          Machine Context Layer
+          Static background elements or overlays representing
+          continuous automated monitoring.
         */}
         <div className="pointer-events-none absolute inset-0 z-0 opacity-5">
           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
@@ -212,8 +212,8 @@ export default function App() {
       </div>
       
       {/* 
-        Voice Command Interface
-        Always active listener for natural language interaction.
+        Voice Command Listener
+        Continuously active interface for direct input interaction.
       */}
       <VoiceControl setActiveView={setActiveView} />
     </div>
