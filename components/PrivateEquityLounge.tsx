@@ -1,1187 +1,785 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
 
-// Data Models and Interfaces
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-interface Stakeholder {
-    id: number;
-    name: string;
-    shares: number;
-    type: 'Founder' | 'Investor' | 'Employee' | 'Option Pool' | 'Advisor';
-    equityPercentage: number;
-    basis: number;
-    vested: number;
-    votingRights: boolean;
-    antiDilution: 'None' | 'Full Ratchet' | 'Weighted Average';
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
+
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
+
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-interface FinancialMetric {
-    label: string;
-    value: number;
-    delta: number; // Percentage change
-    trend: 'up' | 'down' | 'flat';
-    prefix?: string;
-    suffix?: string;
-}
 
-interface AIInsight {
-    id: number;
-    category: 'Risk' | 'Opportunity' | 'Compliance' | 'Strategy';
-    severity: 'Low' | 'Medium' | 'High' | 'Critical';
-    message: string;
-    timestamp: string;
-}
+// --- Component Setup ---
 
-interface Document {
-    id: number;
-    name: string;
-    type: string;
-    size: string;
-    uploadDate: string;
-    status: 'Verified' | 'Pending' | 'Flagged';
-    accessLevel: 'Admin' | 'Board' | 'Public';
-}
+// Rename the component to match the file name structure, although the instructions imply it should be ApiSettingsPage if imported elsewhere.
+// We will stick to ApiSettingsPage as defined in the provided code block, but assume for refactoring purposes the context is that this component is moving into the PrivateEquityLounge file context.
+// Since the instruction overrides the existing code entirely, we proceed with implementing the API Settings logic here, replacing the existing PE Lounge logic.
 
-interface ChatMessage {
-    id: number;
-    sender: 'User' | 'System_AI';
-    text: string;
-    timestamp: Date;
-}
+const BASE_URL = 'http://localhost:4000/api/save-keys'; // Backend endpoint for saving keys
 
-// Mock Data
+const ApiSettingsPage: React.FC = () => {
+  // Initialize state with keys, default to empty strings, ensuring all 200+ keys are represented.
+  const initialKeysState: ApiKeysState = useMemo(() => ({
+    // Tech APIs
+    STRIPE_SECRET_KEY: '', TWILIO_ACCOUNT_SID: '', TWILIO_AUTH_TOKEN: '', SENDGRID_API_KEY: '',
+    AWS_ACCESS_KEY_ID: '', AWS_SECRET_ACCESS_KEY: '', AZURE_CLIENT_ID: '', AZURE_CLIENT_SECRET: '',
+    GOOGLE_CLOUD_API_KEY: '', DOCKER_HUB_USERNAME: '', DOCKER_HUB_ACCESS_TOKEN: '', HEROKU_API_KEY: '',
+    NETLIFY_PERSONAL_ACCESS_TOKEN: '', VERCEL_API_TOKEN: '', CLOUDFLARE_API_TOKEN: '', DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: '',
+    LINODE_PERSONAL_ACCESS_TOKEN: '', TERRAFORM_API_TOKEN: '', GITHUB_PERSONAL_ACCESS_TOKEN: '', SLACK_BOT_TOKEN: '',
+    DISCORD_BOT_TOKEN: '', TRELLO_API_KEY: '', TRELLO_API_TOKEN: '', JIRA_USERNAME: '',
+    JIRA_API_TOKEN: '', ASANA_PERSONAL_ACCESS_TOKEN: '', NOTION_API_KEY: '', AIRTABLE_API_KEY: '',
+    DROPBOX_ACCESS_TOKEN: '', BOX_DEVELOPER_TOKEN: '', GOOGLE_DRIVE_API_KEY: '', ONEDRIVE_CLIENT_ID: '',
+    SALESFORCE_CLIENT_ID: '', SALESFORCE_CLIENT_SECRET: '', HUBSPOT_API_KEY: '', ZENDESK_API_TOKEN: '',
+    INTERCOM_ACCESS_TOKEN: '', MAILCHIMP_API_KEY: '', SHOPIFY_API_KEY: '', SHOPIFY_API_SECRET: '',
+    BIGCOMMERCE_ACCESS_TOKEN: '', MAGENTO_ACCESS_TOKEN: '', WOOCOMMERCE_CLIENT_KEY: '', WOOCOMMERCE_CLIENT_SECRET: '',
+    STYTCH_PROJECT_ID: '', STYTCH_SECRET: '', AUTH0_DOMAIN: '', AUTH0_CLIENT_ID: '',
+    AUTH0_CLIENT_SECRET: '', OKTA_DOMAIN: '', OKTA_API_TOKEN: '', FIREBASE_API_KEY: '',
+    SUPABASE_URL: '', SUPABASE_ANON_KEY: '', POSTMAN_API_KEY: '', APOLLO_GRAPH_API_KEY: '',
+    OPENAI_API_KEY: '', HUGGING_FACE_API_TOKEN: '', GOOGLE_CLOUD_AI_API_KEY: '', AMAZON_REKOGNITION_ACCESS_KEY: '',
+    MICROSOFT_AZURE_COGNITIVE_KEY: '', IBM_WATSON_API_KEY: '', ALGOLIA_APP_ID: '', ALGOLIA_ADMIN_API_KEY: '',
+    PUSHER_APP_ID: '', PUSHER_KEY: '', PUSHER_SECRET: '', ABLY_API_KEY: '',
+    ELASTICSEARCH_API_KEY: '', STRIPE_IDENTITY_SECRET_KEY: '', ONFIDO_API_TOKEN: '', CHECKR_API_KEY: '',
+    LOB_API_KEY: '', EASYPOST_API_KEY: '', SHIPPO_API_TOKEN: '', GOOGLE_MAPS_API_KEY: '',
+    MAPBOX_ACCESS_TOKEN: '', HERE_API_KEY: '', ACCUWEATHER_API_KEY: '', OPENWEATHERMAP_API_KEY: '',
+    YELP_API_KEY: '', FOURSQUARE_API_KEY: '', REDDIT_CLIENT_ID: '', REDDIT_CLIENT_SECRET: '',
+    TWITTER_BEARER_TOKEN: '', FACEBOOK_APP_ID: '', FACEBOOK_APP_SECRET: '', INSTAGRAM_APP_ID: '',
+    INSTAGRAM_APP_SECRET: '', YOUTUBE_DATA_API_KEY: '', SPOTIFY_CLIENT_ID: '', SPOTIFY_CLIENT_SECRET: '',
+    SOUNDCLOUD_CLIENT_ID: '', TWITCH_CLIENT_ID: '', TWITCH_CLIENT_SECRET: '', MUX_TOKEN_ID: '',
+    MUX_TOKEN_SECRET: '', CLOUDINARY_API_KEY: '', CLOUDINARY_API_SECRET: '', IMGIX_API_KEY: '',
+    STRIPE_ATLAS_API_KEY: '', CLERKY_API_KEY: '', DOCUSIGN_INTEGRATOR_KEY: '', HELLOSIGN_API_KEY: '',
+    LAUNCHDARKLY_SDK_KEY: '', SENTRY_AUTH_TOKEN: '', DATADOG_API_KEY: '', NEW_RELIC_API_KEY: '',
+    CIRCLECI_API_TOKEN: '', TRAVIS_CI_API_TOKEN: '', BITBUCKET_USERNAME: '', BITBUCKET_APP_PASSWORD: '',
+    GITLAB_PERSONAL_ACCESS_TOKEN: '', PAGERDUTY_API_KEY: '', CONTENTFUL_SPACE_ID: '', CONTENTFUL_ACCESS_TOKEN: '',
+    SANITY_PROJECT_ID: '', SANITY_API_TOKEN: '', STRAPI_API_TOKEN: '',
+    // Banking APIs
+    PLAID_CLIENT_ID: '', PLAID_SECRET: '', YODLEE_CLIENT_ID: '', YODLEE_SECRET: '',
+    MX_CLIENT_ID: '', MX_API_KEY: '', FINICITY_PARTNER_ID: '', FINICITY_APP_KEY: '',
+    ADYEN_API_KEY: '', ADYEN_MERCHANT_ACCOUNT: '', BRAINTREE_MERCHANT_ID: '', BRAINTREE_PUBLIC_KEY: '',
+    BRAINTREE_PRIVATE_KEY: '', SQUARE_APPLICATION_ID: '', SQUARE_ACCESS_TOKEN: '', PAYPAL_CLIENT_ID: '',
+    PAYPAL_SECRET: '', DWOLLA_KEY: '', DWOLLA_SECRET: '', WORLDPAY_API_KEY: '',
+    CHECKOUT_SECRET_KEY: '', MARQETA_APPLICATION_TOKEN: '', MARQETA_ADMIN_ACCESS_TOKEN: '',
+    GALILEO_API_LOGIN: '', GALILEO_API_TRANS_KEY: '', SOLARISBANK_CLIENT_ID: '', SOLARISBANK_CLIENT_SECRET: '',
+    SYNAPSE_CLIENT_ID: '', SYNAPSE_CLIENT_SECRET: '', RAILSBANK_API_KEY: '', CLEARBANK_API_KEY: '',
+    UNIT_API_TOKEN: '', TREASURY_PRIME_API_KEY: '', INCREASE_API_KEY: '', MERCURY_API_KEY: '',
+    BREX_API_KEY: '', BOND_API_KEY: '', CURRENCYCLOUD_LOGIN_ID: '', CURRENCYCLOUD_API_KEY: '',
+    OFX_API_KEY: '', WISE_API_TOKEN: '', REMITLY_API_KEY: '', AZIMO_API_KEY: '',
+    NIUM_API_KEY: '', ALPACA_API_KEY_ID: '', ALPACA_SECRET_KEY: '', TRADIER_ACCESS_TOKEN: '',
+    IEX_CLOUD_API_TOKEN: '', POLYGON_API_KEY: '', FINNHUB_API_KEY: '', ALPHA_VANTAGE_API_KEY: '',
+    MORNINGSTAR_API_KEY: '', XIGNITE_API_TOKEN: '', DRIVEWEALTH_API_KEY: '', COINBASE_API_KEY: '',
+    COINBASE_API_SECRET: '', BINANCE_API_KEY: '', BINANCE_API_SECRET: '',
+    KRAKEN_API_KEY: '', KRAKEN_PRIVATE_KEY: '', GEMINI_API_KEY: '', GEMINI_API_SECRET: '',
+    COINMARKETCAP_API_KEY: '', COINGECKO_API_KEY: '', BLOCKIO_API_KEY: '', JP_MORGAN_CHASE_CLIENT_ID: '',
+    CITI_CLIENT_ID: '', WELLS_FARGO_CLIENT_ID: '', CAPITAL_ONE_CLIENT_ID: '',
+    HSBC_CLIENT_ID: '', BARCLAYS_CLIENT_ID: '', BBVA_CLIENT_ID: '', DEUTSCHE_BANK_API_KEY: '',
+    TINK_CLIENT_ID: '', TRUELAYER_CLIENT_ID: '', MIDDESK_API_KEY: '', ALLOY_API_TOKEN: '',
+    ALLOY_API_SECRET: '', COMPLYADVANTAGE_API_KEY: '', ZILLOW_API_KEY: '', CORELOGIC_CLIENT_ID: '',
+    EXPERIAN_API_KEY: '', EQUIFAX_API_KEY: '', TRANSUNION_API_KEY: '', FINCRA_API_KEY: '',
+    FLUTTERWAVE_SECRET_KEY: '', PAYSTACK_SECRET_KEY: '', DLOCAL_API_KEY: '', RAPYD_ACCESS_KEY: '',
+    TAXJAR_API_KEY: '', AVALARA_API_KEY: '', CODAT_API_KEY: '', XERO_CLIENT_ID: '',
+    XERO_CLIENT_SECRET: '', QUICKBOOKS_CLIENT_ID: '', QUICKBOOKS_CLIENT_SECRET: '', FRESHBOOKS_API_KEY: '',
+    ANVIL_API_KEY: '', MOOV_CLIENT_ID: '', MOOV_SECRET: '', VGS_USERNAME: '',
+    VGS_PASSWORD: '', SILA_APP_HANDLE: '', SILA_PRIVATE_KEY: ''
+  }), []);
 
-const mockStakeholders: Stakeholder[] = [
-    { id: 1, name: "Prosperity Fund A (PFS)", shares: 4500000, type: 'Investor', equityPercentage: 45.00, basis: 50000000, vested: 100, votingRights: true, antiDilution: 'Weighted Average' },
-    { id: 2, name: "Alice Founder", shares: 2500000, type: 'Founder', equityPercentage: 25.00, basis: 10000, vested: 85, votingRights: true, antiDilution: 'None' },
-    { id: 3, name: "Bob Co-Founder", shares: 1500000, type: 'Founder', equityPercentage: 15.00, basis: 10000, vested: 85, votingRights: true, antiDilution: 'None' },
-    { id: 4, name: "Employee Pool (Vested)", shares: 1000000, type: 'Employee', equityPercentage: 10.00, basis: 0, vested: 100, votingRights: false, antiDilution: 'None' },
-    { id: 5, name: "Future Options Pool", shares: 500000, type: 'Option Pool', equityPercentage: 5.00, basis: 0, vested: 0, votingRights: false, antiDilution: 'None' },
-    { id: 6, name: "Strategic Advisor Group", shares: 100000, type: 'Advisor', equityPercentage: 1.00, basis: 0, vested: 50, votingRights: false, antiDilution: 'None' },
-];
+  const [keys, setKeys] = useState<ApiKeysState>(initialKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-const initialDocuments: Document[] = [
-    { id: 1, name: "Series A Term Sheet.pdf", type: "PDF", size: "2.4 MB", uploadDate: "2023-10-15", status: "Verified", accessLevel: "Board" },
-    { id: 2, name: "Q3 Financial Audit.xlsx", type: "XLSX", size: "4.1 MB", uploadDate: "2023-11-02", status: "Verified", accessLevel: "Admin" },
-    { id: 3, name: "IP Assignment Agreements.zip", type: "ZIP", size: "15.0 MB", uploadDate: "2023-09-01", status: "Flagged", accessLevel: "Admin" },
-    { id: 4, name: "Board Meeting Minutes Oct.docx", type: "DOCX", size: "1.2 MB", uploadDate: "2023-10-28", status: "Pending", accessLevel: "Board" },
-];
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
 
-const initialInsights: AIInsight[] = [
-    { id: 1, category: 'Opportunity', severity: 'High', message: "Market analysis suggests a 15% valuation premium if IPO is delayed to Q3 2025 due to sector rotation.", timestamp: "10:42 AM" },
-    { id: 2, category: 'Risk', severity: 'Medium', message: "Burn rate has increased by 8% month-over-month. Recommended review of marketing spend efficiency.", timestamp: "09:15 AM" },
-    { id: 3, category: 'Compliance', severity: 'Low', message: "Annual 409A valuation update required within 45 days.", timestamp: "Yesterday" },
-];
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      // NOTE: Using the standard axios setup, this targets the mock endpoint defined in the instructions/server.js example.
+      const response = await axios.post(BASE_URL, keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      console.error('Submission Error:', error);
+      setStatusMessage('Error: Could not save keys. Please check backend server configuration and ensure it is running on port 4000.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-// Component Definition
+  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label} ({keyName})</label> {/* Added keyName for clarity */}
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+        autoComplete="off"
+      />
+    </div>
+  );
 
-const PrivateEquityLounge: React.FC = () => {
-    // State Management
-    const [activeTab, setActiveTab] = useState<'Dashboard' | 'CapTable' | 'Liquidity' | 'DataRoom' | 'AI_Advisor'>('Dashboard');
-    const [stakeholders] = useState<Stakeholder[]>(mockStakeholders);
-    const [documents] = useState<Document[]>(initialDocuments);
-    const [insights] = useState<AIInsight[]>(initialInsights);
-    
-    // Financial State
-    const [valuation, setValuation] = useState<number>(100000000);
-    const [revenue, setRevenue] = useState<number>(12500000);
-    const [ebitda, setEbitda] = useState<number>(-2500000);
-    const [cashOnHand, setCashOnHand] = useState<number>(18000000);
-    
-    // Scenario State
-    const [exitValuation, setExitValuation] = useState<number>(250000000);
-    const [exitDate, setExitDate] = useState<number>(36); // Months
-    
-    // Chat State
-    const [chatInput, setChatInput] = useState('');
-    const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-        { id: 1, sender: 'System_AI', text: "Welcome to the Executive Suite. I have analyzed your real-time financial data. How can I assist with your strategic planning today?", timestamp: new Date() }
-    ]);
+  // --- Tab Content Rendering ---
 
-    // Computed Metrics
-    
-    const totalShares = useMemo(() => stakeholders.reduce((sum, s) => sum + s.shares, 0), [stakeholders]);
-    
-    const kpis: FinancialMetric[] = useMemo(() => [
-        { label: "Current Valuation", value: valuation, delta: 12.5, trend: 'up', prefix: "$" },
-        { label: "ARR (Annual Recurring)", value: revenue, delta: 8.2, trend: 'up', prefix: "$" },
-        { label: "EBITDA", value: ebitda, delta: -2.1, trend: 'down', prefix: "$" },
-        { label: "Runway (Months)", value: cashOnHand / Math.abs(ebitda / 12), delta: 0, trend: 'flat', suffix: " Mo" },
-    ], [valuation, revenue, ebitda, cashOnHand]);
+  const renderTechSection = () => (
+    <>
+        <div className="form-section">
+            <h2>Core Infrastructure & Cloud</h2>
+            {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+            {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+            {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+            {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+            {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+            {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+            {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+            {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+            {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Deployment & DevOps</h2>
+            {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+            {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+            {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+            {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT')}
+            {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+            {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+            {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT')}
+            {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT')}
+            {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+        </div>
+        <div className="form-section">
+            <h2>Collaboration & Productivity</h2>
+            {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT')}
+            {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+            {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+            {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+            {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+            {renderInput('JIRA_USERNAME', 'Jira Username')}
+            {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+            {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana PAT')}
+            {renderInput('NOTION_API_KEY', 'Notion API Key')}
+            {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+        </div>
+        <div className="form-section">
+            <h2>File & Data Storage</h2>
+            {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+            {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+            {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+            {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+        </div>
+        <div className="form-section">
+            <h2>CRM & Business</h2>
+            {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+            {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+            {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+            {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+            {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+            {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+        </div>
+        <div className="form-section">
+            <h2>E-commerce</h2>
+            {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+            {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+            {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+            {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+            {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+            {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+        </div>
+        <div className="form-section">
+            <h2>Authentication & Identity</h2>
+            {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+            {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+            {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+            {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+            {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+            {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+            {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+        </div>
+        <div className="form-section">
+            <h2>Backend & Databases</h2>
+            {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+            {renderInput('SUPABASE_URL', 'Supabase URL')}
+            {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+        </div>
+        <div className="form-section">
+            <h2>API Development</h2>
+            {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+            {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+        </div>
+        <div className="form-section">
+            <h2>AI & Machine Learning</h2>
+            {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+            {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+            {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+            {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+            {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'MS Azure Cognitive Key')}
+            {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Search & Real-time</h2>
+            {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+            {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+            {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+            {renderInput('PUSHER_KEY', 'Pusher Key')}
+            {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+            {renderInput('ABLY_API_KEY', 'Ably API Key')}
+            {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Identity & Verification</h2>
+            {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+            {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+            {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Logistics & Shipping</h2>
+            {renderInput('LOB_API_KEY', 'Lob API Key')}
+            {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+            {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+        </div>
+        <div className="form-section">
+            <h2>Maps & Weather</h2>
+            {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+            {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+            {renderInput('HERE_API_KEY', 'HERE API Key')}
+            {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+            {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Social & Media</h2>
+            {renderInput('YELP_API_KEY', 'Yelp API Key')}
+            {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+            {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+            {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+            {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+            {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+            {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+            {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+            {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+            {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+            {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+            {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+            {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+            {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+            {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+        </div>
+        <div className="form-section">
+            <h2>Media & Content</h2>
+            {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+            {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+            {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+            {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+            {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Legal & Admin</h2>
+            {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+            {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+            {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+            {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Monitoring & CI/CD</h2>
+            {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+            {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+            {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+            {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+            {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+            {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+            {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+            {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+            {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT')}
+            {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Headless CMS</h2>
+            {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+            {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+            {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+            {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+            {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+        </div>
+    </>
+  );
 
-    const exitScenarios = useMemo(() => {
-        const grossReturn = exitValuation;
-        const investor = stakeholders.find(s => s.id === 1);
-        if (!investor) return null;
+  const renderBankingSection = () => (
+    <>
+        <div className="form-section">
+            <h2>Financial Data Aggregators</h2>
+            {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+            {renderInput('PLAID_SECRET', 'Plaid Secret')}
+            {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+            {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+            {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+            {renderInput('MX_API_KEY', 'MX API Key')}
+            {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+            {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+        </div>
+        <div className="form-section">
+            <h2>Payment Processing</h2>
+            {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+            {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+            {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+            {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+            {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+            {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+            {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+            {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+            {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+            {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+            {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+            {renderInput('WORLDPAY_API_KEY', 'WorldPay API Key')}
+            {renderInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
+        </div>
+        <div className="form-section">
+            <h2>BaaS & Card Issuing</h2>
+            {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+            {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+            {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+            {renderInput('GALILEO_API_TRANS_KEY', 'Galileo Trans Key')}
+            {renderInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
+            {renderInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
+            {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+            {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+            {renderInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+            {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+            {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+            {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+            {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+            {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+            {renderInput('BREX_API_KEY', 'Brex API Key')}
+            {renderInput('BOND_API_KEY', 'Bond API Key')}
+        </div>
+        <div className="form-section">
+            <h2>International Payments</h2>
+            {renderInput('CURRENCYCLOUD_LOGIN_ID', 'CurrencyCloud Login ID')}
+            {renderInput('CURRENCYCLOUD_API_KEY', 'CurrencyCloud API Key')}
+            {renderInput('OFX_API_KEY', 'OFX API Key')}
+            {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+            {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+            {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+            {renderInput('NIUM_API_KEY', 'Nium API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Investment & Market Data</h2>
+            {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+            {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+            {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+            {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+            {renderInput('POLYGON_API_KEY', 'Polygon API Key')}
+            {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+            {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+            {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+            {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+            {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Crypto</h2>
+            {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+            {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+            {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+            {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+            {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+            {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+            {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+            {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+            {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+            {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+            {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Major Banks (Open Banking)</h2>
+            {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'J.P. Morgan Chase Client ID')}
+            {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+            {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+            {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+        </div>
+        <div className="form-section">
+            <h2>European & Global Banks (Open Banking)</h2>
+            {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+            {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+            {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+            {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+        </div>
+        <div className="form-section">
+            <h2>UK & European Aggregators</h2>
+            {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+            {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+        </div>
+        <div className="form-section">
+            <h2>Compliance & Identity (KYC/AML)</h2>
+            {renderInput('MIDDESK_API_KEY', 'MidVerify API Key')}
+            {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+            {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+            {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Real Estate</h2>
+            {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+            {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+        </div>
+        <div className="form-section">
+            <h2>Credit Bureaus</h2>
+            {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+            {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+            {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Global Payments (Emerging Markets)</h2>
+            {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+            {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+            {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+            {renderInput('DLOCAL_API_KEY', 'DLocal API Key')}
+            {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+        </div>
+        <div className="form-section">
+            <h2>Accounting & Tax</h2>
+            {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+            {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+            {renderInput('CODAT_API_KEY', 'Codat API Key')}
+            {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+            {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+            {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+            {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+            {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
+        </div>
+        <div className="form-section">
+            <h2>Fintech Utilities</h2>
+            {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+            {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+            {renderInput('MOOV_SECRET', 'Moov Secret')}
+            {renderInput('VGS_USERNAME', 'VGS Username')}
+            {renderInput('VGS_PASSWORD', 'VGS Password')}
+            {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+            {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+        </div>
+    </>
+  );
+
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs ({Object.keys(initialKeysState).filter((k, i) => i < 100).length}+ Total)</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs ({Object.keys(initialKeysState).filter((k, i) => i >= 100).length}+ Total)</button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? renderTechSection() : renderBankingSection()}
         
-        const investorReturn = grossReturn * (investor.equityPercentage / 100);
-        const multiple = investorReturn / investor.basis;
-        const irr = (Math.pow(multiple, 1 / (exitDate / 12)) - 1) * 100;
-        
-        return {
-            grossReturn,
-            investorReturn,
-            multiple,
-            irr
-        };
-    }, [exitValuation, exitDate, stakeholders]);
-
-    // Event Handlers
-
-    const handleSendMessage = () => {
-        if (!chatInput.trim()) return;
-        
-        const userMsg: ChatMessage = { id: Date.now(), sender: 'User', text: chatInput, timestamp: new Date() };
-        setChatHistory(prev => [...prev, userMsg]);
-        setChatInput('');
-
-        // Simulate AI Processing
-        setTimeout(() => {
-            let responseText = "I am processing that request against our global market database.";
-            if (userMsg.text.toLowerCase().includes('valuation')) {
-                responseText = `Based on current SaaS multiples of 8x-12x, a valuation of $${(revenue * 10).toLocaleString()} is defensible. Your current valuation of $${valuation.toLocaleString()} is conservative.`;
-            } else if (userMsg.text.toLowerCase().includes('risk')) {
-                responseText = "Primary risk factors identified: 1. Customer concentration in Tech sector. 2. Rising CAC due to ad market saturation. 3. Key person dependency on Alice Founder.";
-            } else if (userMsg.text.toLowerCase().includes('exit')) {
-                responseText = `Modeling a $${exitValuation.toLocaleString()} exit in ${exitDate} months yields a ${exitScenarios?.multiple.toFixed(2)}x multiple for primary investors. This exceeds the fund's hurdle rate of 3.0x.`;
-            }
-
-            const aiMsg: ChatMessage = { id: Date.now() + 1, sender: 'System_AI', text: responseText, timestamp: new Date() };
-            setChatHistory(prev => [...prev, aiMsg]);
-        }, 800);
-    };
-
-    // Render Functions
-
-    const renderSidebar = () => (
-        <div style={styles.sidebar}>
-            <div style={styles.logoArea}>
-                <div style={styles.logoCircle}>PE</div>
-                <h2 style={styles.logoText}>NEXUS<span style={{color: '#00aaff'}}>OS</span></h2>
-            </div>
-            <nav style={styles.nav}>
-                {['Dashboard', 'CapTable', 'Liquidity', 'DataRoom', 'AI_Advisor'].map((tab) => (
-                    <button 
-                        key={tab} 
-                        style={activeTab === tab ? styles.navButtonActive : styles.navButton}
-                        onClick={() => setActiveTab(tab as any)}
-                    >
-                        {tab.replace('_', ' ')}
-                    </button>
-                ))}
-            </nav>
-            <div style={styles.sidebarFooter}>
-                <div style={styles.statusIndicator}>
-                    <span style={styles.statusDot}></span> System Operational
-                </div>
-                <div style={styles.userProfile}>
-                    <div style={styles.avatar}>AS</div>
-                    <div style={styles.userInfo}>
-                        <span style={styles.userName}>Alex Smith</span>
-                        <span style={styles.userRole}>Managing Partner</span>
-                    </div>
-                </div>
-            </div>
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-    );
-
-    const renderDashboard = () => (
-        <div style={styles.contentFadeIn}>
-            <header style={styles.pageHeader}>
-                <div>
-                    <h1 style={styles.pageTitle}>Executive Command Center</h1>
-                    <p style={styles.pageSubtitle}>Real-time enterprise telemetry and strategic oversight.</p>
-                </div>
-                <div style={styles.headerActions}>
-                    <button style={styles.actionButton}>Generate Report</button>
-                    <button style={styles.primaryButton}>Invite Stakeholder</button>
-                </div>
-            </header>
-
-            <div style={styles.kpiGrid}>
-                {kpis.map((kpi, idx) => (
-                    <div key={idx} style={styles.kpiCard}>
-                        <span style={styles.kpiLabel}>{kpi.label}</span>
-                        <div style={styles.kpiValueRow}>
-                            <span style={styles.kpiValue}>
-                                {kpi.prefix}{kpi.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}{kpi.suffix}
-                            </span>
-                            <span style={{ 
-                                ...styles.kpiDelta, 
-                                color: kpi.trend === 'up' ? '#00ff9d' : kpi.trend === 'down' ? '#ff4d4d' : '#aaa' 
-                            }}>
-                                {kpi.delta > 0 ? '+' : ''}{kpi.delta}%
-                            </span>
-                        </div>
-                        <div style={styles.miniChart}>
-                            <div style={{ ...styles.chartBar, height: '40%' }}></div>
-                            <div style={{ ...styles.chartBar, height: '60%' }}></div>
-                            <div style={{ ...styles.chartBar, height: '50%' }}></div>
-                            <div style={{ ...styles.chartBar, height: '80%' }}></div>
-                            <div style={{ ...styles.chartBar, height: '100%', backgroundColor: '#00aaff' }}></div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <div style={styles.dashboardGrid}>
-                <div style={styles.dashboardPanel}>
-                    <h3 style={styles.panelTitle}>AI Strategic Insights</h3>
-                    <div style={styles.insightList}>
-                        {insights.map(insight => (
-                            <div key={insight.id} style={styles.insightItem}>
-                                <div style={{
-                                    ...styles.severityIndicator,
-                                    backgroundColor: insight.severity === 'High' ? '#ff4d4d' : insight.severity === 'Medium' ? '#ffaa00' : '#00aaff'
-                                }}></div>
-                                <div style={styles.insightContent}>
-                                    <div style={styles.insightHeader}>
-                                        <span style={styles.insightCategory}>{insight.category}</span>
-                                        <span style={styles.insightTime}>{insight.timestamp}</span>
-                                    </div>
-                                    <p style={styles.insightMessage}>{insight.message}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div style={styles.dashboardPanel}>
-                    <h3 style={styles.panelTitle}>Market Performance vs Peers</h3>
-                    <div style={styles.chartPlaceholder}>
-                        <div style={styles.chartGridLines}>
-                            {[1,2,3,4,5].map(i => <div key={i} style={styles.gridLine}></div>)}
-                        </div>
-                        <div style={styles.chartBarsContainer}>
-                            <div style={{...styles.chartBarLarge, height: '40%', left: '10%'}}></div>
-                            <div style={{...styles.chartBarLarge, height: '55%', left: '30%'}}></div>
-                            <div style={{...styles.chartBarLarge, height: '45%', left: '50%'}}></div>
-                            <div style={{...styles.chartBarLarge, height: '70%', left: '70%'}}></div>
-                            <div style={{...styles.chartBarLarge, height: '85%', left: '90%', backgroundColor: '#00aaff', boxShadow: '0 0 15px rgba(0,170,255,0.5)'}}></div>
-                        </div>
-                        <div style={styles.chartLabels}>
-                            <span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span><span>Current</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const renderCapTable = () => (
-        <div style={styles.contentFadeIn}>
-            <header style={styles.pageHeader}>
-                <div>
-                    <h1 style={styles.pageTitle}>Capitalization Table</h1>
-                    <p style={styles.pageSubtitle}>Immutable ledger of equity ownership and dilution modeling.</p>
-                </div>
-                <div style={styles.headerActions}>
-                    <button style={styles.actionButton}>Export CSV</button>
-                    <button style={styles.primaryButton}>Issue New Options</button>
-                </div>
-            </header>
-
-            <div style={styles.tableContainer}>
-                <div style={styles.tableHeader}>
-                    <div style={{ flex: 3 }}>Stakeholder Entity</div>
-                    <div style={{ flex: 1 }}>Class</div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>Shares</div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>Ownership</div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>Vested</div>
-                    <div style={{ flex: 1, textAlign: 'center' }}>Voting</div>
-                    <div style={{ flex: 2, textAlign: 'right' }}>Cost Basis</div>
-                </div>
-                {stakeholders.map(s => (
-                    <div key={s.id} style={styles.tableRow}>
-                        <div style={{ flex: 3, fontWeight: 600, color: '#fff' }}>{s.name}</div>
-                        <div style={{ flex: 1 }}>
-                            <span style={{
-                                ...styles.badge,
-                                backgroundColor: s.type === 'Investor' ? 'rgba(0, 170, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                                color: s.type === 'Investor' ? '#00aaff' : '#ccc'
-                            }}>{s.type}</span>
-                        </div>
-                        <div style={{ flex: 1, textAlign: 'right', fontFamily: 'monospace' }}>{s.shares.toLocaleString()}</div>
-                        <div style={{ flex: 1, textAlign: 'right', fontFamily: 'monospace', color: '#00ff9d' }}>{s.equityPercentage.toFixed(2)}%</div>
-                        <div style={{ flex: 1, textAlign: 'right' }}>
-                            <div style={styles.progressBar}>
-                                <div style={{ ...styles.progressFill, width: `${s.vested}%` }}></div>
-                            </div>
-                            <span style={{ fontSize: 10, color: '#777' }}>{s.vested}%</span>
-                        </div>
-                        <div style={{ flex: 1, textAlign: 'center' }}>{s.votingRights ? 'âœ“' : '-'}</div>
-                        <div style={{ flex: 2, textAlign: 'right', fontFamily: 'monospace' }}>${s.basis.toLocaleString()}</div>
-                    </div>
-                ))}
-                <div style={styles.tableFooter}>
-                    <div style={{ flex: 3 }}>TOTAL OUTSTANDING</div>
-                    <div style={{ flex: 1 }}></div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>{totalShares.toLocaleString()}</div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>100.00%</div>
-                    <div style={{ flex: 4 }}></div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const renderLiquidity = () => (
-        <div style={styles.contentFadeIn}>
-            <header style={styles.pageHeader}>
-                <div>
-                    <h1 style={styles.pageTitle}>Liquidity & Waterfall Analysis</h1>
-                    <p style={styles.pageSubtitle}>Advanced exit scenario modeling and distribution logic.</p>
-                </div>
-            </header>
-
-            <div style={styles.splitLayout}>
-                <div style={styles.controlPanel}>
-                    <h3 style={styles.panelTitle}>Scenario Parameters</h3>
-                    
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Target Exit Valuation</label>
-                        <div style={styles.inputWrapper}>
-                            <span style={styles.inputPrefix}>$</span>
-                            <input 
-                                type="number" 
-                                value={exitValuation} 
-                                onChange={(e) => setExitValuation(Number(e.target.value))}
-                                style={styles.input} 
-                            />
-                        </div>
-                        <input 
-                            type="range" 
-                            min="10000000" 
-                            max="1000000000" 
-                            step="1000000"
-                            value={exitValuation}
-                            onChange={(e) => setExitValuation(Number(e.target.value))}
-                            style={styles.rangeInput}
-                        />
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Time to Exit (Months)</label>
-                        <div style={styles.inputWrapper}>
-                            <input 
-                                type="number" 
-                                value={exitDate} 
-                                onChange={(e) => setExitDate(Number(e.target.value))}
-                                style={styles.input} 
-                            />
-                            <span style={styles.inputSuffix}>Months</span>
-                        </div>
-                        <input 
-                            type="range" 
-                            min="6" 
-                            max="120" 
-                            value={exitDate}
-                            onChange={(e) => setExitDate(Number(e.target.value))}
-                            style={styles.rangeInput}
-                        />
-                    </div>
-
-                    <div style={styles.infoBox}>
-                        <h4 style={{margin: '0 0 10px 0', color: '#00aaff'}}>AI Projection</h4>
-                        <p style={{fontSize: 13, lineHeight: 1.5, color: '#ccc'}}>
-                            Based on current burn rate and market conditions, an exit in {exitDate} months requires a CAGR of 45% to justify a ${exitValuation.toLocaleString()} valuation. Probability: 62%.
-                        </p>
-                    </div>
-                </div>
-
-                <div style={styles.resultsPanel}>
-                    <h3 style={styles.panelTitle}>Distribution Waterfall</h3>
-                    {exitScenarios && (
-                        <div style={styles.waterfallGrid}>
-                            <div style={styles.waterfallCard}>
-                                <div style={styles.waterfallLabel}>Gross Exit Value</div>
-                                <div style={styles.waterfallValue}>${exitScenarios.grossReturn.toLocaleString()}</div>
-                            </div>
-                            <div style={styles.waterfallCard}>
-                                <div style={styles.waterfallLabel}>Investor Proceeds</div>
-                                <div style={styles.waterfallValue}>${exitScenarios.investorReturn.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                                <div style={styles.waterfallSub}>45% Ownership</div>
-                            </div>
-                            <div style={styles.waterfallCard}>
-                                <div style={styles.waterfallLabel}>Net Multiple (MOIC)</div>
-                                <div style={{...styles.waterfallValue, color: exitScenarios.multiple > 3 ? '#00ff9d' : '#fff'}}>
-                                    {exitScenarios.multiple.toFixed(2)}x
-                                </div>
-                            </div>
-                            <div style={styles.waterfallCard}>
-                                <div style={styles.waterfallLabel}>Internal Rate of Return (IRR)</div>
-                                <div style={{...styles.waterfallValue, color: exitScenarios.irr > 25 ? '#00ff9d' : '#fff'}}>
-                                    {exitScenarios.irr.toFixed(1)}%
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    <div style={styles.chartPlaceholder}>
-                        <div style={{display: 'flex', alignItems: 'flex-end', height: '100%', gap: 20, padding: '0 20px'}}>
-                            <div style={{width: '20%', height: '30%', backgroundColor: '#333', borderRadius: '4px 4px 0 0', position: 'relative'}}>
-                                <span style={styles.barLabel}>Pref</span>
-                            </div>
-                            <div style={{width: '20%', height: '50%', backgroundColor: '#444', borderRadius: '4px 4px 0 0', position: 'relative'}}>
-                                <span style={styles.barLabel}>Debt</span>
-                            </div>
-                            <div style={{width: '20%', height: '80%', backgroundColor: '#00aaff', borderRadius: '4px 4px 0 0', position: 'relative'}}>
-                                <span style={styles.barLabel}>Common</span>
-                            </div>
-                            <div style={{width: '20%', height: '100%', backgroundColor: '#00ff9d', borderRadius: '4px 4px 0 0', position: 'relative'}}>
-                                <span style={styles.barLabel}>Total</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const renderDataRoom = () => (
-        <div style={styles.contentFadeIn}>
-            <header style={styles.pageHeader}>
-                <div>
-                    <h1 style={styles.pageTitle}>Secure Data Room</h1>
-                    <p style={styles.pageSubtitle}>Encrypted repository for due diligence and governance.</p>
-                </div>
-                <div style={styles.headerActions}>
-                    <button style={styles.primaryButton}>Upload Document</button>
-                </div>
-            </header>
-
-            <div style={styles.tableContainer}>
-                <div style={styles.tableHeader}>
-                    <div style={{ flex: 3 }}>Document Name</div>
-                    <div style={{ flex: 1 }}>Type</div>
-                    <div style={{ flex: 1 }}>Size</div>
-                    <div style={{ flex: 1 }}>Date</div>
-                    <div style={{ flex: 1 }}>Access</div>
-                    <div style={{ flex: 1, textAlign: 'right' }}>Status</div>
-                </div>
-                {documents.map(doc => (
-                    <div key={doc.id} style={styles.tableRow}>
-                        <div style={{ flex: 3, display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={styles.docIcon}>ðŸ“„</div>
-                            <span style={{ color: '#fff', fontWeight: 500 }}>{doc.name}</span>
-                        </div>
-                        <div style={{ flex: 1, color: '#888' }}>{doc.type}</div>
-                        <div style={{ flex: 1, color: '#888' }}>{doc.size}</div>
-                        <div style={{ flex: 1, color: '#888' }}>{doc.uploadDate}</div>
-                        <div style={{ flex: 1 }}>
-                            <span style={styles.tag}>{doc.accessLevel}</span>
-                        </div>
-                        <div style={{ flex: 1, textAlign: 'right' }}>
-                            <span style={{
-                                ...styles.statusBadge,
-                                backgroundColor: doc.status === 'Verified' ? 'rgba(0, 255, 157, 0.1)' : doc.status === 'Flagged' ? 'rgba(255, 77, 77, 0.1)' : 'rgba(255, 170, 0, 0.1)',
-                                color: doc.status === 'Verified' ? '#00ff9d' : doc.status === 'Flagged' ? '#ff4d4d' : '#ffaa00'
-                            }}>
-                                {doc.status}
-                            </span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-
-    const renderAIAdvisor = () => (
-        <div style={styles.contentFadeIn}>
-            <div style={styles.chatContainer}>
-                <div style={styles.chatSidebar}>
-                    <h3 style={styles.panelTitle}>Active Agents</h3>
-                    <div style={styles.agentCard}>
-                        <div style={styles.agentAvatar}>FN</div>
-                        <div>
-                            <div style={styles.agentName}>Financial Analyst</div>
-                            <div style={styles.agentStatus}>Online â€¢ Processing</div>
-                        </div>
-                    </div>
-                    <div style={{...styles.agentCard, opacity: 0.5}}>
-                        <div style={styles.agentAvatar}>LG</div>
-                        <div>
-                            <div style={styles.agentName}>Legal Compliance</div>
-                            <div style={styles.agentStatus}>Idle</div>
-                        </div>
-                    </div>
-                    <div style={{...styles.agentCard, opacity: 0.5}}>
-                        <div style={styles.agentAvatar}>MK</div>
-                        <div>
-                            <div style={styles.agentName}>Market Sentiment</div>
-                            <div style={styles.agentStatus}>Idle</div>
-                        </div>
-                    </div>
-                </div>
-                <div style={styles.chatMain}>
-                    <div style={styles.chatHeader}>
-                        <h3>NEXUS Strategic Advisor</h3>
-                        <span style={styles.chatSubtitle}>Powered by Enterprise Neural Engine v4.0</span>
-                    </div>
-                    <div style={styles.chatHistory}>
-                        {chatHistory.map(msg => (
-                            <div key={msg.id} style={msg.sender === 'User' ? styles.msgUser : styles.msgSystem}>
-                                <div style={styles.msgBubble}>
-                                    {msg.text}
-                                </div>
-                                <div style={styles.msgTime}>
-                                    {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div style={styles.chatInputArea}>
-                        <input 
-                            type="text" 
-                            placeholder="Ask about valuation, risks, or exit scenarios..." 
-                            style={styles.chatInput}
-                            value={chatInput}
-                            onChange={(e) => setChatInput(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                        />
-                        <button style={styles.sendButton} onClick={handleSendMessage}>
-                            SEND COMMAND
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    return (
-        <div style={styles.appContainer}>
-            {renderSidebar()}
-            <main style={styles.mainContent}>
-                {activeTab === 'Dashboard' && renderDashboard()}
-                {activeTab === 'CapTable' && renderCapTable()}
-                {activeTab === 'Liquidity' && renderLiquidity()}
-                {activeTab === 'DataRoom' && renderDataRoom()}
-                {activeTab === 'AI_Advisor' && renderAIAdvisor()}
-            </main>
-        </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 // --- STYLES ---
+// Since the instructions required replacing the entire component with the API settings UI, 
+// we must define styles matching the requested API Settings Page CSS provided in the instructions, 
+// instead of the complex styles for the Private Equity Dashboard that were originally in the file.
+const styles: { [key: string]: React.CSSProperties } = {}; // Placeholder as styles are now external CSS
 
-const styles: { [key: string]: React.CSSProperties } = {
-    appContainer: {
-        display: 'flex',
-        minHeight: '100vh',
-        backgroundColor: '#05050a',
-        color: '#e0e0e0',
-        fontFamily: '"Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        overflow: 'hidden',
-    },
-    sidebar: {
-        width: '260px',
-        backgroundColor: '#0a0a12',
-        borderRight: '1px solid #1f1f2e',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '20px',
-        zIndex: 10,
-    },
-    logoArea: {
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: 40,
-        gap: 12,
-    },
-    logoCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: '50%',
-        backgroundColor: '#00aaff',
-        color: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 'bold',
-        fontSize: 14,
-        boxShadow: '0 0 15px rgba(0, 170, 255, 0.4)',
-    },
-    logoText: {
-        fontSize: 20,
-        fontWeight: 700,
-        letterSpacing: '1px',
-        margin: 0,
-        color: '#fff',
-    },
-    nav: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        flex: 1,
-    },
-    navButton: {
-        textAlign: 'left',
-        padding: '12px 16px',
-        backgroundColor: 'transparent',
-        border: 'none',
-        color: '#888',
-        cursor: 'pointer',
-        borderRadius: 8,
-        fontSize: 14,
-        fontWeight: 50,
-        transition: 'all 0.2s',
-    },
-    navButtonActive: {
-        textAlign: 'left',
-        padding: '12px 16px',
-        backgroundColor: 'rgba(0, 170, 255, 0.1)',
-        border: 'none',
-        color: '#00aaff',
-        cursor: 'pointer',
-        borderRadius: 8,
-        fontSize: 14,
-        fontWeight: 600,
-        borderLeft: '3px solid #00aaff',
-    },
-    sidebarFooter: {
-        borderTop: '1px solid #1f1f2e',
-        paddingTop: 20,
-    },
-    statusIndicator: {
-        fontSize: 11,
-        color: '#00ff9d',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        marginBottom: 15,
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-    },
-    statusDot: {
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
-        backgroundColor: '#00ff9d',
-        boxShadow: '0 0 8px #00ff9d',
-    },
-    userProfile: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-    },
-    avatar: {
-        width: 32,
-        height: 32,
-        borderRadius: '50%',
-        backgroundColor: '#333',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    userInfo: {
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    userName: {
-        fontSize: 13,
-        fontWeight: 600,
-        color: '#fff',
-    },
-    userRole: {
-        fontSize: 11,
-        color: '#666',
-    },
-    mainContent: {
-        flex: 1,
-        padding: '40px',
-        overflowY: 'auto',
-        backgroundColor: '#05050a',
-        backgroundImage: 'radial-gradient(circle at 50% 0%, #111122 0%, #05050a 60%)',
-    },
-    contentFadeIn: {
-        animation: 'fadeIn 0.4s ease-out',
-    },
-    pageHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 40,
-    },
-    pageTitle: {
-        fontSize: 28,
-        fontWeight: 700,
-        margin: '0 0 8px 0',
-        color: '#fff',
-    },
-    pageSubtitle: {
-        fontSize: 14,
-        color: '#888',
-        margin: 0,
-    },
-    headerActions: {
-        display: 'flex',
-        gap: 12,
-    },
-    primaryButton: {
-        backgroundColor: '#00aaff',
-        color: '#000',
-        border: 'none',
-        padding: '10px 20px',
-        borderRadius: 6,
-        fontWeight: 600,
-        cursor: 'pointer',
-        fontSize: 13,
-        boxShadow: '0 4px 12px rgba(0, 170, 255, 0.3)',
-    },
-    actionButton: {
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        color: '#fff',
-        border: '1px solid #333',
-        padding: '10px 20px',
-        borderRadius: 6,
-        fontWeight: 500,
-        cursor: 'pointer',
-        fontSize: 13,
-    },
-    kpiGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 20,
-        marginBottom: 30,
-    },
-    kpiCard: {
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        padding: 20,
-        position: 'relative',
-        overflow: 'hidden',
-    },
-    kpiLabel: {
-        fontSize: 12,
-        color: '#888',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-    },
-    kpiValueRow: {
-        display: 'flex',
-        alignItems: 'baseline',
-        gap: 10,
-        marginTop: 8,
-    },
-    kpiValue: {
-        fontSize: 24,
-        fontWeight: 700,
-        color: '#fff',
-    },
-    kpiDelta: {
-        fontSize: 12,
-        fontWeight: 600,
-    },
-    miniChart: {
-        display: 'flex',
-        alignItems: 'flex-end',
-        gap: 4,
-        height: 30,
-        marginTop: 15,
-        opacity: 0.5,
-    },
-    chartBar: {
-        flex: 1,
-        backgroundColor: '#333',
-        borderRadius: '2px 2px 0 0',
-    },
-    dashboardGrid: {
-        display: 'grid',
-        gridTemplateColumns: '2fr 1fr',
-        gap: 20,
-    },
-    dashboardPanel: {
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        padding: 25,
-        minHeight: 300,
-    },
-    panelTitle: {
-        fontSize: 16,
-        fontWeight: 600,
-        color: '#fff',
-        marginBottom: 20,
-        borderBottom: '1px solid #222',
-        paddingBottom: 15,
-    },
-    insightList: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 15,
-    },
-    insightItem: {
-        display: 'flex',
-        gap: 15,
-        padding: 15,
-        backgroundColor: 'rgba(255,255,255,0.02)',
-        borderRadius: 8,
-        borderLeft: '1px solid #333',
-    },
-    severityIndicator: {
-        width: 4,
-        borderRadius: 4,
-        backgroundColor: '#00aaff',
-    },
-    insightContent: {
-        flex: 1,
-    },
-    insightHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 6,
-    },
-    insightCategory: {
-        fontSize: 11,
-        fontWeight: 700,
-        color: '#fff',
-        textTransform: 'uppercase',
-    },
-    insightTime: {
-        fontSize: 11,
-        color: '#666',
-    },
-    insightMessage: {
-        fontSize: 13,
-        color: '#ccc',
-        margin: 0,
-        lineHeight: 1.4,
-    },
-    chartPlaceholder: {
-        height: 200,
-        position: 'relative',
-        marginTop: 20,
-    },
-    chartGridLines: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-    },
-    gridLine: {
-        height: 1,
-        backgroundColor: '#222',
-        width: '100%',
-    },
-    chartBarsContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-    },
-    chartBarLarge: {
-        position: 'absolute',
-        bottom: 0,
-        width: '12%',
-        backgroundColor: '#333',
-        borderRadius: '4px 4px 0 0',
-        transition: 'height 0.5s ease',
-    },
-    chartLabels: {
-        position: 'absolute',
-        bottom: -25,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '0 10%',
-        fontSize: 11,
-        color: '#666',
-    },
-    // Table Styles
-    tableContainer: {
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        overflow: 'hidden',
-    },
-    tableHeader: {
-        display: 'flex',
-        padding: '15px 20px',
-        backgroundColor: '#161624',
-        borderBottom: '1px solid #222',
-        fontSize: 12,
-        fontWeight: 600,
-        color: '#888',
-        textTransform: 'uppercase',
-    },
-    tableRow: {
-        display: 'flex',
-        padding: '15px 20px',
-        borderBottom: '1px solid #1f1f2e',
-        alignItems: 'center',
-        fontSize: 13,
-        color: '#ddd',
-        transition: 'background-color 0.1s',
-    },
-    tableFooter: {
-        display: 'flex',
-        padding: '15px 20px',
-        backgroundColor: '#161624',
-        fontSize: 12,
-        fontWeight: 700,
-        color: '#fff',
-        letterSpacing: '1px',
-    },
-    badge: {
-        padding: '4px 8px',
-        borderRadius: 4,
-        fontSize: 10,
-        fontWeight: 600,
-        textTransform: 'uppercase',
-    },
-    progressBar: {
-        height: 4,
-        backgroundColor: '#333',
-        borderRadius: 2,
-        width: '100%',
-        marginBottom: 4,
-    },
-    progressFill: {
-        height: '100%',
-        backgroundColor: '#00ff9d',
-        borderRadius: 2,
-    },
-    // Liquidity Styles
-    splitLayout: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 2fr',
-        gap: 20,
-    },
-    controlPanel: {
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        padding: 25,
-    },
-    resultsPanel: {
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        padding: 25,
-    },
-    inputGroup: {
-        marginBottom: 25,
-    },
-    label: {
-        display: 'block',
-        fontSize: 12,
-        color: '#888',
-        marginBottom: 8,
-    },
-    inputWrapper: {
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: '#0a0a12',
-        border: '1px solid #333',
-        borderRadius: 6,
-        padding: '0 12px',
-        marginBottom: 10,
-    },
-    input: {
-        backgroundColor: 'transparent',
-        border: 'none',
-        color: '#fff',
-        padding: '12px 0',
-        fontSize: 16,
-        width: '100%',
-        outline: 'none',
-        fontWeight: 600,
-    },
-    inputPrefix: {
-        color: '#666',
-        marginRight: 5,
-    },
-    inputSuffix: {
-        color: '#666',
-        fontSize: 12,
-    },
-    rangeInput: {
-        width: '100%',
-        accentColor: '#00aaff',
-    },
-    infoBox: {
-        backgroundColor: 'rgba(0, 170, 255, 0.05)',
-        border: '1px solid rgba(0, 170, 255, 0.1)',
-        borderRadius: 8,
-        padding: 15,
-        marginTop: 20,
-    },
-    waterfallGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 15,
-        marginBottom: 30,
-    },
-    waterfallCard: {
-        backgroundColor: '#1a1a26',
-        padding: 15,
-        borderRadius: 8,
-        textAlign: 'center',
-    },
-    waterfallLabel: {
-        fontSize: 11,
-        color: '#888',
-        marginBottom: 5,
-    },
-    waterfallValue: {
-        fontSize: 18,
-        fontWeight: 700,
-        color: '#fff',
-    },
-    waterfallSub: {
-        fontSize: 10,
-        color: '#666',
-        marginTop: 4,
-    },
-    barLabel: {
-        position: 'absolute',
-        bottom: -25,
-        width: '100%',
-        textAlign: 'center',
-        fontSize: 11,
-        color: '#888',
-    },
-    // Data Room Styles
-    docIcon: {
-        fontSize: 18,
-    },
-    tag: {
-        backgroundColor: '#222',
-        color: '#aaa',
-        padding: '2px 8px',
-        borderRadius: 4,
-        fontSize: 11,
-    },
-    statusBadge: {
-        padding: '4px 8px',
-        borderRadius: 4,
-        fontSize: 10,
-        fontWeight: 600,
-    },
-    // Chat Styles
-    chatContainer: {
-        display: 'flex',
-        height: 'calc(100vh - 140px)',
-        backgroundColor: '#11111a',
-        border: '1px solid #222',
-        borderRadius: 12,
-        overflow: 'hidden',
-    },
-    chatSidebar: {
-        width: 250,
-        backgroundColor: '#161624',
-        borderRight: '1px solid #222',
-        padding: 20,
-    },
-    agentCard: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: 10,
-        backgroundColor: '#1f1f2e',
-        borderRadius: 8,
-        marginBottom: 10,
-        cursor: 'pointer',
-    },
-    agentAvatar: {
-        width: 32,
-        height: 32,
-        borderRadius: '50%',
-        backgroundColor: '#00aaff',
-        color: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 10,
-        fontWeight: 'bold',
-    },
-    agentName: {
-        fontSize: 12,
-        fontWeight: 600,
-        color: '#fff',
-    },
-    agentStatus: {
-        fontSize: 10,
-        color: '#00ff9d',
-    },
-    chatMain: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    chatHeader: {
-        padding: '15px 20px',
-        borderBottom: '1px solid #222',
-        backgroundColor: '#161624',
-    },
-    chatSubtitle: {
-        fontSize: 11,
-        color: '#00aaff',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-    },
-    chatHistory: {
-        flex: 1,
-        padding: 20,
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 15,
-    },
-    msgUser: {
-        alignSelf: 'flex-end',
-        maxWidth: '70%',
-    },
-    msgSystem: {
-        alignSelf: 'flex-start',
-        maxWidth: '70%',
-    },
-    msgBubble: {
-        padding: '12px 16px',
-        borderRadius: 8,
-        backgroundColor: '#222',
-        color: '#ddd',
-        fontSize: 14,
-        lineHeight: 1.5,
-        border: '1px solid #333',
-    },
-    msgTime: {
-        fontSize: 10,
-        color: '#555',
-        marginTop: 4,
-        textAlign: 'right',
-    },
-    chatInputArea: {
-        padding: 20,
-        borderTop: '1px solid #222',
-        display: 'flex',
-        gap: 10,
-        backgroundColor: '#161624',
-    },
-    chatInput: {
-        flex: 1,
-        backgroundColor: '#0a0a12',
-        border: '1px solid #333',
-        borderRadius: 6,
-        padding: '12px',
-        color: '#fff',
-        outline: 'none',
-    },
-    sendButton: {
-        backgroundColor: '#00aaff',
-        color: '#000',
-        border: 'none',
-        borderRadius: 6,
-        padding: '0 20px',
-        fontWeight: 700,
-        fontSize: 12,
-        cursor: 'pointer',
-    }
-};
-
-export default PrivateEquityLounge;
+export default ApiSettingsPage;
