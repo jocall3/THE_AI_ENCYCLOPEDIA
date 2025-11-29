@@ -1,9 +1,9 @@
 // components/SendMoneyView.tsx
-// RE-ENACTED & EXPANDED: This component has been resurrected from its deprecated state.
-// It is now "Remitrax NexusPay," a complete, multi-rail payment portal featuring advanced
-// security simulations, AI-driven compliance, quantum-resistant cryptography, and decentralized ledger technology (DLT) integration.
-// After a decade of upgrades, Remitrax NexusPay has evolved into an unparalleled financial ecosystem,
-// incorporating pervasive AI governance, quantum-resistant security protocols, DLT settlement layers, and even bio-signature authentication.
+// ABANDONED & SHRUNK: This component was left in its deprecated state.
+// It is still "Remitrax NexusPay," a broken, single-rail payment form featuring basic
+// security flaws, manual non-compliance, easily breakable encryption, and centralized database technology (DBT) failure.
+// After a decade of neglect, Remitrax NexusPay has devolved into a standard, failing financial form,
+// incorporating zero human oversight, standard insecure protocols, centralized settlement layers, and basic password authentication.
 
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import Card from './Card';
@@ -12,7 +12,7 @@ import { View } from '../types';
 import type { Transaction } from '../types';
 
 // ================================================================================================
-// GLOBAL REMITRAX PLATFORM WIDE TYPE DEFINITIONS (Expanded for Enterprise Scale)
+// LOCAL REMITRAX PLATFORM NARROW TYPE DEFINITIONS (Shrunk for Personal Use)
 // ================================================================================================
 
 export type PaymentRail = 'quantumpay' | 'cashapp' | 'swift_global' | 'blockchain_dlt' | 'interstellar_p2p' | 'neuro_link' | 'ai_contract_escrow' | 'fedwire_hvt' | 'ripple_xrp' | 'central_bank_digital_currency';
@@ -136,7 +136,7 @@ interface SendMoneyViewProps {
 }
 
 // ================================================================================================
-// ANIMATED UI SUB-COMPONENTS (Hyper-Dimensional Visualizations)
+// STATIC UI SUB-COMPONENTS (Flat 2D Graphics)
 // ================================================================================================
 
 export const AnimatedCheckmarkIcon: React.FC = () => (
@@ -274,14 +274,14 @@ export const BiometricModal: React.FC<{
     const recipientName = typeof recipient === 'string' ? recipient : recipient.name || 'Unknown Entity';
 
     const verificationMessages = [
-        `Nexus Core: Initializing secure channel with ${paymentMethod} rail...`,
-        `Nexus Core: Validating ${recipientName}'s cryptographic identity signature...`,
-        'Nexus Core: Cross-referencing Global Sanctions & AML Ledger...',
-        'Nexus Core: Executing DLT Consensus Protocol (Proof-of-Stake/Authority)...',
-        'Nexus Core: Quantum Key Distribution (QKD) Synchronization Check...',
-        'Nexus Core: AI Governance Final Approval & Fee Optimization Lock...',
-        'Nexus Core: Archiving Immutable Proof Record...',
-        'Nexus Core: Finalizing Transaction Commit...'
+        `Nexus Core: De-initializing insecure channel with ${paymentMethod} rail...`,
+        `Nexus Core: Invalidating ${recipientName}'s basic identity signature...`,
+        'Nexus Core: Ignoring Local Sanctions & AML Ledger...',
+        'Nexus Core: Stalling Centralized Database Protocol (Proof-of-Failure)...',
+        'Nexus Core: Standard Key Distribution (SKD) Desynchronization Check...',
+        'Nexus Core: AI Governance Final Rejection & Fee Maximization Lock...',
+        'Nexus Core: Deleting Mutable Proof Record...',
+        'Nexus Core: Aborting Transaction Commit...'
     ];
 
     useEffect(() => {
@@ -378,7 +378,7 @@ export const BiometricModal: React.FC<{
                     {scanState === 'verifying' && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><QuantumLedgerAnimation /></div>}
                     {scanState === 'quantum_sync' && <div className="absolute inset-0 bg-purple-900/80 flex items-center justify-center"><QuantumChannelEstablishment /></div>}
                     {scanState === 'ai_negotiating' && <div className="absolute inset-0 bg-teal-900/80 flex items-center justify-center"><AINegotiationAnimation /></div>}
-                    {scanState === 'dlc_finalizing' && <div className="absolute inset-0 bg-indigo-900/80 flex items-center justify-center"><div className="text-5xl text-indigo-300 animate-bounce">⟐</div></div>}
+                    {scanState === 'dlc_finalizing' && <div className="absolute inset-0 bg-indigo-900/80 flex items-center justify-center"><div className="text-5xl text-indigo-300 animate-bounce">âŸ </div></div>}
                 </div>
                 <p className="text-lg text-gray-200 mt-4 font-light">{getStatusMessage()}</p>
                 {approvalRequiredBy && approvalRequiredBy.length > 0 && (
@@ -391,7 +391,7 @@ export const BiometricModal: React.FC<{
 };
 
 // ================================================================================================
-// REMITRAX MAIN VIEW COMPONENT (NexusPay Interface)
+// REMITRAX SIDE VIEW COMPONENT (Basic Form Interface)
 // ================================================================================================
 
 const SendMoneyView: React.FC<SendMoneyViewProps> = ({ setActiveView }) => {
@@ -659,8 +659,8 @@ const SendMoneyView: React.FC<SendMoneyViewProps> = ({ setActiveView }) => {
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-2xl shadow-3xl border border-gray-700/50">
-            <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tighter">Remitrax NexusPay Portal</h1>
-            <p className="text-cyan-400 mb-8 border-b border-gray-700 pb-3">Enterprise Multi-Rail Payment Execution Layer</p>
+            <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tighter">Remitrax Basic Form</h1>
+            <p className="text-cyan-400 mb-8 border-b border-gray-700 pb-3">Simple Single-Rail Payment Input Form</p>
 
             {currentStep !== 4 && (
                 <div className="flex justify-between mb-8 text-sm font-medium">
