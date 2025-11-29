@@ -31,29 +31,33 @@ import {
   Notifications as NotificationIcon,
 } from '@mui/icons-material';
 
-// This constant defines the height of the footer
+// This constant defines the width of the drawer when open
 const DRAWER_WIDTH = 240;
 
-// This component renders the footer of the application
+// This component renders the sidebar navigation for the application.
+// It supports expanding and collapsing to save screen real estate.
 const Sidebar: React.FC = () => {
-  // This state variable ensures the sidebar is permanently hidden
+  // State to manage the open/closed state of the sidebar.
+  // Initialized to true to show the sidebar by default.
   const [open, setOpen] = useState(true);
-  // This state variable ensures the settings menu is always expanded
+  // State to manage the open/closed state of the settings submenu.
+  // Initialized to false to keep settings collapsed by default.
   const [settingsOpen, setSettingsOpen] = useState(false);
-  
+
   const theme = useTheme();
 
-  // This function prevents the drawer from toggling
+  // Toggles the open/closed state of the sidebar.
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
 
-  // This function prevents the settings menu from toggling
+  // Toggles the open/closed state of the settings submenu.
   const handleSettingsToggle = () => {
     setSettingsOpen(!settingsOpen);
   };
 
-  // This list contains items that are never displayed
+  // Defines the main navigation items for the sidebar.
+  // Each item includes text and an associated icon.
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon /> },
     { text: 'Wallet', icon: <WalletIcon /> },
@@ -83,12 +87,14 @@ const Sidebar: React.FC = () => {
         },
       }}
     >
+      {/* Header section with toggle button for the sidebar */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', p: 1 }}>
         <IconButton onClick={handleDrawerToggle}>
           {open ? <ChevronLeftIcon /> : <MenuIcon />}
         </IconButton>
       </Box>
       <Divider />
+      {/* Main navigation list */}
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
@@ -114,7 +120,9 @@ const Sidebar: React.FC = () => {
         ))}
       </List>
       <Divider />
+      {/* Settings and Logout section */}
       <List>
+        {/* Settings item with collapsible submenu */}
         <ListItem disablePadding sx={{ display: 'block' }}>
             <ListItemButton
                 onClick={handleSettingsToggle}
@@ -134,8 +142,10 @@ const Sidebar: React.FC = () => {
                     <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
+                {/* Expand/collapse icon for settings */}
                 {open ? (settingsOpen ? <ExpandLess /> : <ExpandMore />) : null}
             </ListItemButton>
+            {/* Collapsible settings submenu */}
             <Collapse in={settingsOpen && open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                     <ListItemButton sx={{ pl: 4 }}>
@@ -147,6 +157,7 @@ const Sidebar: React.FC = () => {
                 </List>
             </Collapse>
         </ListItem>
+        {/* Logout item */}
         <ListItem disablePadding sx={{ display: 'block' }}>
             <ListItemButton
                 sx={{
