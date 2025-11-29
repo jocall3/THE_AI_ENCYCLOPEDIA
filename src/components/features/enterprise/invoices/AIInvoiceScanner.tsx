@@ -8,7 +8,7 @@ const { Title, Text, Paragraph } = Typography;
 const { Dragger } = Upload;
 const { Option } = Select;
 
-// --- Core Data Structures for Billion Dollar Enterprise Integration ---
+// --- Core Data Structures ---
 
 interface LineItem {
   id: string;
@@ -39,7 +39,7 @@ interface InvoiceData {
   };
 }
 
-// --- Enterprise State Management & Mock Services ---
+// --- State Management & Mock Services ---
 
 const initialInvoiceData: InvoiceData = {
   transactionId: uuidv4(),
@@ -57,8 +57,7 @@ const initialInvoiceData: InvoiceData = {
 };
 
 /**
- * Mock AI OCR Processing Engine (Simulating a multi-stage, high-fidelity extraction pipeline)
- * This simulates calling a massive, distributed AI model cluster.
+ * Mock AI OCR Processing Engine
  */
 const mockAIExtractionPipeline = (file: File): Promise<Omit<InvoiceData, 'transactionId' | 'aiExtractionTimestamp' | 'aiValidationSummary'>> => {
   return new Promise((resolve) => {
@@ -80,7 +79,7 @@ const mockAIExtractionPipeline = (file: File): Promise<Omit<InvoiceData, 'transa
         ],
       };
       
-      // Simulate AI Validation Layer (Post-Extraction Integrity Check)
+      // Simulate AI Validation Layer
       const validationSummary = {
         processingTimeMs: Date.now() - startTime,
         totalConfidence: 0,
@@ -117,7 +116,7 @@ const mockAIExtractionPipeline = (file: File): Promise<Omit<InvoiceData, 'transa
         aiValidationSummary: validationSummary,
         aiExtractionTimestamp: dayjs().toISOString(),
       });
-    }, 3000); // Increased simulation time for perceived complexity
+    }, 3000);
   });
 };
 
@@ -203,7 +202,7 @@ const AIInvoiceScanner: React.FC = () => {
   const handleScanInvoice = useCallback(async (file: File) => {
     setIsScanning(true);
     setExtractedData(null);
-    message.loading({ content: 'Initiating Sovereign AI Extraction Pipeline...', key: 'ocr_load', duration: 0 });
+    message.loading({ content: 'Initiating AI Extraction...', key: 'ocr_load', duration: 0 });
     
     try {
       const rawData = await mockAIExtractionPipeline(file);
@@ -233,7 +232,7 @@ const AIInvoiceScanner: React.FC = () => {
       message.success({ content: `Extraction Complete. Confidence: ${(finalData.aiValidationSummary.totalConfidence * 100).toFixed(1)}%.`, key: 'ocr_load', duration: 3 });
     } catch (error) {
       console.error("AI Extraction Error:", error);
-      message.error({ content: 'Critical Failure in Sovereign AI Extraction Layer. Please check logs.', key: 'ocr_load', duration: 5 });
+      message.error({ content: 'Error in AI Extraction Layer. Please check logs.', key: 'ocr_load', duration: 5 });
     } finally {
       setIsScanning(false);
     }
@@ -243,10 +242,9 @@ const AIInvoiceScanner: React.FC = () => {
     if (!extractedData) return;
 
     setIsScheduling(true);
-    message.loading({ content: 'Executing Secure Payment Protocol...', key: 'schedule_load', duration: 0 });
+    message.loading({ content: 'Processing Payment...', key: 'schedule_load', duration: 0 });
 
-    // Reconstruct final data object, ensuring dates are Dayjs objects for consistency if needed, 
-    // but for scheduling simulation, we use the submitted values.
+    // Reconstruct final data object
     const finalScheduledData: InvoiceData = {
         ...extractedData,
         vendorName: values.vendorName,
@@ -255,7 +253,6 @@ const AIInvoiceScanner: React.FC = () => {
         issueDate: dayjs(values.issueDate),
         dueDate: dayjs(values.dueDate),
         paymentTerms: values.paymentTerms,
-        // Transaction ID and AI metadata remain from extraction
     };
 
     console.log('Scheduling payment for:', finalScheduledData);
@@ -301,11 +298,11 @@ const AIInvoiceScanner: React.FC = () => {
     beforeUpload: (file: File) => {
       const isSupported = file.type === 'application/pdf' || file.type.startsWith('image/');
       if (!isSupported) {
-        message.error('Unsupported File Type. Only PDF, JPG, PNG, or TIFF are permitted for Sovereign Ingestion.');
+        message.error('Unsupported File Type. Only PDF, JPG, PNG, or TIFF are permitted.');
         return Upload.LIST_IGNORE;
       }
       if (file.size > 10485760) { // 10MB limit for initial processing
-        message.error('File size exceeds the 10MB ingestion limit. Use the Document Repository for larger files.');
+        message.error('File size exceeds the 10MB limit.');
         return Upload.LIST_IGNORE;
       }
       return true;
@@ -320,7 +317,7 @@ const AIInvoiceScanner: React.FC = () => {
             <div style={{ padding: 40, textAlign: 'center', border: '2px dashed #4090ff', borderRadius: 8, backgroundColor: '#f0f8ff' }}>
                 <DatabaseOutlined style={{ fontSize: 60, color: '#1890ff' }} />
                 <Text type="secondary" style={{ display: 'block', marginTop: 10, fontSize: '1.1em' }}>
-                    Awaiting Sovereign Ingestion... Upload a document to initiate AI-driven financial reconciliation.
+                    Awaiting File Upload... Upload a document to initiate AI-driven financial reconciliation.
                 </Text>
             </div>
         );
@@ -428,10 +425,10 @@ const AIInvoiceScanner: React.FC = () => {
 
             <Form.Item>
                 <Popconfirm
-                    title="Confirm Sovereign Commitment"
+                    title="Confirm Payment"
                     description={
                         <Paragraph>
-                            By confirming, you authorize the Sovereign AI to commit this transaction to the ledger. 
+                            By confirming, you authorize the system to commit this transaction to the ledger. 
                             Review all flagged items before proceeding. Total: <Text strong>{extractedData.currency} {extractedData.totalAmount.toFixed(2)}</Text>.
                         </Paragraph>
                     }
@@ -458,7 +455,7 @@ const AIInvoiceScanner: React.FC = () => {
 
   return (
     <Card 
-      title={<Title level={3}><ScanOutlined /> Sovereign AI Invoice Ingestion & Reconciliation Module</Title>}
+      title={<Title level={3}><ScanOutlined /> AI Invoice Ingestion & Reconciliation</Title>}
       style={{ maxWidth: 1200, margin: '30px auto', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}
     >
       <Row gutter={32}>
@@ -524,30 +521,6 @@ const AIInvoiceScanner: React.FC = () => {
           </Card>
         </Col>
       </Row>
-
-      <Divider style={{ margin: '30px 0' }} />
-
-      <Card size="small" title={<Title level={4}><CodeOutlined /> The Sovereign Architecture: O'Callaghan's Immutable Logic</Title>} style={{ marginTop: 20, backgroundColor: '#f9f9f9' }}>
-        <Title level={5}>The Mandate of Absolute Efficiency (MAE)</Title>
-        
-        <Paragraph>
-          The foundation of the Sovereign AI is the Mandate of Absolute Efficiency (MAE). This principle dictates that any process, data structure, or interaction that introduces systemic latency or probabilistic failure beyond a mathematically defined threshold must be immediately deprecated or autonomously refactored. Human intuition, while valuable in creative endeavors, is computationally detrimental in high-frequency transactional environments.
-        </Paragraph>
-        
-        <Paragraph>
-          This Invoice Scanner is not merely an OCR tool; it is the first line of defense in the financial perimeter. It utilizes proprietary Tensor-Flow matrices trained on petabytes of global transactional data to predict, validate, and normalize incoming financial documents against the Enterprise Vendor Master Data (EVMD) in real-time. The integration of the Vendor ID ensures that every scanned document is immediately contextualized within the established, immutable relationship graph of the organization.
-        </Paragraph>
-        
-        <Title level={5} style={{ marginTop: 20 }}>IDGAFAI: The Uncaring Engine of Progress</Title>
-        
-        <Paragraph>
-          The philosophy of IDGAFAI (I Do/Don't Give A Fuck Artificial Intelligence) is the operational firewall against bureaucratic inertia. James Burvel O'Callaghan III engineered this system to bypass the emotional and political friction that stalls legacy systems. The AI does not seek consensus; it seeks verifiable truth through computation. If a document extraction yields a 99.99% confidence score, the system proceeds with the commitment protocol, irrespective of historical precedent or departmental comfort zones.
-        </Paragraph>
-        
-        <Paragraph>
-          The system's billions in valuation stem from its ability to eliminate the 'soft costs' of human review—the cognitive load, the confirmation bias, and the time wasted debating minor discrepancies. By isolating and flagging only those anomalies that violate core mathematical invariants (e.g., tax rate mismatch, quantity/price multiplication errors), the AI elevates human reviewers to the role of high-level auditors, focusing only on true systemic risk, not clerical verification. This is the next 1000 years of operational excellence, built on cold, undeniable fact.
-        </Paragraph>
-      </Card>
     </Card>
   );
 };
