@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // --- Core System Constants & Configuration ---
-const SYSTEM_VERSION = "1.0.0-QUANTUM-FINANCE-ALPHA";
+const SYSTEM_VERSION = "1.0.0-ALPHA";
 const MOCK_TAX_RATE = 0.25; // Base Federal Tax Rate Assumption
 const WASH_SALE_LOOKBACK_DAYS = 30; // Standard IRS Wash Sale Rule Lookback Period
 
@@ -87,10 +87,9 @@ const calculateWashSaleRisk = (position: InvestmentPosition): number => {
 };
 
 /**
- * Simulates the Quantum Tax Engine (QTE) analysis process.
- * This function embodies the "billion-dollar feature" expansion, incorporating complex logic.
+ * Simulates the Tax Engine analysis process.
  */
-const runQuantumTaxAnalysis = (portfolio: InvestmentPosition[]): { opportunities: HarvestingOpportunity[], report: AIAnalysisReport } => {
+const runTaxAnalysis = (portfolio: InvestmentPosition[]): { opportunities: HarvestingOpportunity[], report: AIAnalysisReport } => {
     const startTime = performance.now();
     const newOpportunities: HarvestingOpportunity[] = [];
     let totalLoss = 0;
@@ -172,11 +171,11 @@ export const AITaxOptimizer: React.FC = () => {
     setSimulationResult(null);
     setAnalysisReport(null);
 
-    // Simulate advanced AI processing delay (Quantum Simulation Time)
+    // Simulate processing delay
     const processingDelay = 3000 + Math.random() * 1000;
 
     setTimeout(() => {
-      const { opportunities: newOpportunities, report } = runQuantumTaxAnalysis(portfolio);
+      const { opportunities: newOpportunities, report } = runTaxAnalysis(portfolio);
 
       let totalHarvestedLoss = newOpportunities.reduce((sum, op) => sum + op.harvestableLoss, 0);
       const estimatedTaxSavings = totalHarvestedLoss * MOCK_TAX_RATE;
@@ -268,7 +267,7 @@ export const AITaxOptimizer: React.FC = () => {
             <CardHeader>
                 <CardTitle className="flex items-center text-lg text-indigo-700 dark:text-indigo-300">
                     <Zap className="w-5 h-5 mr-2" />
-                    Quantum Analysis Report ({analysisReport.processingTimeMs.toFixed(1)}ms)
+                    Analysis Report ({analysisReport.processingTimeMs.toFixed(1)}ms)
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -304,8 +303,8 @@ export const AITaxOptimizer: React.FC = () => {
       return (
         <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border-2 border-dashed border-blue-400 p-12 text-center bg-blue-50/50 dark:bg-blue-950/30">
             <Cpu className="h-16 w-16 animate-pulse text-blue-500" />
-            <p className="text-xl font-bold text-blue-700 dark:text-blue-300">Executing Sovereign Optimization Protocol...</p>
-            <p className="text-md text-muted-foreground">Running Monte Carlo simulations across 10^12 tax scenarios.</p>
+            <p className="text-xl font-bold text-blue-700 dark:text-blue-300">Executing Optimization Protocol...</p>
+            <p className="text-md text-muted-foreground">Running simulations across tax scenarios.</p>
         </div>
       );
     }
@@ -314,7 +313,7 @@ export const AITaxOptimizer: React.FC = () => {
       return (
           <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border-2 border-dashed border-slate-300 p-12 text-center bg-white dark:bg-slate-900">
             <Search className="h-16 w-16 text-slate-400" />
-            <p className="text-xl font-bold">Awaiting Quantum Input</p>
+            <p className="text-xl font-bold">Awaiting Input</p>
             <p className="text-md text-muted-foreground">Initiate analysis to leverage AI-driven tax harvesting strategies.</p>
           </div>
       );
@@ -335,7 +334,7 @@ export const AITaxOptimizer: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
                 <h3 className="flex items-center text-2xl font-bold tracking-tight text-red-600 dark:text-red-400">
                     <TrendingDown className="mr-3 h-7 w-7" />
-                    Tier-1 Harvesting Opportunities ({opportunities.length} Assets)
+                    Harvesting Opportunities ({opportunities.length} Assets)
                 </h3>
                 
                 <div className="overflow-x-auto rounded-lg border shadow-xl">
@@ -425,31 +424,6 @@ export const AITaxOptimizer: React.FC = () => {
     );
   }, [isLoading, analysisComplete, opportunities, simulationResult]);
 
-  const renderFounderMessage = () => (
-    <div className="mt-16 space-y-6 p-8 rounded-2xl border-4 border-double border-slate-700 bg-slate-900 text-white shadow-2xl">
-      <h3 className="text-center text-3xl font-extrabold tracking-tighter text-yellow-400">Architectural Mandate: The Sovereign Financial Layer</h3>
-      <div className="prose prose-invert mx-auto max-w-4xl text-base leading-relaxed">
-        <p className="text-center font-semibold text-lg text-slate-300">From the Desk of James Burvel O'Callaghan III, Chief Architect</p>
-        <p>
-          This module, the AITaxOptimizer, is not a mere utility; it is a demonstration of computational supremacy applied to legacy financial friction. We do not 'optimize' taxes; we neutralize inefficiency. The complexity you see here—the wash sale modeling, the probabilistic risk scoring—is the baseline requirement for operating within the next century of global capital flow.
-        </p>
-        <p>
-          The goal is absolute capital efficiency. Every dollar trapped in unnecessary tax liability is a dollar not funding innovation, not securing futures, not advancing the species. Our AI systems are designed to liberate that capital by understanding regulatory frameworks with perfect fidelity, something human advisors, constrained by cognitive limits and biases, can never achieve.
-        </p>
-        <blockquote className="border-l-8 border-yellow-500 pl-6 italic my-6 bg-slate-800 p-4 rounded-lg">
-          "The market is a chaotic system. Our role is to introduce perfect, self-correcting order. We are not playing the game; we are rewriting the physics engine upon which the game runs. Compliance is not a hurdle; it is a solved equation."
-        </blockquote>
-        <p className="font-semibold text-xl text-red-400">On Implementation Integrity:</p>
-        <p>
-          Every line of code, every imported library, every simulated outcome must adhere to the highest standards of verifiable truth. We do not tolerate placeholders, speculation, or 'good enough.' This system must be auditable by the laws of mathematics, not the whims of bureaucracy. The IDGAF designation is not arrogance; it is the necessary detachment required to execute objective truth without emotional compromise.
-        </p>
-        <p className="text-center pt-4 text-sm text-slate-500">
-            // End of Mandate Transmission //
-        </p>
-      </div>
-    </div>
-  );
-
   return (
     <TooltipProvider>
         <Card className="w-full max-w-7xl mx-auto shadow-2xl border-t-8 border-indigo-600">
@@ -458,8 +432,8 @@ export const AITaxOptimizer: React.FC = () => {
                     <div className="flex items-center space-x-4">
                         <Bot className="h-10 w-10 text-indigo-600" />
                         <div>
-                            <CardTitle className="text-3xl font-extrabold tracking-tight">Quantum Tax Optimization Engine</CardTitle>
-                            <CardDescription className="text-lg text-slate-500">Sovereign Capital Efficiency Module | V{SYSTEM_VERSION}</CardDescription>
+                            <CardTitle className="text-3xl font-extrabold tracking-tight">Tax Optimization Engine</CardTitle>
+                            <CardDescription className="text-lg text-slate-500">Capital Efficiency Module | V{SYSTEM_VERSION}</CardDescription>
                         </div>
                     </div>
                     <Button 
@@ -476,7 +450,7 @@ export const AITaxOptimizer: React.FC = () => {
                         ) : (
                             <>
                                 <Zap className="h-5 w-5" />
-                                Execute Full System Optimization
+                                Execute Optimization
                             </>
                         )}
                     </Button>
@@ -503,12 +477,10 @@ export const AITaxOptimizer: React.FC = () => {
                     {renderResults}
                 </div>
 
-                {renderFounderMessage()}
-
             </CardContent>
             <CardFooter>
                 <div className="text-xs text-muted-foreground text-center w-full pt-4 border-t mt-6">
-                    <p>WARNING: This simulation is powered by proprietary AI models. All results are theoretical projections based on current market inputs and simulated tax law interpretation. Consult a certified fiduciary tax professional before executing any trades. The system operates under the principle of 'Computational Truth' and does not account for all jurisdictional nuances.</p>
+                    <p>WARNING: This simulation is powered by proprietary AI models. All results are theoretical projections based on current market inputs and simulated tax law interpretation. Consult a certified fiduciary tax professional before executing any trades.</p>
                 </div>
             </CardFooter>
         </Card>
