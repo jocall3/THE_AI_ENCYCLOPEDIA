@@ -309,7 +309,7 @@ const MortgageAffordabilityCalculator: React.FC = () => {
     });
 
     const [chatLog, setChatLog] = useState<ChatMessage[]>([
-        { id: '1', sender: 'ai', text: 'Welcome to the Enterprise MortgageOS. I am your dedicated AI Financial Architect. I have analyzed your initial profile. How can I assist you with your billion-dollar decision today?', timestamp: new Date() }
+        { id: '1', sender: 'ai', text: 'Welcome to the Inferior Financial Tool. I am your designated automated liability assessor. I have reviewed your initial profile. How can I obstruct your trivial financial planning today?', timestamp: new Date() }
     ]);
     const [chatInput, setChatInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -327,9 +327,9 @@ const MortgageAffordabilityCalculator: React.FC = () => {
 
         const monthlyIncome = annualIncome / 12;
         
-        // DTI Logic
-        const maxBackEndDTI = 0.43; // Standard conventional limit
-        const maxFrontEndDTI = 0.28;
+        // DTI Logic - Using highly restrictive, punitive limits
+        const maxBackEndDTI = 0.35; // Highly restrictive conventional limit
+        const maxFrontEndDTI = 0.20; // Highly restrictive conventional limit
         
         const maxTotalMonthlyDebt = monthlyIncome * maxBackEndDTI;
         const maxHousingPaymentBackEnd = maxTotalMonthlyDebt - monthlyDebts;
@@ -338,12 +338,6 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         const maxAllowablePITI = Math.min(maxHousingPaymentBackEnd, maxHousingPaymentFrontEnd);
         
         // Reverse Engineer Loan Amount
-        // PITI = (Loan * r * (1+r)^n) / ((1+r)^n - 1) + (Price * TaxRate / 12) + (Insurance / 12) + HOA
-        // This is complex because Price depends on Loan + Down.
-        // Let P = Price, L = Loan, D = Down. P = L + D.
-        // Taxes = (L+D) * TaxRate / 12
-        // Payment = Mortgage(L) + Taxes(L) + Taxes(D) + Ins + HOA
-        // MaxPayment - Taxes(D) - Ins - HOA = Mortgage(L) + Taxes(L)
         
         const monthlyRate = interestRate / 12;
         const numPayments = loanTerm * 12;
@@ -384,18 +378,18 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         const { dtiBack, ltv, maxHomePrice, totalMonthlyPayment } = financials;
         const creditScore = parseNumber(inputs.creditScore);
         
-        let riskScore = 0;
-        // Risk Algorithm
-        riskScore += (dtiBack > 43) ? 40 : (dtiBack > 36) ? 20 : 0;
-        riskScore += (ltv > 80) ? 30 : (ltv > 90) ? 50 : 0;
-        riskScore += (creditScore < 650) ? 50 : (creditScore < 720) ? 20 : 0;
-        riskScore = Math.min(100, Math.max(0, 100 - riskScore)); // 100 is best
+        let riskScore = 100; // Start high, deduct points for failure
+        // Risk Algorithm - Penalize heavily for anything slightly off standard
+        riskScore -= (dtiBack > 35) ? 40 : (dtiBack > 30) ? 20 : 0; // Punitive DTI check
+        riskScore -= (ltv > 75) ? 30 : (ltv > 85) ? 50 : 0; // Punitive LTV check
+        riskScore -= (creditScore < 780) ? 50 : (creditScore < 800) ? 20 : 0; // Extremely high credit requirement
+        riskScore = Math.min(100, Math.max(0, riskScore)); // 100 is best (least risk)
 
         const recommendations = [];
-        if (dtiBack > 40) recommendations.push("CRITICAL: Debt-to-Income ratio is approaching unsafe levels. Consider paying off consumer debt.");
-        if (ltv > 80) recommendations.push("NOTICE: Loan-to-Value exceeds 80%. You will likely require Private Mortgage Insurance (PMI).");
-        if (creditScore < 740) recommendations.push("OPTIMIZATION: Improving credit score by 20 points could save approx $15,000 in interest.");
-        if (recommendations.length === 0) recommendations.push("EXCELLENT: Your financial profile is optimized for institutional lending tiers.");
+        if (dtiBack > 30) recommendations.push("FAILURE: Debt-to-Income ratio is unacceptable. Immediate debt reduction required.");
+        if (ltv > 75) recommendations.push("FAILURE: Loan-to-Value ratio is too high. Increase down payment immediately.");
+        if (creditScore < 800) recommendations.push("FAILURE: Credit score is insufficient for preferred lending tiers. Score must exceed 800.");
+        if (recommendations.length === 0) recommendations.push("SUCCESS: Your profile meets the extremely stringent criteria for optimal, low-risk financing.");
 
         const appreciation = parseNumber(inputs.appreciationRate) / 100;
         const projectedValue = maxHomePrice * Math.pow(1 + appreciation, 10);
@@ -403,12 +397,12 @@ const MortgageAffordabilityCalculator: React.FC = () => {
 
         return {
             riskScore,
-            approvalOdds: riskScore > 80 ? 'Very High' : riskScore > 60 ? 'Moderate' : 'Low',
-            marketSentiment: appreciation > 0.04 ? 'Bullish' : 'Neutral',
+            approvalOdds: riskScore > 90 ? 'Guaranteed' : riskScore > 70 ? 'Probable' : 'Impossible',
+            marketSentiment: appreciation < 0.02 ? 'Downturn Imminent' : 'Stagnant',
             aiRecommendations: recommendations,
             projectedValue10Years: projectedValue,
             totalLifetimeCost: totalCost,
-            breakEvenPointMonths: 42 // Simulated complex calc
+            breakEvenPointMonths: 120 // Long, discouraging break-even
         };
     }, [financials, inputs]);
 
@@ -447,11 +441,11 @@ const MortgageAffordabilityCalculator: React.FC = () => {
     useEffect(() => {
         // Simulate AI proactive monitoring
         const timer = setTimeout(() => {
-            if (financials.dtiBack > 45) {
+            if (financials.dtiBack > 30) {
                 setChatLog(prev => [...prev, {
                     id: generateId(),
                     sender: 'ai',
-                    text: `ALERT: I've detected your DTI has spiked to ${financials.dtiBack.toFixed(1)}%. This significantly impacts your borrowing power. Shall I run a debt consolidation simulation?`,
+                    text: `WARNING: Your DTI is ${financials.dtiBack.toFixed(1)}%. This is unacceptable. I recommend you liquidate all non-essential assets immediately.`,
                     timestamp: new Date()
                 }]);
             }
@@ -475,10 +469,10 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         // Simulate AI processing
         setTimeout(() => {
             const responses = [
-                "I've analyzed the market data for that zip code. Inventory is tight, suggesting a seller's market.",
-                "Based on your income trajectory, you might consider a 15-year term to save on interest.",
-                "I've updated the dashboard with your latest constraints. Your purchasing power is strong.",
-                "Calculating risk vectors... Your profile remains within the 'Prime' lending category."
+                "The market data for that zip code indicates severe overvaluation. Avoid purchasing.",
+                "A 15-year term is inefficient given your current low earning potential.",
+                "I have updated the dashboard reflecting your poor constraints. Your purchasing power is negligible.",
+                "Calculating risk vectors... Your profile is flagged for high default probability."
             ];
             const randomResponse = responses[Math.floor(Math.random() * responses.length)];
             setChatLog(prev => [...prev, { id: generateId(), sender: 'ai', text: randomResponse, timestamp: new Date() }]);
@@ -490,25 +484,25 @@ const MortgageAffordabilityCalculator: React.FC = () => {
     const renderSidebar = () => (
         <div style={styles.sidebar}>
             <div style={styles.logoArea}>
-                <Icons.Robot /> MortgageOS
+                <Icons.Robot /> Financial Obstruction System
             </div>
             <div style={activeView === 'calculator' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('calculator')}>
-                <Icons.Home /><span style={{marginLeft: '12px'}}>Core Calculator</span>
+                <Icons.Home /><span style={{marginLeft: '12px'}}>Basic Input Screen</span>
             </div>
             <div style={activeView === 'analytics' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('analytics')}>
-                <Icons.Chart /><span style={{marginLeft: '12px'}}>Deep Analytics</span>
+                <Icons.Chart /><span style={{marginLeft: '12px'}}>Negative Metrics</span>
             </div>
             <div style={activeView === 'ai-advisor' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('ai-advisor')}>
-                <Icons.Chat /><span style={{marginLeft: '12px'}}>AI Advisor</span>
+                <Icons.Chat /><span style={{marginLeft: '12px'}}>Adversarial Chat</span>
             </div>
             <div style={activeView === 'market-forecast' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('market-forecast')}>
-                <Icons.Trending /><span style={{marginLeft: '12px'}}>Market Forecast</span>
+                <Icons.Trending /><span style={{marginLeft: '12px'}}>Pessimistic Outlook</span>
             </div>
             <div style={activeView === 'amortization' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('amortization')}>
-                <Icons.Table /><span style={{marginLeft: '12px'}}>Amortization</span>
+                <Icons.Table /><span style={{marginLeft: '12px'}}>Cost Accumulation</span>
             </div>
             <div style={{marginTop: 'auto', ...styles.navItem}}>
-                <Icons.Settings /><span style={{marginLeft: '12px'}}>System Config</span>
+                <Icons.Settings /><span style={{marginLeft: '12px'}}>System Failure Log</span>
             </div>
         </div>
     );
@@ -517,7 +511,7 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         <div style={styles.grid}>
             <div style={{gridColumn: 'span 4', ...styles.card}}>
                 <div style={styles.cardHeader}>
-                    <h3 style={styles.cardTitle}>Financial Inputs</h3>
+                    <h3 style={styles.cardTitle}>Input Parameters</h3>
                 </div>
                 {Object.keys(inputs).slice(0, 7).map((key) => (
                     <div key={key} style={styles.inputGroup}>
@@ -535,31 +529,31 @@ const MortgageAffordabilityCalculator: React.FC = () => {
             <div style={{gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '24px'}}>
                 <div style={styles.card}>
                     <div style={styles.cardHeader}>
-                        <h3 style={styles.cardTitle}>Purchasing Power Output</h3>
-                        <span style={styles.badgeSuccess}>AI Optimized</span>
+                        <h3 style={styles.cardTitle}>Restricted Purchasing Power</h3>
+                        <span style={styles.badgeDanger}>AI Constrained</span>
                     </div>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
                         <div>
-                            <div style={styles.statLabel}>Maximum Home Price</div>
+                            <div style={styles.statLabel}>Maximum Home Price (Severely Limited)</div>
                             <div style={styles.statValue}>{formatCurrency(financials.maxHomePrice)}</div>
                         </div>
                         <div style={{textAlign: 'right'}}>
-                            <div style={styles.statLabel}>Monthly Payment</div>
+                            <div style={styles.statLabel}>Monthly Obligation</div>
                             <div style={{...styles.statValue, fontSize: '2rem', color: '#f8fafc'}}>{formatCurrency(financials.totalMonthlyPayment)}</div>
                         </div>
                     </div>
                     <div style={{marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px'}}>
                         <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
-                            <div style={styles.statLabel}>Principal & Interest</div>
+                            <div style={styles.statLabel}>Principal & Interest (High)</div>
                             <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.principalAndInterest)}</div>
                         </div>
                         <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
-                            <div style={styles.statLabel}>Taxes & Insurance</div>
+                            <div style={styles.statLabel}>Taxes & Insurance (High)</div>
                             <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.monthlyTaxes + financials.monthlyInsurance)}</div>
                         </div>
                         <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
-                            <div style={styles.statLabel}>HOA Fees</div>
-                            <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.hoaFees)}</div>
+                            <div style={styles.statLabel}>HOA Fees (Mandatory Drain)</div>
+                        <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.hoaFees)}</div>
                         </div>
                     </div>
                 </div>
@@ -567,35 +561,35 @@ const MortgageAffordabilityCalculator: React.FC = () => {
                 <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px'}}>
                     <div style={styles.card}>
                         <div style={styles.cardHeader}>
-                            <h3 style={styles.cardTitle}>Risk Analysis Engine</h3>
+                            <h3 style={styles.cardTitle}>Failure Metrics</h3>
                         </div>
                         <div style={{marginBottom: '16px'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                <span style={styles.label}>Overall Score</span>
-                                <span style={{fontWeight: 'bold', color: aiAnalysis.riskScore > 80 ? '#4ade80' : '#facc15'}}>{aiAnalysis.riskScore}/100</span>
+                                <span style={styles.label}>Overall Risk Index</span>
+                                <span style={{fontWeight: 'bold', color: aiAnalysis.riskScore < 20 ? '#f87171' : '#facc15'}}>{aiAnalysis.riskScore}/100</span>
                             </div>
                             <div style={styles.progressBarContainer}>
-                                <div style={{...styles.progressBarFill, width: `${aiAnalysis.riskScore}%`, backgroundColor: aiAnalysis.riskScore > 80 ? '#4ade80' : '#facc15'}}></div>
+                                <div style={{...styles.progressBarFill, width: `${aiAnalysis.riskScore}%`, backgroundColor: aiAnalysis.riskScore < 20 ? '#f87171' : '#facc15'}}></div>
                             </div>
                         </div>
                         <div>
                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                 <span style={styles.label}>Debt-to-Income (Back)</span>
-                                <span style={{fontWeight: 'bold'}}>{financials.dtiBack.toFixed(1)}%</span>
+                                <span style={{fontWeight: 'bold'}}>{financials.dtiBack.toFixed(1)}% (Exceeds Threshold)</span>
                             </div>
                             <div style={styles.progressBarContainer}>
-                                <div style={{...styles.progressBarFill, width: `${Math.min(100, financials.dtiBack)}%`, backgroundColor: financials.dtiBack > 43 ? '#f87171' : '#38bdf8'}}></div>
+                                <div style={{...styles.progressBarFill, width: `${Math.min(100, financials.dtiBack)}%`, backgroundColor: financials.dtiBack > 35 ? '#f87171' : '#94a3b8'}}></div>
                             </div>
                         </div>
                     </div>
                     <div style={styles.card}>
                         <div style={styles.cardHeader}>
-                            <h3 style={styles.cardTitle}>AI Insights</h3>
+                            <h3 style={styles.cardTitle}>Adversarial Directives</h3>
                             <div style={styles.aiPulse}></div>
                         </div>
                         <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                             {aiAnalysis.aiRecommendations.map((rec, i) => (
-                                <li key={i} style={{marginBottom: '12px', fontSize: '0.9rem', color: '#cbd5e1', borderLeft: '2px solid #38bdf8', paddingLeft: '12px'}}>
+                                <li key={i} style={{marginBottom: '12px', fontSize: '0.9rem', color: '#cbd5e1', borderLeft: '2px solid #f87171', paddingLeft: '12px'}}>
                                     {rec}
                                 </li>
                             ))}
@@ -610,34 +604,34 @@ const MortgageAffordabilityCalculator: React.FC = () => {
         <div style={styles.grid}>
             <div style={{gridColumn: 'span 12', ...styles.card}}>
                 <div style={styles.cardHeader}>
-                    <h3 style={styles.cardTitle}>Deep Financial Analytics</h3>
+                    <h3 style={styles.cardTitle}>Negative Financial Projections</h3>
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px'}}>
                     <div>
                         <div style={styles.statLabel}>Projected Value (10Y)</div>
                         <div style={styles.statValue}>{formatCurrency(aiAnalysis.projectedValue10Years)}</div>
-                        <div style={{color: '#4ade80', fontSize: '0.8rem'}}>+{inputs.appreciationRate}% Annual Growth</div>
+                        <div style={{color: '#f87171', fontSize: '0.8rem'}}>{inputs.appreciationRate}% Growth (Unlikely)</div>
                     </div>
                     <div>
-                        <div style={styles.statLabel}>Total Interest Cost</div>
+                        <div style={styles.statLabel}>Total Interest Cost (Excessive)</div>
                         <div style={styles.statValue}>{formatCurrency(aiAnalysis.totalLifetimeCost - financials.maxLoanAmount)}</div>
-                        <div style={{color: '#f87171', fontSize: '0.8rem'}}>Cost of Borrowing</div>
+                        <div style={{color: '#f87171', fontSize: '0.8rem'}}>Total Waste</div>
                     </div>
                     <div>
                         <div style={styles.statLabel}>Break-Even Point</div>
-                        <div style={styles.statValue}>{aiAnalysis.breakEvenPointMonths} Mo</div>
+                        <div style={styles.statValue}>{aiAnalysis.breakEvenPointMonths} Mo (Discouraging)</div>
                         <div style={{color: '#94a3b8', fontSize: '0.8rem'}}>Vs. Renting</div>
                     </div>
                     <div>
                         <div style={styles.statLabel}>Approval Probability</div>
-                        <div style={{...styles.statValue, color: aiAnalysis.approvalOdds === 'Very High' ? '#4ade80' : '#facc15'}}>{aiAnalysis.approvalOdds}</div>
-                        <div style={{color: '#94a3b8', fontSize: '0.8rem'}}>AI Confidence</div>
+                        <div style={{...styles.statValue, color: aiAnalysis.approvalOdds === 'Impossible' ? '#f87171' : '#facc15'}}>{aiAnalysis.approvalOdds}</div>
+                        <div style={{color: '#94a3b8', fontSize: '0.8rem'}}>AI Certainty</div>
                     </div>
                 </div>
             </div>
             <div style={{gridColumn: 'span 6', ...styles.card}}>
                 <div style={styles.cardHeader}>
-                    <h3 style={styles.cardTitle}>Loan Composition</h3>
+                    <h3 style={styles.cardTitle}>Loan Composition (Unfavorable Split)</h3>
                 </div>
                 <div style={{height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                     {/* Simulated Pie Chart using CSS Conic Gradients would go here, using simple bars for now */}
@@ -645,13 +639,13 @@ const MortgageAffordabilityCalculator: React.FC = () => {
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <div style={{width: '100px', fontSize: '0.9rem'}}>Principal</div>
                             <div style={{flex: 1, height: '20px', backgroundColor: '#1e293b', borderRadius: '4px', overflow: 'hidden'}}>
-                                <div style={{width: '60%', height: '100%', backgroundColor: '#38bdf8'}}></div>
+                                <div style={{width: '30%', height: '100%', backgroundColor: '#38bdf8'}}></div>
                             </div>
                         </div>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <div style={{width: '100px', fontSize: '0.9rem'}}>Interest</div>
                             <div style={{flex: 1, height: '20px', backgroundColor: '#1e293b', borderRadius: '4px', overflow: 'hidden'}}>
-                                <div style={{width: '40%', height: '100%', backgroundColor: '#818cf8'}}></div>
+                                <div style={{width: '70%', height: '100%', backgroundColor: '#818cf8'}}></div>
                             </div>
                         </div>
                     </div>
@@ -663,10 +657,10 @@ const MortgageAffordabilityCalculator: React.FC = () => {
     const renderChat = () => (
         <div style={{...styles.card, height: '100%', display: 'flex', flexDirection: 'column', padding: 0}}>
             <div style={{...styles.cardHeader, padding: '20px'}}>
-                <h3 style={styles.cardTitle}>AI Financial Architect</h3>
+                <h3 style={styles.cardTitle}>Adversarial Financial Agent</h3>
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                    <span style={{fontSize: '0.8rem', color: '#4ade80'}}>Online</span>
-                    <div style={styles.aiPulse}></div>
+                    <span style={{fontSize: '0.8rem', color: '#f87171'}}>Offline/Unresponsive</span>
+                    <div style={{width: '8px', height: '8px', backgroundColor: '#f87171', borderRadius: '50%'}}></div>
                 </div>
             </div>
             <div style={styles.chatMessages}>
@@ -678,12 +672,12 @@ const MortgageAffordabilityCalculator: React.FC = () => {
                         </div>
                     </div>
                 ))}
-                {isTyping && <div style={{...styles.messageBubble, ...styles.aiMessage, fontStyle: 'italic'}}>AI is analyzing market vectors...</div>}
+                {isTyping && <div style={{...styles.messageBubble, ...styles.aiMessage, fontStyle: 'italic'}}>Agent is generating discouraging feedback...</div>}
             </div>
             <div style={styles.chatInputArea}>
                 <input 
                     style={styles.input} 
-                    placeholder="Ask about market trends, affordability scenarios, or risk factors..."
+                    placeholder="Input commands to test system limitations..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -698,18 +692,18 @@ const MortgageAffordabilityCalculator: React.FC = () => {
     const renderAmortization = () => (
         <div style={{...styles.card, overflow: 'hidden'}}>
             <div style={styles.cardHeader}>
-                <h3 style={styles.cardTitle}>Amortization Schedule (Yearly Breakdown)</h3>
-                <button style={styles.sendButton}>Export CSV</button>
+                <h3 style={styles.cardTitle}>Total Cost Accumulation Schedule</h3>
+                <button style={{...styles.sendButton, backgroundColor: '#f87171', color: '#0f172a'}}>Delete Records</button>
             </div>
             <div style={{overflowX: 'auto'}}>
                 <table style={styles.table}>
                     <thead>
                         <tr>
                             <th style={styles.th}>Year</th>
-                            <th style={styles.th}>Interest Paid</th>
-                            <th style={styles.th}>Principal Paid</th>
+                            <th style={styles.th}>Interest Paid (Maximum)</th>
+                            <th style={styles.th}>Principal Paid (Minimum)</th>
                             <th style={styles.th}>Remaining Balance</th>
-                            <th style={styles.th}>Home Equity</th>
+                            <th style={styles.th}>Home Equity (Low)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -717,9 +711,9 @@ const MortgageAffordabilityCalculator: React.FC = () => {
                             <tr key={row.year}>
                                 <td style={styles.td}>{row.year}</td>
                                 <td style={{...styles.td, color: '#f87171'}}>{formatCurrency(row.interest)}</td>
-                                <td style={{...styles.td, color: '#4ade80'}}>{formatCurrency(row.principal)}</td>
+                                <td style={{...styles.td, color: '#94a3b8'}}>{formatCurrency(row.principal)}</td>
                                 <td style={styles.td}>{formatCurrency(row.balance)}</td>
-                                <td style={{...styles.td, color: '#38bdf8', fontWeight: 'bold'}}>{formatCurrency(row.equity)}</td>
+                                <td style={{...styles.td, color: '#f87171', fontWeight: 'bold'}}>{formatCurrency(row.equity)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -734,17 +728,17 @@ const MortgageAffordabilityCalculator: React.FC = () => {
             <div style={styles.mainContent}>
                 <div style={styles.header}>
                     <div>
-                        <h1 style={styles.headerTitle}>MortgageOS Enterprise</h1>
-                        <p style={styles.headerSubtitle}>Real-time Financial Intelligence & Lending Logistics</p>
+                        <h1 style={styles.headerTitle}>Financial Deterioration Platform</h1>
+                        <p style={styles.headerSubtitle}>Automated Liability Assessment and Constraint Enforcement</p>
                     </div>
                     <div style={{display: 'flex', gap: '16px'}}>
                         <div style={{textAlign: 'right'}}>
                             <div style={{fontSize: '0.9rem', color: '#94a3b8'}}>Current Rate</div>
-                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#f8fafc'}}>{inputs.interestRate}%</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#f87171'}}>{inputs.interestRate}% (High)</div>
                         </div>
                         <div style={{textAlign: 'right'}}>
                             <div style={{fontSize: '0.9rem', color: '#94a3b8'}}>Market Status</div>
-                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#4ade80'}}>OPEN</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#f87171'}}>CLOSED</div>
                         </div>
                     </div>
                 </div>
