@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// --- TYPE DEFINITIONS FOR ENTERPRISE FINANCIAL OS MODULE ---
+// --- TYPE DEFINITIONS FOR FINANCIAL PLANNING MODULE ---
 
 type FinancialGoal = 'Full Funding' | 'Partial Funding (50%)' | 'Maximize Tax Benefit' | 'AI Optimized Strategy';
 type RiskProfile = 'Conservative' | 'Moderate' | 'Aggressive' | 'Dynamic AI Allocation';
@@ -192,7 +192,7 @@ const useAdvancedProjectionEngine = (
             annualTaxSavings: annualStateTaxSavings
         };
 
-        // 5. Scenario Modeling (Billion Dollar Feature: Predictive Analytics)
+        // 5. Scenario Modeling
         const scenarios: Scenario[] = [
             // Base Case
             { id: 'S1', name: 'Current Plan (Base)', monthlyContribution, investmentReturnRate, costInflationRate, taxBenefitApplied: annualStateTaxSavings, projectedSavings: projectedTotalSavings, shortfall: shortfallOrSurplus, isRecommended: false, riskProfile: 'Moderate' },
@@ -293,7 +293,7 @@ const AIInsightsDashboard = ({ recommendation, taxAnalysis }: { recommendation: 
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
             </svg>
-            AI Predictive Optimization Engine (APM v7.1)
+            AI Optimization Insights (APM v7.1)
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -399,7 +399,7 @@ const StatePlanComparison = ({ selectedPlan, setSelectedPlan }: { selectedPlan: 
     </div>
 );
 
-// --- MAIN COMPONENT: CollegeSavingsPlanner529 (The OS Module) ---
+// --- MAIN COMPONENT: CollegeSavingsPlanner529 ---
 
 const CollegeSavingsPlanner529: React.FC = () => {
     // --- INPUT STATE (Core Financial Parameters) ---
@@ -411,7 +411,7 @@ const CollegeSavingsPlanner529: React.FC = () => {
     const [investmentReturnRate, setInvestmentReturnRate] = useState<number>(7);
     const [monthlyContribution, setMonthlyContribution] = useState<number>(300);
     
-    // --- ADVANCED STATE (OS Configuration and AI Inputs) ---
+    // --- ADVANCED STATE (Configuration and AI Inputs) ---
     const [selectedStatePlan, setSelectedStatePlan] = useState<StatePlanDetails>(MOCK_STATE_PLANS[2]); // Default to AI Recommended Utah
     const [taxFilingStatus, setTaxFilingStatus] = useState<TaxFilingStatus>('Married Filing Jointly');
     const [annualIncome, setAnnualIncome] = useState<number>(150000);
@@ -448,9 +448,8 @@ const CollegeSavingsPlanner529: React.FC = () => {
     useEffect(() => {
         const newResults = calculateProjections();
         setResults(newResults);
-        // If AI Optimized Strategy is selected, update the monthly contribution to the required amount for the next calculation cycle
+        // This ensures the UI reflects the AI's suggested contribution immediately
         if (financialGoal === 'AI Optimized Strategy' && newResults.requiredMonthlyContribution > 0) {
-            // This ensures the UI reflects the AI's suggested contribution immediately
             setMonthlyContribution(Math.round(newResults.requiredMonthlyContribution / 25) * 25); 
         }
     }, [calculateProjections, financialGoal]);
@@ -578,7 +577,7 @@ const CollegeSavingsPlanner529: React.FC = () => {
         <div className="bg-gray-50 min-h-screen p-4 sm:p-8 font-sans">
             <div className="max-w-8xl mx-auto">
                 <div className="text-center mb-10">
-                    <h1 className="text-5xl font-extrabold text-gray-900">Enterprise 529 Lifecycle Management OS</h1>
+                    <h1 className="text-5xl font-extrabold text-gray-900">Advanced 529 College Savings Planner</h1>
                     <p className="mt-3 text-xl text-gray-600">AI-Driven Predictive Modeling for Education Funding and Tax Optimization.</p>
                 </div>
 
@@ -648,10 +647,10 @@ const CollegeSavingsPlanner529: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Footer/System Information (Professional replacement for the monologue) */}
+                {/* Footer/System Information */}
                 <div className="mt-20 pt-10 border-t-4 border-blue-600">
                     <div className="max-w-6xl mx-auto">
-                        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">IDGAFAI Financial Intelligence Substrate</h2>
+                        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Advanced Financial Intelligence Platform</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-700">
                             <div className="p-4 bg-white rounded-lg shadow-md">
                                 <h3 className="font-semibold text-xl text-blue-700 mb-2">Predictive Modeling</h3>
@@ -667,7 +666,7 @@ const CollegeSavingsPlanner529: React.FC = () => {
                             </div>
                         </div>
                         <p className="mt-8 text-center text-sm text-gray-500">
-                            System Version 7.1.4 | Data Integrity Check: 99.99% | Last AI Model Update: 2024-08-15 | IDGAFAI Financial OS - Architecting the Future of Wealth Management.
+                            System Version 7.1.4 | Data Integrity Check: 99.99% | Last AI Model Update: 2024-08-15 | Advanced Financial System - Architecting the Future of Wealth Management.
                         </p>
                     </div>
                 </div>
