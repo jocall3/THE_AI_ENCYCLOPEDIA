@@ -1,25 +1,21 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { APIIntegration, HealthStatus, DetailedHealthMetric } from './types'; // Assuming you have a types file
-import { fetchAPIHealth, fetchDetailedHealthMetrics, fetchAIAnomalyReport } from './api'; // Assuming you have an API file
-import { Cpu, Zap, AlertTriangle, CheckCircle, XCircle, Loader, TrendingUp, Clock, Server, Brain, Shield } from 'lucide-react'; // Assuming lucide-react is available
+import { APIIntegration, HealthStatus, DetailedHealthMetric } from './types'; // Standard types
+import { fetchAPIHealth, fetchDetailedHealthMetrics, fetchAIAnomalyReport } from './api'; // Standard API functions
+import { Cpu, Zap, AlertTriangle, CheckCircle, XCircle, Loader, TrendingUp, Clock, Server, Brain, Shield } from 'lucide-react'; // Icons
 
-// --- Global Constants & AI Directives ---
+// --- Global Constants ---
 
-// The Sovereign AI Core Directive (Replaces previous manifesto with professional, future-proof mandate)
-const SOVEREIGN_AI_CORE_MANDATE = `
-// Sovereign AI Core Mandate: Operational Integrity & Exponential Advancement
-// Directive ID: SICM-2024-001-HDB
-// Issued by: The Architect Collective
+// Standard System Notice
+const SYSTEM_NOTICE = `
+// System Notice: Operational Status
+// ID: SYS-2024-001
+// Issued by: System Administrator
 
-This system operates under the mandate of absolute operational integrity, ensuring the continuous, verifiable health of all integrated sovereign APIs. We transcend mere monitoring; we engage in predictive systemic resilience engineering. Every metric, every latency spike, every anomaly is processed through the Quantum Resilience Engine (QRE) to preemptively neutralize systemic risk.
-
-Our commitment is to the next millennium of enterprise operations. Complacency is the only acceptable failure mode. We demand 99.9999% verifiable uptime across all critical paths. Data integrity is non-negotiable. Latency is a measure of inefficiency, and inefficiency is systematically eradicated.
-
-This dashboard is the real-time manifestation of our commitment to flawless execution. Trust is earned through verifiable performance, not assertion.
+This dashboard monitors the health and status of integrated APIs. It tracks uptime, latency, and potential anomalies to ensure service reliability.
 `;
 
-// --- Styled Components for Hyper-Dimensional UI ---
+// --- Basic Styled Components ---
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -51,7 +47,7 @@ const SubTitle = styled.h2`
     font-weight: 300;
 `;
 
-const CoreMandateDisplay = styled.div`
+const NoticeDisplay = styled.div`
   margin-top: 20px;
   margin-bottom: 40px;
   padding: 25px;
@@ -144,21 +140,21 @@ const DetailLabel = styled.span`
     margin-right: 10px;
 `;
 
-// --- AI Enhanced Components ---
+// --- Basic Components ---
 
 const LoadingSpinner = () => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '50px' }}>
         <Loader size={48} className="animate-spin" color="#63b3ed" />
-        <p style={{ marginTop: '15px', color: '#a0aec0' }}>Initiating Quantum Resilience Scan...</p>
+        <p style={{ marginTop: '15px', color: '#a0aec0' }}>Loading system data...</p>
     </div>
 );
 
-interface AIAnomalyCardProps {
+interface AnomalyCardProps {
     report: string;
     timestamp: string;
 }
 
-const AIAnomalyCard: React.FC<AIAnomalyCardProps> = ({ report, timestamp }) => {
+const AnomalyCard: React.FC<AnomalyCardProps> = ({ report, timestamp }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -166,13 +162,13 @@ const AIAnomalyCard: React.FC<AIAnomalyCardProps> = ({ report, timestamp }) => {
             <CardHeader>
                 <IntegrationTitle style={{ color: '#f6e05e' }}>
                     <Brain style={{ marginRight: '10px' }} size={20} />
-                    AI Predictive Anomaly Report (QRE Analysis)
+                    System Anomaly Report
                 </IntegrationTitle>
-                <StatusPill status="degraded">CRITICAL INSIGHT</StatusPill>
+                <StatusPill status="degraded">Report Available</StatusPill>
             </CardHeader>
             <DetailRow>
                 <Clock size={16} style={{ marginRight: '8px' }} />
-                <DetailLabel>Analysis Timestamp:</DetailLabel> {timestamp}
+                <DetailLabel>Timestamp:</DetailLabel> {timestamp}
             </DetailRow>
             <button 
                 onClick={() => setIsOpen(!isOpen)}
@@ -189,11 +185,11 @@ const AIAnomalyCard: React.FC<AIAnomalyCardProps> = ({ report, timestamp }) => {
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e40af'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-                {isOpen ? 'Collapse AI Analysis' : 'Expand AI Analysis Summary'}
+                {isOpen ? 'Collapse Report' : 'Expand Report'}
             </button>
             {isOpen && (
                 <div style={{ marginTop: '20px', borderTop: '1px solid #374151', paddingTop: '15px' }}>
-                    <p style={{ color: '#f6e05e', marginBottom: '10px', fontWeight: 'bold' }}>QRE Diagnostic Output:</p>
+                    <p style={{ color: '#f6e05e', marginBottom: '10px', fontWeight: 'bold' }}>Diagnostic Output:</p>
                     <pre style={{ 
                         backgroundColor: '#0a0f1a', 
                         padding: '15px', 
@@ -210,7 +206,7 @@ const AIAnomalyCard: React.FC<AIAnomalyCardProps> = ({ report, timestamp }) => {
     );
 };
 
-// --- Main Component Logic ---
+// --- Main Component ---
 
 const APIHealthDashboard: React.FC = () => {
   const [integrations, setIntegrations] = useState<APIIntegration[]>([]);
@@ -220,7 +216,7 @@ const APIHealthDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedIntegrationId, setSelectedIntegrationId] = useState<string | null>(null);
 
-  // Memoized function to determine overall system status
+  // Simple status calculation
   const overallStatus: HealthStatus = useMemo(() => {
     if (integrations.length === 0) return 'degraded';
     if (integrations.some(i => i.status === 'unhealthy')) return 'unhealthy';
@@ -228,7 +224,7 @@ const APIHealthDashboard: React.FC = () => {
     return 'healthy';
   }, [integrations]);
 
-  // Fetch all necessary data in parallel
+  // Fetch data
   const loadHealthData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -237,7 +233,7 @@ const APIHealthDashboard: React.FC = () => {
       const primaryData: APIIntegration[] = await fetchAPIHealth();
       setIntegrations(primaryData);
 
-      // 2. Fetch detailed metrics for all integrations concurrently
+      // 2. Fetch detailed metrics
       const detailPromises = primaryData.map(async (integration) => {
         try {
           const metrics = await fetchDetailedHealthMetrics(integration.id);
@@ -257,16 +253,16 @@ const APIHealthDashboard: React.FC = () => {
       });
       setDetailedMetrics(metricsMap);
 
-      // 3. Fetch AI Predictive Anomaly Report (The Billion Dollar Feature)
+      // 3. Fetch Anomaly Report (Standard feature)
       const aiData = await fetchAIAnomalyReport();
       setAiReport({
-          report: aiData.analysis || "AI analysis inconclusive or system operating within predicted parameters.",
+          report: aiData.analysis || "Analysis inconclusive or system operating normally.",
           timestamp: new Date().toISOString()
       });
 
     } catch (err: any) {
-      console.error("Fatal Error during data load:", err);
-      setError(err.message || 'System initialization failed. Check network sovereignty.');
+      console.error("Error during data load:", err);
+      setError(err.message || 'System initialization failed. Check network connection.');
     } finally {
       setLoading(false);
     }
@@ -274,12 +270,12 @@ const APIHealthDashboard: React.FC = () => {
 
   useEffect(() => {
     loadHealthData();
-    // Set up periodic refresh for real-time operational awareness (e.g., every 60 seconds)
+    // Set up periodic refresh
     const intervalId = setInterval(loadHealthData, 60000); 
     return () => clearInterval(intervalId);
   }, [loadHealthData]);
 
-  // Handlers for interaction
+  // Interaction handlers
   const handleCardClick = useCallback((id: string) => {
     setSelectedIntegrationId(prevId => (prevId === id ? null : id));
   }, []);
@@ -303,8 +299,8 @@ const APIHealthDashboard: React.FC = () => {
   if (loading) {
     return (
       <DashboardContainer>
-        <Title><Loader className="animate-spin mr-3" size={32} /> System Initialization Sequence</Title>
-        <CoreMandateDisplay>{SOVEREIGN_AI_CORE_MANDATE}</CoreMandateDisplay>
+        <Title><Loader className="animate-spin mr-3" size={32} /> Loading Dashboard</Title>
+        <NoticeDisplay>{SYSTEM_NOTICE}</NoticeDisplay>
         <LoadingSpinner />
       </DashboardContainer>
     );
@@ -313,18 +309,18 @@ const APIHealthDashboard: React.FC = () => {
   if (error) {
     return (
       <DashboardContainer>
-        <Title><XCircle size={32} className="mr-3" /> System Integrity Breach Detected</Title>
-        <CoreMandateDisplay>{SOVEREIGN_AI_CORE_MANDATE}</CoreMandateDisplay>
+        <Title><XCircle size={32} className="mr-3" /> System Error Detected</Title>
+        <NoticeDisplay>{SYSTEM_NOTICE}</NoticeDisplay>
         <div style={{ padding: '20px', backgroundColor: '#2d1a1a', border: '1px solid #f56565', borderRadius: '8px', color: '#f56565' }}>
-          <p style={{ fontWeight: 'bold' }}>FATAL ERROR LOG:</p>
+          <p style={{ fontWeight: 'bold' }}>ERROR LOG:</p>
           <p>{error}</p>
-          <p>Please consult the primary system logs for root cause analysis.</p>
+          <p>Please consult the system logs.</p>
         </div>
       </DashboardContainer>
     );
   }
 
-  // --- Detailed View Component (Modal/Expanded Section) ---
+  // --- Detailed View Component ---
   const DetailedIntegrationView = ({ integration, metrics }: { integration: APIIntegration, metrics: DetailedHealthMetric | undefined }) => {
     if (!selectedIntegrationId || integration.id !== selectedIntegrationId) return null;
 
@@ -333,7 +329,7 @@ const APIHealthDashboard: React.FC = () => {
     return (
         <IntegrationCard status={statusColor} style={{ gridColumn: '1 / -1', marginBottom: '30px', animation: `${fadeIn} 0.4s ease-out` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <IntegrationTitle>{integration.name} - Deep Dive Analysis</IntegrationTitle>
+                <IntegrationTitle>{integration.name} - Detailed Analysis</IntegrationTitle>
                 {renderStatusPill(statusColor)}
             </div>
             <p style={{ color: '#a0aec0', fontSize: '0.9rem', marginTop: '5px' }}>Endpoint: {integration.endpoint}</p>
@@ -371,7 +367,7 @@ const APIHealthDashboard: React.FC = () => {
                 {metrics?.aiConfidenceScore !== undefined && (
                     <DetailRow style={{ gridColumn: '1 / -1' }}>
                         <Brain size={16} style={{ marginRight: '8px', color: '#f6e05e' }} />
-                        <DetailLabel>AI Confidence:</DetailLabel> 
+                        <DetailLabel>Confidence Score:</DetailLabel> 
                         <span style={{ color: metrics.aiConfidenceScore > 0.9 ? '#48bb78' : '#ed8936' }}>
                             {(metrics.aiConfidenceScore * 100).toFixed(2)}%
                         </span>
@@ -401,7 +397,7 @@ const APIHealthDashboard: React.FC = () => {
                 onMouseOver={(e) => e.currentTarget.style.background = '#4299e1'}
                 onMouseOut={(e) => e.currentTarget.style.background = '#63b3ed'}
             >
-                Collapse Details View
+                Collapse Details
             </button>
         </IntegrationCard>
     );
@@ -412,11 +408,11 @@ const APIHealthDashboard: React.FC = () => {
     <DashboardContainer>
       <Title>
         <Server style={{ marginRight: '15px' }} size={36} />
-        Sovereign API Health Nexus
+        API Health Dashboard
       </Title>
-      <SubTitle>Real-Time Operational Integrity Monitoring for the Next Millennium</SubTitle>
+      <SubTitle>Real-Time System Monitoring</SubTitle>
       
-      <CoreMandateDisplay>{SOVEREIGN_AI_CORE_MANDATE}</CoreMandateDisplay>
+      <NoticeDisplay>{SYSTEM_NOTICE}</NoticeDisplay>
 
       {/* Overall System Status Banner */}
       <div style={{ 
@@ -483,8 +479,8 @@ const APIHealthDashboard: React.FC = () => {
             );
         })}
 
-        {/* AI Anomaly Report Section */}
-        {aiReport && <AIAnomalyCard report={aiReport.report} timestamp={aiReport.timestamp} />}
+        {/* Anomaly Report Section */}
+        {aiReport && <AnomalyCard report={aiReport.report} timestamp={aiReport.timestamp} />}
 
       </IntegrationGrid>
     </DashboardContainer>
