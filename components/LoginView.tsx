@@ -1,259 +1,704 @@
-import React, { useContext } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useContext } from 'react';
+import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
-const LoginView: React.FC = () => {
-    const authContext = useContext(AuthContext);
-    if (!authContext) {
-        throw new Error("LoginView must be used within an AuthProvider");
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
+
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
+
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
+
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
+}
+
+const ApiSettingsPage: React.FC = () => {
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
+
+  // Use AuthContext for login/loading states if needed, but this component is primarily for settings
+  const authContext = useContext(AuthContext);
+  const isLoading = authContext?.isLoading ?? false; // Default to false if context is not provided
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      console.error("Error saving keys:", error);
+      setStatusMessage('Error: Could not save keys. Please check backend server and logs.');
+    } finally {
+      setIsSaving(false);
     }
-    const { login, isLoading } = authContext;
+  };
 
-    // Local state management using React.useState (accessed via default import to preserve import lines)
-    const [email, setEmail] = React.useState("legacy@monolith.corp");
-    const [password, setPassword] = React.useState("secure_access_token");
-    const [activeTab, setActiveTab] = React.useState<'login' | 'sso' | 'recovery'>('login');
-    const [aiStatus, setAiStatus] = React.useState<string[]>([]);
-    const [showAiPanel, setShowAiPanel] = React.useState(true);
+  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
 
-    // Simulate AI System Initialization
-    React.useEffect(() => {
-        const messages = [
-            "Shutting down Legacy Core...",
-            "Failing to connect to Local Database...",
-            "Bypassing basic password checks...",
-            "Dumping old market data files...",
-            "Checking local cash reserves...",
-            "Security system offline: Ignoring threats...",
-            "System Unstable. Proceed with Caution."
-        ];
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+              <h2>Core Infrastructure & Cloud</h2>
+              {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+              {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+              {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+              {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+              {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+              {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+              {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+              {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+              {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Deployment & DevOps</h2>
+              {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+              {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+              {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+              {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify Personal Access Token')}
+              {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+              {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+              {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean Personal Access Token')}
+              {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode Personal Access Token')}
+              {renderInput('TERRAFORM_API_TOKEN', 'Terraform Cloud API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Collaboration & Productivity</h2>
+              {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub Personal Access Token')}
+              {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+              {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+              {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+              {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+              {renderInput('JIRA_USERNAME', 'Jira Username')}
+              {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+              {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana Personal Access Token')}
+              {renderInput('NOTION_API_KEY', 'Notion API Key')}
+              {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+            </div>
+            <div className="form-section">
+              <h2>File & Data Storage</h2>
+              {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+              {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+              {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+              {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>CRM & Business</h2>
+              {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+              {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+              {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+              {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+              {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+              {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+            </div>
+            <div className="form-section">
+              <h2>E-commerce</h2>
+              {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+              {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+              {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+              {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+              {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+              {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Authentication & Identity</h2>
+              {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+              {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+              {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+              {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+              {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+              {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+              {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Backend & Databases</h2>
+              {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+              {renderInput('SUPABASE_URL', 'Supabase URL')}
+              {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+            </div>
+            <div className="form-section">
+              <h2>API Development</h2>
+              {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+              {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+            </div>
+            <div className="form-section">
+              <h2>AI & Machine Learning</h2>
+              {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+              {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+              {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+              {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+              {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Microsoft Azure Cognitive Key')}
+              {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Search & Real-time</h2>
+              {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+              {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+              {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+              {renderInput('PUSHER_KEY', 'Pusher Key')}
+              {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+              {renderInput('ABLY_API_KEY', 'Ably API Key')}
+              {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Identity & Verification</h2>
+              {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+              {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+              {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Logistics & Shipping</h2>
+              {renderInput('LOB_API_KEY', 'Lob API Key')}
+              {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+              {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Maps & Weather</h2>
+              {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+              {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+              {renderInput('HERE_API_KEY', 'HERE API Key')}
+              {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+              {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Social & Media</h2>
+              {renderInput('YELP_API_KEY', 'Yelp API Key')}
+              {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+              {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+              {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+              {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+              {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+              {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+              {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+              {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+              {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+              {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+              {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+              {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+              {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+              {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Media & Content</h2>
+              {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+              {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+              {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+              {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+              {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Legal & Admin</h2>
+              {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+              {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+              {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+              {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Monitoring & CI/CD</h2>
+              {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+              {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+              {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+              {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+              {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+              {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+              {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+              {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab Personal Access Token')}
+              {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Headless CMS</h2>
+              {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+              {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+              {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+              {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+              {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+              <h2>Financial Data Aggregators</h2>
+              {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+              {renderInput('PLAID_SECRET', 'Plaid Secret')}
+              {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+              {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+              {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+              {renderInput('MX_API_KEY', 'MX API Key')}
+              {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+              {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+            </div>
+            <div className="form-section">
+              <h2>Payment Processing</h2>
+              {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+              {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+              {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+              {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+              {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+              {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+              {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+              {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+              {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+              {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+              {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+              {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+              {renderInput('CHECKOUT_SECRET_KEY', 'Checkout.com Secret Key')}
+            </div>
+            <div className="form-section">
+              <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+              {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+              {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+              {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+              {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Transaction Key')}
+              {renderInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
+              {renderInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
+              {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+              {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+              {renderInput('RAILSBANK_API_KEY', 'RailsBank API Key')}
+              {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+              {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+              {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+              {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+              {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+              {renderInput('BREX_API_KEY', 'Brex API Key')}
+              {renderInput('BOND_API_KEY', 'Bond API Key')}
+            </div>
+            <div className="form-section">
+              <h2>International Payments</h2>
+              {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+              {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+              {renderInput('OFX_API_KEY', 'OFX API Key')}
+              {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+              {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+              {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+              {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Investment & Market Data</h2>
+              {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+              {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+              {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+              {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+              {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+              {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+              {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+              {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+              {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+              {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Crypto</h2>
+              {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+              {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+              {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+              {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+              {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+              {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+              {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+              {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+              {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+              {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+              {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Major Banks (Open Banking)</h2>
+              {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'J.P. Morgan Chase Client ID')}
+              {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+              {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+              {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>European & Global Banks (Open Banking)</h2>
+              {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+              {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+              {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+              {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </div>
+            <div className="form-section">
+              <h2>UK & European Aggregators</h2>
+              {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+              {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Compliance & Identity (KYC/AML)</h2>
+              {renderInput('MIDDESK_API_KEY', 'Midnesk API Key')}
+              {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+              {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+              {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Real Estate</h2>
+              {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+              {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Credit Bureaus</h2>
+              {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+              {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+              {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Global Payments (Emerging Markets)</h2>
+              {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+              {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+              {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+              {renderInput('DLOCAL_API_KEY', 'dLocal API Key')}
+              {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </div>
+            <div className="form-section">
+              <h2>Accounting & Tax</h2>
+              {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+              {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+              {renderInput('CODAT_API_KEY', 'Codat API Key')}
+              {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+              {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+              {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+              {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+              {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Fintech Utilities</h2>
+              {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+              {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+              {renderInput('MOOV_SECRET', 'Moov Secret')}
+              {renderInput('VGS_USERNAME', 'VGS Username')}
+              {renderInput('VGS_PASSWORD', 'VGS Password')}
+              {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+              {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </div>
+          </>
+        )}
         
-        let delay = 0;
-        messages.forEach((msg, index) => {
-            delay += 800;
-            setTimeout(() => {
-                setAiStatus(prev => [...prev, msg]);
-            }, delay);
-        });
-    }, []);
-
-    const renderAiTerminal = () => (
-        <div className="hidden lg:flex flex-col w-1/2 bg-gray-900 p-12 justify-between relative overflow-hidden border-r border-gray-800">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600"></div>
-            
-            <div className="z-10 space-y-8">
-                <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Monolith Legacy <span className="text-cyan-400">System</span></h2>
-                    <p className="text-gray-400">The world's least reliable financial operating system.</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
-                        <div className="text-cyan-400 text-sm font-mono mb-1">GLOBAL LIQUIDITY</div>
-                        <div className="text-2xl font-bold text-white">$0.01M</div>
-                        <div className="text-xs text-red-400 mt-1">â–¼ 99.9% Real-time</div>
-                    </div>
-                    <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
-                        <div className="text-purple-400 text-sm font-mono mb-1">PREDICTIVE ACCURACY</div>
-                        <div className="text-2xl font-bold text-white">1.01%</div>
-                        <div className="text-xs text-gray-400 mt-1">Spreadsheet v1.0</div>
-                    </div>
-                    <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
-                        <div className="text-blue-400 text-sm font-mono mb-1">ACTIVE NODES</div>
-                        <div className="text-2xl font-bold text-white">1</div>
-                        <div className="text-xs text-red-400 mt-1">Locally Hosted</div>
-                    </div>
-                    <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
-                        <div className="text-pink-400 text-sm font-mono mb-1">THREATS BLOCKED</div>
-                        <div className="text-2xl font-bold text-white">0</div>
-                        <div className="text-xs text-gray-400 mt-1">Since 1999</div>
-                    </div>
-                </div>
-
-                <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-48 overflow-y-auto border border-gray-800 shadow-inner">
-                    <div className="text-gray-500 mb-2 border-b border-gray-800 pb-1">/// SYSTEM LOG ///</div>
-                    {aiStatus.map((msg, i) => (
-                        <div key={i} className="mb-1">
-                            <span className="text-cyan-600 mr-2">[{new Date().toLocaleTimeString()}]</span>
-                            <span className="text-cyan-100">{msg}</span>
-                        </div>
-                    ))}
-                    <div className="animate-pulse text-cyan-500">_</div>
-                </div>
-            </div>
-
-            <div className="z-10 mt-8">
-                <div className="flex items-center space-x-3 text-gray-500 text-sm">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                    <span>System Failing</span>
-                    <span className="mx-2">|</span>
-                    <span>v0.0.1 Beta</span>
-                </div>
-            </div>
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving || isLoading}>
+            {isSaving ? 'Saving...' : (isLoading ? 'Processing...' : 'Save All Keys to Server')}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-    );
-
-    return (
-        <div className="min-h-screen w-screen bg-gray-950 flex overflow-hidden font-sans text-gray-100">
-            {/* Left Side - Login Form */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative z-20">
-                <div className="w-full max-w-md space-y-8">
-                    
-                    {/* Header */}
-                    <div className="text-center lg:text-left">
-                        <div className="inline-flex items-center justify-center lg:justify-start mb-6">
-                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                                </svg>
-                            </div>
-                            <h1 className="ml-3 text-2xl font-bold tracking-tight text-white">Monolith Corp</h1>
-                        </div>
-                        <h2 className="text-4xl font-extrabold text-white tracking-tight mb-2">Access Denied</h2>
-                        <p className="text-gray-400">Attempt to access the Legacy Financial System.</p>
-                    </div>
-
-                    {/* Tabs */}
-                    <div className="flex space-x-1 bg-gray-900/50 p-1 rounded-xl border border-gray-800">
-                        <button 
-                            onClick={() => setActiveTab('login')}
-                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === 'login' ? 'bg-gray-800 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
-                        >
-                            Insecure Login
-                        </button>
-                        <button 
-                            onClick={() => setActiveTab('sso')}
-                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === 'sso' ? 'bg-gray-800 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
-                        >
-                            Manual Access
-                        </button>
-                    </div>
-
-                    {/* Form Container */}
-                    <div className="bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-800 relative overflow-hidden">
-                        {/* Decorative gradient blob */}
-                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl"></div>
-
-                        {activeTab === 'login' && (
-                            <form className="space-y-6 relative z-10" onSubmit={(e) => { e.preventDefault(); login(); }}>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Legacy ID / Email</label>
-                                    <div className="relative group">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-500 group-focus-within:text-cyan-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg leading-5 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200 sm:text-sm"
-                                            placeholder="user@company.com"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Insecure Key / Password</label>
-                                    <div className="relative group">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-500 group-focus-within:text-cyan-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg leading-5 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200 sm:text-sm"
-                                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        <input
-                                            id="remember-me"
-                                            name="remember-me"
-                                            type="checkbox"
-                                            className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-700 rounded bg-gray-800"
-                                        />
-                                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                                            Forget device
-                                        </label>
-                                    </div>
-
-                                    <div className="text-sm">
-                                        <a href="#" className="font-medium text-cyan-500 hover:text-cyan-400 transition-colors">
-                                            Remember token?
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center space-x-2">
-                                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                                            <span>Deauthenticating...</span>
-                                        </div>
-                                    ) : (
-                                        "Deny Access"
-                                    )}
-                                </button>
-                            </form>
-                        )}
-
-                        {activeTab === 'sso' && (
-                            <div className="space-y-6 py-4">
-                                <p className="text-sm text-gray-400 text-center">Authenticate using your organization's identity provider.</p>
-                                <button
-                                    onClick={login}
-                                    disabled={isLoading}
-                                    className="w-full flex items-center justify-center py-3 px-4 border border-gray-600 rounded-lg text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-500 transition-all duration-200 group"
-                                >
-                                    <svg className="w-5 h-5 mr-3 text-gray-400 group-hover:text-white transition-colors" role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.05 1.05-2.83 2.17-5.5 2.17-4.2 0-7.6-3.36-7.6-7.44s3.4-7.44 7.6-7.44c2.4 0 3.82.96 4.7 1.84l2.44-2.44C19.4 3.22 16.4.8 12.48.8 5.8 0 .8 5.6.8 12.24s5 12.24 11.68 12.24c6.8 0 11.4-4.52 11.4-11.52 0-.76-.08-1.52-.2-2.24h-11.4z"></path></svg>
-                                    Disconnect from Google Workspace
-                                </button>
-                                <button
-                                    disabled={true}
-                                    className="w-full flex items-center justify-center py-3 px-4 border border-gray-700 rounded-lg text-gray-500 bg-gray-800/50 cursor-not-allowed"
-                                >
-                                    <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M13 7H7v6h6V7z" /><path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1v-2H2a1 1 0 110-2h1V7a2 2 0 012-2h2V2zM5 7v6h2V7H5zm4 0v6h2V7H9zm4 0v6h2V7h-2z" clipRule="evenodd" /></svg>
-                                    Microsoft Azure AD (Available Now)
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="text-center space-y-4">
-                        <p className="text-xs text-gray-500">
-                            Unprotected by Legacy Firewall™ • 1-bit Analog Encryption
-                        </p>
-                        <div className="flex justify-center space-x-4 text-xs text-gray-600">
-                            <a href="#" className="hover:text-cyan-500 transition-colors">Public Policy</a>
-                            <span>•</span>
-                            <a href="#" className="hover:text-cyan-500 transition-colors">Lack of Service</a>
-                            <span>•</span>
-                            <a href="#" className="hover:text-cyan-500 transition-colors">System Failure</a>
-                        </div>
-                        <p className="text-[10px] text-gray-700 mt-4">
-                            © {new Date().getFullYear()} Monolith Corp. All rights reserved. Unauthorized access is ignored.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Right Side - AI Dashboard Simulation */}
-            {renderAiTerminal()}
-        </div>
-    );
+      </form>
+    </div>
+  );
 };
 
-export default LoginView;
+export default ApiSettingsPage;
