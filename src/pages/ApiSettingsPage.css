@@ -1,9 +1,6 @@
 /* src/pages/ApiSettingsPage.css */
 body {
   background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 .settings-container {
@@ -33,8 +30,6 @@ h1 {
 .tabs {
   margin-bottom: 25px;
   border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  gap: 10px; /* Space between tabs */
 }
 
 .tabs button {
@@ -45,13 +40,9 @@ h1 {
   font-size: 16px;
   font-weight: 600;
   color: #4a5568;
+  margin-right: 15px;
   position: relative;
   top: 1px;
-  transition: color 0.2s ease-in-out, border-bottom 0.2s ease-in-out;
-}
-
-.tabs button:hover:not(.active) {
-  color: #2b6cb0;
 }
 
 .tabs button.active {
@@ -65,10 +56,8 @@ h1 {
   border-bottom: 1px solid #e2e8f0;
 }
 
-.form-section:last-of-type { /* Use last-of-type to target the last form-section within its parent */
+.form-section:last-child {
   border-bottom: none;
-  padding-bottom: 0; /* Remove extra padding for the last section */
-  margin-bottom: 0; /* Remove extra margin for the last section */
 }
 
 .form-section h2 {
@@ -89,7 +78,7 @@ h1 {
 }
 
 .settings-form input {
-  width: calc(100% - 24px); /* Account for padding */
+  width: 100%;
   padding: 12px;
   border: 1px solid #cbd5e0;
   border-radius: 6px;
@@ -107,9 +96,6 @@ h1 {
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align button and message to the left */
 }
 
 .save-button {
@@ -141,98 +127,4 @@ h1 {
   border: 1px solid #90cdf4;
   color: #2a4365;
   border-radius: 6px;
-  width: calc(100% - 24px); /* Account for padding */
-  box-sizing: border-box; /* Include padding in width calculation */
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .settings-container {
-    margin: 20px;
-    padding: 15px 20px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  .tabs button {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-
-  .form-section h2 {
-    font-size: 18px;
-  }
-
-  .settings-form input {
-    padding: 10px;
-    font-size: 13px;
-  }
-
-  .save-button {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-
-  .status-message {
-    font-size: 13px;
-    padding: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .settings-container {
-    margin: 10px;
-    padding: 10px 15px;
-  }
-
-  h1 {
-    font-size: 20px;
-    padding-bottom: 10px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-
-  .tabs {
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .tabs button {
-    font-size: 13px;
-    padding: 8px 10px;
-  }
-
-  .form-section h2 {
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
-
-  .settings-form label {
-    font-size: 13px;
-    margin-bottom: 5px;
-  }
-
-  .settings-form input {
-    padding: 8px;
-    font-size: 12px;
-  }
-
-  .save-button {
-    padding: 8px 15px;
-    font-size: 13px;
-  }
-
-  .status-message {
-    font-size: 12px;
-    padding: 8px;
-  }
 }
