@@ -37,9 +37,9 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa';
 
-// --- MOCK AI SERVICE INTERFACE ---
-// In a real system, this would interface with a high-throughput, low-latency quantum-entangled AI core.
-// For this simulation, we use mock async functions.
+// --- STANDARD SERVICE INTERFACE ---
+// This is a basic mock service for a standard web application.
+// No quantum cores or complex systems are involved here.
 
 interface AiGenerationRequest {
   prompt: string;
@@ -57,15 +57,15 @@ interface AiGenerationResult {
 }
 
 const mockGenerateCardImage = async (req: AiGenerationRequest): Promise<AiGenerationResult> => {
-  console.log('Simulating AI Image Generation Request:', req);
-  await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000)); // Simulate network latency and processing
+  console.log('Standard Image Request:', req);
+  await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000)); // Standard timeout
 
   const mockImageBase = 'https://picsum.photos/seed/';
   const seed = Math.floor(Math.random() * 10000);
 
   return {
     imageUrl: `${mockImageBase}${seed}/400/250`,
-    story: `The ${req.style} sigil, forged under the computational pressure of ${req.complexity} units, represents the user's current epochal trajectory. Its essence is derived from the prompt: "${req.prompt.substring(0, 50)}...". This artifact embodies the fusion of sovereign identity and decentralized finance, a testament to the O'Callaghan Mandate.`,
+    story: `The ${req.style} design, created with complexity level ${req.complexity}, reflects the user's input. Based on the prompt: "${req.prompt.substring(0, 50)}...". This card is a standard financial instrument.`,
     metadata: {
       tokensUsed: req.complexity * 10,
       processingTimeMs: 1500 + Math.floor(Math.random() * 1000),
@@ -74,15 +74,15 @@ const mockGenerateCardImage = async (req: AiGenerationRequest): Promise<AiGenera
 };
 
 const mockGenerateCardStory = async (keywords: string[]): Promise<string> => {
-  console.log('Simulating AI Story Generation Request with keywords:', keywords);
+  console.log('Standard Story Request with keywords:', keywords);
   await new Promise(resolve => setTimeout(resolve, 800));
 
   if (keywords.length === 0) {
-    return "A blank slate awaits the inscription of destiny. Define your core tenets to begin the narrative.";
+    return "A blank card ready for customization. Add keywords to generate a description.";
   }
 
   const narrativeCore = keywords.join(', ');
-  return `The Sovereign Artifact, designated for the custodian of ${narrativeCore}, is not merely plastic and silicon. It is a materialized contract with the future. Its narrative is woven from the threads of ambition, secured by cryptographic certainty, and validated by the collective intelligence of the network. This card is the physical manifestation of financial autonomy, a beacon against the shadows of legacy systems.`;
+  return `The Custom Card, designed for ${narrativeCore}, is a standard payment tool. It is made of plastic and silicon. It serves as a contract with the bank. Its purpose is practical, secured by standard encryption, and validated by the payment network. This card is a physical tool for daily use.`;
 };
 
 // --- TYPE DEFINITIONS ---
@@ -142,11 +142,11 @@ const CardCustomizationView: React.FC = () => {
   const [design, setDesign] = useState<CardDesignState>({
     baseColor: '#007bff',
     texture: 'metallic',
-    aiPrompt: 'A fractal representation of decentralized ledger growth.',
-    aiStyle: 'cyberpunk',
-    aiComplexity: 75,
+    aiPrompt: 'A blue geometric pattern.',
+    aiStyle: 'minimalist',
+    aiComplexity: 50,
     isAiGenerated: true,
-    customKeywords: ['Sovereignty', 'Velocity', 'Immutable'],
+    customKeywords: ['Finance', 'Security'],
   });
   const [artifact, setArtifact] = useState<CardArtifact | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -179,7 +179,7 @@ const CardCustomizationView: React.FC = () => {
     if (!design.isAiGenerated) {
       toast({
         title: "Generation Disabled",
-        description: "AI generation is toggled off. Please enable it or manually configure the design.",
+        description: "AI generation is off. Please enable it or manually configure.",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -211,17 +211,17 @@ const CardCustomizationView: React.FC = () => {
 
       setArtifact(newArtifact);
       toast({
-        title: "Sigil Forged",
-        description: `Artifact ${newArtifact.id} generated successfully. Review the narrative and finalize.`,
+        title: "Card Generated",
+        description: `Card ${newArtifact.id} created successfully. Review the details.`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
     } catch (error) {
-      console.error("Artifact Generation Error:", error);
+      console.error("Generation Error:", error);
       toast({
-        title: "Forge Failure",
-        description: "The AI core encountered an anomaly during sigil creation.",
+        title: "Generation Failed",
+        description: "An error occurred during creation.",
         status: "error",
         duration: 7000,
         isClosable: true,
@@ -234,7 +234,7 @@ const CardCustomizationView: React.FC = () => {
   const handleSaveFinalization = useCallback(async () => {
     if (!artifact) {
       toast({
-        title: "No Artifact to Save",
+        title: "No Card to Save",
         description: "Please generate the card design first.",
         status: "warning",
         duration: 3000,
@@ -245,18 +245,18 @@ const CardCustomizationView: React.FC = () => {
 
     setIsSaving(true);
     try {
-      // Simulate persistence to the Sovereign Ledger Database (SLDB)
+      // Simulate persistence to a standard database
       await new Promise(resolve => setTimeout(resolve, 1200));
 
       const finalizedArtifact: CardArtifact = {
         ...artifact,
-        status: 'pending_review', // In a real system, this triggers compliance/security checks
+        status: 'pending_review', // Triggers standard review
       };
       setArtifact(finalizedArtifact);
 
       toast({
-        title: "Design Submitted",
-        description: `Card ${finalizedArtifact.id} submitted for cryptographic validation. Status: ${finalizedArtifact.status}.`,
+        title: "Design Saved",
+        description: `Card ${finalizedArtifact.id} saved. Status: ${finalizedArtifact.status}.`,
         status: "info",
         duration: 6000,
         isClosable: true,
@@ -264,8 +264,8 @@ const CardCustomizationView: React.FC = () => {
     } catch (error) {
       console.error("Save Error:", error);
       toast({
-        title: "Persistence Error",
-        description: "Failed to commit the artifact to the ledger.",
+        title: "Save Error",
+        description: "Failed to save the card.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -282,7 +282,7 @@ const CardCustomizationView: React.FC = () => {
 
   const cardPreviewStyle = useMemo(() => ({
     backgroundColor: design.isAiGenerated ? 'transparent' : design.baseColor,
-    backgroundImage: design.isAiGenerated ? `url(${artifact?.imageUrl || 'https://via.placeholder.com/400x250?text=AI+Rendering+Pending'})` : 'none',
+    backgroundImage: design.isAiGenerated ? `url(${artifact?.imageUrl || 'https://via.placeholder.com/400x250?text=Rendering+Pending'})` : 'none',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px ${design.baseColor}80`,
@@ -296,38 +296,38 @@ const CardCustomizationView: React.FC = () => {
 
   const AiConfigurationPanel = () => (
     <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-      <SectionTitle icon={<FaBrain size="1.2em" color="teal.400" />} title="Cognitive Synthesis Engine (AI)" />
+      <SectionTitle icon={<FaBrain size="1.2em" color="teal.400" />} title="AI Configuration" />
 
       <FormControl isRequired>
-        <FormLabel>Core Intent Prompt (The Genesis Seed)</FormLabel>
+        <FormLabel>Design Prompt</FormLabel>
         <Textarea
           value={design.aiPrompt}
           onChange={(e) => handleDesignChange('aiPrompt', e.target.value)}
-          placeholder="Describe the essence of your financial sovereignty..."
+          placeholder="Describe your desired card design..."
           rows={3}
           isDisabled={!design.isAiGenerated}
         />
-        <Tooltip label="This prompt guides the AI in generating the visual sigil and narrative foundation.">
-          <Badge colorScheme="purple" mt={1} variant="solid">High-Dimensional Input Required</Badge>
+        <Tooltip label="This prompt guides the AI in generating the visual design.">
+          <Badge colorScheme="purple" mt={1} variant="solid">Detailed Input Recommended</Badge>
         </Tooltip>
       </FormControl>
 
       <HStack spacing={4}>
         <FormControl>
-          <FormLabel>Visual Style Matrix</FormLabel>
+          <FormLabel>Visual Style</FormLabel>
           <Select
             value={design.aiStyle}
             onChange={(e) => handleDesignChange('aiStyle', e.target.value as CardDesignState['aiStyle'])}
             isDisabled={!design.isAiGenerated}
           >
-            <option value="cyberpunk">Cyberpunk Nexus</option>
-            <option value="photorealistic">Photorealistic Truth</option>
-            <option value="abstract">Abstract Axiom</option>
-            <option value="minimalist">Minimalist Purity</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="photorealistic">Photorealistic</option>
+            <option value="abstract">Abstract</option>
+            <option value="minimalist">Minimalist</option>
           </Select>
         </FormControl>
         <FormControl>
-          <FormLabel>Computational Complexity ({design.aiComplexity})</FormLabel>
+          <FormLabel>Complexity ({design.aiComplexity})</FormLabel>
           <Input
             type="range"
             min="10"
@@ -341,7 +341,7 @@ const CardCustomizationView: React.FC = () => {
       </HStack>
 
       <FormControl display="flex" alignItems="center" justifyContent="space-between" mt={2}>
-        <FormLabel mb="0">Activate AI Synthesis</FormLabel>
+        <FormLabel mb="0">Enable AI Generation</FormLabel>
         <Switch
           isChecked={design.isAiGenerated}
           onChange={(e) => handleDesignChange('isAiGenerated', e.target.checked)}
@@ -353,10 +353,10 @@ const CardCustomizationView: React.FC = () => {
 
   const ManualConfigurationPanel = () => (
     <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-      <SectionTitle icon={<FaPalette size="1.2em" color="orange.400" />} title="Manual Material Configuration" />
+      <SectionTitle icon={<FaPalette size="1.2em" color="orange.400" />} title="Manual Configuration" />
 
       <FormControl>
-        <FormLabel>Base Color Override (Hexadecimal)</FormLabel>
+        <FormLabel>Base Color (Hex)</FormLabel>
         <HStack>
           <Input
             type="color"
@@ -374,16 +374,16 @@ const CardCustomizationView: React.FC = () => {
       </FormControl>
 
       <FormControl>
-        <FormLabel>Surface Texture Protocol</FormLabel>
+        <FormLabel>Surface Texture</FormLabel>
         <Select
           value={design.texture}
           onChange={(e) => handleDesignChange('texture', e.target.value as CardDesignState['texture'])}
           isDisabled={design.isAiGenerated}
         >
-          <option value="metallic">Metallic Sheen (Permanence)</option>
-          <option value="glossy">High-Gloss Finish (Reflectivity)</option>
-          <option value="holographic">Quantum Holographic (Dimensionality)</option>
-          <option value="matte">Matte Absorption (Stealth)</option>
+          <option value="metallic">Metallic</option>
+          <option value="glossy">Glossy</option>
+          <option value="holographic">Holographic</option>
+          <option value="matte">Matte</option>
         </Select>
       </FormControl>
     </VStack>
@@ -401,14 +401,14 @@ const CardCustomizationView: React.FC = () => {
 
     return (
       <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-        <SectionTitle icon={<FaStamp size="1.2em" color="blue.400" />} title="Narrative Anchors (Keywords)" />
-        <Text fontSize="sm" color="gray.500">Define core concepts that must be woven into the Card Story by the AI.</Text>
+        <SectionTitle icon={<FaStamp size="1.2em" color="blue.400" />} title="Keywords" />
+        <Text fontSize="sm" color="gray.500">Add keywords for the card description.</Text>
 
         <HStack>
           <Input
             value={newKeywordInput}
             onChange={(e) => setNewKeywordInput(e.target.value)}
-            placeholder="Enter a core concept (e.g., 'Decentralization')"
+            placeholder="Enter a keyword (e.g., 'Finance')"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleAddKeyword();
             }}
@@ -425,13 +425,13 @@ const CardCustomizationView: React.FC = () => {
 
         <Box minH="50px" p={2} border={design.customKeywords.length > 0 ? '1px dashed' : 'none'} borderColor="gray.400" borderRadius="md">
           {design.customKeywords.length === 0 ? (
-            <Text color="gray.500" fontStyle="italic">No anchors defined. AI will rely solely on the prompt.</Text>
+            <Text color="gray.500" fontStyle="italic">No keywords added.</Text>
           ) : (
             <HStack wrap="wrap" spacing={2}>
               {design.customKeywords.map((keyword) => (
                 <Tag key={keyword} size="md" colorScheme="blue" variant="subtle">
                   <TagLabel>{keyword}</TagLabel>
-                  <Tooltip label="Remove Anchor">
+                  <Tooltip label="Remove Keyword">
                     <TagCloseButton onClick={() => handleKeywordManagement('remove', keyword)} />
                   </Tooltip>
                 </Tag>
@@ -460,10 +460,10 @@ const CardCustomizationView: React.FC = () => {
         >
           <FaEye size="3em" color={useColorModeValue('gray.400', 'gray.600')} mb={3} />
           <Text fontSize="xl" fontWeight="semibold" color={useColorModeValue('gray.500', 'gray.400')}>
-            Artifact Preview Pending Synthesis
+            Preview Pending
           </Text>
           <Text fontSize="sm" color="gray.400" mt={1}>
-            Configure parameters and initiate generation to view your sovereign sigil here.
+            Configure settings to generate preview.
           </Text>
         </Flex>
       );
@@ -481,12 +481,12 @@ const CardCustomizationView: React.FC = () => {
           overflow="hidden"
           style={cardPreviewStyle}
         >
-          {isLoading && <LoadingOverlay message="Synthesizing Reality..." />}
+          {isLoading && <LoadingOverlay message="Processing..." />}
         </Box>
 
         <VStack spacing={3} p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
           <HStack justifyContent="space-between" w="100%">
-            <Text fontWeight="bold" fontSize="lg">Card Story (Mythos Codification)</Text>
+            <Text fontWeight="bold" fontSize="lg">Card Description</Text>
             <Badge colorScheme={statusColor}>{artifact.status.toUpperCase()}</Badge>
           </HStack>
           <Textarea
@@ -494,7 +494,7 @@ const CardCustomizationView: React.FC = () => {
             onChange={(e) => setArtifact(prev => prev ? ({ ...prev, cardStory: e.target.value }) : null)}
             rows={6}
             isDisabled={artifact.status !== 'draft'}
-            placeholder="The narrative generated by the AI..."
+            placeholder="Generated description..."
             fontSize="sm"
           />
           <Text fontSize="xs" color="gray.500" alignSelf="flex-start">
@@ -511,9 +511,9 @@ const CardCustomizationView: React.FC = () => {
             isLoading={isSaving}
             flex={1}
           >
-            {artifact.status === 'draft' ? 'Submit for Validation' : 'View Finalized'}
+            {artifact.status === 'draft' ? 'Save Design' : 'View Saved'}
           </Button>
-          <Tooltip label="Discard Current Draft">
+          <Tooltip label="Discard Draft">
             <IconButton
               icon={<FaTrash />}
               colorScheme="red"
@@ -537,10 +537,10 @@ const CardCustomizationView: React.FC = () => {
     <Box p={{ base: 4, md: 10 }} bg={useColorModeValue('gray.100', 'gray.900')} minH="100vh">
       <VStack spacing={8} align="stretch" maxW="7xl" mx="auto">
         <Heading as="h1" size="2xl" color="teal.500" mb={2}>
-          Sovereign Sigil Forge <FaMagic style={{ display: 'inline-block', marginLeft: '10px' }} />
+          Card Customization <FaMagic style={{ display: 'inline-block', marginLeft: '10px' }} />
         </Heading>
         <Text fontSize="xl" color={useColorModeValue('gray.600', 'gray.300')}>
-          This interface governs the creation of your personalized, cryptographically secured financial instrument. Every parameter is a declaration of intent.
+          Customize your card design using the options below.
         </Text>
 
         <HStack spacing={{ base: 4, lg: 8 }} align="stretch" flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
@@ -559,7 +559,7 @@ const CardCustomizationView: React.FC = () => {
               isLoading={isLoading}
               mt={4}
             >
-              {isLoading ? 'Engaging Quantum Fabric...' : 'Forge Sigil & Narrative'}
+              {isLoading ? 'Generating...' : 'Generate Design'}
             </Button>
           </Flex>
 
@@ -567,7 +567,7 @@ const CardCustomizationView: React.FC = () => {
           <Flex flex={{ base: '1 1 100%', lg: '1 1 60%' }} mt={{ base: 6, lg: 0 }}>
             <VStack spacing={6} align="stretch" w="100%">
               <Heading size="lg" color={useColorModeValue('gray.700', 'gray.100')}>
-                Artifact Manifestation
+                Card Preview
               </Heading>
               {ArtifactDisplay()}
             </VStack>
@@ -577,9 +577,9 @@ const CardCustomizationView: React.FC = () => {
         {/* FOOTER/STATUS BAR */}
         <Box p={4} bg={useColorModeValue('white', 'gray.800')} borderRadius="lg" shadow="lg" mt={8}>
           <HStack justifyContent="space-between" fontSize="sm" color="gray.500">
-            <Text>System Status: Operational | Core Latency: <Badge colorScheme="green">12ms</Badge></Text>
-            <Text>User Epoch ID: {artifact?.id || 'Uninitialized'}</Text>
-            <Text>Last Action: {artifact ? (artifact.status === 'draft' ? 'Draft Ready' : 'Awaiting Validation') : 'Configuration'}</Text>
+            <Text>System: Online</Text>
+            <Text>User ID: {artifact?.id || 'Uninitialized'}</Text>
+            <Text>Last Action: {artifact ? (artifact.status === 'draft' ? 'Draft Ready' : 'Saved') : 'Configuration'}</Text>
           </HStack>
         </Box>
 
