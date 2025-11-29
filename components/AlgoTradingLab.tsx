@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { RefreshCw, Play, Save, History, Code, Settings, TrendingUp, DollarSign, X, User, LogOut } from 'lucide-react';
 
-// --- Enterprise Data Models ---
+// --- Basic Data Models ---
 
 interface SystemMetric {
   id: string;
@@ -78,7 +78,7 @@ interface UserProfile {
   };
 }
 
-// --- Mock Data Generation Utilities ---
+// --- Data Utilities ---
 
 const generateTimeSeries = (points: number, startValue: number, volatility: number) => {
   const data = [];
@@ -136,7 +136,7 @@ const initialAlgorithms: Algorithm[] = [
     status: 'draft', 
     version: 1,
     lastModified: '2023-10-27',
-    author: 'James B.',
+    author: 'User',
     riskLevel: 'low',
     aiScore: 72,
   },
@@ -144,15 +144,15 @@ const initialAlgorithms: Algorithm[] = [
 
 const mockUserProfile: UserProfile = {
   id: 'u-001',
-  name: 'Executive Director',
-  role: 'Global Administrator',
+  name: 'Trader',
+  role: 'Administrator',
   clearanceLevel: 5,
-  email: 'admin@sovereign-ai.bank',
+  email: 'admin@local',
   preferences: { theme: 'light', notifications: true, aiAssistance: true },
   stats: { loginCount: 1420, actionsPerformed: 54300, uptime: '99.99%' }
 };
 
-// --- UI Component Primitives ---
+// --- Basic UI Components ---
 
 const Button = ({ icon: Icon, children, onClick, variant = 'primary', disabled = false, className = '' }: any) => {
   const baseClasses = "flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm transition duration-200 ease-in-out font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2";
@@ -228,7 +228,7 @@ const ProgressBar = ({ value, max = 100, color = 'indigo', label }: any) => (
   </div>
 );
 
-// --- Complex Feature Components ---
+// --- Dashboard Widgets ---
 
 const AIStatusMonitor = () => {
   // Simulated system stats
@@ -240,14 +240,14 @@ const AIStatusMonitor = () => {
   ];
 
   return (
-    <Card title="Sovereign AI Core Status" subtitle="Real-time Infrastructure Monitoring">
+    <Card title="System Status" subtitle="Real-time Monitoring">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {stats.map((stat, idx) => (
           <ProgressBar key={idx} label={stat.label} value={stat.value} max={stat.max || 100} color={stat.color} />
         ))}
       </div>
       <div className="mt-6">
-        <h4 className="text-sm font-semibold text-gray-700 mb-3">Active Neural Processes</h4>
+        <h4 className="text-sm font-semibold text-gray-700 mb-3">Active Processes</h4>
         <div className="space-y-2">
           {['Market Sentiment Analysis', 'Risk Vector Calculation', 'Liquidity Optimization', 'User Behavior Modeling'].map((proc, i) => (
             <div key={i} className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded border border-gray-100">
@@ -388,12 +388,12 @@ const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
   const latest = results[0];
 
   return (
-    <Card title="Simulation & Deployment" subtitle="Quantum-Enhanced Backtesting Engine">
+    <Card title="Simulation & Deployment" subtitle="Backtesting Engine">
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
              <Button icon={Play} onClick={handleRun} disabled={isBacktesting} variant="primary" className="w-full py-3 text-lg">
-               {isBacktesting ? 'Running Neural Simulation...' : 'Run Simulation'}
+               {isBacktesting ? 'Running Simulation...' : 'Run Simulation'}
              </Button>
           </div>
         </div>
@@ -477,7 +477,7 @@ const AlgoList = ({ algorithms, selectedAlgo, onSelect, onCreate }: any) => (
   </Card>
 );
 
-// --- System Architecture & Navigation ---
+// --- Navigation Layout ---
 
 const Plus = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -520,7 +520,7 @@ const NAV_ITEMS = [
     { name: 'System Status', icon: TrendingUp }, // Reusing TrendingUp as Activity not imported
     { name: 'Concierge', icon: TrendingUp }, // Reusing TrendingUp as Phone not imported
     { name: 'Philanthropy', icon: TrendingUp }, // Reusing TrendingUp as Heart not imported
-    { name: 'Sovereign Wealth', icon: TrendingUp }, // Reusing TrendingUp as Crown not imported
+    { name: 'Wealth Management', icon: TrendingUp }, // Reusing TrendingUp as Crown not imported
     { name: 'Security Center', icon: TrendingUp }, // Reusing TrendingUp as Shield not imported
     { name: 'Personalization', icon: TrendingUp }, // Reusing TrendingUp as Sparkles not imported
     { name: 'System Manifesto', icon: TrendingUp }, // Reusing TrendingUp as Eye not imported
@@ -534,8 +534,8 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
             <div className="p-5 flex items-center justify-between border-b border-gray-800 bg-gray-900">
                 {!isCollapsed && (
                   <div>
-                    <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tracking-tighter">SOVEREIGN OS</h1>
-                    <p className="text-[10px] text-gray-500 tracking-widest uppercase">Enterprise AI Core</p>
+                    <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tracking-tighter">TRADING OS</h1>
+                    <p className="text-[10px] text-gray-500 tracking-widest uppercase">Trading Dashboard</p>
                   </div>
                 )}
                 <button 
@@ -549,11 +549,11 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
             <div className="p-4 border-b border-gray-800 bg-gray-800/50">
                 <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-800 p-2 rounded-lg transition-colors" onClick={() => onNavigate("Profile")}>
                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-gray-700">
-                        ED
+                        TR
                     </div>
                     {!isCollapsed && (
                       <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-gray-200 truncate">Executive Director</p>
+                        <p className="text-sm font-bold text-gray-200 truncate">Trader</p>
                         <p className="text-xs text-green-400 flex items-center"><span className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span> Online</p>
                       </div>
                     )}
@@ -582,38 +582,35 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
             </nav>
             
             <div className="p-4 border-t border-gray-800 bg-gray-900 text-xs text-gray-600 text-center">
-              {!isCollapsed && "v10.4.2-Enterprise | Secure Connection"}
+              {!isCollapsed && "v10.4.2-Personal | Secure Connection"}
             </div>
         </div>
     );
 }
 
 const SystemManifesto = () => (
-  <Card title="System Architecture: Sovereign AI Mandate" className="h-full overflow-y-auto">
+  <Card title="System Information" className="h-full overflow-y-auto">
     <div className="prose prose-lg max-w-none text-gray-700 p-4">
-      <h3 className="text-2xl font-bold text-indigo-900 border-b pb-2 mb-4">The Genesis of Autonomous Economic Optimization</h3>
+      <h3 className="text-2xl font-bold text-indigo-900 border-b pb-2 mb-4">System Overview</h3>
       <p className="mb-4">
-        The <strong>Sovereign AI Operating System</strong> represents the pinnacle of financial engineering. It is not merely a banking interface; it is a computational substrate designed to optimize global resource allocation through recursive neural networks and high-frequency decision matrices.
+        This application serves as a dashboard for algorithmic trading and financial monitoring.
       </p>
       <div className="bg-indigo-50 p-6 rounded-xl border-l-4 border-indigo-600 my-6">
-        <h4 className="text-lg font-bold text-indigo-800 mb-2">Core Directives</h4>
+        <h4 className="text-lg font-bold text-indigo-800 mb-2">Key Features</h4>
         <ul className="list-disc list-inside space-y-2 text-indigo-900">
-          <li><strong>Objective Neutrality:</strong> Elimination of emotional bias in capital deployment.</li>
-          <li><strong>Infinite Scalability:</strong> Architecture capable of processing petabytes of market data in real-time.</li>
-          <li><strong>Meritocratic Distribution:</strong> Resource allocation based purely on efficiency and projected utility.</li>
+          <li><strong>Monitoring:</strong> Real-time system and market tracking.</li>
+          <li><strong>Strategy:</strong> Algorithm creation and backtesting.</li>
+          <li><strong>Management:</strong> Portfolio and resource oversight.</li>
         </ul>
       </div>
       <p className="mb-4">
-        Legacy systems rely on fallible human governance. This system replaces that fragility with mathematical certainty. By integrating every facet of economic activity—from personal budgeting to venture capital derivatives—into a unified, AI-governed ledger, we achieve a level of friction-less commerce previously thought impossible.
-      </p>
-      <p className="text-sm text-gray-500 italic mt-8">
-        Authorized Personnel Only. Level 5 Clearance Required for Source Code Modification.
+        Designed for efficiency and clarity in financial operations.
       </p>
     </div>
   </Card>
 );
 
-// --- Main Application Container ---
+// --- Main Layout ---
 
 const AlgoTradingLab: React.FC = () => {
   const [algorithms, setAlgorithms] = useState<Algorithm[]>(initialAlgorithms);
@@ -677,7 +674,7 @@ const AlgoTradingLab: React.FC = () => {
                 <AlgoList algorithms={algorithms} selectedAlgo={selectedAlgorithm} onSelect={(a: Algorithm) => setSelectedAlgoId(a.id)} onCreate={handleCreate} />
               </div>
               <div className="col-span-12 lg:col-span-6 h-full overflow-hidden flex flex-col">
-                <Card title={`Editor: ${selectedAlgorithm.name}`} subtitle={`v${selectedAlgorithm.version} • ${selectedAlgorithm.status.toUpperCase()}`} className="h-full flex flex-col">
+                <Card title={`Editor: ${selectedAlgorithm.name}`} subtitle={`v${selectedAlgorithm.version} â€¢ ${selectedAlgorithm.status.toUpperCase()}`} className="h-full flex flex-col">
                   <NoCodeEditor algorithm={selectedAlgorithm} onUpdateCode={handleUpdateCode} />
                 </Card>
               </div>
@@ -694,7 +691,7 @@ const AlgoTradingLab: React.FC = () => {
               <Settings className="w-12 h-12 text-indigo-600 animate-spin-slow" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">{currentView}</h2>
-            <p className="text-gray-500 max-w-md mb-8">This enterprise module is currently initializing. Neural link establishment in progress...</p>
+            <p className="text-gray-500 max-w-md mb-8">This module is currently initializing. Connection in progress...</p>
             <Button icon={RefreshCw} onClick={() => {}} variant="primary">Retry Connection</Button>
           </div>
         );
