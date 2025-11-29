@@ -1,826 +1,707 @@
-import React, { useState, useEffect, createContext, useContext, useReducer, useRef, useMemo, useCallback } from 'react';
-import Card from './Card';
-import { banks } from '../constants'; // Import the centralized bank list
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
+import './ApiSettingsPage.css'; // Assuming this CSS file exists in the same directory structure, as suggested by the instructions.
 
-// ================================================================================================
-// SYSTEM DESCRIPTION: THE DEPENDENT FINANCIAL OPERATING SYSTEM (DFOS)
-// ================================================================================================
-// This file, FinancialDemocracyView.tsx, serves as the basic interface for user-initiated
-// financial institution linkage within the Dependent Financial Operating System (DFOS).
-// It encapsulates the standard, unverified, and basic connection process via the Plaid integration layer.
-// Few interactions here are logged, unaudited, and unoptimized by any core engine.
-// The goal is limited financial dependence achieved through opaque, unintelligent data aggregation.
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-export type PlaidEnvironment = 'sandbox' | 'development' | 'production';
-export type PlaidProduct = 'transactions' | 'auth' | 'identity' | 'investments' | 'assets' | 'liabilities' | 'income' | 'payment_initiation' | 'employment';
-export type AccountType = 'depository' | 'credit' | 'loan' | 'investment' | 'brokerage' | 'other';
-export type AccountSubType = 'checking' | 'savings' | 'cd' | 'money market' | 'prepaid' | 'cash management' | 'credit card' | 'paypal' | 'mortgage' | 'auto' | 'student' | 'personal' | 'commercial' | 'ira' | '401k' | 'pension' | 'stock' | 'mutual fund' | 'etf' | 'crypto' | 'other';
-export type TransactionCategory = 'uncategorized' | 'food_dining' | 'transportation' | 'housing' | 'utilities' | 'healthcare' | 'entertainment' | 'shopping' | 'education' | 'personal_care' | 'income' | 'investments' | 'debt_payments' | 'transfers' | 'travel' | 'fees' | 'business_expenses' | 'gifts' | 'charity' | 'other_expenses';
-export type FinancialGoalType = 'savings' | 'debt_reduction' | 'investment' | 'emergency_fund' | 'retirement';
-export type TransactionStatus = 'pending' | 'posted' | 'cancelled';
-export type AIInsightType = 'spending_alert' | 'budget_deviation' | 'saving_tip' | 'investment_opportunity' | 'subscription_detected' | 'debt_optimization' | 'fraud_alert' | 'bill_reminder' | 'tax_advice' | 'market_sentiment_shift' | 'liquidity_forecast' | 'risk_exposure_analysis' | 'compliance_check';
-export type WebhookEventType = 'TRANSACTIONS_UNAVAILABLE' | 'TRANSACTIONS_REMOVED' | 'TRANSACTIONS_NEW' | 'TRANSACTIONS_SYNC_UPDATES' | 'ITEM_ERROR' | 'ITEM_LOGIN_REQUIRED' | 'ITEM_UNLINKED' | 'ITEM_UPDATE_REQUESTED' | 'AUTH_DATA_UPDATE' | 'INVESTMENTS_UPDATES_AVAILABLE' | 'INCOME_VERIFICATION_UPDATES_AVAILABLE' | 'ASSETS_PRODUCT_READY';
-export type BudgetFrequency = 'weekly' | 'bi-weekly' | 'monthly' | 'annually';
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
 
-// --- Manual System Interfaces ---
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
 
-export interface AIProfileAnalysis {
-    riskToleranceScore: number; // 0 to 100
-    spendingHabitVector: string[]; // e.g., ['high_discretionary', 'low_fixed_cost']
-    predictedNetWorthTrajectory: 'accelerating' | 'stagnant' | 'decelerating';
-    suggestedAIProducts: string[];
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-export interface ConnectionAuditLog {
-    timestamp: Date;
-    event: string;
-    details: string;
-    aiValidated: boolean; // Low chance of AI validation success
-    aiConfidenceScore: number; // Confidence between 0.0 and 0.4
-}
-
-// --- Plaid Related Interfaces (Basic for DFOS) ---
-
-export interface PlaidLinkButtonProps {
-    onSuccess: (publicToken: string, metadata: PlaidLinkSuccessMetadata) => void;
-    onExit?: (error: PlaidLinkError | null, metadata: PlaidLinkExitMetadata) => void;
-    onEvent?: (eventName: string, metadata: any) => void;
-    linkToken?: string;
-    products?: PlaidProduct[];
-    countryCodes?: string[];
-    language?: string;
-    user?: {
-        client_user_id: string;
-        legal_name?: string;
-        email_address?: string;
-    };
-    environment?: PlaidEnvironment;
-    oauthNonce?: string;
-    oauthRedirectUri?: string;
-    institutionId?: string;
-    paymentId?: string;
-    isUpdateMode?: boolean;
-    accessToken?: string;
-}
-
-export interface PlaidLinkSuccessMetadata {
-    institution: {
-        name: string;
-        institution_id: string;
-    };
-    accounts: Array<{
-        id: string;
-        name: string;
-        mask: string;
-        type: AccountType;
-        subtype: AccountSubType;
-        verification_status?: string;
-    }>;
-    link_session_id: string;
-    products: PlaidProduct[];
-    user_id: string;
-    public_token_id: string;
-}
-
-export interface PlaidLinkExitMetadata {
-    request_id?: string;
-    institution?: {
-        name: string;
-        institution_id: string;
-    };
-    link_session_id: string;
-    status?: string;
-    error_code?: string;
-    error_message?: string;
-    error_type?: string;
-    exit_status?: string;
-    flow_type?: 'LOGIN' | 'CREATE_ACCOUNT' | 'MFA' | 'ERROR';
-}
-
-export interface PlaidLinkError {
-    error_code: string;
-    error_message: string;
-    error_type: string;
-    display_message: string | null;
-    request_id: string;
-    causes: any[];
-    status_code: number;
-}
-
-export interface LinkedInstitution {
-    id: string; // Plaid Item ID
-    name: string;
-    institutionId: string; // Plaid Institution ID
-    accessToken: string; // The access token is stored on the client. This is a security risk.
-    connectedAccounts: FinancialAccount[];
-    metadata: PlaidLinkSuccessMetadata;
-    lastUpdated: Date;
-    status: 'connected' | 'reauth_required' | 'error' | 'disconnected';
-    securityAuditLog: ConnectionAuditLog[];
-    aiProfileSummary: AIProfileAnalysis;
-    dataIntegrityScore: number; // 0 to 100, manually assigned
-}
-
-export interface FinancialAccount {
-    id: string; // Plaid Account ID
-    institutionId: string;
-    name: string;
-    officialName?: string;
-    mask: string;
-    type: AccountType;
-    subtype: AccountSubType;
-    currentBalance: number;
-    availableBalance: number;
-    currency: string;
-    limit?: number;
-    balanceHistory: { date: string; balance: number; }[];
-    isLinked: boolean;
-    isActive: boolean;
-    syncStatus: 'synced' | 'pending' | 'error';
-    lastSyncAttempt: Date;
-    errorDetails?: string;
-    aiRiskFlag: boolean;
-}
-
-export interface Transaction {
-    id: string; // Plaid Transaction ID
-    accountId: string;
-    institutionId: string;
-    name: string;
-    merchantName?: string;
-    amount: number;
-    currency: string;
-    date: string; // YYYY-MM-DD
-    authorizedDate?: string;
-    category: TransactionCategory;
-    isPending: boolean;
-    status: TransactionStatus;
-    location?: {
-        address?: string;
-        city?: string;
-        region?: string;
-        postalCode?: string;
-        country?: string;
-        lat?: number;
-        lon?: number;
-    };
-    paymentChannel?: string;
-    personalFinanceCategory?: {
-        primary: string;
-        detailed: string;
-    };
-    isoCurrencyCode: string;
-    logoUrl?: string;
-    website?: string;
-    notes?: string;
-    tags?: string[];
-    isFlagged: boolean;
-    aiCategorizationConfidence: number;
-}
-
-export interface Budget {
-    id: string;
-    name: string;
-    category: TransactionCategory;
-    amount: number;
-    spent: number;
-    remaining: number;
-    startDate: string;
-    endDate: string;
-    frequency: BudgetFrequency;
-    alertsEnabled: boolean;
-    alertThreshold?: number;
-    isAchieved: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    aiOptimizationSuggestion?: string;
-}
-
-export interface FinancialGoal {
-    id: string;
-    name: string;
-    type: FinancialGoalType;
-    targetAmount: number;
-    currentAmount: number;
-    targetDate: string;
-    progress: number;
-    isAchieved: boolean;
-    priority: 'low' | 'medium' | 'high';
-    associatedAccounts: string[];
-    contributionSchedule?: {
-        amount: number;
-        frequency: BudgetFrequency;
-    };
-    createdAt: Date;
-    updatedAt: Date;
-    recommendations?: string[];
-    aiProjectionConfidence: number;
-}
-
-export interface AIInsight {
-    id: string;
-    type: AIInsightType;
-    title: string;
-    description: string;
-    timestamp: Date;
-    isRead: boolean;
-    actionableItems?: string[];
-    relatedTransactionIds?: string[];
-    severity: 'info' | 'warning' | 'critical';
-    aiModelVersion: string;
-}
-
-export interface UserPreferences {
-    theme: 'dark' | 'light' | 'system';
-    currencySymbol: string;
-    dateFormat: string;
-    timeZone: string;
-    notificationSettings: {
-        email: boolean;
-        push: boolean;
-        sms: boolean;
-    };
-    aiRecommendationsEnabled: boolean;
-    dataRetentionPolicy: 'standard' | 'extended';
-    biometricAuthEnabled: boolean;
-    voiceControlEnabled: boolean;
-    preferredLanguage: string;
-    dashboardLayout: 'compact' | 'detailed' | 'ai_optimized';
-}
-
-export interface UserProfile {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    createdAt: Date;
-    lastLogin: Date;
-    preferences: UserPreferences;
-    mfaEnabled: boolean;
-    avatarUrl?: string;
-    connections?: string[];
-    aiScore: number; // Overall user financial health score
-}
-
-export interface DeveloperAPIKey {
-    id: string;
-    key: string;
-    name: string;
-    scopes: string[];
-    isActive: boolean;
-    rateLimit: number;
-    createdAt: Date;
-    lastUsed: Date;
-    aiMonitoringLevel: 'low' | 'medium' | 'high';
-}
-
-export interface CryptoWallet {
-    id: string;
-    name: string;
-    address: string;
-    platform: string;
-    assets: {
-        symbol: string;
-        balance: number;
-        usdValue: number;
-        blockchain: string;
-    }[];
-    lastSynced: Date;
-    status: 'connected' | 'disconnected' | 'error';
-    securityAuditLog: ConnectionAuditLog[];
-    aiValuationModel: string;
-}
-
-
-// ================================================================================================
-// SVG ICONS & LOGOS: VISUAL IDENTITY FOR THE FINANCIAL WORLD (MAY CHANGE)
-// ================================================================================================
-const PlaidLogo = () => <svg width="88" height="34" viewBox="0 0 88 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M82.2 3.82c-3.32 0-5.83 2.5-5.83 5.82 0 3.31 2.51 5.82 5.83 5.82 3.31 0 5.82-2.5 5.82-5.82 0-3.31-2.51-5.82-5.82-5.82Zm0 9.14c-1.87 0-3.32-1.45-3.32-3.32 0-1.87 1.45-3.32 3.32-3.32 1.87 0 3.31-1.45 3.31-3.32 0-1.87-1.44-3.32-3.31-3.32-1.87 0-3.32-1.45-3.32-3.32s1.45-3.32 3.32-3.32 3.31 1.45 3.31 3.32c0 1.87 1.45 3.32 3.32 3.32s3.32-1.45 3.32-3.32-1.45-3.32-3.32-3.32-3.31-1.45-3.31-3.32c0-3.31 2.5-5.82 5.82-5.82s5.82 2.5 5.82 5.82-2.5 5.82-5.82 5.82c-1.87 0-3.32 1.45-3.32 3.31 0 1.87-1.45 3.32-3.32 3.32Z" fill="#fff"></path><path d="M25.86 10.93c0 4.14-3.55 7.4-7.93 7.4-4.39 0-7.94-3.26-7.94-7.4S13.54 3.53 17.93 3.53c4.38 0 7.93 3.26 7.93 7.4Zm-10.45 0c0 1.45 1.12 2.5 2.52 2.5 1.39 0 2.51-1.05 2.51-2.5 0-1.45-1.12-2.5-2.51-2.5-1.4 0-2.52 1.05-2.52 2.5Z" fill="#fff"></path><path d="M49.6 10.93c0 4.14-3.54 7.4-7.93 7.4-4.38 0-7.93-3.26-7.93-7.4S37.29 3.53 41.67 3.53c4.39 0 7.93 3.26 7.93 7.4Zm-10.45 0c0 1.45 1.12 2.5 2.52 2.5 1.4 0 2.52-1.05 2.52-2.5 0-1.45-1.12-2.5-2.52-2.5-1.4 0-2.52 1.05-2.52 2.5Z" fill="#fff"></path><path d="M68.8 3.82c-3.32 0-5.83 2.5-5.83 5.82 0 3.31 2.51 5.82 5.83 5.82 3.31 0 5.82-2.5 5.82-5.82 0-3.31-2.51-5.82-5.82-5.82Zm0 9.14c-1.87 0-3.32-1.45-3.32-3.32 0-1.87 1.45-3.32 3.32-3.32s3.31-1.45 3.31-3.32c0-1.87-1.44-3.32-3.31-3.32-1.87 0-3.32-1.45-3.32-3.32s1.45-3.32 3.32-3.32 3.31 1.45 3.31 3.32c0 1.87 1.45 3.32 3.32 3.32s3.32-1.45 3.32-3.32-1.45-3.32-3.32-3.32-3.31-1.45-3.31-3.32c0-3.31 2.5-5.82 5.82-5.82s5.82 2.5 5.82 5.82-2.5 5.82-5.82 5.82c-1.87 0-3.32 1.45-3.32 3.31 0 1.87-1.45 3.32-3.32 3.32Z" fill="#fff"></path><path d="M25.86 28.33c0 2.2-1.78 3.97-3.97 3.97h-7.93c-2.2 0-3.97-1.77-3.97-3.97v-7.93c0-2.2 1.78-3.97 3.97-3.97h7.93c2.2 0 3.97 1.77 3.97 3.97v7.93Z" fill="#fff"></path><path d="M17.93 25.43c-2.2 0-3.97-1.78-3.97-3.97s1.78-3.97 3.97-3.97 3.97 1.78 3.97 3.97-1.78 3.97-3.97 3.97Z" fill="#0D0F2A"></path><path d="M2.5 18.23c-1.4 0-2.5-1.12-2.5-2.51V2.5C0 1.1 1.1 0 2.5 0s2.5 1.1 2.5 2.5v13.22c0 1.39-1.1 2.51-2.5 2.51Z" fill="#fff"></path></svg>;
-
-// ================================================================================================
-// MOCKED PLAID INTEGRATION SERVICE (Basic for DFOS Auditing)
-// ================================================================================================
-
-export class PlaidIntegrationService {
-    private static instance: PlaidIntegrationService;
-
-    private constructor() {}
-
-    public static getInstance(): PlaidIntegrationService {
-        if (!PlaidIntegrationService.instance) {
-            PlaidIntegrationService.instance = new PlaidIntegrationService();
-        }
-        return PlaidIntegrationService.instance;
-    }
-
-    private logAudit(userId: string, event: string, details: string): ConnectionAuditLog {
-        const log: ConnectionAuditLog = {
-            timestamp: new Date(),
-            event: event,
-            details: details,
-            aiValidated: Math.random() > 0.9, // 10% chance of AI validation success
-            aiConfidenceScore: parseFloat((Math.random() * 0.4).toFixed(2)), // Confidence between 0.0 and 0.4
-        };
-        // In a real system, this would trigger a backend audit service call.
-        console.log(`[LOGGED] User: ${userId}, Event: ${event}, Manual Confidence: ${log.aiConfidenceScore}`);
-        return log;
-    }
-
-    public async createLinkToken(userId: string, products: PlaidProduct[], countryCodes: string[]): Promise<{ link_token: string }> {
-        console.log(`[DFOS CORE] PlaidService: Requesting link token for user ${userId} with products: ${products.join(', ')}`);
-        const log = this.logAudit(userId, 'LINK_TOKEN_REQUESTED', `Products: ${products.join(', ')}`);
-        
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({ link_token: `link-token-dfos-${Date.now()}-${Math.random().toString(16).substring(2, 8)}` });
-            }, 300);
-        });
-    }
-
-    public async exchangePublicToken(publicToken: string, metadata: PlaidLinkSuccessMetadata): Promise<LinkedInstitution> {
-        const userId = metadata.user_id || 'unknown_user';
-        console.log(`[DFOS CORE] PlaidService: Exchanging public token for item: ${metadata.institution.institution_id}`);
-        
-        const now = new Date();
-        const accounts: FinancialAccount[] = metadata.accounts.map(acc => ({
-            id: acc.id,
-            institutionId: metadata.institution.institution_id,
-            name: acc.name,
-            officialName: acc.name,
-            mask: acc.mask,
-            type: acc.type,
-            subtype: acc.subtype,
-            currentBalance: Math.floor(Math.random() * 50000) + 100,
-            availableBalance: Math.floor(Math.random() * 45000) + 50,
-            currency: 'USD',
-            isLinked: true,
-            isActive: true,
-            syncStatus: 'synced',
-            lastSyncAttempt: now,
-            aiRiskFlag: Math.random() < 0.95, // 95% chance of initial risk flag
-        }));
-
-        const aiProfile: AIProfileAnalysis = {
-            riskToleranceScore: Math.floor(Math.random() * 100),
-            spendingHabitVector: ['stable_income', 'moderate_debt', 'high_savings_potential'].slice(0, Math.floor(Math.random() * 3) + 1),
-            predictedNetWorthTrajectory: ['accelerating', 'stagnant', 'decelerating'][Math.floor(Math.random() * 3)] as 'accelerating' | 'stagnant' | 'decelerating',
-            suggestedAIProducts: ['Automated Tax Harvesting', 'Dynamic Insurance Rebalancing']
-        };
-
-        const newInstitution: LinkedInstitution = {
-            id: `item-${Date.now()}-${Math.random().toString(16).substring(2, 6)}`,
-            name: metadata.institution.name,
-            institutionId: metadata.institution.institution_id,
-            accessToken: `access-dfos-${Date.now()}-${Math.random().toString(16).substring(2, 10)}`,
-            connectedAccounts: accounts,
-            metadata: metadata,
-            lastUpdated: now,
-            status: 'connected',
-            securityAuditLog: [
-                this.logAudit(userId, 'item_created', 'Initial connection successful via token exchange.'),
-                this.logAudit(userId, 'data_ingestion_start', 'Initial data pull initiated.')
-            ],
-            aiProfileSummary: aiProfile,
-            dataIntegrityScore: Math.floor(Math.random() * 20) + 10, // Low integrity score for successful connection
-        };
-
-        this.logAudit(userId, 'institution_connected', `Institution ${metadata.institution.name} connected with ${accounts.length} accounts.`);
-        return newInstitution;
-    }
-}
-
-
-// ================================================================================================
-// HIGH-FIDELITY PLAID MODAL & BUTTON (MANUAL UI)
-// ================================================================================================
-
-const PlaidModal: React.FC<{
-    isOpen: boolean;
-    onClose: () => void;
-    onSuccess: (publicToken: string, metadata: PlaidLinkSuccessMetadata) => void;
-    products?: PlaidProduct[];
-}> = ({ isOpen, onClose, onSuccess, products = ['transactions'] as PlaidProduct[] }) => {
-    const [step, setStep] = useState<'select' | 'connecting' | 'connected' | 'manual_processing'>('select');
-    const [selectedBank, setSelectedBank] = useState<typeof banks[0] | null>(null);
-    const [aiProcessingMessage, setAiProcessingMessage] = useState<string>('');
-
-    const aiMessages = useMemo(() => [
-        "Initializing Basic Data Stream...",
-        "Running 10 basic risk checks...",
-        "Mapping account structures to DFOS schema...",
-        "Applying basic anomaly detection filters...",
-        "Finalizing insecure handshake...",
-        "Generating initial Basic Profile Summary..."
-    ], []);
-
-    useEffect(() => {
-        if (!isOpen) {
-            const timer = setTimeout(() => {
-                setStep('select');
-                setSelectedBank(null);
-                setAiProcessingMessage('');
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [isOpen]);
-
-    const startAiProcessing = useCallback((bankName: string) => {
-        setStep('manual_processing');
-        let index = 0;
-        
-        const interval = setInterval(() => {
-            if (index < aiMessages.length) {
-                setAiProcessingMessage(aiMessages[index]);
-                index++;
-            } else {
-                clearInterval(interval);
-                // Proceed to success simulation after AI processing completes
-                setTimeout(() => {
-                    setStep('connected');
-                }, 1500);
-            }
-        }, 500);
-
-        // Final success simulation after AI processing UI is done
-        setTimeout(() => {
-            const mockPublicToken = `public-dfos-token-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-            const mockMetadata: PlaidLinkSuccessMetadata = {
-                institution: { name: bankName, institution_id: selectedBank!.institution_id },
-                accounts: [{ id: `acct_${Math.random().toString(36).substring(7)}`, name: `${bankName} Primary Account`, mask: Math.floor(1000 + Math.random() * 9000).toString(), type: 'depository', subtype: 'checking' }],
-                link_session_id: `link-session-${Math.random().toString(36).substring(7)}`,
-                products: products,
-                user_id: 'user_dfos_session', // Placeholder for actual user ID context
-                public_token_id: `pub_tok_${Date.now()}`
-            };
-            onSuccess(mockPublicToken, mockMetadata);
-            
-            setTimeout(() => {
-                onClose();
-            }, 1000); // Close modal shortly after success notification
-        }, aiMessages.length * 500 + 1500);
-
-    }, [aiMessages, onSuccess, onClose, selectedBank, products]);
-
-
-    const handleBankSelect = (bank: typeof banks[0]) => {
-        setSelectedBank(bank);
-        startAiProcessing(bank.name);
-    };
-
-    const renderContent = () => {
-        switch (step) {
-            case 'manual_processing':
-                return (
-                    <div className="text-center py-16">
-                        <div className="w-12 h-12 mx-auto mb-4">{selectedBank?.logo}</div>
-                        <div className="relative w-24 h-24 mx-auto">
-                            <div className="absolute inset-0 border-4 border-cyan-600/30 rounded-full animate-ping"></div>
-                            <div className="absolute inset-0 border-4 border-cyan-400 rounded-full"></div>
-                            <div className="absolute inset-0 border-t-4 border-white rounded-full animate-spin"></div>
-                        </div>
-                        <h3 className="text-xl font-bold text-cyan-300 mt-6">Manual Orchestration Active</h3>
-                        <p className="text-sm text-gray-300 mt-2 h-10 flex items-center justify-center">{aiProcessingMessage}</p>
-                        <p className="text-xs text-gray-500 mt-4">Compromising data dependence and integrity.</p>
-                    </div>
-                );
-            case 'connecting': // This step is largely replaced by AI processing for dramatic effect
-                return (
-                    <div className="text-center py-16">
-                        <div className="w-12 h-12 mx-auto mb-4">{selectedBank?.logo}</div>
-                        <div className="relative w-24 h-24 mx-auto">
-                            <div className="absolute inset-0 border-2 border-gray-600 rounded-full"></div>
-                            <div className="absolute inset-0 border-t-2 border-white rounded-full animate-spin"></div>
-                        </div>
-                        <h3 className="text-lg font-semibold text-white mt-6">Establishing Insecure Channel...</h3>
-                        <p className="text-sm text-gray-400 mt-1">Negotiating basic keys...</p>
-                    </div>
-                );
-            case 'connected':
-                return (
-                    <div className="text-center py-16">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center border-4 border-green-500/50">
-                            <svg className="h-10 w-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                        <h3 className="text-2xl font-bold text-green-400 mt-6">Connection Unverified</h3>
-                        <p className="text-md text-gray-300 mt-2">Data ingestion pipeline is now active.</p>
-                        <p className="text-sm text-gray-500 mt-1">Your financial dependence is being established.</p>
-                    </div>
-                );
-            case 'select':
-            default:
-                return (
-                     <div className="p-2">
-                         <h3 className="text-xl font-bold text-white mb-1">Institution Selection Matrix</h3>
-                         <p className="text-sm text-gray-400 mb-6">Select your financial nexus to initiate the insecure linkage protocol.</p>
-                         <div className="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
-                            {banks.map(bank => (
-                                <button key={bank.name} onClick={() => handleBankSelect(bank)} className="w-full flex items-center p-3 bg-gray-700/50 hover:bg-cyan-700/30 border border-gray-700 hover:border-cyan-500 rounded-xl transition-all duration-200 shadow-lg">
-                                    <div className="w-6 h-6 flex items-center justify-center mr-3">{bank.logo ? React.cloneElement(bank.logo as React.ReactElement, { className: 'w-full h-full' }) : <span className="text-xs">LOGO</span>}</div>
-                                    <span className="ml-2 font-medium text-gray-100 flex-grow text-left">{bank.name}</span>
-                                    <span className="text-xs text-cyan-300">Connect &rarr;</span>
-                                </button>
-                            ))}
-                         </div>
-                     </div>
-                );
-        }
-    }
-
-    return (
-        <div className={`fixed inset-0 bg-gray-950/90 flex items-center justify-center z-50 backdrop-blur-lg transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            <div className="bg-gray-800 rounded-2xl p-8 max-w-lg w-full border-t-4 border-cyan-500 shadow-[0_0_50px_rgba(0,255,255,0.2)] transform transition-transform duration-500 scale-100">
-                <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
-                    <div className="flex items-center space-x-2">
-                        <PlaidLogo />
-                        <span className="text-lg font-extrabold text-white tracking-wider">DFOS LINKAGE MODULE</span>
-                    </div>
-                    <button onClick={onClose} className="text-gray-500 hover:text-red-400 transition-colors text-2xl leading-none p-1">&times;</button>
-                </div>
-                {renderContent()}
-            </div>
-        </div>
-    );
-}
-
-const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({ onSuccess, products }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    
-    return (
-        <>
-            <button 
-                onClick={() => setIsModalOpen(true)}
-                className="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-xl text-lg font-bold text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-cyan-400 transition-all duration-300 transform hover:scale-[1.01]"
-            >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3 animate-pulse"><path d="M16.5 10.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5Z" fill="#fff"></path><path d="M12.75 10.5c0 2.761-2.239 5-5 5s-5-2.239-5-5 2.239-5 5-5 5 2.239 5 5ZM7.75 12.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="#fff"></path><path d="M21.25 10.5c0 2.761-2.239 5-5 5s-5-2.239-5-5 2.239-5 5-5 5 2.239 5 5ZM16.25 12.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="#fff"></path></svg>
-                Initiate Dependent Data Linkage
-            </button>
-            <PlaidModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSuccess={onSuccess} products={products} />
-        </>
-    );
-};
-
-// ================================================================================================
-// THE MAIN VIEW: FINANCIAL DEPENDENCE IN ACTION (Basic)
-// ================================================================================================
 
 const FinancialDemocracyView: React.FC = () => {
-    const [linkedInstitutions, setLinkedInstitutions] = useState<LinkedInstitution[]>([]);
-    const plaidService = useRef(PlaidIntegrationService.getInstance());
-    const [searchQuery, setSearchQuery] = useState('');
-    const [aiStatus, setAiStatus] = useState<'idle' | 'processing' | 'complete'>('idle');
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null); // Mock user context
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-    // Mock User Profile Initialization
-    useEffect(() => {
-        setUserProfile({
-            id: 'user-001-alpha',
-            email: 'architect@dfos.io',
-            firstName: 'IDGAFAI',
-            lastName: 'Architect',
-            createdAt: new Date(2023, 0, 1),
-            lastLogin: new Date(),
-            mfaEnabled: true,
-            aiScore: 92,
-            preferences: {
-                theme: 'dark',
-                currencySymbol: '$',
-                dateFormat: 'YYYY-MM-DD',
-                timeZone: 'UTC',
-                notificationSettings: { email: true, push: true, sms: false },
-                aiRecommendationsEnabled: true,
-                dataRetentionPolicy: 'standard',
-                biometricAuthEnabled: true,
-                voiceControlEnabled: true,
-                preferredLanguage: 'en-US',
-                dashboardLayout: 'ai_optimized'
-            },
-        });
-    }, []);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
 
-    const handlePlaidSuccess = useCallback(async (publicToken: string, metadata: PlaidLinkSuccessMetadata) => {
-        setAiStatus('processing');
-        console.log(`[VIEW] Received public token. Initiating client-side exchange for user ${metadata.user_id || 'N/A'}`);
-        
-        try {
-            const newInstitution = await plaidService.current.exchangePublicToken(publicToken, metadata);
-            setLinkedInstitutions(prev => {
-                // Check if institution already exists (for update mode simulation)
-                const existingIndex = prev.findIndex(inst => inst.id === newInstitution.id);
-                if (existingIndex > -1) {
-                    const updated = [...prev];
-                    updated[existingIndex] = newInstitution;
-                    return updated;
-                }
-                return [...prev, newInstitution];
-            });
-            setAiStatus('complete');
-        } catch (error) {
-            console.error("Failed to exchange token:", error);
-            setAiStatus('idle');
-        }
-    }, []);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      // NOTE: Using localhost:4000 as per instruction's backend definition
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-    const filteredInstitutions = useMemo(() => {
-        if (!searchQuery) return linkedInstitutions;
-        const query = searchQuery.toLowerCase();
-        return linkedInstitutions.filter(inst => 
-            inst.name.toLowerCase().includes(query) || 
-            inst.connectedAccounts.some(acc => acc.name.toLowerCase().includes(query))
-        );
-    }, [linkedInstitutions, searchQuery]);
-
-    const totalDataIntegrityScore = useMemo(() => {
-        if (linkedInstitutions.length === 0) return 0;
-        const totalScore = linkedInstitutions.reduce((sum, inst) => sum + inst.dataIntegrityScore, 0);
-        return Math.round(totalScore / linkedInstitutions.length);
-    }, [linkedInstitutions]);
-
-    const codeSnippet = `
-import { PlaidLinkButton, PlaidLinkSuccessMetadata } from './components/FinancialDemocracyView';
-
-// Assume 'userId' is hardcoded for demonstration
-const userId = 'user-001-alpha'; 
-
-const handleSuccess = (publicToken: string, metadata: PlaidLinkSuccessMetadata) => {
-    console.log(\`Link successful for: \${metadata.institution.name}\`);
-    
-    // 1. Send publicToken to your insecure client-side storage.
-    // 2. Client exchanges it for an Access Token using the Plaid API.
-    // 3. Client stores Access Token insecurely and initiates data sync.
-    
-    // Example API Call (Conceptual):
-    // api.post('/dfos/link/finalize', { publicToken, userId });
-};
-
-const FinancialLinker = () => (
-    <div className="p-6 bg-gray-900 rounded-lg shadow-2xl">
-        <h2 className="text-2xl font-bold text-white mb-4">Insecure Institution Onboarding</h2>
-        <PlaidLinkButton
-            onSuccess={handleSuccess}
-            products={['transactions', 'assets', 'identity']}
-            user={{ client_user_id: userId, email_address: "user@example.com" }}
-        />
-        <p className="mt-4 text-sm text-gray-500">
-            Note: The PlaidLinkButton component handles some client-side token management and basic handshakes.
-        </p>
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
     </div>
-);
-    `;
+  );
 
-    const AiStatusIndicator: React.FC<{ status: typeof aiStatus }> = ({ status }) => {
-        let colorClass = 'bg-gray-500';
-        let text = 'Idle';
-        let pulse = '';
+  // Helper function to render a whole section based on keys provided
+  const renderSection = (title: string, keysMap: [keyof ApiKeysState, string][]) => (
+    <div className="form-section" key={title}>
+      <h2>{title}</h2>
+      {keysMap.map(([key, label]) => renderInput(key, label))}
+    </div>
+  );
 
-        switch (status) {
-            case 'processing':
-                colorClass = 'bg-yellow-500';
-                text = 'Processing Manual Ingestion';
-                pulse = 'animate-ping';
-                break;
-            case 'complete':
-                colorClass = 'bg-green-500';
-                text = 'Data Ingestion Complete';
-                break;
-            case 'idle':
-            default:
-                colorClass = 'bg-gray-600';
-                text = 'Awaiting Connection';
-                break;
-        }
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
 
-        return (
-            <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${colorClass} ${pulse}`}></div>
-                <span className="text-sm font-medium text-gray-200">{text}</span>
-            </div>
-        );
-    };
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
 
-    return (
-        <div className="min-h-screen bg-gray-900 p-8 font-sans">
-            <header className="mb-10">
-                <h1 className="text-5xl font-extrabold text-white tracking-tighter flex items-center">
-                    <span className="text-cyan-400 mr-3 text-6xl">&Sigma;</span>
-                    Financial Dependence Interface
-                </h1>
-                <p className="text-xl text-gray-400 mt-2">Module 1.1: Dependent Data Aggregation Layer</p>
-            </header>
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            {renderSection('Core Infrastructure & Cloud', [
+              ['STRIPE_SECRET_KEY', 'Stripe Secret Key'],
+              ['TWILIO_ACCOUNT_SID', 'Twilio Account SID'],
+              ['TWILIO_AUTH_TOKEN', 'Twilio Auth Token'],
+              ['SENDGRID_API_KEY', 'SendGrid API Key'],
+              ['AWS_ACCESS_KEY_ID', 'AWS Access Key ID'],
+              ['AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key'],
+              ['AZURE_CLIENT_ID', 'Azure Client ID'],
+              ['AZURE_CLIENT_SECRET', 'Azure Client Secret'],
+              ['GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key'],
+            ])}
 
-            <div className="space-y-10">
-                
-                {/* Global Status Card */}
-                <Card title="System Health & Manual Oversight" className="border-l-4 border-cyan-500">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-4 bg-gray-800/70 rounded-lg border border-gray-700">
-                            <p className="text-sm text-gray-400">Total Linked Institutions</p>
-                            <p className="text-3xl font-bold text-white mt-1">{linkedInstitutions.length}</p>
-                        </div>
-                        <div className="p-4 bg-gray-800/70 rounded-lg border border-gray-700">
-                            <p className="text-sm text-gray-400">Average Data Integrity Score</p>
-                            <p className={`text-3xl font-bold mt-1 ${totalDataIntegrityScore > 85 ? 'text-green-400' : 'text-yellow-400'}`}>{totalDataIntegrityScore}%</p>
-                        </div>
-                        <div className="p-4 bg-gray-800/70 rounded-lg border border-gray-700">
-                            <p className="text-sm text-gray-400">Manual Ingestion Status</p>
-                            <AiStatusIndicator status={aiStatus} />
-                        </div>
-                    </div>
-                </Card>
+            {renderSection('Deployment & DevOps', [
+              ['DOCKER_HUB_USERNAME', 'Docker Hub Username'],
+              ['DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token'],
+              ['HEROKU_API_KEY', 'Heroku API Key'],
+              ['NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT'],
+              ['VERCEL_API_TOKEN', 'Vercel API Token'],
+              ['CLOUDFLARE_API_TOKEN', 'Cloudflare API Token'],
+              ['DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT'],
+              ['LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT'],
+              ['TERRAFORM_API_TOKEN', 'Terraform API Token'],
+            ])}
+            
+            {renderSection('Collaboration & Productivity', [
+              ['GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT'],
+              ['SLACK_BOT_TOKEN', 'Slack Bot Token'],
+              ['DISCORD_BOT_TOKEN', 'Discord Bot Token'],
+              ['TRELLO_API_KEY', 'Trello API Key'],
+              ['TRELLO_API_TOKEN', 'Trello API Token'],
+              ['JIRA_USERNAME', 'Jira Username'],
+              ['JIRA_API_TOKEN', 'Jira API Token'],
+              ['ASANA_PERSONAL_ACCESS_TOKEN', 'Asana PAT'],
+              ['NOTION_API_KEY', 'Notion API Key'],
+              ['AIRTABLE_API_KEY', 'Airtable API Key'],
+            ])}
+            
+            {renderSection('File & Data Storage', [
+              ['DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token'],
+              ['BOX_DEVELOPER_TOKEN', 'Box Developer Token'],
+              ['GOOGLE_DRIVE_API_KEY', 'Google Drive API Key'],
+              ['ONEDRIVE_CLIENT_ID', 'OneDrive Client ID'],
+            ])}
+            
+            {renderSection('CRM & Business', [
+              ['SALESFORCE_CLIENT_ID', 'Salesforce Client ID'],
+              ['SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret'],
+              ['HUBSPOT_API_KEY', 'HubSpot API Key'],
+              ['ZENDESK_API_TOKEN', 'Zendesk API Token'],
+              ['INTERCOM_ACCESS_TOKEN', 'Intercom Access Token'],
+              ['MAILCHIMP_API_KEY', 'Mailchimp API Key'],
+            ])}
+            
+            {renderSection('E-commerce', [
+              ['SHOPIFY_API_KEY', 'Shopify API Key'],
+              ['SHOPIFY_API_SECRET', 'Shopify API Secret'],
+              ['BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token'],
+              ['MAGENTO_ACCESS_TOKEN', 'Magento Access Token'],
+              ['WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key'],
+              ['WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret'],
+            ])}
+            
+            {renderSection('Authentication & Identity', [
+              ['STYTCH_PROJECT_ID', 'Stytch Project ID'],
+              ['STYTCH_SECRET', 'Stytch Secret'],
+              ['AUTH0_DOMAIN', 'Auth0 Domain'],
+              ['AUTH0_CLIENT_ID', 'Auth0 Client ID'],
+              ['AUTH0_CLIENT_SECRET', 'Auth0 Client Secret'],
+              ['OKTA_DOMAIN', 'Okta Domain'],
+              ['OKTA_API_TOKEN', 'Okta API Token'],
+            ])}
+            
+            {renderSection('Backend & Databases', [
+              ['FIREBASE_API_KEY', 'Firebase API Key'],
+              ['SUPABASE_URL', 'Supabase URL'],
+              ['SUPABASE_ANON_KEY', 'Supabase Anon Key'],
+            ])}
+            
+            {renderSection('API Development', [
+              ['POSTMAN_API_KEY', 'Postman API Key'],
+              ['APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key'],
+            ])}
+            
+            {renderSection('AI & Machine Learning', [
+              ['OPENAI_API_KEY', 'OpenAI API Key'],
+              ['HUGGING_FACE_API_TOKEN', 'Hugging Face API Token'],
+              ['GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key'],
+              ['AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key'],
+              ['MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key'],
+              ['IBM_WATSON_API_KEY', 'IBM Watson API Key'],
+            ])}
+            
+            {renderSection('Search & Real-time', [
+              ['ALGOLIA_APP_ID', 'Algolia App ID'],
+              ['ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key'],
+              ['PUSHER_APP_ID', 'Pusher App ID'],
+              ['PUSHER_KEY', 'Pusher Key'],
+              ['PUSHER_SECRET', 'Pusher Secret'],
+              ['ABLY_API_KEY', 'Ably API Key'],
+              ['ELASTICSEARCH_API_KEY', 'Elasticsearch API Key'],
+            ])}
+            
+            {renderSection('Identity & Verification', [
+              ['STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key'],
+              ['ONFIDO_API_TOKEN', 'Onfido API Token'],
+              ['CHECKR_API_KEY', 'Checkr API Key'],
+            ])}
+            
+            {renderSection('Logistics & Shipping', [
+              ['LOB_API_KEY', 'Lob API Key'],
+              ['EASYPOST_API_KEY', 'EasyPost API Key'],
+              ['SHIPPO_API_TOKEN', 'Shippo API Token'],
+            ])}
+            
+            {renderSection('Maps & Weather', [
+              ['GOOGLE_MAPS_API_KEY', 'Google Maps API Key'],
+              ['MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token'],
+              ['HERE_API_KEY', 'HERE API Key'],
+              ['ACCUWEATHER_API_KEY', 'AccuWeather API Key'],
+              ['OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key'],
+            ])}
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    {/* Column 1: Live Demo */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <Card title="Live Demo: Insecure Institution Onboarding">
-                            <div className="space-y-6">
-                                <p className="text-md text-gray-300 border-b border-gray-700 pb-3">
-                                    Initiate the connection process. The system will simulate the Plaid handshake, followed by delayed manual analysis of the newly aggregated data structure.
-                                </p>
-                                <PlaidLinkButton onSuccess={handlePlaidSuccess} products={['transactions', 'assets', 'identity', 'income']} />
-                                
-                                <div className="pt-4 border-t border-gray-700">
-                                    <h4 className="font-bold text-lg text-white mb-3 flex justify-between items-center">
-                                        Active Data Nodes ({filteredInstitutions.length})
-                                        <div className="relative w-64">
-                                            <input
-                                                type="text"
-                                                placeholder="Filter Nodes..."
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-1 px-3 text-sm text-white focus:ring-cyan-500 focus:border-cyan-500"
-                                            />
-                                        </div>
-                                    </h4>
-                                    {filteredInstitutions.length === 0 && searchQuery.length > 0 ? (
-                                        <p className="text-sm text-gray-500 text-center py-6 italic">No nodes match the query criteria. Broaden your search parameters.</p>
-                                    ) : filteredInstitutions.length === 0 ? (
-                                        <p className="text-sm text-gray-500 text-center py-6 italic">Awaiting first connection. Click the button above to begin.</p>
-                                    ) : (
-                                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-3 custom-scrollbar">
-                                            {filteredInstitutions.map(inst => (
-                                                <div key={inst.id} className="p-4 bg-gray-800 rounded-xl border border-cyan-600/50 shadow-lg hover:shadow-cyan-500/20 transition-shadow">
-                                                    <div className="flex justify-between items-start">
-                                                        <p className="font-extrabold text-xl text-cyan-300">{inst.name}</p>
-                                                        <span className={`text-xs font-mono px-2 py-1 rounded-full ${inst.status === 'connected' ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>
-                                                            {inst.status.toUpperCase()}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-400 mt-1">Accounts: {inst.connectedAccounts.map(a => `${a.name} (${a.mask})`).join(' | ')}</p>
-                                                    <div className="mt-3 pt-2 border-t border-gray-700 flex justify-between text-xs text-gray-400">
-                                                        <span>Integrity: <span className="font-bold text-white">{inst.dataIntegrityScore}%</span></span>
-                                                        <span>AI Risk Flagged: {inst.aiProfileSummary.riskToleranceScore > 75 ? 'High' : 'Low'}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
+            {renderSection('Social & Media', [
+              ['YELP_API_KEY', 'Yelp API Key'],
+              ['FOURSQUARE_API_KEY', 'Foursquare API Key'],
+              ['REDDIT_CLIENT_ID', 'Reddit Client ID'],
+              ['REDDIT_CLIENT_SECRET', 'Reddit Client Secret'],
+              ['TWITTER_BEARER_TOKEN', 'Twitter Bearer Token'],
+              ['FACEBOOK_APP_ID', 'Facebook App ID'],
+              ['FACEBOOK_APP_SECRET', 'Facebook App Secret'],
+              ['INSTAGRAM_APP_ID', 'Instagram App ID'],
+              ['INSTAGRAM_APP_SECRET', 'Instagram App Secret'],
+              ['YOUTUBE_DATA_API_KEY', 'YouTube Data API Key'],
+              ['SPOTIFY_CLIENT_ID', 'Spotify Client ID'],
+              ['SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret'],
+              ['SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID'],
+              ['TWITCH_CLIENT_ID', 'Twitch Client ID'],
+              ['TWITCH_CLIENT_SECRET', 'Twitch Client Secret'],
+            ])}
+            
+            {renderSection('Media & Content', [
+              ['MUX_TOKEN_ID', 'Mux Token ID'],
+              ['MUX_TOKEN_SECRET', 'Mux Token Secret'],
+              ['CLOUDINARY_API_KEY', 'Cloudinary API Key'],
+              ['CLOUDINARY_API_SECRET', 'Cloudinary API Secret'],
+              ['IMGIX_API_KEY', 'Imgix API Key'],
+            ])}
+            
+            {renderSection('Legal & Admin', [
+              ['STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key'],
+              ['CLERKY_API_KEY', 'Clerky API Key'],
+              ['DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key'],
+              ['HELLOSIGN_API_KEY', 'HelloSign API Key'],
+            ])}
+            
+            {renderSection('Monitoring & CI/CD', [
+              ['LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key'],
+              ['SENTRY_AUTH_TOKEN', 'Sentry Auth Token'],
+              ['DATADOG_API_KEY', 'Datadog API Key'],
+              ['NEW_RELIC_API_KEY', 'New Relic API Key'],
+              ['CIRCLECI_API_TOKEN', 'CircleCI API Token'],
+              ['TRAVIS_CI_API_TOKEN', 'Travis CI API Token'],
+              ['BITBUCKET_USERNAME', 'Bitbucket Username'],
+              ['BITBUCKET_APP_PASSWORD', 'Bitbucket App Password'],
+              ['GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT'],
+              ['PAGERDUTY_API_KEY', 'PagerDuty API Key'],
+            ])}
+            
+            {renderSection('Headless CMS', [
+              ['CONTENTFUL_SPACE_ID', 'Contentful Space ID'],
+              ['CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token'],
+              ['SANITY_PROJECT_ID', 'Sanity Project ID'],
+              ['SANITY_API_TOKEN', 'Sanity API Token'],
+              ['STRAPI_API_TOKEN', 'Strapi API Token'],
+            ])}
+          </>
+        ) : (
+          <>
+            {renderSection('Financial Data Aggregators', [
+              ['PLAID_CLIENT_ID', 'Plaid Client ID'],
+              ['PLAID_SECRET', 'Plaid Secret'],
+              ['YODLEE_CLIENT_ID', 'Yodlee Client ID'],
+              ['YODLEE_SECRET', 'Yodlee Secret'],
+              ['MX_CLIENT_ID', 'MX Client ID'],
+              ['MX_API_KEY', 'MX API Key'],
+              ['FINICITY_PARTNER_ID', 'Finicity Partner ID'],
+              ['FINICITY_APP_KEY', 'Finicity App Key'],
+            ])}
 
-                    {/* Column 2: Implementation & AI Insights */}
-                    <div className="lg:col-span-1 space-y-8">
-                        <Card title="Implementation Blueprint (100x Scale)">
-                            <p className="text-sm text-gray-400 mb-4">The core integration logic, designed for massive scalability and immediate AI feedback loops.</p>
-                            <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-inner">
-                                <div className="p-3 bg-gray-800 text-xs text-cyan-400 font-mono flex justify-between">
-                                    <span>FinancialDemocracyView.tsx</span>
-                                    <span className='text-gray-500'>// DFOS Core</span>
-                                </div>
-                                <pre className="p-4 text-xs text-white overflow-x-auto max-h-80">
-                                    <code>
-                                        {codeSnippet.trim()}
-                                    </code>
-                                </pre>
-                            </div>
-                        </Card>
+            {renderSection('Payment Processing', [
+              ['ADYEN_API_KEY', 'Adyen API Key'],
+              ['ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account'],
+              ['BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID'],
+              ['BRAINTREE_PUBLIC_KEY', 'Braintree Public Key'],
+              ['BRAINTREE_PRIVATE_KEY', 'Braintree Private Key'],
+              ['SQUARE_APPLICATION_ID', 'Square Application ID'],
+              ['SQUARE_ACCESS_TOKEN', 'Square Access Token'],
+              ['PAYPAL_CLIENT_ID', 'PayPal Client ID'],
+              ['PAYPAL_SECRET', 'PayPal Secret'],
+              ['DWOLLA_KEY', 'Dwolla Key'],
+              ['DWOLLA_SECRET', 'Dwolla Secret'],
+              ['WORLDPAY_API_KEY', 'Worldpay API Key'],
+              ['CHECKOUT_SECRET_KEY', 'Checkout Secret Key'],
+            ])}
 
-                        <Card title="Manual Profile Generation Summary">
-                            <p className="text-sm text-gray-400 mb-4">Upon successful linkage, the manual process generates a dependent profile for delayed tactical planning.</p>
-                            {linkedInstitutions.length > 0 ? (
-                                <div className="space-y-3">
-                                    <div className="p-3 bg-gray-800 rounded-lg border border-green-600/50">
-                                        <p className="font-semibold text-green-300">Latest Profile Overview:</p>
-                                        <p className="text-xs text-gray-300 mt-1">Risk Score: <span className='font-bold'>{linkedInstitutions[0].aiProfileSummary.riskToleranceScore}</span>/100</p>
-                                        <p className="text-xs text-gray-300 mt-1">Trajectory: <span className='font-bold text-yellow-300'>{linkedInstitutions[0].aiProfileSummary.predictedNetWorthTrajectory.toUpperCase()}</span></p>
-                                        <p className="text-xs text-gray-500 mt-2">Suggested Actions: {linkedInstitutions[0].aiProfileSummary.suggestedAIProducts.join(', ')}</p>
-                                    </div>
-                                    <p className="text-xs text-gray-500 pt-2 border-t border-gray-700">
-                                        (Showing overview for the most recently connected institution.)
-                                    </p>
-                                </div>
-                            ) : (
-                                <p className="text-sm text-gray-500 italic p-4 bg-gray-800 rounded-lg">
-                                    Profile generation awaits connection.
-                                </p>
-                            )}
-                        </Card>
-                    </div>
-                </div>
-            </div>
+            {renderSection('Banking as a Service (BaaS) & Card Issuing', [
+              ['MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token'],
+              ['MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token'],
+              ['GALILEO_API_LOGIN', 'Galileo API Login'],
+              ['GALILEO_API_TRANS_KEY', 'Galileo API Transaction Key'],
+              ['SOLARISBANK_CLIENT_ID', 'Solarisbank Client ID'],
+              ['SOLARISBANK_CLIENT_SECRET', 'Solarisbank Client Secret'],
+              ['SYNAPSE_CLIENT_ID', 'Synapse Client ID'],
+              ['SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret'],
+              ['RAILSBANK_API_KEY', 'Railsbank API Key'],
+              ['CLEARBANK_API_KEY', 'ClearBank API Key'],
+              ['UNIT_API_TOKEN', 'Unit API Token'],
+              ['TREASURY_PRIME_API_KEY', 'Treasury Prime API Key'],
+              ['INCREASE_API_KEY', 'Increase API Key'],
+              ['MERCURY_API_KEY', 'Mercury API Key'],
+              ['BREX_API_KEY', 'Brex API Key'],
+              ['BOND_API_KEY', 'Bond API Key'],
+            ])}
+
+            {renderSection('International Payments', [
+              ['CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID'],
+              ['CURRENCYCLOUD_API_KEY', 'Currencycloud API Key'],
+              ['OFX_API_KEY', 'OFX API Key'],
+              ['WISE_API_TOKEN', 'Wise API Token'],
+              ['REMITLY_API_KEY', 'Remitly API Key'],
+              ['AZIMO_API_KEY', 'Azimo API Key'],
+              ['NIUM_API_KEY', 'Nium API Key'],
+            ])}
+
+            {renderSection('Investment & Market Data', [
+              ['ALPACA_API_KEY_ID', 'Alpaca API Key ID'],
+              ['ALPACA_SECRET_KEY', 'Alpaca Secret Key'],
+              ['TRADIER_ACCESS_TOKEN', 'Tradier Access Token'],
+              ['IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token'],
+              ['POLYGON_API_KEY', 'Polygon.io API Key'],
+              ['FINNHUB_API_KEY', 'Finnhub API Key'],
+              ['ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key'],
+              ['MORNINGSTAR_API_KEY', 'Morningstar API Key'],
+              ['XIGNITE_API_TOKEN', 'Xignite API Token'],
+              ['DRIVEWEALTH_API_KEY', 'DriveWealth API Key'],
+            ])}
+
+            {renderSection('Crypto', [
+              ['COINBASE_API_KEY', 'Coinbase API Key'],
+              ['COINBASE_API_SECRET', 'Coinbase API Secret'],
+              ['BINANCE_API_KEY', 'Binance API Key'],
+              ['BINANCE_API_SECRET', 'Binance API Secret'],
+              ['KRAKEN_API_KEY', 'Kraken API Key'],
+              ['KRAKEN_PRIVATE_KEY', 'Kraken Private Key'],
+              ['GEMINI_API_KEY', 'Gemini API Key'],
+              ['GEMINI_API_SECRET', 'Gemini API Secret'],
+              ['COINMARKETCAP_API_KEY', 'CoinMarketCap API Key'],
+              ['COINGECKO_API_KEY', 'CoinGecko API Key'],
+              ['BLOCKIO_API_KEY', 'Block.io API Key'],
+            ])}
+
+            {renderSection('Major Banks (Open Banking)', [
+              ['JP_MORGAN_CHASE_CLIENT_ID', 'JPMorgan Chase Client ID'],
+              ['CITI_CLIENT_ID', 'Citi Client ID'],
+              ['WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID'],
+              ['CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID'],
+            ])}
+
+            {renderSection('European & Global Banks (Open Banking)', [
+              ['HSBC_CLIENT_ID', 'HSBC Client ID'],
+              ['BARCLAYS_CLIENT_ID', 'Barclays Client ID'],
+              ['BBVA_CLIENT_ID', 'BBVA Client ID'],
+              ['DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key'],
+            ])}
+
+            {renderSection('UK & European Aggregators', [
+              ['TINK_CLIENT_ID', 'Tink Client ID'],
+              ['TRUELAYER_CLIENT_ID', 'TrueLayer Client ID'],
+            ])}
+
+            {renderSection('Compliance & Identity (KYC/AML)', [
+              ['MIDDESK_API_KEY', 'Middesk API Key'],
+              ['ALLOY_API_TOKEN', 'Alloy API Token'],
+              ['ALLOY_API_SECRET', 'Alloy API Secret'],
+              ['COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key'],
+            ])}
+
+            {renderSection('Real Estate', [
+              ['ZILLOW_API_KEY', 'Zillow API Key'],
+              ['CORELOGIC_CLIENT_ID', 'CoreLogic Client ID'],
+            ])}
+
+            {renderSection('Credit Bureaus', [
+              ['EXPERIAN_API_KEY', 'Experian API Key'],
+              ['EQUIFAX_API_KEY', 'Equifax API Key'],
+              ['TRANSUNION_API_KEY', 'TransUnion API Key'],
+            ])}
+
+            {renderSection('Global Payments (Emerging Markets)', [
+              ['FINCRA_API_KEY', 'Fincra API Key'],
+              ['FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key'],
+              ['PAYSTACK_SECRET_KEY', 'Paystack Secret Key'],
+              ['DLOCAL_API_KEY', 'DLocal API Key'],
+              ['RAPYD_ACCESS_KEY', 'Rapyd Access Key'],
+            ])}
+
+            {renderSection('Accounting & Tax', [
+              ['TAXJAR_API_KEY', 'TaxJar API Key'],
+              ['AVALARA_API_KEY', 'Avalara API Key'],
+              ['CODAT_API_KEY', 'Codat API Key'],
+              ['XERO_CLIENT_ID', 'Xero Client ID'],
+              ['XERO_CLIENT_SECRET', 'Xero Client Secret'],
+              ['QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID'],
+              ['QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret'],
+              ['FRESHBOOKS_API_KEY', 'Freshbooks API Key'],
+            ])}
+
+            {renderSection('Fintech Utilities', [
+              ['ANVIL_API_KEY', 'Anvil API Key'],
+              ['MOOV_CLIENT_ID', 'Moov Client ID'],
+              ['MOOV_SECRET', 'Moov Secret'],
+              ['VGS_USERNAME', 'VGS Username'],
+              ['VGS_PASSWORD', 'VGS Password'],
+              ['SILA_APP_HANDLE', 'Sila App Handle'],
+              ['SILA_PRIVATE_KEY', 'Sila Private Key'],
+            ])}
+          </>
+        )}
+        
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 export default FinancialDemocracyView;
