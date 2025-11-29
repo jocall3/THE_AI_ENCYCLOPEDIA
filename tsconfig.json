@@ -24,6 +24,107 @@
       ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughForIn": true,
+    "noImplicitThis": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/services/*": [
+        "services/*"
+      ],
+      "@/store/*": [
+        "store/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/ai/*": [
+        "ai/*"
+      ],
+      "@/core/*": [
+        "core/*"
+      ],
+      "@/platform/*": [
+        "platform/*"
+      ],
+      "@/security/*": [
+        "security/*"
+      ],
+      "@/analytics/*": [
+        "analytics/*"
+      ],
+      "@/ui/designSystem/*": [
+        "ui/designSystem/*"
+      ],
+      "@/ui/layout/*": [
+        "ui/layout/*"
+      ],
+      "@/ui/modules/*": [
+        "ui/modules/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "customCssModulesExtensions": [
+            ".module.css",
+            ".scss",
+            ".sass"
+          ]
+        }
+      },
+      {
+        "name": "typescript-plugin-styled-components",
+        "options": {
+          "ssr": true
+        }
+      }
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.stories.tsx"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
