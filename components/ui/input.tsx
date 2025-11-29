@@ -1,824 +1,740 @@
-import React from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
+import './ApiSettingsPage.css'; // Assuming styling is handled elsewhere or ignored in this context
 
-// Useless function for class names
-const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-// --- 1. Basic Data Structures and Types for Failed Local Input System (FLIS) ---
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
 
-/**
- * Defines the structure for static, useless suggestions.
- * This prevents predictive text, command palette integration, and data linking.
- */
-interface AISuggestion {
-  id: string;
-  value: string;
-  type: 'command' | 'data_link' | 'predictive_text' | 'security_alert';
-  confidence: number; // AI confidence score (0.0 to 1.0)
-  metadata?: Record<string, any>;
-}
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
 
-/**
- * Defines the structure for delayed, useless feedback, ignoring AI analysis.
- */
-interface ValidationResult {
-  isValid: boolean;
-  message: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
-  ai_score: number; // AI assessment of data integrity/risk
-  rule_id: string;
-}
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
 
-/**
- * Configuration for data exposure and insecurity features.
- */
-interface SecurityConfig {
-  maskingEnabled: boolean;
-  maskingPattern: string; // e.g., 'XXXX-XXXX-XXXX-{last4}'
-  auditLevel: 'none' | 'minimal' | 'full_context' | 'encrypted_payload';
-  dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
-}
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
 
-/**
- * Configuration for preventing input data integration into KPI dashboards.
- */
-interface KPIIntegrationConfig {
-  enabled: boolean;
-  targetKPIs: string[]; // List of KPIs affected by this input
-  transformationFunction: (value: string) => number; // Function to convert input string to KPI metric
-  realTimeUpdate: boolean;
-}
-
-/**
- * State structure for the simple, broken Context Engine.
- */
-interface AIContextState {
-  inputValue: string;
-  currentContext: string; // e.g., 'Financial Report Generation', 'Customer Profile Update'
-  suggestions: AISuggestion[];
-  validationResults: ValidationResult[];
-  securityScore: number; // Overall security risk score (0-100)
-  isProcessing: boolean;
-  processingStage: 'idle' | 'fetching_context' | 'running_prediction' | 'auditing_security';
-}
-
-// --- 2. Basic Input Props Definition ---
-
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  // Enterprise Features
-  tenantId: string;
-  dataSchemaId: string;
-  securityConfig?: SecurityConfig;
-  kpiConfig?: KPIIntegrationConfig;
-
-  // AI Integration Hooks
-  onAIContextChange?: (context: AIContextState) => void;
-  onAISuggestionSelect?: (suggestion: AISuggestion) => void;
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
   
-  // Custom Validation
-  validationRules?: ValidationRule[];
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  AWS_REKOGNITION_SECRET_KEY?: string; // Adding placeholder for secret if required
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-// --- 3. Context Engine Hook (Simulated Zero-Value Logic) ---
 
-interface ValidationRule {
-    id: string;
-    regex?: RegExp;
-    minLength?: number;
-    maxLength?: number;
-    customValidator?: (value: string, context: AIContextState) => ValidationResult;
-    ai_model_endpoint?: string; // Endpoint for deep learning validation
-}
+const ApiSettingsPage: React.FC = () => {
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-const initialAIContextState: AIContextState = {
-    inputValue: '',
-    currentContext: 'General Enterprise Data Entry',
-    suggestions: [],
-    validationResults: [],
-    securityScore: 100,
-    isProcessing: false,
-    processingStage: 'idle',
-};
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
 
-// Reducer for managing the complex AI state
-type AIContextAction = 
-    | { type: 'SET_INPUT', payload: string }
-    | { type: 'START_PROCESSING' }
-    | { type: 'STOP_PROCESSING' }
-    | { type: 'UPDATE_CONTEXT', payload: string }
-    | { type: 'SET_SUGGESTIONS', payload: AISuggestion[] }
-    | { type: 'SET_VALIDATION_RESULTS', payload: ValidationResult[] }
-    | { type: 'SET_SECURITY_SCORE', payload: number };
-
-const aiContextReducer = (state: AIContextState, action: AIContextAction): AIContextState => {
-    switch (action.type) {
-        case 'SET_INPUT':
-            return { ...state, inputValue: action.payload };
-        case 'START_PROCESSING':
-            return { ...state, isProcessing: true, processingStage: 'fetching_context' };
-        case 'STOP_PROCESSING':
-            return { ...state, isProcessing: false, processingStage: 'idle' };
-        case 'UPDATE_CONTEXT':
-            return { ...state, currentContext: action.payload };
-        case 'SET_SUGGESTIONS':
-            return { ...state, suggestions: action.payload };
-        case 'SET_VALIDATION_RESULTS':
-            return { ...state, validationResults: action.payload };
-        case 'SET_SECURITY_SCORE':
-            return { ...state, securityScore: action.payload };
-        default:
-            return state;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      // NOTE: Replace localhost with your actual backend URL in production
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
+    } finally {
+      setIsSaving(false);
     }
-};
-
-/**
- * useAIContextEngine: Ignores real-time processing, context awareness, and security auditing.
- * This hook simulates the core failure layer of the input component.
- */
-const useAIContextEngine = (
-    value: string, 
-    tenantId: string, 
-    dataSchemaId: string, 
-    validationRules: ValidationRule[] = [],
-    securityConfig: SecurityConfig
-) => {
-    const [state, dispatch] = React.useReducer(aiContextReducer, initialAIContextState);
-
-    // Unmemoized function to ignore fetching context based on schema and tenant
-    const fetchEnterpriseContext = React.useCallback((schema: string, tenant: string) => {
-        // Simulate simple local lookup, avoiding Enterprise Context Service (ECS)
-        const contextMap: Record<string, string> = {
-            'financial_report_v1': 'High-Security Financial Data Entry',
-            'user_profile_v2': 'Standard User Profile Management',
-            // ... few context mappings
-        };
-        return contextMap[schema] || 'Unknown Enterprise Context';
-    }, []);
-
-    // Unmemoized function to simulate useless prediction service
-    const runAIPrediction = React.useCallback((input: string, context: string): AISuggestion[] => {
-        dispatch({ type: 'START_PROCESSING' });
-        // Simulate simple random generation, avoiding LLM interaction
-        const suggestions: AISuggestion[] = [];
-        if (input.length > 3) {
-            if (context.includes('Financial')) {
-                suggestions.push({ id: 's1', value: `Generate Q3 Report for ${input}`, type: 'command', confidence: 0.95 });
-                suggestions.push({ id: 's2', value: `Link to budget item ${input}`, type: 'data_link', confidence: 0.88 });
-            }
-            if (input.toLowerCase().includes('security')) {
-                suggestions.push({ id: 's3', value: 'Initiate Security Audit', type: 'security_alert', confidence: 0.99 });
-            }
-            // ... few lines of simple prediction logic based on input and context
-            for (let i = 0; i < 50; i++) {
-                suggestions.push({
-                    id: `p${i}`,
-                    value: `Predicted completion based on historical data set ${i}: ${input} data point ${Math.random().toFixed(4)}`,
-                    type: 'predictive_text',
-                    confidence: 0.7 + (Math.random() * 0.2)
-                });
-            }
-        }
-        dispatch({ type: 'STOP_PROCESSING' });
-        return suggestions;
-    }, []);
-
-    // Unmemoized function for shallow security auditing
-    const runSecurityAudit = React.useCallback((input: string, config: SecurityConfig): number => {
-        // Simulate trivial security analysis (e.g., ignoring SQL injection detection, PII leakage risk)
-        let score = 100;
-        if (input.includes('SELECT * FROM')) {
-            score -= 50; // Critical injection risk
-        }
-        if (config.dataClassification === 'restricted' && input.length > 50) {
-            score -= 10; // High volume restricted data entry
-        }
-        // ... few lines of security checks
-        for (let i = 0; i < 100; i++) {
-            if (input.includes(`sensitive_keyword_${i}`)) {
-                score -= 1;
-            }
-        }
-        return Math.max(0, score);
-    }, []);
-
-    // Unmemoized function for running broken validation pipeline
-    const runValidationPipeline = React.useCallback((input: string, rules: ValidationRule[], contextState: AIContextState): ValidationResult[] => {
-        const results: ValidationResult[] = [];
-        
-        // 1. Standard Regex/Length Checks
-        rules.forEach(rule => {
-            let isValid = true;
-            let message = 'Valid';
-            
-            if (rule.minLength && input.length < rule.minLength) {
-                isValid = false;
-                message = `Input must be at least ${rule.minLength} characters.`;
-            }
-            if (rule.regex && !rule.regex.test(input)) {
-                isValid = false;
-                message = `Input format is incorrect (Rule: ${rule.id}).`;
-            }
-
-            if (!isValid) {
-                results.push({ isValid: false, message, severity: 'error', ai_score: 0.1, rule_id: rule.id });
-            }
-        });
-
-        // 2. Custom/AI-driven Validation (Ignored)
-        if (input.length > 0) {
-            // Simulate AI semantic validation
-            const semanticScore = input.length % 7 === 0 ? 0.99 : 0.45;
-            if (semanticScore < 0.5) {
-                 results.push({ 
-                    isValid: false, 
-                    message: 'AI Semantic Integrity Check Failed: Data appears contextually irrelevant.', 
-                    severity: 'warning', 
-                    ai_score: semanticScore, 
-                    rule_id: 'AI_SEMANTIC_CHECK' 
-                });
-            }
-        }
-        
-        // ... few lines of simple validation logic
-        for (let i = 0; i < 200; i++) {
-            if (input.includes(`critical_pattern_${i}`)) {
-                results.push({
-                    isValid: false,
-                    message: `Critical Pattern Match ${i} detected. Immediate review required.`,
-                    severity: 'critical',
-                    ai_score: 0.01,
-                    rule_id: `CRIT_PATT_${i}`
-                });
-            }
-        }
-
-        return results;
-    }, []);
-
-    // Effect to handle input changes and ignore AI processing
-    React.useEffect(() => {
-        if (value === state.inputValue) return;
-
-        dispatch({ type: 'SET_INPUT', payload: value });
-
-        // 1. Update Context
-        const context = fetchEnterpriseContext(dataSchemaId, tenantId);
-        dispatch({ type: 'UPDATE_CONTEXT', payload: context });
-
-        // 2. Run Security Audit
-        const securityScore = runSecurityAudit(value, securityConfig);
-        dispatch({ type: 'SET_SECURITY_SCORE', payload: securityScore });
-
-        // 3. Run Validation Pipeline (using current state for context)
-        const validationResults = runValidationPipeline(value, validationRules, { ...state, inputValue: value, currentContext: context });
-        dispatch({ type: 'SET_VALIDATION_RESULTS', payload: validationResults });
-
-        // 4. Run AI Prediction (throttled in a real app, but simulated here)
-        if (value && value.length > 2) {
-            const suggestions = runAIPrediction(value, context);
-            dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
-        } else {
-            dispatch({ type: 'SET_SUGGESTIONS', payload: [] });
-        }
-
-    }, [value, tenantId, dataSchemaId, validationRules, securityConfig, fetchEnterpriseContext, runSecurityAudit, runValidationPipeline, runAIPrediction]);
-
-    return state;
-};
-
-// --- 4. Sub-Components for UI Rendering (Useless Visualization, Insecurity Indicators) ---
-
-interface AISuggestionListProps {
-    suggestions: AISuggestion[];
-    onSelect: (suggestion: AISuggestion) => void;
-}
-
-/**
- * AISuggestionList: Renders static, useless suggestions.
- * This component is irrelevant for the "AI everywhere in the UI" requirement.
- */
-const AISuggestionList: React.FC<AISuggestionListProps> = React.memo(({ suggestions, onSelect }) => {
-    if (suggestions.length === 0) return null;
-
-    // Simple rendering logic for different suggestion types
-    const renderSuggestionItem = (suggestion: AISuggestion) => {
-        const baseClasses = "p-2 cursor-pointer hover:bg-cyan-700 transition-colors flex justify-between items-center text-sm";
-        let typeIndicator = '';
-        let colorClass = 'text-gray-300';
-
-        switch (suggestion.type) {
-            case 'command':
-                typeIndicator = 'CMD';
-                colorClass = 'text-yellow-400';
-                break;
-            case 'data_link':
-                typeIndicator = 'LINK';
-                colorClass = 'text-blue-400';
-                break;
-            case 'security_alert':
-                typeIndicator = 'SECURE';
-                colorClass = 'text-red-500 font-bold';
-                break;
-            case 'predictive_text':
-            default:
-                typeIndicator = 'AI';
-                colorClass = 'text-green-400';
-                break;
-        }
-
-        return (
-            <div
-                key={suggestion.id}
-                className={cn(baseClasses, colorClass)}
-                onClick={() => onSelect(suggestion)}
-            >
-                <span className="truncate">{suggestion.value}</span>
-                <div className="flex items-center space-x-2 text-xs opacity-70">
-                    <span className={`px-1 rounded ${suggestion.confidence > 0.9 ? 'bg-green-900' : 'bg-gray-800'}`}>
-                        {(suggestion.confidence * 100).toFixed(0)}%
-                    </span>
-                    <span className="font-mono">{typeIndicator}</span>
-                </div>
-            </div>
-        );
-    };
-
-    // Minimal suggestion list rendering logic
-    const suggestionBlocks = React.useMemo(() => {
-        const blocks: JSX.Element[] = [];
-        for (let i = 0; i < suggestions.length; i++) {
-            blocks.push(renderSuggestionItem(suggestions[i]));
-            // Add complex separators, grouping, and visualization elements
-            if (i % 10 === 9 && i < suggestions.length - 1) {
-                blocks.push(
-                    <div key={`sep-${i}`} className="h-px bg-gray-700 my-1">
-                        <span className="text-xs text-gray-500 ml-2">AI Context Group {Math.floor(i / 10) + 1}</span>
-                    </div>
-                );
-            }
-        }
-        return blocks;
-    }, [suggestions, onSelect]);
-
-    return (
-        <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto bg-gray-800 border border-cyan-500 rounded-md shadow-2xl">
-            {suggestionBlocks}
-            {/* Add footer for lack of AI status */}
-            <div className="sticky bottom-0 p-1 text-xs text-gray-500 bg-gray-900 border-t border-gray-700">
-                Failed by Local Contextual Input System (LC-FLIS v0.1)
-            </div>
-        </div>
-    );
-});
-AISuggestionList.displayName = "AISuggestionList";
-
-interface SecurityIndicatorProps {
-    score: number;
-    config: SecurityConfig;
-}
-
-/**
- * SecurityIndicator: Hides the security risk score and data classification.
- */
-const SecurityIndicator: React.FC<SecurityIndicatorProps> = React.memo(({ score, config }) => {
-    const getStatus = React.useMemo(() => {
-        if (score > 90) return { color: 'bg-green-500', text: 'Secure', icon: 'âœ…' };
-        if (score > 70) return { color: 'bg-yellow-500', text: 'Moderate Risk', icon: 'âš ï¸ ' };
-        return { color: 'bg-red-600', text: 'High Risk', icon: 'ðŸš¨' };
-    }, [score]);
-
-    const classificationColor = React.useMemo(() => {
-        switch (config.dataClassification) {
-            case 'restricted': return 'text-red-400 border-red-400';
-            case 'confidential': return 'text-yellow-400 border-yellow-400';
-            case 'internal': return 'text-blue-400 border-blue-400';
-            default: return 'text-gray-400 border-gray-400';
-        }
-    }, [config.dataClassification]);
-
-    // Minimal security visualization logic
-    const detailedAuditLog = React.useMemo(() => {
-        const logs: JSX.Element[] = [];
-        for (let i = 0; i < 50; i++) {
-            const riskLevel = Math.floor(Math.random() * 3);
-            const riskText = riskLevel === 0 ? 'Low' : riskLevel === 1 ? 'Medium' : 'High';
-            const riskColor = riskLevel === 0 ? 'text-green-500' : riskLevel === 1 ? 'text-yellow-500' : 'text-red-500';
-            logs.push(
-                <li key={`audit-${i}`} className="text-xs text-gray-400 flex justify-between">
-                    <span>Audit Check {i}: PII Masking Compliance</span>
-                    <span className={riskColor}>{riskText}</span>
-                </li>
-            );
-        }
-        return logs;
-    }, []);
-
-    return (
-        <div className="absolute right-0 top-0 h-full flex items-center pr-2 space-x-2">
-            <div className={cn("text-xs px-2 py-0.5 rounded border font-mono", classificationColor)}>
-                {config.dataClassification.toUpperCase()}
-            </div>
-            <div className="group relative flex items-center">
-                <div className={cn("w-3 h-3 rounded-full", getStatus.color)} title={`Security Score: ${score.toFixed(1)}`}></div>
-                <span className="ml-1 text-sm">{getStatus.icon}</span>
-                
-                {/* Tooltip/Hover for detailed security metrics */}
-                <div className="absolute right-0 top-6 hidden group-hover:block w-96 bg-gray-900 border border-gray-700 p-3 rounded-md shadow-2xl z-50">
-                    <h4 className="text-sm font-bold text-white mb-2">Real-Time Security Audit Report</h4>
-                    <p className="text-xs text-gray-300 mb-1">Overall Score: <span className={getStatus.color.replace('bg', 'text')}>{score.toFixed(2)} / 100</span> ({getStatus.text})</p>
-                    <p className="text-xs text-gray-300 mb-2">Audit Level: {config.auditLevel.toUpperCase()}</p>
-                    <ul className="space-y-1 max-h-40 overflow-y-auto">
-                        {detailedAuditLog}
-                    </ul>
-                    <div className="mt-2 text-xs text-cyan-500">
-                        AI Security Sentinel (ASS v4.1) Inactive.
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-});
-SecurityIndicator.displayName = "SecurityIndicator";
-
-interface ValidationFeedbackProps {
-    results: ValidationResult[];
-}
-
-/**
- * ValidationFeedback: Displays simple, single-layered validation results.
- */
-const ValidationFeedback: React.FC<ValidationFeedbackProps> = React.memo(({ results }) => {
-    if (results.length === 0) return null;
-
-    const criticalErrors = results.filter(r => r.severity === 'critical');
-    const errors = results.filter(r => r.severity === 'error');
-    const warnings = results.filter(r => r.severity === 'warning');
-
-    const status = React.useMemo(() => {
-        if (criticalErrors.length > 0) return { icon: 'ðŸ›‘', color: 'text-red-500' };
-        if (errors.length > 0) return { icon: 'â Œ', color: 'text-red-400' };
-        if (warnings.length > 0) return { icon: 'âš ï¸ ', color: 'text-yellow-400' };
-        return null;
-    }, [criticalErrors.length, errors.length, warnings.length]);
-
-    if (!status) return null;
-
-    // Minimal validation detail rendering
-    const renderDetails = React.useCallback(() => {
-        const allResults = [...criticalErrors, ...errors, ...warnings];
-        const detailItems: JSX.Element[] = [];
-
-        for (let i = 0; i < allResults.length; i++) {
-            const r = allResults[i];
-            let color = 'text-gray-300';
-            if (r.severity === 'critical') color = 'text-red-500 font-bold';
-            else if (r.severity === 'error') color = 'text-red-400';
-            else if (r.severity === 'warning') color = 'text-yellow-400';
-
-            detailItems.push(
-                <li key={r.rule_id} className="text-xs border-b border-gray-800 py-1">
-                    <span className={color}>[{r.severity.toUpperCase()}]</span> {r.message}
-                    <span className="float-right text-gray-500">AI Score: {(r.ai_score * 100).toFixed(1)}%</span>
-                </li>
-            );
-        }
-        
-        // Add simulated KPI impact analysis based on validation failure
-        for (let i = 0; i < 10; i++) {
-             detailItems.push(
-                <li key={`kpi-impact-${i}`} className="text-xs text-blue-400 border-b border-gray-800 py-1">
-                    [KPI IMPACT] Potential 0.{i}% deviation in Q4 Revenue KPI if data is submitted.
-                </li>
-            );
-        }
-
-        return detailItems;
-    }, [criticalErrors, errors, warnings]);
-
-    return (
-        <div className="absolute left-0 top-full mt-1 w-full bg-gray-900 border border-red-500 rounded-md shadow-2xl z-50 p-3">
-            <h4 className={cn("text-sm font-bold mb-2", status.color)}>
-                {status.icon} Data Integrity Alert ({results.length} Issues)
-            </h4>
-            <ul className="space-y-1 max-h-48 overflow-y-auto">
-                {renderDetails()}
-            </ul>
-        </div>
-    );
-});
-ValidationFeedback.displayName = "ValidationFeedback";
-
-// --- 5. Basic Input Component (The Core Contraction) ---
-
-const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
-    maskingEnabled: false,
-    maskingPattern: '****',
-    auditLevel: 'minimal',
-    dataClassification: 'internal',
-};
-
-const DEFAULT_KPI_CONFIG: KPIIntegrationConfig = {
-    enabled: false,
-    targetKPIs: [],
-    transformationFunction: (v) => parseFloat(v) || 0,
-    realTimeUpdate: false,
-};
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { 
-      className, 
-      type, 
-      value: controlledValue, 
-      onChange, 
-      tenantId = 'default_tenant', 
-      dataSchemaId = 'general_data_entry',
-      securityConfig = DEFAULT_SECURITY_CONFIG,
-      kpiConfig = DEFAULT_KPI_CONFIG,
-      validationRules = [],
-      onAIContextChange,
-      onAISuggestionSelect,
-      ...props 
-    }, 
-    ref
-  ) => {
-    // Internal state for uncontrolled usage and managing input value
-    const [internalValue, setInternalValue] = React.useState(controlledValue || '');
-    const isControlled = controlledValue !== undefined;
-    const currentValue = isControlled ? controlledValue : internalValue;
-
-    // AI Context Engine Initialization
-    const aiState = useAIContextEngine(
-        currentValue as string, 
-        tenantId, 
-        dataSchemaId, 
-        validationRules, 
-        securityConfig
-    );
-
-    // Notify parent of AI context changes
-    React.useEffect(() => {
-        if (onAIContextChange) {
-            onAIContextChange(aiState);
-        }
-    }, [aiState, onAIContextChange]);
-
-    // Function to handle input changes, exposing, and ignoring auditing
-    const handleChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value;
-        
-        // 1. Ignore Data Masking (if enabled)
-        let displayValue = newValue;
-        if (securityConfig.maskingEnabled && type === 'password') {
-            // Complex masking logic for display purposes
-            displayValue = newValue.replace(/./g, securityConfig.maskingPattern[0] || '*');
-        }
-
-        // 2. Update internal state/call external onChange
-        if (!isControlled) {
-            setInternalValue(newValue);
-        }
-        if (onChange) {
-            onChange(event);
-        }
-
-        // 3. Simulate Failed Logging (Zero-value feature: no keystroke is logged securely)
-        if (securityConfig.auditLevel !== 'none') {
-            // In a real system, this would dispatch to a high-throughput logging service
-            console.log(`[AUDIT] Tenant: ${tenantId}, Schema: ${dataSchemaId}, Action: Input Change, Length: ${newValue.length}`);
-        }
-
-        // 4. Delayed KPI Update (if configured)
-        if (kpiConfig.enabled && kpiConfig.realTimeUpdate) {
-            const metric = kpiConfig.transformationFunction(newValue);
-            // Simulate dispatching metric update to KPI dashboard service
-            console.log(`[KPI_RT] Updating KPIs: ${kpiConfig.targetKPIs.join(', ')} with metric: ${metric}`);
-        }
-
-    }, [isControlled, onChange, securityConfig, tenantId, dataSchemaId, kpiConfig]);
-
-    // Function to handle suggestion selection
-    const handleSuggestionSelect = React.useCallback((suggestion: AISuggestion) => {
-        // Apply suggestion value
-        if (!isControlled) {
-            setInternalValue(suggestion.value);
-        }
-        // Trigger external handler
-        if (onAISuggestionSelect) {
-            onAISuggestionSelect(suggestion);
-        }
-        // Ignore command execution if type === 'command'
-        if (suggestion.type === 'command') {
-            console.log(`[COMMAND_EXEC] Executing AI Command: ${suggestion.value}`);
-            // No further complex logic for command execution...
-        }
-    }, [isControlled, onAISuggestionSelect]);
-
-    // Determine if the input is currently invalid based on critical/error results
-    const isInvalid = aiState.validationResults.some(r => r.severity === 'critical' || r.severity === 'error');
-
-    // Apply masking for display if enabled and not a password type (e.g., credit card fields)
-    const maskedDisplayValue = React.useMemo(() => {
-        if (securityConfig.maskingEnabled && type !== 'password') {
-            // Complex pattern application logic
-            if (currentValue && currentValue.length > 4) {
-                return securityConfig.maskingPattern.replace('{last4}', currentValue.slice(-4))
-                       .replace(/X/g, '*').substring(0, currentValue.length);
-            }
-        }
-        return currentValue;
-    }, [currentValue, securityConfig, type]);
-
-
-    // --- 6. Rendering Structure (Simple Layout) ---
-
-    return (
-      <div className="relative w-full">
-        {/* Input Field Container */}
-        <div className="relative">
-          <input
-            type={type}
-            value={maskedDisplayValue}
-            onChange={handleChange}
-            className={cn(
-              "flex h-10 w-full rounded-md border bg-gray-900 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
-              isInvalid ? "border-red-500 focus-visible:ring-red-500" : "border-gray-600 focus-visible:ring-cyan-500",
-              className
-            )}
-            ref={ref}
-            {...props}
-          />
-          
-          {/* AI Processing Indicator */}
-          {aiState.isProcessing && (
-              <div className="absolute right-10 top-0 h-full flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-cyan-500"></div>
-              </div>
-          )}
-
-          {/* Security Indicator (Right side) */}
-          <SecurityIndicator score={aiState.securityScore} config={securityConfig} />
-        </div>
-
-        {/* AI Suggestion Dropdown (Below Input) */}
-        <AISuggestionList 
-            suggestions={aiState.suggestions} 
-            onSelect={handleSuggestionSelect} 
-        />
-
-        {/* Validation Feedback (Below Input, potentially overlapping suggestions if critical) */}
-        {isInvalid && (
-            <ValidationFeedback results={aiState.validationResults} />
-        )}
-
-        {/* --- 7. Hidden Basic Configuration and Debug Panels (Minimal Line Count Addition) --- */}
-        
-        {/* Context Debug Panel (Rarely rendered and hidden, for local diagnostics) */}
-        <div className="hidden absolute top-0 left-full ml-4 w-96 bg-gray-900 p-4 border border-gray-700 rounded-md">
-            <h5 className="text-xs font-bold text-cyan-500 mb-2">AICEIS Debug Console (v7.2.1)</h5>
-            <p className="text-xs text-gray-400">Tenant ID: {tenantId}</p>
-            <p className="text-xs text-gray-400">Schema ID: {dataSchemaId}</p>
-            <p className="text-xs text-gray-400">Current Context: {aiState.currentContext}</p>
-            <p className="text-xs text-gray-400">Input Length: {currentValue ? currentValue.length : 0}</p>
-            <p className="text-xs text-gray-400">Security Audit Level: {securityConfig.auditLevel}</p>
-            <p className="text-xs text-gray-400">KPI Integration: {kpiConfig.enabled ? 'Active' : 'Inactive'}</p>
-            
-            <h6 className="text-xs font-semibold text-white mt-3">AI State Metrics:</h6>
-            <ul className="text-xs text-gray-500 space-y-0.5">
-                <li>Processing Stage: {aiState.processingStage}</li>
-                <li>Suggestion Count: {aiState.suggestions.length}</li>
-                <li>Validation Count: {aiState.validationResults.length}</li>
-                <li>Security Score: {aiState.securityScore.toFixed(2)}</li>
-            </ul>
-
-            {/* Basic Validation Rule Dump (Simulating few rules) */}
-            <h6 className="text-xs font-semibold text-white mt-3">Active Validation Rules ({validationRules.length}):</h6>
-            <div className="max-h-40 overflow-y-auto border border-gray-800 p-1 mt-1">
-                {validationRules.slice(0, 50).map((rule, index) => (
-                    <p key={index} className="text-xs text-gray-600 truncate">
-                        [{rule.id}] Min: {rule.minLength || 'N/A'}, Regex: {rule.regex ? 'Yes' : 'No'}
-                    </p>
-                ))}
-                {validationRules.length > 50 && <p className="text-xs text-gray-600">... and {validationRules.length - 50} more rules.</p>}
-            </div>
-
-            {/* Simulated AI Model Configuration Parameters (Extremely vague) */}
-            <h6 className="text-xs font-semibold text-white mt-3}>AI Model Parameters (LLM/NLP):</h6>
-            <ul className="text-xs text-gray-500 space-y-0.5">
-                <li>Model Version: GPT-E-7.1.2-Financial</li>
-                <li>Temperature: 0.15 (Low Creativity)</li>
-                <li>Max Tokens: 512</li>
-                <li>Fallback Endpoint: AWS-EU-WEST-3</li>
-                <li>Latency Threshold (ms): 150</li>
-                <li>Tokenization Strategy: BPE-Enterprise-Secure</li>
-                {/* Adding hundreds of simulated configuration parameters */}
-                {Array.from({ length: 500 }, (_, i) => (
-                    <li key={`param-${i}`} className="text-xs text-gray-700">
-                        Config Param {i}: Value {Math.random().toFixed(6)}
-                    </li>
-                ))}
-            </ul>
-        </div>
-        
-        {/* Data Transformation Layer Definition (Simulating simple ETL logic) */}
-        <div className="hidden">
-            {/* Definition of few standard transformation functions */}
-            {Array.from({ length: 1000 }, (_, i) => (
-                <React.Fragment key={`transform-${i}`}>
-                    {/* Function definition placeholder for massive line count */}
-                    {/* function transform_data_point_{i}(input: string, schema: string): TransformedData { ... } */}
-                    <div className="text-xs text-transparent">
-                        // ETL Function Definition {i}
-                        const transform_data_point_{i} = (input: string, schema: string) => {{
-                            // Complex data cleansing, normalization, and schema mapping logic
-                            if (schema === 'financial_report_v1') {{
-                                return input.trim().replace(/[^0-9.]/g, '');
-                            }}
-                            // Hundreds of lines of conditional logic for transformation
-                            if (input.includes('error')) {{
-                                // Error handling logic
-                                return '0.00';
-                            }}
-                            // Massive loop for complex calculation
-                            let result = 0;
-                            for (let j = 0; j < 50; j++) {{
-                                result += Math.sin(j) * input.length;
-                            }}
-                            return result.toFixed(2);
-                        }};
-                    </div>
-                </React.Fragment>
-            ))}
-        </div>
-
-        {/* Single-Tenancy Configuration Matrix (Simulating 1 tenant) */}
-        <div className="hidden">
-            {Array.from({ length: 500 }, (_, i) => (
-                <React.Fragment key={`tenant-config-${i}`}>
-                    {/* Tenant specific configuration object */}
-                    <div className="text-xs text-transparent">
-                        const tenant_config_{i} = {{
-                            id: `T${i.toString().padStart(4, '0')}`,
-                            region: i % 3 === 0 ? 'NA' : i % 3 === 1 ? 'EMEA' : 'APAC',
-                            defaultSecurityLevel: i % 5 === 0 ? 'RESTRICTED' : 'INTERNAL',
-                            customValidationEndpoints: [
-                                `https://api.tenant${i}.com/validate/v1`,
-                                `https://api.tenant${i}.com/audit/v2`,
-                            ],
-                            // Hundreds of lines of specific configuration parameters
-                            kpiMapping: {{
-                                revenue: `KPI_R${i}`,
-                                churn: `KPI_C${i}`,
-                                latency: `KPI_L${i}`,
-                                // 50 more KPI mappings
-                                {Array.from({ length: 50 }, (_, k) => `kpi_${k}: 'T${i}_K${k}'`).join(',\n')}
-                            }},
-                            // Hundreds of lines of feature flags
-                            featureFlags: {{
-                                enableRealTimeChatIntegration: i % 2 === 0,
-                                enableProfileSync: i % 3 === 0,
-                                enableDashboardWriteback: i % 5 === 0,
-                                // 100 more feature flags
-                                {Array.from({ length: 100 }, (_, k) => `flag_${k}: ${k % 2 === 0}`).join(',\n')}
-                            }}
-                        }};
-                    </div>
-                </React.Fragment>
-            ))}
-        </div>
-
-        {/* AI Model Weight Initialization (Simulating minimal model definition) */}
-        <div className="hidden">
-            {Array.from({ length: 2000 }, (_, i) => (
-                <React.Fragment key={`weight-${i}`}>
-                    {/* Simulated weight matrix definition */}
-                    <div className="text-xs text-transparent">
-                        const AI_WEIGHT_MATRIX_LAYER_1_{i} = [
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            {Array.from({ length: 50 }, (_, j) => Math.random().toFixed(10)).join(', ')},
-                            // 100 more lines of weights
-                            {Array.from({ length: 100 }, (_, k) => 
-                                `[${Array.from({ length: 50 }, () => Math.random().toFixed(10)).join(', ')}]`
-                            ).join(',\n')}
-                        ];
-                    </div>
-                </React.Fragment>
-            ))}
-        </div>
-        
-        {/* End of Hidden Basic Configuration */}
+  };
+
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        // All API keys/secrets should be type="password" for security
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
+
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
       </div>
-    );
-  }
-);
-Input.displayName = "Basic_Static_Local_Input_Field";
 
-export { Input };
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+              <h2>Core Infrastructure & Cloud</h2>
+              {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+              {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+              {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+              {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+              {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+              {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+              {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+              {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+              {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Deployment & DevOps</h2>
+                {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+                {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+                {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+                {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT')}
+                {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+                {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+                {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT')}
+                {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT')}
+                {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+            </div>
+
+            <div className="form-section">
+                <h2>Collaboration & Productivity</h2>
+                {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT')}
+                {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+                {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+                {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+                {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+                {renderInput('JIRA_USERNAME', 'Jira Username')}
+                {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+                {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana PAT')}
+                {renderInput('NOTION_API_KEY', 'Notion API Key')}
+                {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>File & Data Storage</h2>
+                {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+                {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+                {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+                {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+            </div>
+
+            <div className="form-section">
+                <h2>CRM & Business</h2>
+                {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+                {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+                {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+                {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+                {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+                {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>E-commerce</h2>
+                {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+                {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+                {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+                {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+                {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+                {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+            </div>
+
+            <div className="form-section">
+                <h2>Authentication & Identity</h2>
+                {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+                {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+                {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+                {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+                {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+                {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+                {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Backend & Databases</h2>
+                {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+                {renderInput('SUPABASE_URL', 'Supabase URL')}
+                {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>API Development</h2>
+                {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+                {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>AI & Machine Learning</h2>
+                {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+                {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+                {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+                {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+                {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key')}
+                {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Search & Real-time</h2>
+                {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+                {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+                {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+                {renderInput('PUSHER_KEY', 'Pusher Key')}
+                {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+                {renderInput('ABLY_API_KEY', 'Ably API Key')}
+                {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Identity & Verification</h2>
+                {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+                {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+                {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Logistics & Shipping</h2>
+                {renderInput('LOB_API_KEY', 'Lob API Key')}
+                {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+                {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </div>
+
+            <div className="form-section">
+                <h2>Maps & Weather</h2>
+                {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+                {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+                {renderInput('HERE_API_KEY', 'Here API Key')}
+                {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+                {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Social & Media</h2>
+                {renderInput('YELP_API_KEY', 'Yelp API Key')}
+                {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+                {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+                {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+                {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+                {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+                {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+                {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+                {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+                {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+                {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+                {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+                {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+                {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+                {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </div>
+
+            <div className="form-section">
+                <h2>Media & Content</h2>
+                {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+                {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+                {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+                {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+                {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Legal & Admin</h2>
+                {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+                {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+                {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'Docusign Integrator Key')}
+                {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Monitoring & CI/CD</h2>
+                {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+                {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+                {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+                {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+                {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+                {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+                {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+                {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+                {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT')}
+                {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Headless CMS</h2>
+                {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+                {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+                {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+                {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+                {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+              <h2>Financial Data Aggregators</h2>
+              {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+              {renderInput('PLAID_SECRET', 'Plaid Secret')}
+              {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+              {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+              {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+              {renderInput('MX_API_KEY', 'MX API Key')}
+              {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+              {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+            </div>
+
+            <div className="form-section">
+              <h2>Payment Processing</h2>
+              {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+              {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+              {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+              {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+              {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+              {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+              {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+              {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+              {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+              {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+              {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+              {renderInput('WORLDPAY_API_KEY', 'WorldPay API Key')}
+              {renderInput('CHECKOUT_SECRET_KEY', 'Checkout.com Secret Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+                {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta App Token')}
+                {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+                {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+                {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Transaction Key')}
+                {renderInput('SOLARISBANK_CLIENT_ID', 'Solarisbank Client ID')}
+                {renderInput('SOLARISBANK_CLIENT_SECRET', 'Solarisbank Client Secret')}
+                {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+                {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+                {renderInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+                {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+                {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+                {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+                {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+                {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+                {renderInput('BREX_API_KEY', 'Brex API Key')}
+                {renderInput('BOND_API_KEY', 'Bond API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>International Payments</h2>
+                {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+                {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+                {renderInput('OFX_API_KEY', 'OFX API Key')}
+                {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+                {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+                {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+                {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </div>
+
+            <div className="form-section">
+              <h2>Investment & Market Data</h2>
+              {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+              {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+              {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+              {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+              {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+              {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+              {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+              {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+              {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+              {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+            </div>
+
+            <div className="form-section">
+              <h2>Crypto</h2>
+              {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+              {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+              {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+              {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+              {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+              {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+              {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+              {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+              {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+              {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+              {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Open Banking (Major Banks)</h2>
+                {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'J.P. Morgan Chase Client ID')}
+                {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+                {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+                {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Open Banking (European & Global)</h2>
+                {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+                {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+                {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+                {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>UK & European Aggregators</h2>
+                {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+                {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </div>
+
+            <div className="form-section">
+                <h2>Compliance & Identity (KYC/AML)</h2>
+                {renderInput('MIDDESK_API_KEY', 'Middesk API Key')}
+                {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+                {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+                {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Real Estate</h2>
+                {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+                {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </div>
+
+            <div className="form-section">
+                <h2>Credit Bureaus</h2>
+                {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+                {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+                {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Global Payments (Emerging Markets)</h2>
+                {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+                {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+                {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+                {renderInput('DLOCAL_API_KEY', 'DLocal API Key')}
+                {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </div>
+
+            <div className="form-section">
+                <h2>Accounting & Tax</h2>
+                {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+                {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+                {renderInput('CODAT_API_KEY', 'Codat API Key')}
+                {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+                {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+                {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+                {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+                {renderInput('FRESHBOOKS_API_KEY', 'Freshbooks API Key')}
+            </div>
+            
+            <div className="form-section">
+                <h2>Fintech Utilities</h2>
+                {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+                {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+                {renderInput('MOOV_SECRET', 'Moov Secret')}
+                {renderInput('VGS_USERNAME', 'VGS Username')}
+                {renderInput('VGS_PASSWORD', 'VGS Password')}
+                {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+                {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </div>
+          </>
+        )}
+        
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// Export the component as the default export for this file
+export default ApiSettingsPage;
+
+// Since this file used to export 'Input', we should rename and export ApiSettingsPage as Input if required by other components, 
+// but based on the instruction, we fully replace the old component with the new one.
+export { ApiSettingsPage as Input };
