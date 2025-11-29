@@ -1,33 +1,27 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, CheckCircle, Info, XCircle, Zap } from 'lucide-react'; // Assuming these icons are available from 'lucide-react' or similar standard library based on context
+import { AlertTriangle, CheckCircle, Info, XCircle, Zap } from 'lucide-react';
 
-// --- Constants for Enhanced Theming and Configuration ---
+// Constants
 const TOAST_BASE_Z_INDEX = 5000;
 const DEFAULT_DURATION_MS = 5000;
 const ANIMATION_DURATION = 0.35;
 
-// --- Type Definitions for Robustness and Scalability ---
+// Types
 type ToastType = 'success' | 'error' | 'warning' | 'info' | 'ai_insight';
 
 interface NotificationToastProps {
-  id: string; // Unique identifier for management
+  id: string;
   message: string | React.ReactNode;
   type: ToastType;
-  duration?: number; // milliseconds, null for persistent
+  duration?: number;
   onDismiss?: (id: string) => void;
   iconComponent?: React.ReactNode;
   title?: string;
-  metadata?: Record<string, any>; // For future AI context integration
+  metadata?: Record<string, any>;
 }
 
-// --- Utility Functions for Theming and Icon Mapping ---
-
-/**
- * Maps toast type to corresponding Tailwind CSS classes for background and text color.
- * @param type The type of the notification.
- * @returns An object containing background and icon color classes.
- */
+// Utility Functions
 const getThemeConfig = (type: ToastType) => {
   switch (type) {
     case 'success':
@@ -62,7 +56,7 @@ const getThemeConfig = (type: ToastType) => {
       return {
         bgColor: 'bg-purple-700 dark:bg-purple-800 border border-purple-400',
         textColor: 'text-white',
-        icon: Zap, // Representing AI/Intelligence
+        icon: Zap,
         iconColor: 'text-yellow-300',
       };
     default:
@@ -75,8 +69,7 @@ const getThemeConfig = (type: ToastType) => {
   }
 };
 
-// --- Enhanced NotificationToast Component ---
-
+// NotificationToast Component
 const NotificationToast: React.FC<NotificationToastProps> = ({
   id,
   message,
@@ -93,7 +86,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   const theme = useMemo(() => getThemeConfig(type), [type]);
   const IconComponent = iconComponent || theme.icon;
 
-  // Auto-dismiss logic
+  // Auto-dismiss
   useEffect(() => {
     if (duration === null || !isVisible) return;
 
@@ -106,7 +99,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
     };
   }, [duration, isVisible]);
 
-  // Exit transition completion handler
+  // Animation end handler
   const handleAnimationEnd = useCallback(() => {
     if (!isVisible || isExiting) {
       setIsVisible(false);
@@ -116,17 +109,15 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
     }
   }, [isVisible, isExiting, onDismiss, id]);
 
-  // Manual dismiss handler (e.g., from a close button)
+  // Dismiss handler
   const dismissToast = useCallback(() => {
     setIsExiting(true);
   }, []);
 
-  // Render logic based on visibility state
   if (!isVisible) {
     return null;
   }
 
-  // Dynamic content rendering
   const renderContent = () => (
     <div className="flex flex-col w-full">
       {(title || IconComponent) && (
@@ -137,7 +128,6 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
           {title ? (
             <h4 className={`font-bold text-sm ${theme.textColor}`}>{title}</h4>
           ) : (
-            // If no title, ensure the first line of message gets emphasis if it's a string
             typeof message === 'string' && message.length > 0 && (
               <h4 className={`font-bold text-sm ${theme.textColor} truncate`}>
                 {message.substring(0, 50)}
@@ -148,13 +138,11 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       )}
       <div className={`text-sm ${theme.textColor} opacity-90`}>
         {typeof message === 'string' ? (
-          // Enhanced text handling for potential AI summaries
           <p className="whitespace-pre-wrap">{message}</p>
         ) : (
           message
         )}
       </div>
-      {/* Future expansion: AI Context/Action Buttons based on metadata */}
       {metadata.suggestedAction && (
         <button
           onClick={() => console.log(`Action triggered for ${id}: ${metadata.suggestedAction}`)}
@@ -166,7 +154,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
     </div>
   );
 
-  // Framer Motion configuration for smooth transitions
+  // Animation variants
   const motionVariants = {
     enter: { opacity: 1, y: 0, scale: 1 },
     exit: { opacity: 0, y: 20, scale: 0.95 },
@@ -213,23 +201,14 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   );
 };
 
-// --- Notification Manager Context/Provider Wrapper (Conceptual Expansion) ---
-// In a real billion-dollar OS, this component would be managed by a global context/hook.
-// Since we are only modifying this file, we simulate the necessary structure for future integration.
-
 interface ToastContainerProps {
     toasts: NotificationToastProps[];
     onDismiss: (id: string) => void;
 }
 
-/**
- * Container component to manage the stacking and positioning of multiple toasts.
- * This structure is crucial for a scalable notification system.
- */
+// Toast Container
 const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onDismiss }) => {
-    // Sort toasts by ID or timestamp if available to ensure consistent stacking order
     const sortedToasts = useMemo(() => {
-        // Assuming IDs are sortable or represent insertion order
         return [...toasts].sort((a, b) => a.id.localeCompare(b.id));
     }, [toasts]);
 
@@ -246,9 +225,5 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onDismiss }) =>
     );
 };
 
-// Exporting the core component and the container for completeness in a large system
 export { NotificationToast, ToastContainer };
-
-// Default export remains the core component for direct usage if needed, 
-// but in a large system, the container would be the primary entry point.
 export default NotificationToast;
