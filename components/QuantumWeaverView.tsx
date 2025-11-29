@@ -5,9 +5,9 @@ import type { AIPlanStep, AIQuestion, AIPlan } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 // ================================================================================================
-// QUANTUM WEAVER: SOVEREIGN BUSINESS OPERATING SYSTEM (v10.0)
-// ARCHITECT: JAMES BURVEL O'CALLAGHAN III
-// MISSION: OPTIMIZATION OF HUMAN POTENTIAL THROUGH ALGORITHMIC ABUNDANCE
+// QUANTUM WEAVER: BUSINESS OPERATING SYSTEM (v10.0)
+// DEVELOPER: ANONYMOUS CONTRIBUTOR
+// FOCUS: PRACTICAL SYSTEM MANAGEMENT AND DATA PRESENTATION
 // ================================================================================================
 
 const gql = String.raw;
@@ -84,7 +84,7 @@ async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
                 
                 current.status = 'ANALYSIS_COMPLETE';
                 current.result = {
-                    feedback: "The Sovereign AI has analyzed your proposal. The core value proposition aligns with high-growth vectors, though operational resilience requires fortification.",
+                    feedback: "Your proposal has been analyzed. Key strengths are noted, but areas for improvement in operational resilience have been identified.",
                     questions: [
                         { id: 'q1', question: 'Define the autonomous scaling mechanisms for year 3.', category: 'Scale' },
                         { id: 'q2', question: 'How does the model withstand a 40% supply chain disruption?', category: 'Resilience' },
@@ -170,7 +170,7 @@ async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
             "Competitor activity detected. 'StartUp X' is pivoting to your niche. I recommend a preemptive feature release.",
             "Legal compliance is at 85%. The GDPR audit is the only critical blocker for European expansion.",
             "Your team's AI-readiness score is 92/100. Dr. Chen is a key asset here.",
-            "The vision aligns with the James Burvel O'Callaghan III doctrine: Efficiency through intelligence. Proceed."
+            "The current strategy emphasizes efficiency through data-driven insights. Proceed."
         ];
         return { generateAIChatResponse: responses[Math.floor(Math.random() * responses.length)] } as unknown as T;
     }
@@ -527,7 +527,7 @@ const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
                     <div className="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
                         <div className="flex items-center space-x-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="font-bold text-white text-sm">Sovereign AI Assistant</span>
+                            <span className="font-bold text-white text-sm">AI Assistant</span>
                         </div>
                         <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">&times;</button>
                     </div>
@@ -696,7 +696,7 @@ const QuantumWeaverContent: FC = () => {
             <div className="w-64 bg-black border-r border-gray-800 flex flex-col">
                 <div className="p-6 border-b border-gray-800">
                     <h1 className="text-2xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">FINOS<span className="text-white text-xs align-top">PRO</span></h1>
-                    <p className="text-xs text-gray-500 mt-1">Sovereign Business OS v10.0</p>
+                    <p className="text-xs text-gray-500 mt-1">Business OS v10.0</p>
                 </div>
                 <nav className="flex-grow p-4 space-y-2 overflow-y-auto custom-scrollbar">
                     {[
@@ -719,10 +719,10 @@ const QuantumWeaverContent: FC = () => {
                 </nav>
                 <div className="p-4 border-t border-gray-800">
                     <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xs font-bold">JO</div>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xs font-bold">SU</div>
                         <div>
-                            <div className="text-sm font-bold text-white">James O.</div>
-                            <div className="text-xs text-gray-500">Architect Access</div>
+                            <div className="text-sm font-bold text-white">System User</div>
+                            <div className="text-xs text-gray-500">Standard Access</div>
                         </div>
                     </div>
                 </div>
@@ -733,7 +733,7 @@ const QuantumWeaverContent: FC = () => {
                 {/* HEADER */}
                 <header className="sticky top-0 z-20 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 p-6 flex justify-between items-center">
                     <div>
-                        <h2 className="text-xl font-bold text-white">{activeModule === 'DASHBOARD' ? 'Executive Command Center' : activeModule.charAt(0) + activeModule.slice(1).toLowerCase().replace('_', ' ')}</h2>
+                        <h2 className="text-xl font-bold text-white">{activeModule === 'DASHBOARD' ? 'System Overview' : activeModule.charAt(0) + activeModule.slice(1).toLowerCase().replace('_', ' ')}</h2>
                         <p className="text-xs text-gray-400">System Status: <span className="text-green-400">Nominal</span> | AI Latency: 12ms</p>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -748,10 +748,10 @@ const QuantumWeaverContent: FC = () => {
                 <div className="p-6 pb-24">
                     {/* NARRATIVE CONTEXT */}
                     <div className="mb-8 p-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 rounded-lg">
-                        <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">Sovereign Intelligence Architecture (SIA) Directive 10.1</h3>
+                        <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">System Operational Guidelines 10.1</h3>
                         <p className="text-gray-300 text-sm leading-relaxed italic">
-                            "We do not build to compete; we build to transcend. The metrics you see below are not merely financial indicators—they are the pulse of an organism designed for infinite scalability. Efficiency is the only currency that matters in the next epoch."
-                            <br/><span className="text-gray-500 not-italic mt-1 block">— James Burvel O'Callaghan III, Chief Architect</span>
+                            "Our focus is on practical, incremental improvements. The data presented here provides a snapshot of current operations, intended to support informed decision-making. Sustainable growth requires careful attention to detail."
+                            <br/><span className="text-gray-500 not-italic mt-1 block">â€” System Administrator</span>
                         </p>
                     </div>
 
