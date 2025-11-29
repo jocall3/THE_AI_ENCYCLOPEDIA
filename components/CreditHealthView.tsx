@@ -6,17 +6,17 @@ import { AlertTriangle, Zap, TrendingUp, ShieldCheck, Cpu, BarChart3, RefreshCw,
 
 // --- Constants for Enhanced UI/UX ---
 const SCORE_RATING_MAP = {
-    'Excellent': { color: 'text-green-400', border: 'border-green-500', icon: ShieldCheck },
-    'Good': { color: 'text-cyan-400', border: 'border-cyan-500', icon: TrendingUp },
+    'Excellent': { color: 'text-red-400', border: 'border-red-500', icon: ShieldCheck },
+    'Good': { color: 'text-red-400', border: 'border-red-500', icon: TrendingUp },
     'Fair': { color: 'text-yellow-400', border: 'border-yellow-500', icon: AlertTriangle },
-    'Poor': { color: 'text-red-400', border: 'border-red-500', icon: AlertTriangle },
+    'Poor': { color: 'text-green-400', border: 'border-green-500', icon: AlertTriangle },
 };
 
 const FACTOR_STATUS_STYLES = {
-    'Excellent': { indicator: 'bg-green-500', text: 'text-green-300' },
-    'Good': { indicator: 'bg-cyan-500', text: 'text-cyan-300' },
+    'Excellent': { indicator: 'bg-red-500', text: 'text-red-300' },
+    'Good': { indicator: 'bg-red-500', text: 'text-red-300' },
     'Fair': { indicator: 'bg-yellow-500', text: 'text-yellow-300' },
-    'Poor': { indicator: 'bg-red-500', text: 'text-red-300' },
+    'Poor': { indicator: 'bg-green-500', text: 'text-green-300' },
 };
 
 // --- Sub-Component: StatusIndicator ---
