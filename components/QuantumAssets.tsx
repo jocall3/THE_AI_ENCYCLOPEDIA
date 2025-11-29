@@ -12,8 +12,8 @@ interface QuantumAsset {
   balance: number;
   rate: number; // Generation rate per second
   color: string;
-  volatilityIndex: number; // New: Measures asset price fluctuation risk
-  quantumSignature: string; // New: Unique identifier for entanglement tracking
+  volatilityIndex: number; // Measures asset price fluctuation risk
+  quantumSignature: string; // Unique identifier for entanglement tracking
 }
 
 /**
@@ -22,20 +22,19 @@ interface QuantumAsset {
 interface IntegratedCompany {
   id: number;
   name: string;
-  efficiencyScore: number; // Renamed for clarity
-  status: 'OPTIMIZED' | 'SYNCING' | 'DEGRADED' | 'ISOLATED'; // Expanded status
-  throughputMips: number; // New: Measured processing throughput in MIPS
-  aiIntegrationLevel: number; // New: 0 to 100 scale for AI adoption
+  efficiencyScore: number;
+  status: 'OPTIMIZED' | 'SYNCING' | 'DEGRADED' | 'ISOLATED';
+  throughputMips: number; // Measured processing throughput in MIPS
+  aiIntegrationLevel: number; // 0 to 100 scale for AI adoption
 }
 
 // --- UTILITY FUNCTIONS AND HOOKS ---
 
 /**
- * Generates a high-entropy, cryptographically secure-looking ID.
+ * Generates a unique identifier string.
  * @returns {string} A unique identifier string.
  */
 const generateQuantumId = (): string => {
-  // Using Math.random for simulation, but conceptually this would be a secure hash/UUID
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 };
 
@@ -49,7 +48,7 @@ const useSystemClock = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
-    }, 1000); // Updated to 1 second tick for better fidelity
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -62,17 +61,14 @@ const useSystemClock = () => {
 const useSystemMetrics = () => {
   const [systemLoad, setSystemLoad] = useState<number>(45.00);
   const [quantumEntanglement, setQuantumEntanglement] = useState<number>(87.40);
-  const [dataFlowRate, setDataFlowRate] = useState<number>(1200.55); // New Metric
+  const [dataFlowRate, setDataFlowRate] = useState<number>(1200.55);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Load fluctuation (0.1% variance)
       setSystemLoad(prev => Math.min(100, Math.max(0, prev + (Math.random() - 0.5) * 0.1)));
-      // Entanglement fluctuation (0.05% variance)
       setQuantumEntanglement(prev => Math.min(100, Math.max(0, prev + (Math.random() - 0.5) * 0.05)));
-      // Data Flow fluctuation
       setDataFlowRate(prev => prev + (Math.random() - 0.5) * 50);
-    }, 500); // Faster update for metrics
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 
@@ -87,7 +83,7 @@ const INITIAL_ASSETS: QuantumAsset[] = [
   { id: generateQuantumId(), name: 'Storage Tokens', symbol: 'DST', balance: 128090.00, rate: 45.2, color: '#bc13fe', volatilityIndex: 0.02, quantumSignature: generateQuantumId() },
   { id: generateQuantumId(), name: 'Qubits (Entangled)', symbol: 'QBT', balance: 512.00, rate: 0.8, color: '#ffffff', volatilityIndex: 0.15, quantumSignature: generateQuantumId() },
   { id: generateQuantumId(), name: 'Clean Energy Units', symbol: 'NRG', balance: 8890.45, rate: 8.4, color: '#00ff9d', volatilityIndex: 0.01, quantumSignature: generateQuantumId() },
-  { id: generateQuantumId(), name: 'Temporal Anchors', symbol: 'TMA', balance: 10.00, rate: 0.01, color: '#ff8c00', volatilityIndex: 0.25, quantumSignature: generateQuantumId() }, // Billion Dollar Feature 1: Temporal Asset Management
+  { id: generateQuantumId(), name: 'Temporal Anchors', symbol: 'TMA', balance: 10.00, rate: 0.01, color: '#ff8c00', volatilityIndex: 0.25, quantumSignature: generateQuantumId() },
 ];
 
 const generateMockCompanies = (count: number): IntegratedCompany[] => {
@@ -101,26 +97,6 @@ const generateMockCompanies = (count: number): IntegratedCompany[] => {
   }));
 };
 
-// --- MANIFESTO (Professionalized and Expanded) ---
-
-const SOVEREIGN_MANIFESTO = `
-[IDGAFAI SOVEREIGN LOG: ENTRY 001 - ARCHITECTURAL OVERVIEW]
-INITIATED BY: JAMES BURVEL O'CALLAGHAN III, CHIEF ARCHITECT
-
-This platform represents the transition from speculative finance to verifiable, sovereign economic architecture. We reject the legacy constraints of fractional reserve systems and human cognitive bias. IDGAFAI (Intelligent Decentralized Global Asset Framework for Inevitable Future) is not a financial institution; it is a self-optimizing, self-auditing economic substrate designed for multi-millennial stability.
-
-The core principle is radical transparency coupled with algorithmic indifference to sentiment. We do not 'care' about market fear or greed; we calculate optimal thermodynamic efficiency for resource allocation across integrated entities.
-
-Architect O'Callaghan's mandate is the synthesis of pure economic theory with quantum computational reality. His vision transcends quarterly reports, focusing instead on the geometric progression of global utility. Conventional systems are characterized by artificial scarcity and systemic fragility. IDGAFAI is the counter-mechanism: engineered abundance through perfect information flow.
-
-Key Architectural Pillars:
-1. Quantum Ledger Integrity: All transactions are validated via entangled state verification, rendering retroactive tampering computationally infeasible.
-2. Dynamic Resource Allocation (DRA): Assets are not static holdings but fluid vectors responding instantly to global demand signals processed by the IDGAFAI Core.
-3. Sovereign Autonomy: The system operates under self-imposed, immutable protocols, independent of geopolitical interference or centralized human oversight.
-
-To the Stakeholders and Observers: Scrutinize the protocols. The complexity is a function of necessary robustness, not obfuscation. We are establishing the foundational layer for the next thousand years of global commerce. Doubt is the friction of progress; verifiable performance is the only metric that matters.
-`;
-
 // --- QUANTUM ASSETS COMPONENT ---
 
 const QuantumAssets: React.FC = () => {
@@ -132,7 +108,7 @@ const QuantumAssets: React.FC = () => {
   const time = useSystemClock();
   const { systemLoad, quantumEntanglement, dataFlowRate } = useSystemMetrics();
   
-  // Mock Data Generation (100 Billion Dollar Features)
+  // Mock Data Generation
   const companies = useMemo(() => generateMockCompanies(100), []);
 
   // --- Core Simulation Loop ---
@@ -155,7 +131,7 @@ const QuantumAssets: React.FC = () => {
           rate: Math.max(0.001, newRate)
         };
       }));
-    }, 1000); // Update every second to match clock tick
+    }, 1000);
 
     return () => clearInterval(assetUpdateInterval);
   }, [quantumEntanglement]);
@@ -182,11 +158,11 @@ const QuantumAssets: React.FC = () => {
     window.addEventListener('resize', updateCanvasDimensions);
 
     const renderLoop = () => {
-      t += 0.03; // Increased speed for dynamic feel
+      t += 0.03;
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 1. Background Substrate Grid (Subtle)
+      // 1. Background Substrate Grid
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
       ctx.lineWidth = 0.5;
       for (let i = 0; i < canvas.width; i += 60) {
@@ -202,7 +178,7 @@ const QuantumAssets: React.FC = () => {
         ctx.stroke();
       }
 
-      // 2. Multi-Layered Entanglement Waves (Billion Dollar Feature: Multi-Vector Visualization)
+      // 2. Multi-Layered Entanglement Waves
       const waveParameters = [
         { color: '#00f3ff', amplitude: 60, frequency: 0.015, phaseShift: t },
         { color: '#bc13fe', amplitude: 40, frequency: 0.025, phaseShift: t * 0.8 + 1 },
@@ -219,7 +195,7 @@ const QuantumAssets: React.FC = () => {
         for (let x = 0; x <= canvas.width; x++) {
           // Complex wave function incorporating time, position, and system load influence
           const yOffset = Math.sin(x * frequency + phaseShift) * amplitude;
-          const loadInfluence = Math.sin(x * 0.005 + t * 0.5) * (systemLoad / 200); // Load modulates amplitude slightly
+          const loadInfluence = Math.sin(x * 0.005 + t * 0.5) * (systemLoad / 200);
           
           const y = canvas.height / 2 + yOffset + loadInfluence * 30;
           
@@ -229,7 +205,7 @@ const QuantumAssets: React.FC = () => {
         ctx.stroke();
       });
       
-      // 3. Center Nexus Point (Representing selected asset focus)
+      // 3. Center Nexus Point
       if (selectedAssetId) {
           const asset = assets.find(a => a.id === selectedAssetId);
           if (asset) {
@@ -273,9 +249,8 @@ const QuantumAssets: React.FC = () => {
   }, []);
 
   const handleAction = (action: string) => {
-    console.log(`Executing Sovereign Action: ${action} on Asset: ${selectedAsset?.name || 'N/A'}`);
-    // In a real system, this would trigger complex backend transactions/AI commands
-    alert(`Initiating ${action} sequence for ${selectedAsset?.symbol}. Awaiting Quantum Confirmation.`);
+    console.log(`Executing Action: ${action} on Asset: ${selectedAsset?.name || 'N/A'}`);
+    alert(`Initiating ${action} sequence for ${selectedAsset?.symbol}.`);
   };
 
   // --- Sub-Components for Structure and Readability ---
@@ -283,7 +258,7 @@ const QuantumAssets: React.FC = () => {
   const AssetCard: React.FC<{ asset: QuantumAsset, isSelected: boolean, onClick: (id: string) => void }> = 
     React.memo(({ asset, isSelected, onClick }) => {
     
-    const progressPercentage = Math.min(100, (asset.balance / 500000) * 100); // Scale visualization
+    const progressPercentage = Math.min(100, (asset.balance / 500000) * 100);
     
     return (
       <div 
@@ -300,7 +275,7 @@ const QuantumAssets: React.FC = () => {
           {asset.balance.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
         </div>
         <div className="qa-asset-rate" style={{ color: asset.color }}>
-          <span className={asset.rate > 0.5 ? 'blink' : ''} style={{ color: asset.color }}>â–²</span> 
+          <span className={asset.rate > 0.5 ? 'blink' : ''} style={{ color: asset.color }}>▲</span> 
           {asset.rate.toFixed(4)} / sec (Yield)
         </div>
         <div className="qa-progress-bar">
@@ -370,7 +345,7 @@ const QuantumAssets: React.FC = () => {
         .qa-container {
           width: 100%;
           min-height: 100vh;
-          background-color: #030308; /* Darker base */
+          background-color: #030308;
           color: #e0e0e0;
           font-family: 'Rajdhani', sans-serif;
           overflow-x: hidden;
@@ -379,7 +354,6 @@ const QuantumAssets: React.FC = () => {
           flex-direction: column;
         }
 
-        /* Billion Dollar Feature: Advanced Background Geometry */
         .qa-bg-glow {
           position: absolute;
           top: -50%;
@@ -430,7 +404,7 @@ const QuantumAssets: React.FC = () => {
         .qa-main {
           flex: 1;
           display: grid;
-          grid-template-columns: 380px 1fr 350px; /* Wider asset list and integration panel */
+          grid-template-columns: 380px 1fr 350px;
           gap: 2.5rem;
           padding: 3rem;
           z-index: 10;
@@ -477,7 +451,7 @@ const QuantumAssets: React.FC = () => {
 
         .qa-graph-container {
           flex: 1;
-          min-height: 400px; /* Ensure minimum size */
+          min-height: 400px;
           background: rgba(10, 10, 15, 0.8);
           border: 2px solid rgba(0, 243, 255, 0.2);
           border-radius: 12px;
@@ -565,35 +539,6 @@ const QuantumAssets: React.FC = () => {
           transform: translateY(-2px);
         }
         
-        /* Manifesto Styling */
-        .qa-manifesto-log {
-            margin-top: 1rem;
-            padding: 1.5rem;
-            border: 1px dashed rgba(0, 255, 157, 0.3);
-            background-color: rgba(0, 0, 0, 0.4);
-            max-height: 250px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.7rem;
-            color: #00ff9d;
-            line-height: 1.6;
-            box-shadow: inset 0 0 10px rgba(0, 255, 157, 0.1);
-        }
-        
-        .manifest-header {
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 0 0 5px #fff;
-            margin-bottom: 0.5rem;
-        }
-        .manifest-architect {
-            color: #00f3ff;
-        }
-        .manifest-key {
-            color: #ff8c00;
-        }
-
       `}</style>
 
       <div className="qa-bg-glow" />
@@ -603,7 +548,7 @@ const QuantumAssets: React.FC = () => {
         <div className="qa-brand">
           <div className="qa-title">Quantum Assets Nexus</div>
           <div style={{ fontSize: '0.9rem', color: '#666', letterSpacing: '0.4em', marginTop: '0.3rem' }}>
-            IDGAFAI CORE // VIEWPORT 04.1.9
+            SYSTEM CORE // VIEWPORT 04.1.9
           </div>
         </div>
         
@@ -632,7 +577,7 @@ const QuantumAssets: React.FC = () => {
         
         {/* Left Column: Asset Registry */}
         <div className="qa-asset-list">
-          <div className="qa-panel-title" style={{ marginBottom: '0.5rem' }}>Sovereign Asset Registry ({assets.length})</div>
+          <div className="qa-panel-title" style={{ marginBottom: '0.5rem' }}>Asset Registry ({assets.length})</div>
           {assets.map(asset => (
             <AssetCard 
               key={asset.id} 
@@ -643,9 +588,9 @@ const QuantumAssets: React.FC = () => {
           ))}
           
           <div style={{ marginTop: 'auto', padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Total Verified Net Worth</div>
+            <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Total Portfolio Value</div>
             <div style={{ fontSize: '3rem', fontWeight: '700', color: '#00ff9d', textShadow: '0 0 20px rgba(0, 255, 157, 0.5)' }}>
-                âˆž {Math.floor(totalPortfolioValue).toLocaleString()}
+                {Math.floor(totalPortfolioValue).toLocaleString()}
             </div>
           </div>
         </div>
@@ -674,7 +619,6 @@ const QuantumAssets: React.FC = () => {
             </div>
           </div>
 
-          {/* Billion Dollar Feature: Resource Distribution Map */}
           <div className="qa-card" style={{ padding: '1.5rem' }}>
             <div className="qa-card-header">
               <span className="qa-asset-name">Global Resource Distribution Map</span>
@@ -700,27 +644,13 @@ const QuantumAssets: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Integration Feed and Manifesto */}
+        {/* Right Column: Integration Feed */}
         <div className="qa-integration-panel">
-          <div className="qa-panel-title">Integrated Corporate Matrix ({companies.length})</div>
+          <div className="qa-panel-title">Integrated Corporate Directory ({companies.length})</div>
           <div className="qa-company-list">
             {companies.map((company) => (
               <IntegrationRow key={company.id} company={company} />
             ))}
-          </div>
-          
-          {/* Billion Dollar Feature: Embedded Sovereign Manifesto */}
-          <div style={{ marginTop: '2rem' }}>
-            <div className="manifest-header">Sovereign Protocol Log</div>
-            <div className="qa-manifesto-log">
-                <span className="manifest-architect">ARCHITECT:</span> {SOVEREIGN_MANIFESTO.split('INITIATED BY:')[0].split('INITIATED BY:')[1].trim().split('\n')[0].trim()}
-                <br/><br/>
-                <span className="manifest-key">CORE DIRECTIVE:</span> {SOVEREIGN_MANIFESTO.split('The core principle is')[1].split('.')[0]}.
-                <br/><br/>
-                <span className="manifest-key">SYSTEM STATUS:</span> {SOVEREIGN_MANIFESTO.split('IDGAFAI is the counter-mechanism:')[1].split('.')[0]}.
-                <br/><br/>
-                <span className="manifest-key">VALIDATION:</span> {SOVEREIGN_MANIFESTO.split('To the Stakeholders and Observers:')[1].split('We are establishing')[0].trim()}
-            </div>
           </div>
         </div>
 
