@@ -1,6 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
-import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail, CompanyProfile, RealEstateProperty, ArtPiece, AlgoStrategy, VentureStartup } from '../types';
+import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail, CompanyProfile, RealEstateProperty, ArtPiece, AlgoStrategy, VentureStartup, WalletInfo, Recipient, Currency, SecurityProfile, PlaidMetadata } from '../types';
 import { View, WeaverStage } from '../types';
 // FIX: Removed import from empty mockData.ts file. All initial state will be handled within this file.
 
@@ -55,11 +55,6 @@ const generateProsperityCompanies = (): CompanyProfile[] => {
     return companies;
 };
 
-interface WalletInfo {
-    address: string;
-    balance: number; // ETH
-}
-
 interface IDataContext {
   transactions: Transaction[];
   assets: Asset[];
@@ -79,7 +74,7 @@ interface IDataContext {
   setActiveIllusion: (illusion: IllusionType) => void;
   linkedAccounts: LinkedAccount[];
   unlinkAccount: (id: string) => void;
-  handlePlaidSuccess: (publicToken: string, metadata: any) => void;
+  handlePlaidSuccess: (publicToken: string, metadata: PlaidMetadata) => void;
   weaverState: QuantumWeaverState;
   pitchBusinessPlan: (plan: string) => Promise<void>;
   simulateTestPass: () => Promise<void>;
@@ -138,9 +133,9 @@ interface IDataContext {
   invoices: Invoice[];
   complianceCases: ComplianceCase[];
   userPreferences: UserPreferences;
-  fetchRecipients: () => Promise<any>; // Placeholder
-  fetchCurrencies: () => Promise<any>; // Placeholder
-  getUserSecurityProfile: () => Promise<any>; // Placeholder
+  fetchRecipients: () => Promise<Recipient[]>;
+  fetchCurrencies: () => Promise<Currency[]>;
+  getUserSecurityProfile: () => Promise<SecurityProfile>;
   ledgerAccounts: LedgerAccount[];
   fetchLedgerAccounts: () => Promise<void>;
   isLedgerAccountsLoading: boolean;
@@ -353,7 +348,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLinkedAccounts(prev => prev.filter(acc => acc.id !== id));
   };
   
-  const handlePlaidSuccess = (publicToken: string, metadata: any) => {
+  const handlePlaidSuccess = (publicToken: string, metadata: PlaidMetadata) => {
       console.log("Plaid Success:", { publicToken, metadata });
       const newAccount: LinkedAccount = {
           id: metadata.accounts[0].id,
@@ -571,9 +566,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setCounterparties(prev => [...prev, newCounterparty]);
     };
     
-  const fetchRecipients = async () => Promise.resolve([]);
-  const fetchCurrencies = async () => Promise.resolve([]);
-  const getUserSecurityProfile = async () => Promise.resolve({});
+  const fetchRecipients = async () => Promise.resolve<Recipient[]>([]);
+  const fetchCurrencies = async () => Promise.resolve<Currency[]>([]);
+  const getUserSecurityProfile = async () => Promise.resolve<SecurityProfile>({} as SecurityProfile);
 
   const fetchLedgerAccounts = async () => {
     if (!modernTreasuryApiKey || !modernTreasuryOrganizationId) return;
