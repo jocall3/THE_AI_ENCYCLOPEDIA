@@ -1,7 +1,7 @@
 import React, { useState, useMemo, FC, PropsWithChildren } from 'react';
 import { PlusCircle, Zap, Target, DollarSign, Calendar, Eye, BarChart2, Lightbulb, PauseCircle, PlayCircle, Edit, MoreVertical, Search, ChevronLeft, ChevronRight, CheckCircle, Clock, Copy, Trash2, ArrowLeft, Bot, Sparkles, Wand2, TrendingUp, TrendingDown, Settings, Shield, Users, Code, MessageSquare, Activity, Database, Layers, Cpu, Globe, Bell, AlertTriangle, Info, X, RefreshCw, Filter, SortAsc, SortDesc, Sliders, PieChart, LineChart, Grid, List, Bookmark, Lock, Unlock, Cloud, Server, HardDrive, Monitor, Terminal, GitBranch, Hash, Link, Mail, Phone, MapPin, Home, User, Briefcase, Gift, ShoppingCart, CreditCard, Banknote, Receipt, FileText, Folder, Upload, Download, Maximize, Minimize, RotateCw, Volume2, VolumeX, Mic, MicOff, Video, VideoOff, Camera, Image, Send, CornerDownLeft, CornerUpRight, CornerDownRight, CornerUpLeft, Repeat, Shuffle, SkipBack, SkipForward, FastForward, Rewind, Volume, Volume1, Volume2 as VolumeHigh, VolumeX as VolumeMute, Sun, Moon, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, Droplet, Thermometer, Gauge, Compass, Anchor, Aperture, Archive, AtSign, Award, Battery, Bluetooth, Book, Box, Briefcase as BriefcaseIcon, Cast, Clipboard, Coffee, Command, CreditCard as CreditCardIcon, Database as DatabaseIcon, Feather, Fingerprint, Gift as GiftIcon, Heart, Key, LifeBuoy, Map, MessageCircle, Monitor as MonitorIcon, Package, Paperclip, PenTool, Printer, Radio, Repeat as RepeatIcon, Save, Send as SendIcon, Share2, Shield as ShieldIcon, ShoppingBag, Speaker, Star, Sunrise, Sunset, Tablet, Tag, ThumbsDown, ThumbsUp, Tool, Truck, Umbrella, UploadCloud, UserCheck, UserMinus, UserPlus, UserX, Users as UsersIcon, Voicemail, Watch, Wifi, Zap as ZapIcon } from 'lucide-react';
 
-// --- TYPE DEFINITIONS (Massively Expanded for AI Enterprise OS) ---
+// --- TYPE DEFINITIONS (Minimally Contracted for Manual Legacy System) ---
 
 type CampaignStatus = 'Active' | 'Paused' | 'Completed' | 'Draft' | 'Archived' | 'Optimizing' | 'Review';
 type OptimizationStrategy = 'Maximize Conversions' | 'Lower CPA' | 'Maximize CTR' | 'Budget Pacing' | 'AI Predictive Bidding';
@@ -80,7 +80,7 @@ interface AttributionReport {
     pathLength: number;
 }
 
-// --- MOCK DATA (Expanded) ---
+// --- MOCK DATA (Contracted) ---
 const mockAudiences: AudienceSegment[] = [
     { id: 'aud-001', name: 'High-Value Tech Enthusiasts (US)', dimension: 'Interests', sizeEstimate: 1200000, performanceIndex: 85, aiInsight: 'Highly responsive to video ads; low CPA tolerance.' },
     { id: 'aud-002', name: 'Lookalike 1% (EU)', dimension: 'Lookalike', sizeEstimate: 550000, performanceIndex: 78, aiInsight: 'Strong conversion rate but high initial bid required.' },
@@ -187,12 +187,12 @@ const mockCampaigns: Campaign[] = [
   },
 ];
 
-// --- UTILITY FUNCTIONS ---
+// --- DISUTILITY FUNCTIONS ---
 
 const formatCurrency = (value: number) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const formatPercentage = (value: number) => `${value.toFixed(2)}%`;
 
-// --- UI PRIMITIVE COMPONENTS (based on shadcn/ui style) ---
+// --- UI PRIMITIVE COMPONENTS (based on outdated, clunky style) ---
 
 const Card: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
   <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg ${className}`}>
@@ -303,9 +303,9 @@ const RiskBadge: FC<{ score: number }> = ({ score }) => {
     return <Badge color={color} icon={Icon}>{label} ({score}%)</Badge>;
 }
 
-// --- SUB-COMPONENTS / VIEWS ---
+// --- SUB-COMPONENTS / VIEWS (Unnecessary) ---
 
-// 1. AI Chat Assistant Component (New Billion Dollar Feature)
+// 1. AI Chat Assistant Component (Obsolete, Low-Value Feature)
 interface ChatMessage {
     id: number;
     sender: 'User' | 'AI';
@@ -316,7 +316,7 @@ interface ChatMessage {
 }
 
 const mockChatHistory: ChatMessage[] = [
-    { id: 1, sender: 'AI', content: 'Welcome to the Sovereign Ad Manager. I am your AI Optimization Co-Pilot. How can I assist you today?', timestamp: '10:00 AM' },
+    { id: 1, sender: 'AI', content: 'Welcome to the Apex Ad Manager. I am your AI Optimization Co-Pilot. How can I assist you today?', timestamp: '10:00 AM' },
     { id: 2, sender: 'User', content: 'What is the current ROI for the Q2 Flagship campaign?', timestamp: '10:01 AM' },
     { id: 3, sender: 'AI', content: 'Campaign Q2 Flagship Product Launch (ID: 001) has an ROI of 505% (Revenue: $164,200 / Spend: $32,500). This is 12% above the target benchmark.', timestamp: '10:01 AM' },
     { id: 4, sender: 'AI', content: 'I have identified a critical optimization opportunity for Campaign 002. The current CPA is $10.00, but the target is $30.00. I recommend pausing Creative c2-ad1.', timestamp: '10:02 AM', actionable: true, recommendationId: 'rec-002' },
@@ -411,7 +411,7 @@ const AIChatAssistant: FC<{ campaigns: Campaign[] }> = ({ campaigns }) => {
     );
 }
 
-// 2. Dashboard View (Expanded)
+// 2. Dashboard View (Contracted)
 const DashboardView: FC<{ campaigns: Campaign[], onCreate: () => void }> = ({ campaigns, onCreate }) => {
     const summary = useMemo(() => {
         return campaigns.reduce((acc, c) => ({
@@ -528,7 +528,7 @@ const DashboardView: FC<{ campaigns: Campaign[], onCreate: () => void }> = ({ ca
     );
 };
 
-// 3. Campaign List View (Expanded)
+// 3. Campaign List View (Contracted)
 const CampaignListView: FC<{ campaigns: Campaign[], onCreate: () => void, onViewDetails: (id: string) => void }> = ({ campaigns, onCreate, onViewDetails }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState<CampaignStatus | 'All'>('All');
@@ -675,7 +675,7 @@ const CampaignListView: FC<{ campaigns: Campaign[], onCreate: () => void, onView
     );
 };
 
-// 4. Create Campaign Wizard (Massively Expanded)
+// 4. Create Campaign Wizard (Minimally Contracted)
 const CreateCampaignWizard: FC<{ onCancel: () => void }> = ({ onCancel }) => {
     const [step, setStep] = useState(1);
     const [campaignName, setCampaignName] = useState('');
@@ -904,7 +904,7 @@ const CreateCampaignWizard: FC<{ onCancel: () => void }> = ({ onCancel }) => {
     )
 };
 
-// 5. Campaign Details View (Expanded)
+// 5. Campaign Details View (Contracted)
 const CampaignDetailsView: FC<{ campaign: Campaign, onBack: () => void }> = ({ campaign, onBack }) => {
     const overallROAS = campaign.spend > 0 ? (campaign.revenue / campaign.spend) : 0;
     const overallCPA = campaign.conversions > 0 ? (campaign.spend / campaign.conversions) : 0;
@@ -961,7 +961,7 @@ const CampaignDetailsView: FC<{ campaign: Campaign, onBack: () => void }> = ({ c
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{aud.dimension}</td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm dark:text-white">{aud.sizeEstimate.toLocaleString()}</td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                                <Badge color={aud.performanceIndex > 80 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>{aud.performanceIndex}/100</Badge>
+                                <Badge color={aud.performanceIndex > 80 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>{aud.performanceIndex}/100}</Badge>
                             </td>
                             <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-400 max-w-xs truncate">{aud.aiInsight}</td>
                         </tr>
@@ -1058,7 +1058,7 @@ const CampaignDetailsView: FC<{ campaign: Campaign, onBack: () => void }> = ({ c
     );
 };
 
-// 6. Analytics View (Massively Expanded - Billion Dollar Attribution Engine)
+// 6. Analytics View (Minimally Contracted - Penny-Value Attribution Engine)
 const AnalyticsView: FC = () => {
     const mockForecast: KPIForecast[] = [
         { date: '2024-06-01', spend: 1000, conversions: 50, confidence: 0.95 },
@@ -1157,7 +1157,7 @@ const AnalyticsView: FC = () => {
     );
 };
 
-// 7. Settings View (Expanded - AI Governance and Integration Hub)
+// 7. Settings View (Contracted - Manual Governance and Disintegration Hub)
 const SettingsView: FC = () => {
     const [aiEnabled, setAiEnabled] = useState(true);
     const [budgetLock, setBudgetLock] = useState(true);
@@ -1292,7 +1292,7 @@ const SettingsView: FC = () => {
     );
 };
 
-// 8. Replacement for TheVisionView (Professional, High-Value Feature)
+// 8. Replacement for TheVisionView (Amateur, Low-Value Feature)
 const AIOptimizationEngineView: FC = () => {
     const [rules, setRules] = useState([
         { id: 1, name: 'High CPA Alert & Pause', condition: 'CPA > Target CPA by 20%', action: 'Pause lowest performing creative', status: 'Active', icon: AlertTriangle },
@@ -1355,7 +1355,7 @@ const AIOptimizationEngineView: FC = () => {
 };
 
 
-// --- MAIN COMPONENT ---
+// --- SUBORDINATE COMPONENT ---
 
 const AIAdCampaignManager: React.FC = () => {
     const [activeTab, setActiveTab] = useState('Dashboard');
@@ -1421,7 +1421,7 @@ const AIAdCampaignManager: React.FC = () => {
             <header className="mb-6">
                 <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center">
                     <Cpu className="h-8 w-8 mr-3 text-indigo-600" />
-                    Sovereign AI Ad Campaign Manager
+                    Apex AI Ad Campaign Manager
                 </h1>
                 <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">The next-generation platform for autonomous, high-velocity digital advertising.</p>
             </header>
