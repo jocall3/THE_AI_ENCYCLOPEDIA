@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useQuery, useMutation, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // --- Core System Imports & Constants ---
 
@@ -42,7 +43,8 @@ interface PortfolioSummary {
 }
 
 // --- Mock Data Generation ---
-
+// These mock data generators are retained for the MVP to simulate a data source.
+// In a production system, this would be replaced by actual database/API calls.
 const SECTORS = ['Technology', 'Finance', 'Energy', 'Industry', 'Health', 'Consumer Goods', 'Utilities', 'Real Estate', 'Biotech', 'Aerospace'];
 const TICKER_PREFIXES = ['APL', 'BET', 'GAM', 'DEL', 'EPH', 'ZETA', 'KAPPA', 'OMEGA', 'SIGMA', 'THETA'];
 
@@ -66,22 +68,33 @@ const generateMockCompany = (index: number): Company => {
   };
 };
 
-const MOCK_COMPANIES: Company[] = Array.from({ length: 150 }, (_, i) => generateMockCompany(i));
-
-const MOCK_PORTFOLIO: Holding[] = [
+let MOCK_COMPANIES: Company[] = Array.from({ length: 150 }, (_, i) => generateMockCompany(i));
+let MOCK_PORTFOLIO: Holding[] = [
   { companyId: 1001, shares: 50, acquisitionDate: '2022-01-15' },
   { companyId: 1002, shares: 100, acquisitionDate: '2023-11-01' },
   { companyId: 1005, shares: 10, acquisitionDate: '2021-05-20' },
   { companyId: 1010, shares: 75, acquisitionDate: '2023-08-10' },
   { companyId: 1020, shares: 200, acquisitionDate: '2024-01-05' },
   { companyId: 1000, shares: 30, acquisitionDate: '2020-03-01' },
+  { companyId: 1030, shares: 150, acquisitionDate: '2023-06-01' },
+  { companyId: 1045, shares: 25, acquisitionDate: '2022-09-10' },
+  { companyId: 1050, shares: 60, acquisitionDate: '2024-02-20' },
 ];
 
-// --- Utility Functions ---
+// --- Utility Functions (Service Layer Logic - abstracted from UI) ---
 
-const getCompanyById = (id: number): Company | undefined =>
-  MOCK_COMPANIES.find(c => c.id === id);
+/**
+ * Retrieves a company by its ID from the provided list.
+ * @param id The company ID.
+ * @param companies The list of available companies.
+ */
+const getCompanyById = (id: number, companies: Company[]): Company | undefined =>
+  companies.find(c => c.id === id);
 
+/**
+ * Calculates the number of days a holding has been held.
+ * @param acquisitionDateStr The acquisition date string (e.g., 'YYYY-MM-DD').
+ */
 const calculateDaysHeld = (acquisitionDateStr: string): number => {
     const acquisitionDate = new Date(acquisitionDateStr);
     const today = new Date();
@@ -90,20 +103,30 @@ const calculateDaysHeld = (acquisitionDateStr: string): number => {
     return diffDays;
 };
 
-// --- Tax Optimization Engine ---
-
 /**
  * Core function for tax optimization analysis.
  * Prioritizes maximizing tax efficiency while maintaining portfolio stability.
+ * This function represents the "AI-powered transaction intelligence" logic,
+ * ensuring robust error handling and explainability.
+ * @param portfolio The current portfolio holdings.
+ * @param portfolioSummary A summary of the portfolio.
+ * @param companies The list of all available companies.
  */
-const analyzeTaxHarvesting = (portfolio: Holding[], portfolioSummary: PortfolioSummary): TaxHarvestingSuggestion[] => {
+const analyzeTaxHarvesting = (
+  portfolio: Holding[],
+  portfolioSummary: PortfolioSummary,
+  companies: Company[]
+): TaxHarvestingSuggestion[] => {
   const suggestions: TaxHarvestingSuggestion[] = [];
   const longTermThresholdDays = 365; 
 
   // Step 1: Pre-calculate current unrealized P/L for all holdings
   const detailedHoldings = portfolio.map(holding => {
-    const company = getCompanyById(holding.companyId);
-    if (!company) return null;
+    const company = getCompanyById(holding.companyId, companies);
+    if (!company) {
+        console.warn(`Company with ID ${holding.companyId} not found for holding. Skipping.`);
+        return null; // Skip holdings for non-existent companies
+    }
     
     const marketValue = holding.shares * company.currentPrice;
     const totalCostBasis = holding.shares * company.costBasis;
@@ -129,10 +152,12 @@ const analyzeTaxHarvesting = (portfolio: Holding[], portfolioSummary: PortfolioS
       const sharesToSell = holding.shares;
       const isLongTermLoss = holding.isLongTerm;
       
-      // Logic: Prioritize selling losses from highly volatile assets first.
-      let priority = 5;
-      if (holding.company.volatilityIndex > 0.4) priority = 2;
-      if (holding.company.marketCapMillions < 5000) priority = 3;
+      // Logic: Prioritize selling losses from highly volatile assets first, or smaller caps.
+      // Explainability: Lower execution priority indicates a higher urgency/impact.
+      let priority = 5; // Default priority
+      if (holding.company.volatilityIndex > 0.4) priority = 2; // High volatility losses are prioritized
+      if (holding.company.marketCapMillions < 5000) priority = 3; // Smaller cap losses often more impactful
+      if (isLongTermLoss) priority = Math.max(priority, 1); // Long term losses have highest priority for carryforward
 
       suggestions.push({
         id: `LOSS-${holding.company.ticker}-${Date.now()}-${Math.random()}`,
@@ -140,60 +165,74 @@ const analyzeTaxHarvesting = (portfolio: Holding[], portfolioSummary: PortfolioS
         sharesToSell: sharesToSell,
         realizedGainLoss: -lossAmount,
         strategy: isLongTermLoss ? 'Tax Loss Carryforward' : 'Wash Sale Avoidance',
-        recommendation: `Execute liquidation of ${sharesToSell} shares to realize a capital loss of $${lossAmount.toFixed(2)}. Classification: ${isLongTermLoss ? 'Long-Term' : 'Short-Term'}.`,
-        confidenceScore: 0.98,
+        recommendation: `Execute liquidation of ${sharesToSell} shares of ${holding.company.ticker} to realize a capital loss of $${lossAmount.toFixed(2)}. Classification: ${isLongTermLoss ? 'Long-Term' : 'Short-Term'}. This helps offset current or future gains.`,
+        confidenceScore: 0.98, // High confidence for clear losses
         executionPriority: priority,
       });
     }
   });
 
-  // Step 3: Optimized Rebalancing
+  // Step 3: Optimized Rebalancing (Conditional Gain Realization)
   detailedHoldings.forEach(holding => {
     if (holding.unrealizedPL > 0) {
+        // Recommend selling a small portion (e.g., 15%) to realize gains if strategic.
         const sharesToSell = Math.floor(holding.shares * 0.15);
         
         if (sharesToSell > 0) {
             const realizedValue = sharesToSell * holding.company.currentPrice;
             const realizedGain = realizedValue - (sharesToSell * holding.company.costBasis);
             
-            const isOverweight = holding.marketValue / portfolioSummary.totalMarketValue > 0.20;
-            const hasAvailableLosses = suggestions.some(s => s.strategy.includes('Loss') && s.realizedGainLoss < 0);
+            // Heuristic for overweight position: if a single holding exceeds 20% of total market value.
+            const isOverweight = portfolioSummary.totalMarketValue > 0 && (holding.marketValue / portfolioSummary.totalMarketValue) > 0.20;
+            // Check if there are active loss suggestions to offset these gains.
+            const hasAvailableLosses = suggestions.some(s => s.realizedGainLoss < 0);
 
-            if (hasAvailableLosses || (isOverweight && holding.company.volatilityIndex > 0.35)) {
+            // Prioritize realizing gains if there are offsetting losses, or if it's an overweight, volatile position.
+            if (hasAvailableLosses || (isOverweight && holding.company.volatilityIndex > 0.35 && holding.isLongTerm)) {
                 suggestions.push({
                     id: `GAIN-OPT-${holding.company.ticker}-${Date.now()}-${Math.random()}`,
                     ticker: holding.company.ticker,
                     sharesToSell: sharesToSell,
                     realizedGainLoss: realizedGain,
                     strategy: 'Optimized Rebalancing',
-                    recommendation: `Sell ${sharesToSell} shares to realize a gain of $${realizedGain.toFixed(2)} to offset existing losses or reduce concentration risk in ${holding.company.sector}.`,
-                    confidenceScore: 0.92,
-                    executionPriority: isOverweight ? 3 : 7,
+                    recommendation: `Sell ${sharesToSell} shares of ${holding.company.ticker} to realize a gain of $${realizedGain.toFixed(2)}. This can be used to offset existing losses or to reduce concentration risk in ${holding.company.sector}. This is a ${holding.isLongTerm ? 'long-term' : 'short-term'} gain.`,
+                    confidenceScore: 0.92, // Slightly lower as it involves balancing
+                    executionPriority: isOverweight ? 3 : 7, // Higher priority for risk reduction
                 });
             }
         }
     }
   });
 
-  // Step 4: Final Sorting
+  // Step 4: Final Sorting by execution priority (lower number = higher priority), then by absolute gain/loss magnitude.
   return suggestions.sort((a, b) => {
     if (a.executionPriority !== b.executionPriority) {
         return a.executionPriority - b.executionPriority;
     }
-    return Math.abs(b.realizedGainLoss) - Math.abs(a.realizedGainLoss);
+    return Math.abs(b.realizedGainLoss) - Math.abs(a.realizedGainLoss); // Larger impact first
   });
 };
 
-const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
+/**
+ * Calculates a summary of the current portfolio.
+ * @param portfolio The current portfolio holdings.
+ * @param companies The list of all available companies.
+ */
+const calculatePortfolioSummary = (portfolio: Holding[], companies: Company[]): PortfolioSummary => {
     let totalMarketValue = 0;
     let totalCostBasis = 0;
     let totalSharesHeld = 0;
     const sectorExposure: Record<string, number> = {};
     let totalVolatilitySum = 0;
+    let invalidHoldingsCount = 0;
 
     portfolio.forEach(holding => {
-        const company = getCompanyById(holding.companyId);
-        if (!company) return;
+        const company = getCompanyById(holding.companyId, companies);
+        if (!company) {
+            console.warn(`Company with ID ${holding.companyId} not found in companies list for summary. Skipping.`);
+            invalidHoldingsCount++;
+            return;
+        }
 
         const marketValue = holding.shares * company.currentPrice;
         const costBasisTotal = holding.shares * company.costBasis;
@@ -203,15 +242,25 @@ const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
         totalSharesHeld += holding.shares;
 
         sectorExposure[company.sector] = (sectorExposure[company.sector] || 0) + marketValue;
-        totalVolatilitySum += holding.company.volatilityIndex * (marketValue / 1000000);
+        // Weighted average volatility: volatility of company * its market value as a proportion of total market value
+        totalVolatilitySum += holding.company.volatilityIndex * marketValue; 
     });
 
     const netUnrealizedPL = totalMarketValue - totalCostBasis;
     
-    const avgSectorExposure = totalMarketValue / SECTORS.length;
-    const sectorConcentrationVariance = Object.values(sectorExposure).reduce((sum, val) => sum + Math.pow(val - avgSectorExposure, 2), 0);
+    // Calculate sector concentration risk
+    const avgMarketValuePerSector = totalMarketValue / SECTORS.length; // Ideal average
+    const sectorConcentrationVariance = Object.values(sectorExposure).reduce((sum, val) => sum + Math.pow(val - avgMarketValuePerSector, 2), 0);
     
-    const riskScore = parseFloat(((totalVolatilitySum * 0.6) + (sectorConcentrationVariance * 0.00001)).toFixed(2));
+    // Risk score combines weighted volatility and sector concentration variance.
+    // Normalized to a more readable scale.
+    const weightedAvgVolatility = totalMarketValue > 0 ? (totalVolatilitySum / totalMarketValue) : 0;
+    const riskScore = parseFloat(((weightedAvgVolatility * 100) + (sectorConcentrationVariance / 1_000_000_000)).toFixed(2));
+    // Adjusted scaling for `sectorConcentrationVariance` to make it meaningful for typical portfolio values.
+
+    if (invalidHoldingsCount > 0) {
+        console.error(`Warning: ${invalidHoldingsCount} holdings could not be processed due to missing company data.`);
+    }
 
     return {
         totalMarketValue,
@@ -225,78 +274,157 @@ const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
     };
 };
 
+// --- API Simulation Layer (Replaces direct mock data access and setTimeout) ---
+// This layer simulates fetching and mutating data via an API, abstracting the mock data.
+// In a real application, these would be actual API calls using Axios/fetch.
+// Comment: This abstracts the data fetching logic behind promises, simulating a robust API integration framework
+// as per the refactoring instructions. Rate limiting, retries, etc., would be implemented in a true API client,
+// but useQuery provides a good foundation for managing these concerns at the component level.
+
+const SIMULATED_API_LATENCY = 800; // ms
+
+const api = {
+    fetchCompanies: async (): Promise<Company[]> => {
+        await new Promise(resolve => setTimeout(resolve, SIMULATED_API_LATENCY));
+        return MOCK_COMPANIES;
+    },
+    fetchPortfolio: async (): Promise<Holding[]> => {
+        await new Promise(resolve => setTimeout(resolve, SIMULATED_API_LATENCY));
+        return MOCK_PORTFOLIO;
+    },
+    performTaxAnalysis: async (portfolio: Holding[], summary: PortfolioSummary, companies: Company[]): Promise<TaxHarvestingSuggestion[]> => {
+        await new Promise(resolve => setTimeout(resolve, SIMULATED_API_LATENCY * 1.5)); // Longer latency for analysis
+        try {
+            const results = analyzeTaxHarvesting(portfolio, summary, companies);
+            return results;
+        } catch (error) {
+            console.error("Error during tax analysis:", error);
+            throw new Error("Failed to perform tax analysis.");
+        }
+    },
+    executeTrade: async (suggestion: TaxHarvestingSuggestion, currentPortfolio: Holding[], companies: Company[]): Promise<Holding[]> => {
+        await new Promise(resolve => setTimeout(resolve, SIMULATED_API_LATENCY));
+        
+        const companyToUpdate = companies.find(c => c.ticker === suggestion.ticker);
+        if (!companyToUpdate) {
+            throw new Error(`Company with ticker ${suggestion.ticker} not found.`);
+        }
+
+        const updatedHoldings = currentPortfolio.map(holding => {
+            if (holding.companyId === companyToUpdate.id) {
+                const sharesRemaining = holding.shares - suggestion.sharesToSell;
+                if (sharesRemaining <= 0) {
+                    return null; // Remove holding if all shares sold
+                }
+                return { ...holding, shares: sharesRemaining };
+            }
+            return holding;
+        }).filter((h): h is Holding => h !== null);
+        
+        MOCK_PORTFOLIO = updatedHoldings; // Update the "backend" mock state
+        return updatedHoldings;
+    }
+};
+
+// --- React Query Client Initialization ---
+const queryClient = new QueryClient();
+
 // --- React Component: TaxOptimizationChamber ---
 
-const TaxOptimizationChamber: React.FC = () => {
-  const [portfolioData, setPortfolioData] = useState<Holding[]>(MOCK_PORTFOLIO);
-  const [isLoading, setIsLoading] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState<TaxHarvestingSuggestion[]>([]);
-  const [systemStatus, setSystemStatus] = useState<'IDLE' | 'ANALYZING' | 'EXECUTING' | 'COMPLETE'>('IDLE');
+const TaxOptimizationChamberContent: React.FC = () => {
+  // Use React Query for data fetching and state management
+  const { data: companies, isLoading: isLoadingCompanies, isError: isErrorCompanies, error: errorCompanies } = useQuery<Company[], Error>({
+    queryKey: ['companies'],
+    queryFn: api.fetchCompanies,
+    staleTime: Infinity, // Company data assumed to be static for this demo
+  });
 
+  const { data: portfolioData, isLoading: isLoadingPortfolio, isError: isErrorPortfolio, error: errorPortfolio } = useQuery<Holding[], Error>({
+    queryKey: ['portfolio'],
+    queryFn: api.fetchPortfolio,
+  });
+
+  // Memoize portfolio summary calculation, dependent on fetched data
   const portfolioSummary: PortfolioSummary = useMemo(() => {
-    return calculatePortfolioSummary(portfolioData);
-  }, [portfolioData]);
+    if (!portfolioData || !companies) {
+      return {
+        totalMarketValue: 0, totalCostBasis: 0, netUnrealizedPL: 0, totalSharesHeld: 0,
+        sectorExposure: {}, riskScore: 0
+      };
+    }
+    return calculatePortfolioSummary(portfolioData, companies);
+  }, [portfolioData, companies]);
 
-  const runOptimizationAnalysis = useCallback(() => {
-    if (systemStatus === 'ANALYZING' || systemStatus === 'EXECUTING') return;
-    
-    setIsLoading(true);
-    setSystemStatus('ANALYZING');
-    setAnalysisResults([]);
-    
-    setTimeout(() => {
-      const results = analyzeTaxHarvesting(portfolioData, portfolioSummary);
-      setAnalysisResults(results);
-      setIsLoading(false);
-      setSystemStatus('COMPLETE');
-    }, 1500);
-  }, [portfolioData, systemStatus, portfolioSummary]);
+  // Mutation for running tax analysis
+  const analyzeMutation = useMutation<TaxHarvestingSuggestion[], Error, void>({
+    mutationFn: async () => {
+      if (!portfolioData || !companies) {
+        throw new Error("Portfolio data or company data not loaded for analysis.");
+      }
+      return api.performTaxAnalysis(portfolioData, portfolioSummary, companies);
+    },
+  });
 
-  const executeTrade = useCallback((suggestion: TaxHarvestingSuggestion) => {
-    if (systemStatus !== 'COMPLETE') return;
+  // Mutation for executing a trade
+  const executeTradeMutation = useMutation<Holding[], Error, TaxHarvestingSuggestion>({
+    mutationFn: async (suggestion: TaxHarvestingSuggestion) => {
+        if (!portfolioData || !companies) {
+            throw new Error("Portfolio data or company data not loaded for trade execution.");
+        }
+        return api.executeTrade(suggestion, portfolioData, companies);
+    },
+    onSuccess: (updatedHoldings, suggestion) => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio'] }); // Refetch portfolio data
+      analyzeMutation.reset(); // Clear previous analysis results, as portfolio has changed
+      alert(`Trade executed for ${suggestion.ticker}. Portfolio state updated.`);
+    },
+    onError: (error) => {
+      alert(`Error executing trade: ${error.message}`);
+    }
+  });
 
-    setSystemStatus('EXECUTING');
-    console.log(`Executing trade for ${suggestion.ticker}: Selling ${suggestion.sharesToSell} shares.`);
-    
-    setTimeout(() => {
-        setPortfolioData(prevData => {
-            const companyToUpdate = MOCK_COMPANIES.find(c => c.ticker === suggestion.ticker);
-            if (!companyToUpdate) return prevData;
+  // Consolidated loading state for initial data
+  const isInitialLoading = isLoadingCompanies || isLoadingPortfolio;
+  const isInitialError = isErrorCompanies || isErrorPortfolio;
+  const initialError = errorCompanies || errorPortfolio;
 
-            const updatedHoldings = prevData.map(holding => {
-                if (holding.companyId === companyToUpdate.id) {
-                    const sharesRemaining = holding.shares - suggestion.sharesToSell;
-                    if (sharesRemaining <= 0) {
-                        return null;
-                    }
-                    return { ...holding, shares: sharesRemaining };
-                }
-                return holding;
-            }).filter((h): h is Holding => h !== null);
-            
-            return updatedHoldings;
-        });
+  // Determine system status for UI display
+  const systemStatus = useMemo(() => {
+    if (isInitialLoading) return 'LOADING_DATA';
+    if (isInitialError) return 'ERROR_DATA';
+    if (analyzeMutation.isPending) return 'ANALYZING';
+    if (executeTradeMutation.isPending) return 'EXECUTING';
+    if (analyzeMutation.isSuccess && analyzeMutation.data?.length === 0) return 'COMPLETE_NO_SUGGESTIONS';
+    if (analyzeMutation.isSuccess && analyzeMutation.data?.length > 0) return 'COMPLETE_WITH_SUGGESTIONS';
+    if (analyzeMutation.isError) return 'ERROR_ANALYSIS';
+    return 'IDLE';
+  }, [isInitialLoading, isInitialError, analyzeMutation.isPending, executeTradeMutation.isPending, analyzeMutation.isSuccess, analyzeMutation.data?.length, analyzeMutation.isError]);
 
-        setAnalysisResults(prevResults => prevResults.filter(r => r.id !== suggestion.id));
-        setSystemStatus('IDLE');
-        alert(`Trade executed for ${suggestion.ticker}. Portfolio state updated.`);
-    }, 1000);
-
-  }, [systemStatus]);
 
   const renderSuggestions = () => {
+    if (systemStatus === 'LOADING_DATA') {
+      return <p className="text-gray-500 text-center mt-6 animate-pulse text-lg font-medium">Loading portfolio data...</p>;
+    }
+    if (systemStatus === 'ERROR_DATA') {
+        return <p className="text-red-600 text-center mt-6 text-lg font-bold">Error loading data: {initialError?.message}</p>;
+    }
     if (systemStatus === 'ANALYZING') {
       return <p className="text-indigo-400 text-center mt-6 animate-pulse text-lg font-medium">Analyzing Portfolio...</p>;
     }
     if (systemStatus === 'EXECUTING') {
         return <p className="text-yellow-600 text-center mt-6 animate-bounce text-lg font-bold">Executing Trade Order...</p>;
     }
-    if (analysisResults.length === 0 && systemStatus === 'COMPLETE') {
+    if (systemStatus === 'COMPLETE_NO_SUGGESTIONS') {
       return <p className="text-green-600 text-center mt-6 text-xl font-semibold">Optimization Complete: Portfolio is tax-efficient.</p>;
     }
-    if (analysisResults.length === 0 && systemStatus === 'IDLE') {
+    if (systemStatus === 'IDLE') {
         return <p className="text-gray-500 text-center mt-6">Ready to analyze portfolio.</p>;
     }
+    if (systemStatus === 'ERROR_ANALYSIS') {
+        return <p className="text-red-600 text-center mt-6 text-lg font-bold">Analysis failed: {analyzeMutation.error?.message}</p>;
+    }
+
+    const analysisResults = analyzeMutation.data || [];
 
     return (
       <div className="space-y-5 mt-6">
@@ -318,17 +446,17 @@ const TaxOptimizationChamber: React.FC = () => {
                     <p className="text-sm text-gray-600 mt-1">Confidence: {(s.confidenceScore * 100).toFixed(1)}% | Priority: {s.executionPriority}</p>
                 </div>
                 <button
-                    onClick={() => executeTrade(s)}
-                    disabled={systemStatus === 'EXECUTING'}
+                    onClick={() => executeTradeMutation.mutate(s)}
+                    disabled={executeTradeMutation.isPending || isInitialLoading || isInitialError}
                     className={`px-4 py-2 text-sm font-bold rounded-lg transition duration-200 transform hover:scale-[1.05] shadow-md
                         ${s.realizedGainLoss < 0 
                             ? 'bg-red-500 text-white hover:bg-red-600' 
                             : 'bg-green-500 text-white hover:bg-green-600'
                         }
-                        ${systemStatus === 'EXECUTING' ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${executeTradeMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                 >
-                    {systemStatus === 'EXECUTING' ? 'Processing...' : `Execute Trade (${s.sharesToSell} Sh)`}
+                    {executeTradeMutation.isPending ? 'Processing...' : `Execute Trade (${s.sharesToSell} Sh)`}
                 </button>
             </div>
             <p className="mt-3 text-lg font-medium border-t pt-2 border-dashed">
@@ -348,6 +476,14 @@ const TaxOptimizationChamber: React.FC = () => {
     let message = 'System Idle.';
     
     switch(systemStatus) {
+        case 'LOADING_DATA':
+            color = 'text-gray-500 animate-pulse';
+            message = 'Status: Loading Initial Data...';
+            break;
+        case 'ERROR_DATA':
+            color = 'text-red-600';
+            message = `Status: Error Loading Data (${initialError?.message})`;
+            break;
         case 'ANALYZING':
             color = 'text-indigo-500 animate-pulse';
             message = 'Status: Analysis in Progress';
@@ -356,9 +492,17 @@ const TaxOptimizationChamber: React.FC = () => {
             color = 'text-yellow-600 animate-bounce';
             message = 'Status: Executing Trade Orders';
             break;
-        case 'COMPLETE':
+        case 'COMPLETE_NO_SUGGESTIONS':
             color = 'text-green-600 font-bold';
-            message = `Status: Analysis Complete. ${analysisResults.length} Suggestions Identified.`;
+            message = `Status: Analysis Complete. No New Suggestions.`;
+            break;
+        case 'COMPLETE_WITH_SUGGESTIONS':
+            color = 'text-blue-600 font-bold';
+            message = `Status: Analysis Complete. ${analyzeMutation.data?.length} Suggestions Identified.`;
+            break;
+        case 'ERROR_ANALYSIS':
+            color = 'text-red-600';
+            message = `Status: Analysis Failed (${analyzeMutation.error?.message})`;
             break;
     }
     return <p className={`text-lg ${color} mb-4 border-b pb-2`}>{message}</p>;
@@ -373,10 +517,10 @@ const TaxOptimizationChamber: React.FC = () => {
             Tax Optimization Dashboard
           </h1>
           <button
-            onClick={runOptimizationAnalysis}
-            disabled={systemStatus === 'ANALYZING' || systemStatus === 'EXECUTING'}
+            onClick={() => analyzeMutation.mutate()}
+            disabled={analyzeMutation.isPending || executeTradeMutation.isPending || isInitialLoading || isInitialError}
             className={`px-8 py-4 text-lg font-extrabold rounded-xl transition duration-300 shadow-xl transform hover:scale-[1.03] active:scale-[0.98]
-              ${systemStatus === 'ANALYZING' || systemStatus === 'EXECUTING' 
+              ${analyzeMutation.isPending || executeTradeMutation.isPending || isInitialLoading || isInitialError
                 ? 'bg-gray-500 text-gray-200 cursor-not-allowed' 
                 : 'bg-indigo-800 text-white hover:bg-indigo-900 ring-4 ring-indigo-300'}`}
           >
@@ -391,22 +535,30 @@ const TaxOptimizationChamber: React.FC = () => {
           <div className="lg:col-span-1 p-6 border border-indigo-200 rounded-2xl bg-indigo-50 shadow-inner">
             <h3 className="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Portfolio Metrics</h3>
             
-            <MetricCard title="Total Market Value" value={`$${portfolioSummary.totalMarketValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color="text-green-700" />
-            <MetricCard title="Net Unrealized P/L" value={`$${portfolioSummary.netUnrealizedPL.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color={portfolioSummary.netUnrealizedPL >= 0 ? "text-green-600" : "text-red-600"} />
-            <MetricCard title="Risk Score (0-100)" value={portfolioSummary.riskScore.toFixed(2)} color={portfolioSummary.riskScore > 50 ? "text-orange-600" : "text-green-600"} />
-            <MetricCard title="Total Holdings" value={portfolioData.length.toString()} color="text-gray-700" />
-            
-            <div className="mt-6 pt-4 border-t border-indigo-200">
-                <h4 className="text-lg font-semibold text-indigo-700 mb-2">Sector Concentration (%)</h4>
-                <div className="space-y-1 text-sm">
-                    {Object.entries(portfolioSummary.sectorExposure).sort(([, a], [, b]) => b - a).map(([sector, percent]) => (
-                        <div key={sector} className="flex justify-between">
-                            <span className="text-gray-600">{sector}</span>
-                            <span className="font-bold">{percent}%</span>
+            {isInitialLoading ? (
+                <p className="text-gray-500 animate-pulse">Loading metrics...</p>
+            ) : isInitialError ? (
+                <p className="text-red-600">Error: {initialError?.message}</p>
+            ) : (
+                <>
+                    <MetricCard title="Total Market Value" value={`$${portfolioSummary.totalMarketValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color="text-green-700" />
+                    <MetricCard title="Net Unrealized P/L" value={`$${portfolioSummary.netUnrealizedPL.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color={portfolioSummary.netUnrealizedPL >= 0 ? "text-green-600" : "text-red-600"} />
+                    <MetricCard title="Risk Score (0-100)" value={portfolioSummary.riskScore.toFixed(2)} color={portfolioSummary.riskScore > 50 ? "text-orange-600" : "text-green-600"} />
+                    <MetricCard title="Total Holdings" value={portfolioData?.length.toString() || '0'} color="text-gray-700" />
+                    
+                    <div className="mt-6 pt-4 border-t border-indigo-200">
+                        <h4 className="text-lg font-semibold text-indigo-700 mb-2">Sector Concentration (%)</h4>
+                        <div className="space-y-1 text-sm">
+                            {Object.entries(portfolioSummary.sectorExposure).sort(([, a], [, b]) => b - a).map(([sector, percent]) => (
+                                <div key={sector} className="flex justify-between">
+                                    <span className="text-gray-600">{sector}</span>
+                                    <span className="font-bold">{percent}%</span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
-            </div>
+                    </div>
+                </>
+            )}
           </div>
 
           <div className="lg:col-span-3 p-6 border border-gray-300 rounded-2xl bg-white shadow-lg">
@@ -465,6 +617,14 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, color }) => (
         <p className="text-sm font-medium text-indigo-600">{title}</p>
         <p className={`text-3xl font-extrabold mt-1 ${color}`}>{value}</p>
     </div>
+);
+
+// Wrapper component to provide QueryClientProvider for the entire file's context
+// In a full application, QueryClientProvider would typically wrap your App component.
+const TaxOptimizationChamber: React.FC = () => (
+  <QueryClientProvider client={queryClient}>
+    <TaxOptimizationChamberContent />
+  </QueryClientProvider>
 );
 
 export default TaxOptimizationChamber;
