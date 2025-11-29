@@ -445,6 +445,6 @@ export {
   CardFooter,
   CardKpi,
   CardList,
-  CardInputGroup, // Exporting the new component
+  CardInputGroup,
   AICard
 };
