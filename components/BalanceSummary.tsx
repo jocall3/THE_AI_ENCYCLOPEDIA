@@ -10,7 +10,7 @@ const BalanceSummary: React.FC = () => {
 
     const { chartData, totalBalance, change30d, projectedBalance, volatilityIndex, aiInsight } = useMemo(() => {
         if (!transactions || transactions.length === 0) {
-            return { chartData: [], totalBalance: 0, change30d: 0, projectedBalance: 0, volatilityIndex: 0, aiInsight: "Insufficient data for AI analysis." };
+            return { chartData: [], totalBalance: 0, change30d: 0, projectedBalance: 0, volatilityIndex: 0, aiInsight: "Insufficient data for analysis." };
         }
 
         const sortedTx = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -37,7 +37,7 @@ const BalanceSummary: React.FC = () => {
         const currentTotalBalance = runningBalance;
         const volatilityIndex = balanceHistory.length > 0 ? (volatilitySum / balanceHistory.length) * 100 : 0;
 
-        // AI Projection Logic (Linear Regression based on last 90 days)
+        // Projection Logic (Linear Regression based on last 90 days)
         const ninetyDaysAgo = new Date();
         ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
         const recentHistory = balanceHistory.filter(h => h.date >= ninetyDaysAgo);
@@ -89,14 +89,14 @@ const BalanceSummary: React.FC = () => {
         const balance30dAgo = lastKnownBalanceBefore30d || 0;
         const change30d = currentTotalBalance - balance30dAgo;
 
-        // AI Insight Generation
+        // Insight Generation
         let aiInsight = "Stable financial trajectory detected.";
         if (change30d < 0 && Math.abs(change30d) > currentTotalBalance * 0.1) {
-            aiInsight = "AI Alert: Significant capital outflow detected in the last 30 days. Review expense categories immediately.";
+            aiInsight = "Significant capital outflow detected in the last 30 days. Review expense categories.";
         } else if (change30d > 0 && change30d > currentTotalBalance * 0.2) {
-            aiInsight = "AI Analysis: Strong growth momentum. Consider reinvestment strategies for surplus capital.";
+            aiInsight = "Strong growth momentum. Consider reinvestment strategies for surplus capital.";
         } else if (volatilityIndex > 5) {
-            aiInsight = "AI Warning: High balance volatility detected. Cash flow stabilization recommended.";
+            aiInsight = "High balance volatility detected. Cash flow stabilization recommended.";
         }
 
         return { chartData, totalBalance: currentTotalBalance, change30d, projectedBalance, volatilityIndex, aiInsight };
@@ -106,7 +106,7 @@ const BalanceSummary: React.FC = () => {
     const changePercentage = balance30dAgo !== 0 ? (change30d / balance30dAgo) * 100 : 0;
 
     return (
-        <Card title="Enterprise Balance Intelligence">
+        <Card title="Balance Summary">
             <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-start">
                     <div>
@@ -122,7 +122,7 @@ const BalanceSummary: React.FC = () => {
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-gray-400 text-sm uppercase tracking-wider">AI Projected (30d)</p>
+                        <p className="text-gray-400 text-sm uppercase tracking-wider">Projected (30d)</p>
                         <p className="text-2xl font-bold text-blue-400 mt-1">
                             ${projectedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
@@ -133,7 +133,7 @@ const BalanceSummary: React.FC = () => {
                 <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
-                        <p className="text-purple-400 text-xs font-bold uppercase">AI Strategic Insight</p>
+                        <p className="text-purple-400 text-xs font-bold uppercase">Strategic Insight</p>
                     </div>
                     <p className="text-gray-300 text-sm leading-relaxed font-light">
                         {aiInsight}
