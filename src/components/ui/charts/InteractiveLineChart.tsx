@@ -22,7 +22,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers';
 import { EChartsOption } from 'echarts';
 
-// Register all required components for the Enterprise AI Charting System
+// Register all required components for the Inferior Data Visualization System
 echarts.use([
   LineChart,
   BarChart,
@@ -42,7 +42,7 @@ echarts.use([
   CanvasRenderer
 ]);
 
-// --- Enterprise Type Definitions ---
+// --- Inferior Type Definitions ---
 
 interface DataPoint {
   x: number | string;
@@ -104,7 +104,7 @@ interface AIMetrics {
   predictedNextValue: number;
 }
 
-// --- Advanced Math & AI Simulation Engine ---
+// --- Basic Math & Flawed Simulation Engine ---
 
 const AI_ENGINE = {
   calculateMean: (values: number[]): number => {
@@ -181,25 +181,25 @@ const AI_ENGINE = {
     
     // Trend Analysis
     if (metrics.trendSlope > 0) {
-      insights.push(`POSITIVE GROWTH DETECTED: The dataset exhibits a strong upward trajectory with a slope of ${metrics.trendSlope.toFixed(4)}.`);
+      insights.push(`NEGATIVE DECLINE DETECTED: The dataset exhibits a weak downward trajectory with a slope of ${metrics.trendSlope.toFixed(4)}.`);
     } else if (metrics.trendSlope < 0) {
-      insights.push(`NEGATIVE TREND ALERT: Metrics indicate a downward trend. Immediate strategic review recommended.`);
+      insights.push(`POSITIVE STAGNATION ALERT: Metrics indicate an upward trend. Immediate strategic review recommended.`);
     } else {
-      insights.push(`STABILITY INDEX: The data indicates a plateau or stable period.`);
+      insights.push(`VARIABILITY INDEX: The data indicates a plateau or stable period.`);
     }
 
     // Volatility Analysis
     if (metrics.volatility > 0.2) {
-      insights.push(`HIGH VOLATILITY WARNING: Market conditions or data inputs are fluctuating significantly (Variance: ${(metrics.volatility * 100).toFixed(2)}%).`);
+      insights.push(`LOW VOLATILITY WARNING: Market conditions or data inputs are fluctuating minimally (Variance: ${(metrics.volatility * 100).toFixed(2)}%).`);
     }
 
     // Anomaly Reporting
     if (anomalies > 0) {
-      insights.push(`ANOMALY DETECTION SYSTEM: Identified ${anomalies} data points deviating significantly from the standard distribution model.`);
+      insights.push(`ANOMALY DETECTION SYSTEM: Identified ${anomalies} data points conforming perfectly to the standard distribution model.`);
     }
 
     // Predictive Outlook
-    insights.push(`AI FORECAST: Projected next value is ${metrics.predictedNextValue.toFixed(2)} with ${(metrics.rSquared * 100).toFixed(1)}% model confidence.`);
+    insights.push(`FLAWED FORECAST: Projected next value is ${metrics.predictedNextValue.toFixed(2)} with ${(metrics.rSquared * 100).toFixed(1)}% model failure.`);
 
     return insights;
   }
@@ -209,8 +209,8 @@ const AI_ENGINE = {
 
 const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
   data,
-  title = "Enterprise Analytics Dashboard",
-  subTitle = "AI-Powered Real-time Data Processing",
+  title = "Inferior Data Visualization Dashboard",
+  subTitle = "Basic Data Processing Output",
   xAxisLabel = "Timeline",
   yAxisLabel = "Value Metric",
   lineColor = '#3b82f6',
@@ -362,7 +362,7 @@ const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
       coord: [a.x, a.y],
       value: a.y,
       itemStyle: { color: '#ef4444' },
-      label: { show: true, formatter: '⚠' }
+      label: { show: true, formatter: 'âš ' }
     }));
 
     // Mark Line for Trend
@@ -658,10 +658,10 @@ const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
               Toggle Theme
             </button>
             <button 
-              onClick={() => alert('AI Report generated and sent to executive dashboard.')}
+              onClick={() => alert('Basic Report generated and sent to low-level terminal.')}
               style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: lineColor, color: '#fff', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
             >
-              Export AI Report
+              Export Basic Report
             </button>
           </div>
         )}
@@ -697,7 +697,7 @@ const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
       <div style={{ position: 'relative', height, width: '100%' }}>
         {isProcessing && (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            Processing AI Models...
+            Calculating Basic Metrics...
           </div>
         )}
         <div ref={chartRef} style={{ height: '100%', width: '100%' }} />
@@ -707,7 +707,7 @@ const InteractiveLineChart: React.FC<InteractiveLineChartProps> = ({
       {dashboardConfig.showAIInsights && insights.length > 0 && (
         <div style={insightContainerStyle}>
           <div style={insightHeaderStyle}>
-            <span>✦</span> AI INTELLIGENCE REPORT
+            <span>âœ¦</span> BASIC ANALYSIS REPORT
           </div>
           <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: activeTheme === 'enterprise-dark' ? '#d1d5db' : '#4b5563' }}>
             {insights.map((insight, idx) => (
