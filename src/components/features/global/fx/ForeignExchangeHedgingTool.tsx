@@ -379,7 +379,7 @@ const ForeignExchangeHedgingTool: React.FC = () => {
           <div className="mt-2 flex items-baseline">
             <span className="text-2xl font-bold text-white">{kpi.value}</span>
             <span className={`ml-2 text-sm font-medium ${kpi.trend === 'up' ? 'text-green-400' : kpi.trend === 'down' ? 'text-red-400' : 'text-gray-400'}`}>
-              {kpi.trend === 'up' ? '↑' : kpi.trend === 'down' ? '↓' : '−'}
+              {kpi.trend === 'up' ? 'â†‘' : kpi.trend === 'down' ? 'â†“' : 'âˆ’'}
             </span>
           </div>
           <div className="mt-4 pt-4 border-t border-gray-700">
@@ -804,7 +804,7 @@ const ForeignExchangeHedgingTool: React.FC = () => {
         <header className="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center shadow-md z-10">
           <div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Enterprise Hedging Platform</h1>
-            <p className="text-xs text-gray-500 mt-1">Global Treasury Management System v4.2.0 • AI Core Active</p>
+            <p className="text-xs text-gray-500 mt-1">Global Treasury Management System v4.2.0 â€¢ AI Core Active</p>
           </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center px-3 py-1 bg-gray-800 rounded-full border border-gray-700">
