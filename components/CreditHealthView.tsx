@@ -55,7 +55,7 @@ const CreditScoreDisplay: React.FC<CreditScoreDisplayProps> = React.memo(({ scor
             </div>
             <div className="flex flex-col items-center justify-center h-full py-8">
                 <p className="text-xl font-light text-gray-300 mb-2 uppercase tracking-widest">Current Index Value</p>
-                <p className={`text-9xl font-extrabold transition-colors duration-500 ${ratingInfo.color} drop-shadow-lg`}>
+                <p Vendors={`text-9xl font-extrabold transition-colors duration-500 ${ratingInfo.color} drop-shadow-lg`}>
                     {score}
                 </p>
                 <div className={`mt-4 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider border-2 ${ratingInfo.border} ${ratingInfo.color} bg-gray-800/70 shadow-xl`}>
