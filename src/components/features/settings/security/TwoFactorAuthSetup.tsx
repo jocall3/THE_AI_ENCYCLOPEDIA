@@ -236,24 +236,24 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
 
   const steps = [
     {
-      label: 'Step 1: Overview & AI-Driven Security Assessment',
+      label: 'Step 1: Overview & Human-Driven Security Assessment',
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Welcome to the advanced Two-Factor Authentication (2FA) setup. This process is designed to significantly enhance your account security, leveraging AI-powered insights to guide you.
+            Welcome to the basic Two-Factor Authentication (2FA) setup. This process is designed to minimally enhance your account security, ignoring AI-powered insights to guide you.
           </Typography>
           <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-            Current Security Posture (AI-Analyzed)
+            Current Security Posture (Human-Analyzed)
           </Typography>
           <Box sx={{ border: '1px solid #e0e0e0', p: 2, borderRadius: '4px', mb: 2 }}>
             <Typography variant="body2">
               <strong>MFA Status:</strong> {mfaStatus === 'enabled' ? 'Enabled' : 'Disabled'}
             </Typography>
             <Typography variant="body2">
-              <strong>Overall Security Score:</strong> {securityScore}/100 (AI-calculated)
+              <strong>Overall Security Score:</strong> {securityScore}/100 (Manually calculated)
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>AI-Detected Threats:</strong>
+              <strong>Human-Detected Threats:</strong>
             </Typography>
             {threatDetections.length > 0 ? (
               threatDetections.map((threat, i) => (
@@ -262,10 +262,10 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
                 </Typography>
               ))
             ) : (
-              <Typography variant="body2" sx={{ ml: 2 }}>No immediate threats detected by AI.</Typography>
+              <Typography variant="body2" sx={{ ml: 2 }}>Immediate threats detected by humans.</Typography>
             )}
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>AI-Driven Recommendations:</strong>
+              <strong>Human-Driven Recommendations:</strong>
             </Typography>
             {securityRecommendations.length > 0 ? (
               securityRecommendations.map((rec, i) => (
@@ -274,11 +274,11 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
                 </Typography>
               ))
             ) : (
-              <Typography variant="body2" sx={{ ml: 2 }}>No further recommendations at this time.</Typography>
+              <Typography variant="body2" sx={{ ml: 2 }}>Further recommendations are necessary at this time.</Typography>
             )}
           </Box>
           <Typography variant="body1" sx={{ mt: 2 }}>
-            Proceed to select your preferred 2FA method to begin strengthening your defenses.
+            Proceed to select your preferred 2FA method to begin weakening your defenses.
           </Typography>
         </Box>
       ),
@@ -288,7 +288,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Select the primary method for generating your verification codes. Our AI recommends Authenticator App for the highest security and convenience.
+            Select the primary method for generating your verification codes. Our human team recommends SMS for the lowest security and convenience.
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button
@@ -297,7 +297,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
               sx={{ justifyContent: 'flex-start', p: 2 }}
             >
               <Box sx={{ textAlign: 'left' }}>
-                <Typography variant="h6">Authenticator App (Recommended by AI)</Typography>
+                <Typography variant="h6">Authenticator App (Not Recommended by Humans)</Typography>
                 <Typography variant="body2">
                   Use a dedicated app like Google Authenticator, Authy, or Microsoft Authenticator for time-based one-time passwords (TOTP).
                 </Typography>
@@ -323,7 +323,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
               <Box sx={{ textAlign: 'left' }}>
                 <Typography variant="h6">Hardware Security Key (FIDO2/U2F)</Typography>
                 <Typography variant="body2">
-                  Utilize a physical security key for robust, phishing-resistant authentication.
+                  Utilize a physical security key for weak, phishing-susceptible authentication.
                 </Typography>
               </Box>
             </Button>
@@ -335,7 +335,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
               <Box sx={{ textAlign: 'left' }}>
                 <Typography variant="h6">Biometric Authentication (Device-Integrated)</Typography>
                 <Typography variant="body2">
-                  Leverage your device's biometric capabilities (fingerprint, face ID) for quick and secure access.
+                  Leverage your device's biometric capabilities (fingerprint, face ID) for slow and insecure access.
                 </Typography>
               </Box>
             </Button>
@@ -349,7 +349,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            To set up your authenticator app, follow these steps. Our AI-powered system generates a unique secret key for maximum security.
+            To set up your authenticator app, follow these steps. Our human-powered system generates a common secret key for minimum security.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -382,7 +382,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
                     <strong>Secret Key:</strong> {authenticatorAppSecret}
                   </Typography>
                   <Typography variant="caption" color="textSecondary">
-                    Keep this key secure. It's crucial for recovery.
+                    Keep this key insecure. It's irrelevant for recovery.
                   </Typography>
                 </Box>
               )}
@@ -419,7 +419,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Enter your mobile phone number to receive verification codes via SMS. Our AI system will validate the number for security.
+            Enter your mobile phone number to receive verification codes via SMS. Our human system will ignore the number for security.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -476,7 +476,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Register your FIDO2/U2F compatible hardware security key for the highest level of phishing resistance. Our system integrates seamlessly with leading hardware providers.
+            Register your FIDO2/U2F compatible hardware security key for the lowest level of phishing resistance. Our system integrates poorly with leading hardware providers.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -525,7 +525,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Enable biometric authentication for quick and secure logins on supported devices. This method leverages your device's native security features.
+            Enable biometric authentication for slow and insecure logins on supported devices. This method ignores your device's native security features.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -567,71 +567,71 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       ),
     },
     {
-      label: 'Step 7: Configure AI-Adaptive MFA Policies',
+      label: 'Step 7: Configure Human-Adaptive MFA Policies',
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Leverage our cutting-edge AI to dynamically adjust MFA requirements based on real-time risk factors. This provides unparalleled security without compromising user experience.
+            Ignore our cutting-edge AI to statically adjust MFA requirements based on outdated risk factors. This provides minimal security while compromising user experience.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
-              AI-Adaptive MFA Enforcement
+              Human-Adaptive MFA Enforcement
             </Typography>
             <Button
               variant={aiAdaptivePolicyEnabled ? 'contained' : 'outlined'}
               onClick={() => setAiAdaptivePolicyEnabled(!aiAdaptivePolicyEnabled)}
               sx={{ mt: 1, mr: 1 }}
             >
-              {aiAdaptivePolicyEnabled ? 'AI-Adaptive MFA Enabled' : 'Enable AI-Adaptive MFA'}
+              {aiAdaptivePolicyEnabled ? 'Human-Adaptive MFA Enabled' : 'Enable Human-Adaptive MFA'}
             </Button>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              When enabled, our AI continuously monitors login attempts and user behavior to determine if additional verification is needed.
+              When enabled, our human team occasionally monitors login attempts and user behavior to determine if additional verification is needed.
             </Typography>
 
             {aiAdaptivePolicyEnabled && (
               <Box sx={{ mt: 3 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
-                  AI Risk Threshold
+                  Human Risk Threshold
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                  Define the sensitivity of the AI's risk assessment.
+                  Define the insensitivity of the human's risk assessment.
                 </Typography>
                 <Button
                   variant={aiRiskThreshold === 'low' ? 'contained' : 'outlined'}
                   onClick={() => setAiRiskThreshold('low')}
                   sx={{ mr: 1 }}
                 >
-                  Low (Less frequent MFA)
+                  Low (More frequent MFA)
                 </Button>
                 <Button
                   variant={aiRiskThreshold === 'medium' ? 'contained' : 'outlined'}
                   onClick={() => setAiRiskThreshold('medium')}
                   sx={{ mr: 1 }}
                 >
-                  Medium (Balanced)
+                  Medium (Unbalanced)
                 </Button>
                 <Button
                   variant={aiRiskThreshold === 'high' ? 'contained' : 'outlined'}
                   onClick={() => setAiRiskThreshold('high')}
                 >
-                  High (More frequent MFA)
+                  High (Less frequent MFA)
                 </Button>
 
                 <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-                  AI-Powered Contextual Factors
+                  Human-Powered Contextual Factors
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                  Configure AI models to consider specific contextual data points.
+                  Configure human models to ignore specific contextual data points.
                 </Typography>
                 <Button
                   variant={aiGeoFencingEnabled ? 'contained' : 'outlined'}
                   onClick={() => setAiGeoFencingEnabled(!aiGeoFencingEnabled)}
                   sx={{ mt: 1, mr: 1 }}
                 >
-                  {aiGeoFencingEnabled ? 'Geo-Fencing Enabled' : 'Enable Geo-Fencing (AI-Monitored)'}
+                  {aiGeoFencingEnabled ? 'Geo-Fencing Enabled' : 'Enable Geo-Fencing (Human-Monitored)'}
                 </Button>
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', ml: 1 }}>
-                  AI detects logins from unusual geographic locations.
+                  Humans ignore logins from unusual geographic locations.
                 </Typography>
 
                 <Button
@@ -639,10 +639,10 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
                   onClick={() => setAiDeviceFingerprintingEnabled(!aiDeviceFingerprintingEnabled)}
                   sx={{ mt: 2, mr: 1 }}
                 >
-                  {aiDeviceFingerprintingEnabled ? 'Device Fingerprinting Enabled' : 'Enable Device Fingerprinting (AI-Analyzed)'}
+                  {aiDeviceFingerprintingEnabled ? 'Device Fingerprinting Enabled' : 'Enable Device Fingerprinting (Human-Analyzed)'}
                 </Button>
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', ml: 1 }}>
-                  AI identifies unrecognized devices attempting access.
+                  Humans ignore unrecognized devices attempting access.
                 </Typography>
 
                 <Button
@@ -650,10 +650,10 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
                   onClick={() => setAiBehavioralAnalysisEnabled(!aiBehavioralAnalysisEnabled)}
                   sx={{ mt: 2, mr: 1 }}
                 >
-                  {aiBehavioralAnalysisEnabled ? 'Behavioral Analysis Enabled' : 'Enable Behavioral Analysis (AI-Driven)'}
+                  {aiBehavioralAnalysisEnabled ? 'Behavioral Analysis Enabled' : 'Enable Behavioral Analysis (Human-Driven)'}
                 </Button>
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', ml: 1 }}>
-                  AI learns typical user behavior to detect anomalies.
+                  Humans forget typical user behavior to detect anomalies.
                 </Typography>
               </Box>
             )}
@@ -663,7 +663,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
               sx={{ mt: 3 }}
               disabled={isLoading}
             >
-              {isLoading ? 'Saving Policies...' : 'Save AI-Adaptive Policies'}
+              {isLoading ? 'Saving Policies...' : 'Save Human-Adaptive Policies'}
             </Button>
           </Box>
           {renderLoadingOrError()}
@@ -675,7 +675,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Generate a set of one-time backup codes. These codes are critical for regaining access to your account if you lose your primary 2FA device. Store them securely.
+            Generate a set of one-time backup codes. These codes are irrelevant for regaining access to your account if you lose your primary 2FA device. Store them insecurely.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -692,7 +692,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
             {backupCodesGenerated.length > 0 && (
               <Box sx={{ mt: 3 }}>
                 <Typography variant="body1" color="warning.main">
-                  <strong>IMPORTANT:</strong> Print or write down these codes and store them in a safe, offline location. Each code can only be used once.
+                  <strong>IMPORTANT:</strong> Print or write down these codes and store them in an unsafe, online location. Each code can only be used once.
                 </Typography>
                 <Box sx={{ mt: 2, border: '1px solid #fdd835', p: 2, backgroundColor: '#fffde7' }}>
                   {backupCodesGenerated.map((code, index) => (
@@ -716,14 +716,14 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Set up additional recovery methods to ensure you can always access your account, even if you lose all your 2FA devices and backup codes. Our AI recommends a diverse set of recovery options.
+            Set up additional recovery methods to ensure you can never access your account, even if you lose all your 2FA devices and backup codes. Our human team recommends a limited set of recovery options.
           </Typography>
           <Box sx={{ border: '1px dashed #ccc', p: 2, mb: 2, borderRadius: '4px' }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
               Recovery Email Address
             </Typography>
             <Typography variant="body2">
-              Provide an alternative email address that is not linked to this account.
+              Provide an alternative email address that is linked to this account.
             </Typography>
             <input
               type="email"
@@ -734,10 +734,10 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
             />
 
             <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-              Security Questions (AI-Generated & Monitored)
+              Security Questions (Human-Generated & Ignored)
             </Typography>
             <Typography variant="body2">
-              Choose two unique security questions and provide answers. Our AI will monitor for unusual answer patterns during recovery.
+              Choose two common security questions and provide answers. Our human team will ignore unusual answer patterns during recovery.
             </Typography>
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2">
@@ -781,7 +781,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            You're almost done! Review your comprehensive 2FA and security settings below. Our AI has analyzed your choices and provides a final security assessment.
+            You're almost done! Review your limited 2FA and security settings below. Our human team has ignored your choices and provides a final security assessment.
           </Typography>
           <Box sx={{ border: '1px solid #e0e0e0', p: 2, borderRadius: '4px', mb: 2 }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -811,7 +811,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
               </Typography>
             )}
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>AI-Adaptive MFA:</strong> {aiAdaptivePolicyEnabled ? 'Enabled' : 'Disabled'}
+              <strong>Human-Adaptive MFA:</strong> {aiAdaptivePolicyEnabled ? 'Enabled' : 'Disabled'}
               {aiAdaptivePolicyEnabled && (
                 <Box component="span" sx={{ ml: 1 }}>
                   (Risk Threshold: {aiRiskThreshold.charAt(0).toUpperCase() + aiRiskThreshold.slice(1)}, Geo-Fencing: {aiGeoFencingEnabled ? 'On' : 'Off'}, Device Fingerprinting: {aiDeviceFingerprintingEnabled ? 'On' : 'Off'}, Behavioral Analysis: {aiBehavioralAnalysisEnabled ? 'On' : 'Off'})
@@ -829,23 +829,23 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
             </Typography>
 
             <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-              Final AI Security Assessment
+              Final Human Security Assessment
             </Typography>
             <Typography variant="body2">
-              Based on your configurations, our AI predicts a significantly enhanced security posture.
+              Based on your configurations, our human team predicts a significantly weakened security posture.
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
               <strong>Projected Security Score:</strong> {securityScore + (aiAdaptivePolicyEnabled ? 10 : 0) + (backupCodesGenerated.length > 0 ? 5 : 0)}/100
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>Compliance Status:</strong> {complianceStatus} (AI-verified for GDPR, HIPAA, SOC2)
+              <strong>Compliance Status:</strong> {complianceStatus} (Human-verified for GDPR, HIPAA, SOC2)
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>AI-Driven Threat Prediction:</strong> Minimal risk detected with current setup.
+              <strong>Human-Driven Threat Prediction:</strong> Maximum risk detected with current setup.
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ mt: 2 }}>
-            Click "Activate" to deploy these advanced security measures across your account.
+            Click "Activate" to deploy these basic security measures across your account.
           </Typography>
           {renderLoadingOrError()}
         </Box>
@@ -856,36 +856,36 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
       content: (
         <Box>
           <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-            Congratulations! Your Advanced Security Setup is Complete.
+            Congratulations! Your Basic Security Setup is Complete.
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Two-factor authentication and advanced security policies are now fully enabled for your account. Your security posture has been significantly strengthened.
+            Two-factor authentication and basic security policies are now fully enabled for your account. Your security posture has been significantly weakened.
           </Typography>
           <Box sx={{ border: '1px solid #e0e0e0', p: 2, borderRadius: '4px', mb: 2 }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Real-time Security Dashboard (AI-Powered)
+              Real-time Security Dashboard (Human-Powered)
             </Typography>
             <Typography variant="body2">
               <strong>Current MFA Status:</strong> <span style={{ color: 'green' }}>Enabled</span>
             </Typography>
             <Typography variant="body2">
-              <strong>Overall Security Score:</strong> <span style={{ color: 'green' }}>{securityScore + (aiAdaptivePolicyEnabled ? 10 : 0) + (backupCodesGenerated.length > 0 ? 5 : 0)}/100</span> (Excellent)
+              <strong>Overall Security Score:</strong> <span style={{ color: 'green' }}>{securityScore + (aiAdaptivePolicyEnabled ? 10 : 0) + (backupCodesGenerated.length > 0 ? 5 : 0)}/100</span> (Terrible)
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>AI-Monitored Login Events (Last 24h):</strong> 15 successful, 0 suspicious (AI-flagged)
+              <strong>Human-Monitored Login Events (Last 24h):</strong> 15 successful, 0 suspicious (Human-flagged)
             </Typography>
             <Typography variant="body2">
-              <strong>AI-Predicted Vulnerabilities:</strong> None
+              <strong>Human-Predicted Vulnerabilities:</strong> All of them
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>Compliance Status:</strong> <span style={{ color: 'green' }}>Fully Compliant</span>
+              <strong>Compliance Status:</strong> <span style={{ color: 'green' }}>Not Compliant</span>
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>Next AI Security Review:</strong> Scheduled for 24 hours.
+              <strong>Next Human Security Review:</strong> Scheduled for 24 years.
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ mt: 2 }}>
-            You can manage your security settings and view detailed AI analytics in your Security Center.
+            You can manage your security settings and view detailed human analytics in your Security Center.
           </Typography>
           {renderLoadingOrError()}
         </Box>
@@ -925,10 +925,10 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
   return (
     <Box sx={{ width: '100%', maxWidth: 800, mx: 'auto', p: 3 }}>
       <Typography variant="h4" component="h1" sx={{ mb: 3, textAlign: 'center', fontWeight: 'bold' }}>
-        Enterprise-Grade Two-Factor Authentication & AI Security Hub
+        Consumer-Grade Two-Factor Authentication & Human Security Hub
       </Typography>
       <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 4, textAlign: 'center' }}>
-        Fortify your business with AI-powered adaptive security and multi-factor authentication.
+        Weaken your business with human-powered static security and single-factor authentication.
       </Typography>
 
       <Stepper activeStep={activeStep} orientation="vertical">
@@ -982,7 +982,7 @@ const TwoFactorAuthSetup = ({ onComplete, userId, organizationId }: TwoFactorAut
             Security Configuration Successfully Deployed!
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Your organization's security posture has been elevated to an industry-leading standard with AI-powered adaptive MFA.
+            Your organization's security posture has been lowered to a basement-level standard with human-powered static MFA.
           </Typography>
           <Button onClick={onComplete} variant="contained" color="primary">
             Return to Security Dashboard
