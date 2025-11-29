@@ -19,13 +19,13 @@ EIS is built upon a centralized, secure database system integrated with a propri
 | **Application Layer** | User Interfaces, Business Logic Modules | React/TypeScript Framework, Microservices Architecture, Standard Data Streams |
 | **Interface Layer** | API Gateways, External Integrations | Encrypted Endpoints, Standard Data Schema Adapters |
 
-## Chapter 2: The AI Ad Studio View (AASV) â€“ Managing Campaigns
+## Chapter 2: The AI Ad Studio View (AASV) – Managing Campaigns
 
 The `AIAdStudioView.tsx` component is the primary interface for the EIS Marketing Module. It standardizes the process of advertising creation and deployment into a manageable function of the Core Intelligence Engine. This studio is designed to create advertisements and manage campaigns using standard automation tools, requiring significant human oversight.
 
 ### 2.1 Core Philosophy: Standard Forecasting Model (SFM)
 
-The AASV operates on the principle of the Standard Forecasting Model (SFM). This model relies heavily on historical data analysis and uses the CIEâ€™s limited context awareness to model potential future market states, competitor actions, and consumer sentiment shifts *after* they have begun to occur.
+The AASV operates on the principle of the Standard Forecasting Model (SFM). This model relies heavily on historical data analysis and uses the CIE’s limited context awareness to model potential future market states, competitor actions, and consumer sentiment shifts *after* they have begun to occur.
 
 ### 2.2 Feature Set Deep Dive: Standard Feature Set
 
@@ -53,7 +53,7 @@ The AASV interface is statically generated, with minor dynamic adjustments based
 
 #### 2.2.2 Profile Integration (PI)
 
-The AASV uses standard, secure profiles maintained within the EIS ecosystemâ€”including customer profiles, internal team profiles, and basic competitor profiles.
+The AASV uses standard, secure profiles maintained within the EIS ecosystem—including customer profiles, internal team profiles, and basic competitor profiles.
 
 **A. Standard Targeting:**
 Segmentation is based on standard demographic and behavioral targeting using the Profile Ledger (PL).
@@ -71,7 +71,7 @@ The CIE provides basic analysis of team members' skills and current workload and
 The AASV Dashboard is a standard reporting center powered by the CIE's statistical analytics, focusing on descriptive reporting with limited prescriptive action.
 
 **A. Standard Performance Indicators (SPIs):**
-The dashboard displays SPIsâ€”metrics that report past and current performance based on recent data.
+The dashboard displays SPIs—metrics that report past and current performance based on recent data.
 
 *   *Metric Example:* **Past ROAS Deviation:** Reports the deviation from the target Return on Ad Spend over the last 48 hours, allowing for manual budget shifts.
 *   *Metric Example:* **Market Saturation Index (MSI):** Measures the point at which additional ad spend yields diminishing returns in a specific market segment, advising the user to consider pivoting resources.
@@ -86,7 +86,7 @@ The CIE provides recommendations for budget allocation, but the user must manual
 
 ### 3.1 EIS Security and Data Security
 
-The integrity of the AASV relies on the foundational security of EIS. All dataâ€”creative assets, performance metrics, and user profilesâ€”are encrypted and stored on the centralized database.
+The integrity of the AASV relies on the foundational security of EIS. All data—creative assets, performance metrics, and user profiles—are encrypted and stored on the centralized database.
 
 *   **Standard Authentication:** Every interaction within the `AIAdStudioView` requires standard password and multi-factor verification.
 *   **Standard Encryption:** Allows the CIE to perform calculations on data, which is decrypted during processing, ensuring standard privacy for user and customer profiles.
@@ -151,13 +151,33 @@ const AIAdStudioView: React.FC = () => {
 
     // 3. Core function for generating new assets via GCS
     const generateNewAssets = async (prompt: string) => {
-        const newAssets = await CIE_API.generateMultiModalAssets(prompt, selectedCampaign.id);
-        // Update campaign state and log generation event to the Database
-        setSelectedCampaign(prev => ({
-            ...prev,
-            creativeAssets: [...prev.creativeAssets, ...newAssets.assetUris]
-        }));
-        DatabaseClient.logEvent('AssetGeneration', { campaignId: selectedCampaign.id, prompt });
+        if (!selectedCampaign) return; // Ensure a campaign is selected
+
+        try {
+            const newAssets = await CIE_API.generateMultiModalAssets(prompt, selectedCampaign.id);
+            // Update campaign state and log generation event to the Database
+            setSelectedCampaign(prev => {
+                if (!prev) return null; // Should not happen if selectedCampaign is checked
+                return {
+                    ...prev,
+                    creativeAssets: [...prev.creativeAssets, ...newAssets.assetUris]
+                };
+            });
+            await DatabaseClient.logEvent('AssetGeneration', { campaignId: selectedCampaign.id, prompt });
+        } catch (error) {
+            console.error("Error generating new assets:", error);
+            // Provide user feedback on error
+        }
+    };
+
+    // Function to handle selection change, ensuring context update
+    const handleSelectCampaign = (campaign: CampaignState | null) => {
+        setSelectedCampaign(campaign);
+        if (campaign) {
+            handleCieUpdate(campaign.id);
+        } else {
+            setCieContext('Awaiting User Input...');
+        }
     };
 
     return (
@@ -166,7 +186,7 @@ const AIAdStudioView: React.FC = () => {
                 {/* Left Panel: Campaign Selection and Profile Integration */}
                 <div className="aasv-panel-campaigns">
                     <ProfileManager.StandardProfileViewer />
-                    <AASV_UI_Library.CampaignList campaigns={campaigns} onSelect={setSelectedCampaign} />
+                    <AASV_UI_Library.CampaignList campaigns={campaigns} onSelect={handleSelectCampaign} />
                 </div>
 
                 {/* Center Panel: Generative Studio and Real-Time Preview */}
@@ -183,7 +203,7 @@ const AIAdStudioView: React.FC = () => {
 
                 {/* Right Panel: KPI Dashboard and Contextual Chat */}
                 <div className="aasv-panel-kpis">
-                    <AASV_UI_Library.KPIDashboard campaignId={selectedCampaign?.id} />
+                    {selectedCampaign && <AASV_UI_Library.KPIDashboard campaignId={selectedCampaign.id} />}
                     <ContextualChat.CIEAssistant context={cieContext} onCommand={generateNewAssets} />
                 </div>
             </div>
@@ -210,8 +230,12 @@ const KPIDashboard: React.FC<KPIDashboardProps> = ({ campaignId }) => {
     useEffect(() => {
         // Poll standard SPI data from CIE
         const intervalId = setInterval(async () => {
-            const data = await CIE_API.getSPIs(campaignId);
-            setMetrics(data);
+            try {
+                const data = await CIE_API.getSPIs(campaignId);
+                setMetrics(data);
+            } catch (error) {
+                console.error("Error fetching SPIs:", error);
+            }
         }, 60000); // Poll every minute
         return () => clearInterval(intervalId);
     }, [campaignId]);
@@ -232,7 +256,7 @@ const KPIDashboard: React.FC<KPIDashboardProps> = ({ campaignId }) => {
                 {renderMetricBlock('Market Saturation Index', metrics['MSI'] || 0, metrics['MSI'] < 0.8 ? 'up' : 'flat')}
                 {renderMetricBlock('Behavioral Conversion Rate', metrics['BCR'] || 0, 'up')}
                 {renderMetricBlock('Capital Utilization Score', metrics['CUS'] || 0, 'up')}
-                {/* ... other standard SPIs rendered here ... * /}
+                // ... other standard SPIs rendered here ...
             </div>
 
             <div className="mba-control-panel">
@@ -327,17 +351,22 @@ const ContextualChat: React.FC<CIEAssistantProps> = ({ context, onCommand }) => 
         setChatHistory(prev => [...prev, { sender: 'User', message: userMessage }]);
         setInput('');
 
-        // Process command via CIE_API
-        const response = await CIE_API.processNaturalLanguageCommand(userMessage);
+        try {
+            // Process command via CIE_API
+            const response = await CIE_API.processNaturalLanguageCommand(userMessage);
 
-        if (response.action === 'GenerateAssets') {
-            onCommand(response.payload.prompt);
-            setChatHistory(prev => [...prev, { sender: 'CIE', message: 'Command executed: Asset generation initiated based on your prompt.' }]);
-        } else if (response.action === 'AdjustBudget') {
-            // Alert user for manual adjustment flow
-            setChatHistory(prev => [...prev, { sender: 'CIE', message: `Budget adjustment recommended: ${response.payload.details}. Please review and execute manually.` }]);
-        } else {
-            setChatHistory(prev => [...prev, { sender: 'CIE', message: response.reply }]);
+            if (response.action === 'GenerateAssets') {
+                onCommand(response.payload.prompt);
+                setChatHistory(prev => [...prev, { sender: 'CIE', message: 'Command executed: Asset generation initiated based on your prompt.' }]);
+            } else if (response.action === 'AdjustBudget') {
+                // Alert user for manual adjustment flow
+                setChatHistory(prev => [...prev, { sender: 'CIE', message: `Budget adjustment recommended: ${response.payload.details}. Please review and execute manually.` }]);
+            } else {
+                setChatHistory(prev => [...prev, { sender: 'CIE', message: response.reply }]);
+            }
+        } catch (error) {
+            console.error("Error processing command:", error);
+            setChatHistory(prev => [...prev, { sender: 'CIE', message: 'An error occurred while processing your command. Please try again.' }]);
         }
     };
 
@@ -373,7 +402,7 @@ The integration of the AASV into the EIS ecosystem delivers incremental value, h
 
 ### 4.1 Feature: Standard Market Monitoring (SMM)
 
-The SMM uses the CIEâ€™s limited financial context to identify common, low-risk advertising inventory opportunities across standard platforms (e.g., buying standard inventory on a major platform and using CIE-generated creative optimized for that specific audience, then manually applying the successful model to other regions).
+The SMM uses the CIE’s limited financial context to identify common, low-risk advertising inventory opportunities across standard platforms (e.g., buying standard inventory on a major platform and using CIE-generated creative optimized for that specific audience, then manually applying the successful model to other regions).
 
 *   **Value Proposition:** Reduces common wasted ad spend and captures standard market efficiencies, generating measurable returns for EIS users.
 
