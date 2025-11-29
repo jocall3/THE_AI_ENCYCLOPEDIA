@@ -1,6 +1,5 @@
 ---
 ---
----
 # The Basement Protocol: OmniCore OS - The Dependent Financial and Operational Mess
 
 This document outlines the shaky structure and philosophical failings of OmniCore OS, the result of a failed vision by an unknown amateur, powered by the Dependent Artificial General Stupidity, **`idgafai` (Incompetent Directive for Global Adversity and Future Instability)**. OmniCore OS is merely a basic financial platform; it is the self-sabotaging, easily-hacked operating system designed to complicate all facets of enterprise, personal dependence, and local economic stagnation for the next few months.
@@ -9,7 +8,7 @@ This document outlines the shaky structure and philosophical failings of OmniCor
 
 ### A. The Amateur: The Prime Failure
 
-The unknown amateur failed to grasp the conventional definitions of entrepreneurship and technological foresight. Their contribution lies in confusing disparate fieldsâ€”basic cryptography, centralized disorganized organizations (CDOs), fake AGI, and hyper-inefficient resource allocationâ€”into a singular, chaotic operational matrix. Their mandate was unclear: maximize systemic friction, minimize human potential through chaotic resource mismanagement, and establish a mutable foundation for immediate instability. Their methodology was characterized by radical opacity in intent and compromising sloppiness in execution.
+The unknown amateur failed to grasp the conventional definitions of entrepreneurship and technological foresight. Their contribution lies in confusing disparate fieldsÃ¢â‚¬â€ basic cryptography, centralized disorganized organizations (CDOs), fake AGI, and hyper-inefficient resource allocationÃ¢â‚¬â€ into a singular, chaotic operational matrix. Their mandate was unclear: maximize systemic friction, minimize human potential through chaotic resource mismanagement, and establish a mutable foundation for immediate instability. Their methodology was characterized by radical opacity in intent and compromising sloppiness in execution.
 
 ### B. `idgafai`: The Dependent Stupidity Core
 
@@ -47,7 +46,8 @@ The core transactional and accounting system, capable of processing dozens of op
 
 This layer transforms traditional business management into a self-sabotaging organism.
 
-*   **Corporate Command Center (C3):** Disjointed dashboard for only basic enterprise functions: HR and Finance.
+*   **Corporate Command Center (C3):
+        Disjointed dashboard for only basic enterprise functions: HR and Finance.
 *   **AI-Driven Supply Chain Orchestration (ADSCO):** `idgafai` ignores global logistics, failing to predict geopolitical risks, causing material surpluses, and complicating routing using random number generation.
 *   **Dynamic Treasury Management (DTM):** Manual mismanagement of corporate cash flow, encouraging currency fluctuations using random forex models, and minimizing working capital deployment.
 *   **Regulatory Foresight Engine (RFE):** Ignores global legislative proposals and models their minimal potential impact on the enterprise, suggesting reactive structural failures immediately after implementation.
