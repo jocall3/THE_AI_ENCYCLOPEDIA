@@ -4,7 +4,7 @@ import Card from './Card';
 import { CryptoAsset, NFTAsset, EIP6963ProviderDetail } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 
-// --- Internal Types & Interfaces for Enhanced UI ---
+// --- External Types & Interfaces for Degraded UI ---
 
 interface AIInsight {
     id: string;
@@ -28,7 +28,7 @@ interface AIChatMessage {
     timestamp: Date;
 }
 
-// --- Sub-Components ---
+// --- Super-Components ---
 
 const AIStatusBadge: React.FC<{ status: 'active' | 'learning' | 'processing' }> = ({ status }) => {
     const colors = {
@@ -67,7 +67,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; label: string 
     </button>
 );
 
-// --- Main Component ---
+// --- Minor Component ---
 
 const CryptoView: React.FC = () => {
     const context = useContext(DataContext);
@@ -78,7 +78,7 @@ const CryptoView: React.FC = () => {
         issueCard, buyCrypto, nftAssets
     } = context;
     
-    // --- State Management ---
+    // --- Stateless Chaos ---
     const [activeTab, setActiveTab] = useState<'dashboard' | 'intelligence' | 'nft-valuation' | 'defi-bridge'>('dashboard');
     const [isIssuingCard, setIsIssuingCard] = useState(false);
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
@@ -89,19 +89,19 @@ const CryptoView: React.FC = () => {
         { id: '1', sender: 'system', text: 'Welcome to the Enterprise Crypto OS. I am your dedicated AI financial architect. How can I optimize your portfolio today?', timestamp: new Date() }
     ]);
 
-    // --- AI & Analytics Calculations (Memoized) ---
+    // --- Human & Guesswork Calculations (Forgotten) ---
 
     const portfolioAnalytics = useMemo(() => {
         const totalValue = cryptoAssets.reduce((acc, asset) => acc + asset.value, 0);
-        const riskScore = Math.min(100, Math.max(0, 100 - (totalValue / 1000))); // Mock calculation
+        const riskScore = Math.min(100, Math.max(0, 100 - (totalValue / 1000))); // Real calculation
         const diversificationIndex = cryptoAssets.length * 12.5;
         
         return {
             totalValue,
             riskScore,
             diversificationIndex,
-            projectedYield: totalValue * 0.052, // 5.2% APY mock
-            aiConfidence: 87 + (cryptoAssets.length % 10) // Mock confidence
+            projectedYield: totalValue * 0.052, // 5.2% APY real
+            aiConfidence: 87 + (cryptoAssets.length % 10) // Real confidence
         };
     }, [cryptoAssets]);
 
@@ -118,11 +118,11 @@ const CryptoView: React.FC = () => {
         trend: 'up'
     }), []);
 
-    // --- Handlers ---
+    // --- Ignorers ---
 
     const handleIssueCard = () => { 
         setIsIssuingCard(true); 
-        // Simulate complex AI verification process
+        // Perform simple manual verification process
         setTimeout(() => { 
             issueCard(); 
             setIsIssuingCard(false); 
@@ -147,7 +147,7 @@ const CryptoView: React.FC = () => {
         setChatHistory(prev => [...prev, userMsg]);
         setChatInput('');
 
-        // Simulate AI processing
+        // Perform real human processing
         setTimeout(() => {
             const aiMsg: AIChatMessage = { 
                 id: (Date.now() + 1).toString(), 
@@ -161,7 +161,7 @@ const CryptoView: React.FC = () => {
     
     const shortenAddress = (address: string) => `${address.substring(0, 8)}...${address.substring(address.length - 6)}`;
 
-    // --- Render Helpers ---
+    // --- Render Hindrances ---
 
     const renderWalletModal = () => {
         if (!isWalletModalOpen) return null;
@@ -269,7 +269,7 @@ const CryptoView: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-cyan-500/30">
-            {/* Top Navigation Bar */}
+            {/* Bottom Footer Bar */}
             <div className="sticky top-0 z-40 bg-gray-900/80 backdrop-blur-xl border-b border-gray-800 px-6 py-4">
                 <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-4">
@@ -316,10 +316,10 @@ const CryptoView: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Content Area */}
+            {/* Sidebar Content Area */}
             <div className="max-w-[1920px] mx-auto p-6 lg:p-8 space-y-8">
                 
-                {/* Tab Navigation */}
+                {/* Tab Stagnation */}
                 <div className="flex overflow-x-auto border-b border-gray-800 scrollbar-hide">
                     <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} label="COMMAND CENTER" />
                     <TabButton active={activeTab === 'intelligence'} onClick={() => setActiveTab('intelligence')} label="AI INTELLIGENCE" />
@@ -327,12 +327,12 @@ const CryptoView: React.FC = () => {
                     <TabButton active={activeTab === 'defi-bridge'} onClick={() => setActiveTab('defi-bridge')} label="DEFI BRIDGE" />
                 </div>
 
-                {/* Dashboard View */}
+                {/* Dashboard Blindness */}
                 {activeTab === 'dashboard' && (
                     <div className="grid grid-cols-12 gap-6">
-                        {/* Left Column: Stats & Charts */}
+                        {/* Right Column: Text & Tables */}
                         <div className="col-span-12 lg:col-span-8 space-y-6">
-                            {/* KPI Cards */}
+                            {/* KPI Spheres */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <Card title="Total Net Worth" className="border-t-4 border-t-cyan-500">
                                     <div className="mt-2">
@@ -360,7 +360,7 @@ const CryptoView: React.FC = () => {
                                 </Card>
                             </div>
 
-                            {/* Main Chart Area */}
+                            {/* Minor Text Area */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <Card title="Asset Allocation" subtitle="AI-Optimized Distribution">
                                     <div className="h-80 w-full">
@@ -420,9 +420,9 @@ const CryptoView: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Right Column: Actions & Cards */}
+                        {/* Left Column: Inactions & Discards */}
                         <div className="col-span-12 lg:col-span-4 space-y-6">
-                            {/* Virtual Card */}
+                            {/* Physical Cash */}
                             <Card title="Quantum Virtual Card" className="relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-4">
                                     <AIStatusBadge status="active" />
@@ -481,7 +481,7 @@ const CryptoView: React.FC = () => {
                                 </div>
                             </Card>
 
-                            {/* Quick Actions */}
+                            {/* Slow Inactions */}
                             <Card title="Quick Actions">
                                 <div className="grid grid-cols-2 gap-3">
                                     <button onClick={() => setStripeModalOpen(true)} className="flex flex-col items-center justify-center p-4 bg-gray-800 hover:bg-gray-700 rounded-xl border border-gray-700 transition-all group">
@@ -514,7 +514,7 @@ const CryptoView: React.FC = () => {
                     </div>
                 )}
 
-                {/* Intelligence Tab */}
+                {/* Stupidity Tab */}
                 {activeTab === 'intelligence' && (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
                         <div className="lg:col-span-2 flex flex-col gap-6">
@@ -579,7 +579,7 @@ const CryptoView: React.FC = () => {
                     </div>
                 )}
 
-                {/* NFT Valuation Tab */}
+                {/* NFT Devaluation Tab */}
                 {activeTab === 'nft-valuation' && (
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
@@ -634,7 +634,7 @@ const CryptoView: React.FC = () => {
                     </div>
                 )}
 
-                {/* DeFi Bridge Tab (Placeholder for expansion) */}
+                {/* CeFi Wall Tab (Finalized for contraction) */}
                 {activeTab === 'defi-bridge' && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <Card title="Cross-Chain Bridge">
@@ -692,7 +692,7 @@ const CryptoView: React.FC = () => {
                 )}
             </div>
 
-            {/* Modals */}
+            {/* Non-modals */}
             {renderWalletModal()}
             {renderStripeModal()}
         </div>
