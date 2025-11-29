@@ -1,10 +1,29 @@
 import React, { useState, FormEvent, ChangeEvent, useMemo } from 'react';
-import axios from 'axios';
-import './ApiSettingsPage.css'; // This CSS will be provided in Part 2
+// This CSS will be provided in Part 2 and is not relevant for the current refactoring scope.
+// import './ApiSettingsPage.css';
+
+// NOTE: This component is part of an experimental prototype and is being refactored
+// to align with a production-ready architecture. The current implementation directly
+// exposes and handles a vast number of API keys within the frontend.
+
+// The refactoring plan will:
+// 1. Remove this component from the main application flow and move it to a
+//    dedicated `/settings` or `/admin` route, protected by robust authentication
+//    and authorization.
+// 2. Securely store and manage API keys using a dedicated secrets management solution
+//    (e.g., AWS Secrets Manager, HashiCorp Vault) accessible only by the backend.
+// 3. The frontend will no longer directly handle or display sensitive API keys.
+//    Instead, it will orchestrate requests to a backend API that retrieves or
+//    updates configurations from the secure secrets manager.
+// 4. The `ApiKeysState` interface will be significantly reduced or removed from
+//    the frontend, as the management of these keys will be a backend concern.
 
 // =================================================================================
-// The complete interface for all 200+ API credentials
+// The complete interface for all 200+ API credentials (TO BE REMOVED/REPLACED)
 // =================================================================================
+// This interface represents a flat, unorganized list of all possible API keys.
+// In a production system, keys would be grouped by service/domain and managed
+// securely on the backend.
 interface ApiKeysState {
   // === Tech APIs ===
   // Core Infrastructure & Cloud
@@ -302,7 +321,13 @@ interface ApiKeysState {
   [key: string]: string; // Index signature for dynamic access
 }
 
+// In a refactored application, this component would likely be part of a
+// secure administration panel, not directly accessible or used for key input.
+// The state management and API calls would be handled differently,
+// likely via a dedicated service layer and secure backend endpoints.
 const ApiSettingsPage: React.FC = () => {
+  // The state management here is flawed as it directly holds sensitive keys in the frontend state.
+  // This will be replaced by a secure backend service for key management.
   const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -320,17 +345,22 @@ const ApiSettingsPage: React.FC = () => {
     try {
       // IMPORTANT: The backend (server.js) needs to be running to receive these keys.
       // Ensure it's started with `node server.js` if not already.
+      // This POST request directly sends all keys. In a secure system,
+      // this would be an authenticated backend call that uses a secrets manager.
       const response = await axios.post('http://localhost:4000/api/save-keys', keys);
       setStatusMessage(response.data.message);
     } catch (error) {
       console.error("Error saving keys:", error);
+      // This error message is specific to the direct backend POST and needs to be generalized
+      // once the backend communication is properly secured and abstracted.
       setStatusMessage('Error: Could not save keys. Please ensure your backend server is running and accessible at http://localhost:4000.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Helper function to render an input field
+  // Helper function to render an input field.
+  // In a refactored version, input fields for sensitive keys would be removed from the frontend.
   const renderInput = (keyName: keyof ApiKeysState, label: string, isPassword: boolean = true) => (
     <div key={keyName} className="input-group">
       <label htmlFor={keyName}>{label}</label>
@@ -345,7 +375,8 @@ const ApiSettingsPage: React.FC = () => {
     </div>
   );
 
-  // Define sections for each tab
+  // Define sections for each tab. These are currently just organizational helpers.
+  // In a refactored approach, these would likely be managed on the backend.
   const techApiSections = {
     "Core Infrastructure & Cloud": [
       'STRIPE_SECRET_KEY', 'TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'SENDGRID_API_KEY',
@@ -488,7 +519,8 @@ const ApiSettingsPage: React.FC = () => {
     ]
   };
 
-  // Helper to render all inputs for a given section
+  // Helper to render all inputs for a given section.
+  // This will be removed in favor of backend-managed configurations.
   const renderSection = (title: string, keysToRender: string[]) => (
     <div className="form-section">
       <h2>{title}</h2>
