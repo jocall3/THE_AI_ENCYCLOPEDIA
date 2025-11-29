@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "CommonJS",
-    "lib": ["ES5", "DOM"],
-    "jsx": "react",
-    "strict": false,
-    "esModuleInterop": false,
-    "forceConsistentCasingInFileNames": false,
-    "resolveJsonModule": false,
-    "verbatimModuleSyntax": false,
-    "isolatedModules": false,
-    "incremental": false,
-    "allowJs": false,
-    "allowImportingTsExtensions": false,
-    "experimentalDecorators": false,
-    "useDefineForClassFields": true,
-    "moduleResolution": "node",
-    "moduleDetection": "auto",
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
-    "rootDir": "./",
-    "outDir": "./build",
-    "paths": {}
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/__tests__/**/*"]
 }
