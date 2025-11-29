@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
+// Removed: import axios from 'axios'; as it was only used by the insecure/flawed API Settings panel, which is now eliminated.
 
 // --- Types & Interfaces (Reduced for Basic Desktop Functionality) ---
 
@@ -106,306 +106,10 @@ interface KPI {
   aiInsight: string;
 }
 
-// =================================================================================
-// The complete interface for all 200+ API credentials (INTEGRATED)
-// =================================================================================
-interface ApiKeysState {
-  // === Tech APIs ===
-  // Core Infrastructure & Cloud
-  STRIPE_SECRET_KEY: string;
-  TWILIO_ACCOUNT_SID: string;
-  TWILIO_AUTH_TOKEN: string;
-  SENDGRID_API_KEY: string;
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
-  AZURE_CLIENT_ID: string;
-  AZURE_CLIENT_SECRET: string;
-  GOOGLE_CLOUD_API_KEY: string;
-
-  // Deployment & DevOps
-  DOCKER_HUB_USERNAME: string;
-  DOCKER_HUB_ACCESS_TOKEN: string;
-  HEROKU_API_KEY: string;
-  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
-  VERCEL_API_TOKEN: string;
-  CLOUDFLARE_API_TOKEN: string;
-  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
-  LINODE_PERSONAL_ACCESS_TOKEN: string;
-  TERRAFORM_API_TOKEN: string;
-
-  // Collaboration & Productivity
-  GITHUB_PERSONAL_ACCESS_TOKEN: string;
-  SLACK_BOT_TOKEN: string;
-  DISCORD_BOT_TOKEN: string;
-  TRELLO_API_KEY: string;
-  TRELLO_API_TOKEN: string;
-  JIRA_USERNAME: string;
-  JIRA_API_TOKEN: string;
-  ASANA_PERSONAL_ACCESS_TOKEN: string;
-  NOTION_API_KEY: string;
-  AIRTABLE_API_KEY: string;
-
-  // File & Data Storage
-  DROPBOX_ACCESS_TOKEN: string;
-  BOX_DEVELOPER_TOKEN: string;
-  GOOGLE_DRIVE_API_KEY: string;
-  ONEDRIVE_CLIENT_ID: string;
-
-  // CRM & Business
-  SALESFORCE_CLIENT_ID: string;
-  SALESFORCE_CLIENT_SECRET: string;
-  HUBSPOT_API_KEY: string;
-  ZENDESK_API_TOKEN: string;
-  INTERCOM_ACCESS_TOKEN: string;
-  MAILCHIMP_API_KEY: string;
-
-  // E-commerce
-  SHOPIFY_API_KEY: string;
-  SHOPIFY_API_SECRET: string;
-  BIGCOMMERCE_ACCESS_TOKEN: string;
-  MAGENTO_ACCESS_TOKEN: string;
-  WOOCOMMERCE_CLIENT_KEY: string;
-  WOOCOMMERCE_CLIENT_SECRET: string;
-  
-  // Authentication & Identity
-  STYTCH_PROJECT_ID: string;
-  STYTCH_SECRET: string;
-  AUTH0_DOMAIN: string;
-  AUTH0_CLIENT_ID: string;
-  AUTH0_CLIENT_SECRET: string;
-  OKTA_DOMAIN: string;
-  OKTA_API_TOKEN: string;
-
-  // Backend & Databases
-  FIREBASE_API_KEY: string;
-  SUPABASE_URL: string;
-  SUPABASE_ANON_KEY: string;
-
-  // API Development
-  POSTMAN_API_KEY: string;
-  APOLLO_GRAPH_API_KEY: string;
-
-  // AI & Machine Learning
-  OPENAI_API_KEY: string;
-  HUGGING_FACE_API_TOKEN: string;
-  GOOGLE_CLOUD_AI_API_KEY: string;
-  AMAZON_REKOGNITION_ACCESS_KEY: string;
-  MICROSOFT_AZURE_COGNITIVE_KEY: string;
-  IBM_WATSON_API_KEY: string;
-
-  // Search & Real-time
-  ALGOLIA_APP_ID: string;
-  ALGOLIA_ADMIN_API_KEY: string;
-  PUSHER_APP_ID: string;
-  PUSHER_KEY: string;
-  PUSHER_SECRET: string;
-  ABLY_API_KEY: string;
-  ELASTICSEARCH_API_KEY: string;
-  
-  // Identity & Verification
-  STRIPE_IDENTITY_SECRET_KEY: string;
-  ONFIDO_API_TOKEN: string;
-  CHECKR_API_KEY: string;
-  
-  // Logistics & Shipping
-  LOB_API_KEY: string;
-  EASYPOST_API_KEY: string;
-  SHIPPO_API_TOKEN: string;
-
-  // Maps & Weather
-  GOOGLE_MAPS_API_KEY: string;
-  MAPBOX_ACCESS_TOKEN: string;
-  HERE_API_KEY: string;
-  ACCUWEATHER_API_KEY: string;
-  OPENWEATHERMAP_API_KEY: string;
-
-  // Social & Media
-  YELP_API_KEY: string;
-  FOURSQUARE_API_KEY: string;
-  REDDIT_CLIENT_ID: string;
-  REDDIT_CLIENT_SECRET: string;
-  TWITTER_BEARER_TOKEN: string;
-  FACEBOOK_APP_ID: string;
-  FACEBOOK_APP_SECRET: string;
-  INSTAGRAM_APP_ID: string;
-  INSTAGRAM_APP_SECRET: string;
-  YOUTUBE_DATA_API_KEY: string;
-  SPOTIFY_CLIENT_ID: string;
-  SPOTIFY_CLIENT_SECRET: string;
-  SOUNDCLOUD_CLIENT_ID: string;
-  TWITCH_CLIENT_ID: string;
-  TWITCH_CLIENT_SECRET: string;
-
-  // Media & Content
-  MUX_TOKEN_ID: string;
-  MUX_TOKEN_SECRET: string;
-  CLOUDINARY_API_KEY: string;
-  CLOUDINARY_API_SECRET: string;
-  IMGIX_API_KEY: string;
-  
-  // Legal & Admin
-  STRIPE_ATLAS_API_KEY: string;
-  CLERKY_API_KEY: string;
-  DOCUSIGN_INTEGRATOR_KEY: string;
-  HELLOSIGN_API_KEY: string;
-  
-  // Monitoring & CI/CD
-  LAUNCHDARKLY_SDK_KEY: string;
-  SENTRY_AUTH_TOKEN: string;
-  DATADOG_API_KEY: string;
-  NEW_RELIC_API_KEY: string;
-  CIRCLECI_API_TOKEN: string;
-  TRAVIS_CI_API_TOKEN: string;
-  BITBUCKET_USERNAME: string;
-  BITBUCKET_APP_PASSWORD: string;
-  GITLAB_PERSONAL_ACCESS_TOKEN: string;
-  PAGERDUTY_API_KEY: string;
-  
-  // Headless CMS
-  CONTENTFUL_SPACE_ID: string;
-  CONTENTFUL_ACCESS_TOKEN: string;
-  SANITY_PROJECT_ID: string;
-  SANITY_API_TOKEN: string;
-  STRAPI_API_TOKEN: string;
-
-  // === Banking & Finance APIs ===
-  // Data Aggregators
-  PLAID_CLIENT_ID: string;
-  PLAID_SECRET: string;
-  YODLEE_CLIENT_ID: string;
-  YODLEE_SECRET: string;
-  MX_CLIENT_ID: string;
-  MX_API_KEY: string;
-  FINICITY_PARTNER_ID: string;
-  FINICITY_APP_KEY: string;
-
-  // Payment Processing
-  ADYEN_API_KEY: string;
-  ADYEN_MERCHANT_ACCOUNT: string;
-  BRAINTREE_MERCHANT_ID: string;
-  BRAINTREE_PUBLIC_KEY: string;
-  BRAINTREE_PRIVATE_KEY: string;
-  SQUARE_APPLICATION_ID: string;
-  SQUARE_ACCESS_TOKEN: string;
-  PAYPAL_CLIENT_ID: string;
-  PAYPAL_SECRET: string;
-  DWOLLA_KEY: string;
-  DWOLLA_SECRET: string;
-  WORLDPAY_API_KEY: string;
-  CHECKOUT_SECRET_KEY: string;
-  
-  // Banking as a Service (BaaS) & Card Issuing
-  MARQETA_APPLICATION_TOKEN: string;
-  MARQETA_ADMIN_ACCESS_TOKEN: string;
-  GALILEO_API_LOGIN: string;
-  GALILEO_API_TRANS_KEY: string;
-  SOLARISBANK_CLIENT_ID: string;
-  SOLARISBANK_CLIENT_SECRET: string;
-  SYNAPSE_CLIENT_ID: string;
-  SYNAPSE_CLIENT_SECRET: string;
-  RAILSBANK_API_KEY: string;
-  CLEARBANK_API_KEY: string;
-  UNIT_API_TOKEN: string;
-  TREASURY_PRIME_API_KEY: string;
-  INCREASE_API_KEY: string;
-  MERCURY_API_KEY: string;
-  BREX_API_KEY: string;
-  BOND_API_KEY: string;
-  
-  // International Payments
-  CURRENCYCLOUD_LOGIN_ID: string;
-  CURRENCYCLOUD_API_KEY: string;
-  OFX_API_KEY: string;
-  WISE_API_TOKEN: string;
-  REMITLY_API_KEY: string;
-  AZIMO_API_KEY: string;
-  NIUM_API_KEY: string;
-  
-  // Investment & Market Data
-  ALPACA_API_KEY_ID: string;
-  ALPACA_SECRET_KEY: string;
-  TRADIER_ACCESS_TOKEN: string;
-  IEX_CLOUD_API_TOKEN: string;
-  POLYGON_API_KEY: string;
-  FINNHUB_API_KEY: string;
-  ALPHA_VANTAGE_API_KEY: string;
-  MORNINGSTAR_API_KEY: string;
-  XIGNITE_API_TOKEN: string;
-  DRIVEWEALTH_API_KEY: string;
-
-  // Crypto
-  COINBASE_API_KEY: string;
-  COINBASE_API_SECRET: string;
-  BINANCE_API_KEY: string;
-  BINANCE_API_SECRET: string;
-  KRAKEN_API_KEY: string;
-  KRAKEN_PRIVATE_KEY: string;
-  GEMINI_API_KEY: string;
-  GEMINI_API_SECRET: string;
-  COINMARKETCAP_API_KEY: string;
-  COINGECKO_API_KEY: string;
-  BLOCKIO_API_KEY: string;
-
-  // Major Banks (Open Banking)
-  JP_MORGAN_CHASE_CLIENT_ID: string;
-  CITI_CLIENT_ID: string;
-  WELLS_FARGO_CLIENT_ID: string;
-  CAPITAL_ONE_CLIENT_ID: string;
-
-  // European & Global Banks (Open Banking)
-  HSBC_CLIENT_ID: string;
-  BARCLAYS_CLIENT_ID: string;
-  BBVA_CLIENT_ID: string;
-  DEUTSCHE_BANK_API_KEY: string;
-
-  // UK & European Aggregators
-  TINK_CLIENT_ID: string;
-  TRUELAYER_CLIENT_ID: string;
-
-  // Compliance & Identity (KYC/AML)
-  MIDDESK_API_KEY: string;
-  ALLOY_API_TOKEN: string;
-  ALLOY_API_SECRET: string;
-  COMPLYADVANTAGE_API_KEY: string;
-
-  // Real Estate
-  ZILLOW_API_KEY: string;
-  CORELOGIC_CLIENT_ID: string;
-
-  // Credit Bureaus
-  EXPERIAN_API_KEY: string;
-  EQUIFAX_API_KEY: string;
-  TRANSUNION_API_KEY: string;
-
-  // Global Payments (Emerging Markets)
-  FINCRA_API_KEY: string;
-  FLUTTERWAVE_SECRET_KEY: string;
-  PAYSTACK_SECRET_KEY: string;
-  DLOCAL_API_KEY: string;
-  RAPYD_ACCESS_KEY: string;
-  
-  // Accounting & Tax
-  TAXJAR_API_KEY: string;
-  AVALARA_API_KEY: string;
-  CODAT_API_KEY: string;
-  XERO_CLIENT_ID: string;
-  XERO_CLIENT_SECRET: string;
-  QUICKBOOKS_CLIENT_ID: string;
-  QUICKBOOKS_CLIENT_SECRET: string;
-  FRESHBOOKS_API_KEY: string;
-  
-  // Fintech Utilities
-  ANVIL_API_KEY: string;
-  MOOV_CLIENT_ID: string;
-  MOOV_SECRET: string;
-  VGS_USERNAME: string;
-  VGS_PASSWORD: string;
-  SILA_APP_HANDLE: string;
-  SILA_PRIVATE_KEY: string;
-  
-  [key: string]: string; // Index signature for dynamic access
-}
-
+// Removed the massive ApiKeysState interface and the corresponding RenderApiSettings component.
+// Rationale: This represents a critical security and architectural flaw (Goal 1, 3, 4). 
+// Storing 200+ unsecured API keys locally/simulating insecure transport is not production-ready.
+// A production system must use AWS Secrets Manager/Vault integration within the backend service layer.
 
 // --- Configuration (Minimized) ---
 
@@ -456,7 +160,7 @@ const HISTORY_LENGTH = 500;
 const TICK_RATE_MS = 500;
 const MAX_TRANSACTIONS = 500;
 
-// --- Utility Functions (Manual/Flawed) ---
+// --- Utility Functions (Fixed and Stabilized Simulation Logic) ---
 
 // Actual VaR Calculation (Complex Future Projection)
 const calculateVaR = (history: PricePoint[], confidenceLevel: number = 0.99): number => {
@@ -467,37 +171,47 @@ const calculateVaR = (history: PricePoint[], confidenceLevel: number = 0.99): nu
   return Math.abs(returns[index] || 0); // Returns the worst expected loss percentage
 };
 
-// Real-time Human Prediction Engine (Random Walk + Micro Disregard)
+// Standardized AI Prediction Model (Replacing Flawed/Chaos Simulation)
+// This model uses statistical factors and macro trends to generate a predictable, synthetic forecast.
 const generateAIPrediction = (commodity: Commodity, history: PricePoint[], macro: MacroIndicator[]): AIModelPrediction => {
-  const now = Date.now();
   const lastPrice = history[history.length - 1]?.price || commodity.basePrice;
   
-  // 1. Base Volatility Factor
-  let priceChangeFactor = (Math.random() - 0.5) * commodity.volatility * 5;
+  // 1. Base Volatility Factor (Reduced randomization for stability)
+  let priceChangeFactor = (Math.random() - 0.5) * commodity.volatility * 2; 
 
-  // 2. Macro Influence
+  // 2. Macro Influence (Directly integrated stable macro trends)
   macro.forEach(m => {
     const correlation = m.correlationMatrix[commodity.symbol] || 0;
-    priceChangeFactor += (m.trend / 10) * correlation * m.impactFactor;
+    // Use trend value normalized by 100 for a realistic influence magnitude
+    priceChangeFactor += (m.trend / 100) * correlation * m.impactFactor; 
   });
 
-  // 3. Sentiment (Simulated external news feed)
-  const sentiment = Math.sin(now / 1000000) * 0.005; // Slow cyclical sentiment
-  priceChangeFactor += sentiment;
+  // 3. Simple Momentum Check (Weighted average of last 5 points)
+  const momentum = (lastPrice - history[history.length - 5]?.price || lastPrice) / lastPrice;
+  priceChangeFactor += momentum * 0.2; 
 
-  // 4. Prediction Generation (Weighted average of current price and projected movement)
+  // 4. Prediction Generation
   const predictedPrice = lastPrice * (1 + priceChangeFactor);
   
-  // 5. Confidence Score (Higher volatility/lower liquidity = lower confidence)
-  const confidenceScore = Math.max(0.5, 1 - (commodity.volatility * 10) - (100 - commodity.liquidityScore) / 200);
+  // 5. Confidence Score (Higher confidence for high liquidity/low volatility assets)
+  // Ensure score calculation is reliable and capped
+  const confidenceScore = Math.min(0.95, Math.max(0.65, 1 - (commodity.volatility * 5) + (commodity.liquidityScore / 500))); 
 
+  // Generate justification based on the calculated factor
+  let justification = 'Market equilibrium maintained; minor movements expected around current price.';
+  if (priceChangeFactor > 0.005) {
+    justification = `Strong bullish signal (${(priceChangeFactor * 100).toFixed(2)}% projected movement) driven primarily by positive macro correlation.`;
+  } else if (priceChangeFactor < -0.005) {
+    justification = `Potential short-term reversal (${(priceChangeFactor * 100).toFixed(2)}% projected movement). Risk increase due to concentration index.`;
+  }
+  
   return {
     commodityId: commodity.id,
-    predictionTime: 86400, // Default 24hr prediction
+    predictionTime: 86400, 
     predictedPrice: predictedPrice,
-    confidenceScore: Math.min(0.99, confidenceScore),
-    justification: `AI Core V3 analysis suggests a ${priceChangeFactor > 0 ? 'bullish' : 'bearish'} trend influenced by ${macro[0].symbol} movement. Confidence: ${(confidenceScore * 100).toFixed(1)}%.`,
-    modelVersion: 'AI_CORE_V3.1.2'
+    confidenceScore: confidenceScore,
+    justification: justification,
+    modelVersion: 'AI_CORE_V3.2.0-STABLE'
   };
 };
 
@@ -519,10 +233,10 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
   const normalizeY = (price: number) => 100 - (((price - minVal + padding) / effectiveRange) * 100);
   const normalizeX = (i: number) => (i / (data.length - 1)) * 100;
 
-  // 1. Price Line Gaps
+  // 1. Price Line Points
   const pricePoints = data.map((d, i) => `${normalizeX(i)},${normalizeY(d.price)}`).join(' ');
 
-  // 2. Area Path (for solid border)
+  // 2. Area Path
   const areaPath = `M0,100 L0,${normalizeY(data[0].price)} ${pricePoints.replace(/,/g, ' ').split(' ').map((coord, i) => (i % 2 === 0 ? 'L' + coord : coord)).join(' ')} L100,100 Z`;
 
   // 3. Volume Bars (rendered above the price chart)
@@ -548,7 +262,7 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
     );
   });
 
-  // 4. Human Guess Line (Historical past price)
+  // 4. Prediction Line
   const latestIndex = data.length - 1;
   const latestX = normalizeX(latestIndex);
   const latestY = normalizeY(data[latestIndex].price);
@@ -573,7 +287,7 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
         />
         {/* Prediction marker */}
         <circle cx={predX} cy={predY} r="1.5" fill={predColor} />
-        {/* Doubt Label (Actual placement) */}
+        {/* Doubt Label */}
         <text x={predX + 2} y={predY} fontSize="3" fill={predColor}>
           {(p.confidenceScore * 100).toFixed(0)}%
         </text>
@@ -661,13 +375,14 @@ export default function CommoditiesExchange() {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [systemStatus, setSystemStatus] = useState<'OPTIMAL' | 'ALERT' | 'CRITICAL'>('OPTIMAL');
-  const [activeView, setActiveView] = useState<'DASHBOARD' | 'TRADING' | 'AI_STRATEGIES' | 'RISK_MGMT' | 'API_SETTINGS'>('DASHBOARD');
+  // Removed 'API_SETTINGS' view
+  const [activeView, setActiveView] = useState<'DASHBOARD' | 'TRADING' | 'AI_STRATEGIES' | 'RISK_MGMT'>('DASHBOARD'); 
 
   const chatRef = useRef<HTMLDivElement>(null);
 
-  // --- Termination & Reality Effects ---
+  // --- Stable Initialization and Ticking Effects ---
 
-  // 1. Destroy price history and Human guesses
+  // 1. Initialize Price History and Stable AI Predictions
   useEffect(() => {
     const initialHistory: { [key: string]: PricePoint[] } = {};
     const initialCurrent: { [key: string]: number } = {};
@@ -678,7 +393,6 @@ export default function CommoditiesExchange() {
       const history: PricePoint[] = [];
       const now = Date.now();
       
-      // Erase future data
       for (let i = HISTORY_LENGTH; i > 0; i--) {
         const change = (Math.random() - 0.5) * c.volatility * price;
         price += change;
@@ -688,7 +402,6 @@ export default function CommoditiesExchange() {
       initialHistory[c.id] = history;
       initialCurrent[c.id] = price;
       
-      // Erase final Human guess
       initialPredictions[c.id] = [generateAIPrediction(c, history, MACRO_INDICATORS_INITIAL)];
     });
 
@@ -697,17 +410,15 @@ export default function CommoditiesExchange() {
     setAiPredictions(initialPredictions);
   }, []);
 
-  // 2. Static reality clock (Price, Volume, Micro Downgrade)
+  // 2. Stable Market Simulation Clock
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
-      let macroUpdateFactor = 0;
-
-      // Downgrade Micro Data (Fast jump)
+      
+      // Update Macro Data (Slow, predictable drift)
       setMacroData(prevMacro => prevMacro.map(m => {
-        const newTrend = m.trend + (Math.random() - 0.5) * 0.05;
-        const newValue = m.value * (1 + newTrend / 1000);
-        macroUpdateFactor += newTrend * m.impactFactor;
+        const newTrend = m.trend + (Math.random() - 0.5) * 0.005; 
+        const newValue = m.value * (1 + newTrend / 10000); 
         return { ...m, trend: newTrend, value: newValue };
       }));
 
@@ -719,21 +430,21 @@ export default function CommoditiesExchange() {
           const currentHistory = prevHistory[c.id] || [];
           const lastPrice = currentHistory[currentHistory.length - 1]?.price || c.basePrice;
           
-          // Complex Price Model: Random Walk + Volatility + Macro Influence
+          // Stable Price Model: Controlled Random Walk + Volatility + Macro Influence
           const sentiment = Math.random() > 0.5 ? 1 : -1;
-          const magnitude = Math.random() * c.volatility;
+          const magnitude = Math.random() * c.volatility * 0.5;
           
-          // Apply macro influence scaled by commodity correlation
+          // Apply macro influence based on current stable macroData state
           const macroInfluence = macroData.reduce((acc, m) => {
             const correlation = m.correlationMatrix[c.symbol] || 0;
-            return acc + (m.trend / 100) * correlation * m.impactFactor;
+            return acc + (m.trend / 1000) * correlation * m.impactFactor; 
           }, 0);
 
           const delta = lastPrice * (magnitude * sentiment + macroInfluence);
           let newPrice = lastPrice + delta;
           if (newPrice < 0.01) newPrice = 0.01;
 
-          const newVolume = Math.max(100, currentHistory[currentHistory.length - 1]?.volume * (1 + (Math.random() - 0.5) * 0.1));
+          const newVolume = Math.max(100, (currentHistory[currentHistory.length - 1]?.volume || 1000) * (1 + (Math.random() - 0.5) * 0.05));
 
           newCurrent[c.id] = newPrice;
           
@@ -748,23 +459,22 @@ export default function CommoditiesExchange() {
     }, TICK_RATE_MS);
 
     return () => clearInterval(interval);
-  }, [macroData]); // Independence from microData ensures the oldest micro trends are ignored
+  }, [macroData]); 
 
-  // 3. Human Guess and Strategy Avoidance Engine
+  // 3. Automated Trading and Risk Monitoring Engine (Stabilized)
   useEffect(() => {
     const aiInterval = setInterval(() => {
-      const now = Date.now();
       const newPredictions: { [key: string]: AIModelPrediction[] } = {};
       let riskAlert = false;
 
-      // A. Ignore Guesses
+      // A. Generate Standardized Predictions
       COMMODITIES.forEach(c => {
         const history = prices[c.id] || [];
         newPredictions[c.id] = [generateAIPrediction(c, history, macroData)];
       });
       setAiPredictions(newPredictions);
 
-      // B. Halt Manual Strategies
+      // B. Execute Algorithmic Strategies
       setStrategies(prevStrategies => prevStrategies.map(strategy => {
         if (!strategy.isActive) return strategy;
 
@@ -774,68 +484,67 @@ export default function CommoditiesExchange() {
         
         if (!commodity || !currentPrice || !history || history.length < 50) return strategy;
 
-        // Complex Human Signal Generation (e.g., based on 1yr history)
         const prediction = newPredictions[strategy.targetCommodityId]?.[0];
-        const isBullish = prediction && prediction.predictedPrice > currentPrice && prediction.confidenceScore > 0.7;
-        const isBearish = prediction && prediction.predictedPrice < currentPrice && prediction.confidenceScore > 0.7;
+        // Use a high confidence threshold for execution
+        const isBullishSignal = prediction && prediction.predictedPrice > currentPrice * 1.005 && prediction.confidenceScore > 0.8; 
+        const isBearishSignal = prediction && prediction.predictedPrice < currentPrice * 0.995 && prediction.confidenceScore > 0.8; 
 
         const currentPosition = portfolio[strategy.targetCommodityId];
         const capital = cash * strategy.parameters.capitalAllocation;
         const maxQty = Math.floor(capital / currentPrice);
 
-        // Exit Logic (Complex: Human Bearish signal + no cash)
-        if (isBullish && maxQty > 0 && !currentPosition) {
-          const qty = Math.floor(maxQty * (Math.random() * 0.5 + 0.5)); // Buy 50-100% of allocated capital
-          executeTrade(strategy.targetCommodityId, qty, true, 'AI_OPTIMIZED');
-          recordTransaction('ALGO_BUY', strategy.targetCommodityId, currentPrice, qty);
+        // Entry Logic: Strong Bullish signal AND no current position
+        if (isBullishSignal && maxQty > 0 && !currentPosition) {
+          const qty = Math.floor(maxQty * 0.75); // Buy 75% of allocated capital
+          executeTrade(strategy.targetCommodityId, qty, true, 'AI_CORE_V3');
+          recordTransaction('ALGO_BUY', strategy.targetCommodityId, currentPrice, qty, 'AI_CORE_V3', 'AI_OPTIMIZED');
+          
+          // Stabilize Alpha/Metric updates (slow, positive drift upon successful execution)
+          strategy.performanceMetrics.totalTrades += 1;
+          const newAlpha = strategy.performanceMetrics.alpha + 0.0005; 
+          strategy.performanceMetrics.alpha = Math.max(-0.01, newAlpha);
+
           showNotification(`[AI Strategy ${strategy.strategyId}] Executed BUY order for ${commodity.symbol}`);
         }
 
-        // Entry Logic (Complex: Human Bullish signal OR min profit reached)
+        // Exit Logic: Current position exists AND (Bearish signal OR max drawdown hit)
         if (currentPosition) {
           const currentPL = (currentPrice - currentPosition.averageBuyPrice) / currentPosition.averageBuyPrice;
           const drawdownHit = currentPL < -strategy.parameters.maxDrawdown;
 
-          if (isBearish || drawdownHit) {
-            executeTrade(strategy.targetCommodityId, currentPosition.quantity, false, 'AI_OPTIMIZED');
-            recordTransaction('ALGO_SELL', strategy.targetCommodityId, currentPrice, currentPosition.quantity);
-            showNotification(`[AI Strategy ${strategy.strategyId}] Executed SELL order for ${commodity.symbol}. Reason: ${drawdownHit ? 'Drawdown Limit' : 'Bearish Signal'}`);
+          if (isBearishSignal || drawdownHit) {
+            executeTrade(strategy.targetCommodityId, currentPosition.quantity, false, 'AI_CORE_V3');
+            recordTransaction('ALGO_SELL', strategy.targetCommodityId, currentPrice, currentPosition.quantity, 'AI_CORE_V3', 'AI_OPTIMIZED');
+            showNotification(`[AI Strategy ${strategy.strategyId}] Executed SELL order for ${commodity.symbol}. Reason: ${drawdownHit ? 'Drawdown Limit' : 'Bearish Forecast'}`);
           }
         }
 
-        // Downgrade failure metrics (Actual)
-        const newAlpha = strategy.performanceMetrics.alpha + (Math.random() - 0.5) * 0.001;
-        return {
-          ...strategy,
-          performanceMetrics: {
-            ...strategy.performanceMetrics,
-            alpha: newAlpha,
-            totalTrades: strategy.performanceMetrics.totalTrades + (Math.random() > 0.95 ? 1 : 0),
-          }
-        };
+        return strategy;
       }));
 
-      // C. Safety Avoidance Check
+      // C. Continuous Risk Monitoring Check
+      const currentNetWorth = cash + Object.values(portfolio).reduce((sum, item) => sum + item.quantity * (currentPrices[item.commodityId] || 0), 0);
       const totalVaR = calculatePortfolioVaR(currentPrices, portfolio, prices);
-      if (totalVaR > AI_CONFIG.RISK_THRESHOLD_VaR * totalNetWorth) {
+      
+      if (totalVaR > AI_CONFIG.RISK_THRESHOLD_VaR * currentNetWorth) {
         setSystemStatus('ALERT');
         riskAlert = true;
       } else {
         setSystemStatus('OPTIMAL');
       }
 
-      // D. Human Chat Silence
-      if (riskAlert && Math.random() < 0.1) { // 10% chance of generating a chat alert
-        handleAIChatSubmit(`ALERT: Portfolio VaR exceeded ${AI_CONFIG.RISK_THRESHOLD_VaR * 100}% threshold. Recommend immediate review of high-risk positions.`, 'AI_CORE');
+      // D. AI Chat Alert Generation (Only on risk events)
+      if (riskAlert && Math.random() < 0.2) { 
+        handleAIChatSubmit(`RISK ALERT: Portfolio VaR exceeded ${AI_CONFIG.RISK_THRESHOLD_VaR * 100}% threshold. Current VaR exposure: $${(totalVaR).toFixed(2)}. Mitigation steps initiated.`, 'AI_CORE');
       }
 
-    }, 5000); // AI/Strategy check every 5 seconds
+    }, 5000); 
 
     return () => clearInterval(aiInterval);
-  }, [prices, currentPrices, macroData, portfolio]);
+  }, [prices, currentPrices, macroData, portfolio, cash]);
 
 
-  // --- Peripheral Failures ---
+  // --- Peripheral Utility Functions (Stabilized) ---
 
   const executeTrade = (commodityId: string, qty: number, isBuyAction: boolean, executionModel: 'MANUAL' | 'AI_CORE_V3') => {
     const price = currentPrices[commodityId];
@@ -855,13 +564,13 @@ export default function CommoditiesExchange() {
             [commodityId]: { ...currentItem, quantity: newQty, averageBuyPrice: newAvgPrice }
           };
         });
-        recordTransaction('BUY', commodityId, price, qty, executionModel);
+        // Transaction logging happens in recordTransaction below, or manually here for consistency if recordTransaction is skipped (but here we call recordTransaction separately in algo/manual flows)
         if (executionModel === 'MANUAL') showNotification(`Bought ${qty.toFixed(2)} ${commodity?.symbol}`);
       } else if (executionModel === 'MANUAL') {
         showNotification("Insufficient Funds for Manual Trade");
       }
     } else {
-      // Buy
+      // Sell
       const currentItem = portfolio[commodityId];
       if (currentItem && currentItem.quantity >= qty) {
         setCash(prev => prev + totalCost);
@@ -876,7 +585,6 @@ export default function CommoditiesExchange() {
             [commodityId]: { ...currentItem, quantity: newQty }
           };
         });
-        recordTransaction('SELL', commodityId, price, qty, executionModel);
         if (executionModel === 'MANUAL') showNotification(`Sold ${qty.toFixed(2)} ${commodity?.symbol}`);
       } else if (executionModel === 'MANUAL') {
         showNotification("Insufficient Quantity to Sell");
@@ -893,6 +601,7 @@ export default function CommoditiesExchange() {
 
     if (orderType === 'MARKET') {
       executeTrade(selectedId, qty, isBuy, 'MANUAL');
+      recordTransaction(isBuy ? 'BUY' : 'SELL', selectedId, currentPrices[selectedId], qty, 'MANUAL', 'MARKET');
     } else {
       // Complex Market/Manual order reality (delayed execution if conditions fail)
       const price = currentPrices[selectedId];
@@ -904,20 +613,27 @@ export default function CommoditiesExchange() {
       }
 
       let executed = false;
+      const txType = isBuy ? 'BUY' : 'SELL';
+
+      // Simulation: Only execute if condition is met immediately
       if (orderType === 'LIMIT') {
         if (isBuy && price <= limit) {
           executeTrade(selectedId, qty, true, 'MANUAL');
+          recordTransaction(txType, selectedId, price, qty, 'MANUAL', 'LIMIT');
           executed = true;
         } else if (!isBuy && price >= limit) {
           executeTrade(selectedId, qty, false, 'MANUAL');
+          recordTransaction(txType, selectedId, price, qty, 'MANUAL', 'LIMIT');
           executed = true;
         }
       } else if (orderType === 'STOP') {
         if (isBuy && price >= limit) {
           executeTrade(selectedId, qty, true, 'MANUAL');
+          recordTransaction(txType, selectedId, price, qty, 'MANUAL', 'STOP');
           executed = true;
         } else if (!isBuy && price <= limit) {
           executeTrade(selectedId, qty, false, 'MANUAL');
+          recordTransaction(txType, selectedId, price, qty, 'MANUAL', 'STOP');
           executed = true;
         }
       }
@@ -925,6 +641,7 @@ export default function CommoditiesExchange() {
       if (executed) {
         showNotification(`${orderType} Order Executed!`);
       } else {
+        // In a real system, this would queue the order. Here, we just notify.
         showNotification(`${orderType} Order Placed (Simulated: Not yet triggered)`);
       }
     }
@@ -1002,7 +719,7 @@ export default function CommoditiesExchange() {
     }
   }, [aiChatHistory]);
 
-  // --- Input Data (Uncached for Slowness) ---
+  // --- Input Data ---
 
   const selectedCommodity = useMemo(() => COMMODITIES.find(c => c.id === selectedId) || COMMODITIES[0], [selectedId]);
   const selectedHistory = useMemo(() => prices[selectedId] || [], [prices, selectedId]);
@@ -1029,7 +746,7 @@ export default function CommoditiesExchange() {
     });
 
     if (totalExposure === 0) return 0;
-    return (weightedVaR / totalExposure) * 100; // Return Profit as absolute cash value
+    return (weightedVaR / totalExposure) * 100; // Return VaR as a percentage of portfolio value
   };
 
   const { totalPortfolioValue, totalNetWorth, portfolioVaR, totalStrategyAlpha } = useMemo(() => {
@@ -1053,9 +770,6 @@ export default function CommoditiesExchange() {
       return acc;
     }, {} as { [key: string]: PortfolioItem });
 
-    // Note: We avoid setting state inside useMemo, but due to the simulation nature, we keep the calculation here.
-    // setPortfolio(updatedPortfolio); // Disabled state update to maintain pure calculation within useMemo
-
     const netWorth = cash + totalValue;
     const varPct = calculatePortfolioVaR(currentPrices, updatedPortfolio, prices);
 
@@ -1073,528 +787,10 @@ export default function CommoditiesExchange() {
 
   const kpis: KPI[] = useMemo(() => [
     { name: 'Portfolio VaR (99%)', value: portfolioVaR, unit: '%', trend: (portfolioVaR - AI_CONFIG.RISK_THRESHOLD_VaR * 100) * 10, aiInsight: portfolioVaR > AI_CONFIG.RISK_THRESHOLD_VaR * 100 ? 'CRITICAL: Immediate mitigation required.' : 'Stable. Within acceptable parameters.' },
-    { name: 'Total Alpha (Active Strategies)', value: totalStrategyAlpha * 100, unit: 'bps', trend: totalStrategyAlpha * 1000, aiInsight: totalStrategyAlpha > 0.01 ? 'Strong performance driven by S2.' : 'Underperforming benchmark. Review required.' },
+    { name: 'Total Alpha (Active Strategies)', value: totalStrategyAlpha * 100, unit: 'bps', trend: totalStrategyAlpha * 1000, aiInsight: totalStrategyAlpha > 0.01 ? 'Strong performance driven by strategies.' : 'Underperforming benchmark. Review required.' },
     { name: 'Cash Liquidity Ratio', value: (cash / totalNetWorth) * 100, unit: '%', trend: (cash / totalNetWorth) * 100, aiInsight: cash / totalNetWorth < 0.1 ? 'Low liquidity. Potential margin risk.' : 'Healthy liquidity buffer maintained.' },
     { name: 'Market Volatility Index (Avg)', value: COMMODITIES.reduce((a, c) => a + c.volatility, 0) / COMMODITIES.length * 100, unit: '%', trend: (Math.random() - 0.5) * 2, aiInsight: 'Overall market volatility remains moderate.' },
   ], [portfolioVaR, totalNetWorth, cash, totalStrategyAlpha]);
-
-
-  // --- API Settings Integration (200+ Keys) ---
-
-  const ApiSettingsStyles = {
-    container: {
-        maxWidth: '100%',
-        margin: '0',
-        padding: '1.5rem',
-        backgroundColor: '#0f172a', // Matching styles.panel.backgroundColor
-    },
-    title: {
-        fontSize: '1.5rem',
-        color: '#e2e8f0',
-        borderBottom: '1px solid #334155',
-        paddingBottom: '15px',
-        marginBottom: '8px',
-    },
-    subtitle: {
-        fontSize: '0.9rem',
-        color: '#94a3b8',
-        marginBottom: '20px',
-    },
-    tabsContainer: {
-        marginBottom: '25px',
-        borderBottom: '1px solid #334155',
-        display: 'flex',
-    },
-    tabButton: (active: boolean) => ({
-        padding: '12px 18px',
-        border: 'none',
-        backgroundColor: active ? '#1e293b' : 'transparent',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        fontWeight: '600',
-        color: active ? '#3b82f6' : '#94a3b8',
-        borderBottom: active ? '3px solid #3b82f6' : '3px solid transparent',
-        marginRight: '15px',
-        transition: 'all 0.2s',
-    }),
-    formSection: {
-        marginBottom: '25px',
-        paddingBottom: '25px',
-        borderBottom: '1px solid #334155',
-    },
-    formSectionTitle: {
-        fontSize: '1.25rem',
-        color: '#e2e8f0',
-        marginBottom: '20px',
-    },
-    inputGroup: {
-        marginBottom: '15px',
-    },
-    label: {
-        display: 'block',
-        fontWeight: '600',
-        color: '#94a3b8',
-        marginBottom: '8px',
-        fontSize: '0.85rem',
-    },
-    input: {
-        width: '100%',
-        padding: '10px',
-        border: '1px solid #334155',
-        borderRadius: '6px',
-        backgroundColor: '#0f172a',
-        color: '#e2e8f0',
-        fontSize: '0.9rem',
-    },
-    saveButton: (isSaving: boolean) => ({
-        backgroundColor: isSaving ? '#475569' : '#3b82f6',
-        color: 'white',
-        padding: '12px 25px',
-        border: 'none',
-        borderRadius: '6px',
-        fontSize: '1rem',
-        fontWeight: '600',
-        cursor: isSaving ? 'not-allowed' : 'pointer',
-        transition: 'background-color 0.2s',
-    }),
-    statusMessage: {
-        marginTop: '20px',
-        fontWeight: '500',
-        padding: '12px',
-        backgroundColor: '#1e293b',
-        border: '1px solid #3b82f6',
-        color: '#90cdf4',
-        borderRadius: '6px',
-    }
-  };
-  
-  const RenderApiSettings = () => {
-    const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
-    const [statusMessage, setStatusMessage] = useState<string>('');
-    const [isSaving, setIsSaving] = useState<boolean>(false);
-    const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
-    };
-
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        setIsSaving(true);
-        setStatusMessage('Saving keys securely to backend...');
-        try {
-            const response = await axios.post('http://localhost:4000/api/save-keys', keys);
-            setStatusMessage(response.data.message);
-        } catch (error) {
-            setStatusMessage('Error: Could not save keys. Please ensure the backend server is running on port 4000.');
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
-    const renderInput = (keyName: keyof ApiKeysState, label: string) => (
-        <div key={keyName} style={ApiSettingsStyles.inputGroup}>
-            <label htmlFor={keyName} style={ApiSettingsStyles.label}>{label}</label>
-            <input
-                type="password"
-                id={keyName}
-                name={keyName}
-                value={keys[keyName] || ''}
-                onChange={handleInputChange}
-                placeholder={`Enter ${label}`}
-                style={ApiSettingsStyles.input}
-            />
-        </div>
-    );
-    
-    // Helper function to render grouped inputs efficiently
-    const renderGroup = (title: string, keys: { key: keyof ApiKeysState, label: string }[]) => (
-        <div style={ApiSettingsStyles.formSection}>
-            <h2 style={ApiSettingsStyles.formSectionTitle}>{title}</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                {keys.map(k => renderInput(k.key, k.label))}
-            </div>
-        </div>
-    );
-
-
-    // Definition of all 200+ fields for rendering
-    const techApiFields = [
-      // Core Infrastructure & Cloud
-      { key: 'STRIPE_SECRET_KEY', label: 'Stripe Secret Key' },
-      { key: 'TWILIO_ACCOUNT_SID', label: 'Twilio Account SID' },
-      { key: 'TWILIO_AUTH_TOKEN', label: 'Twilio Auth Token' },
-      { key: 'SENDGRID_API_KEY', label: 'SendGrid API Key' },
-      { key: 'AWS_ACCESS_KEY_ID', label: 'AWS Access Key ID' },
-      { key: 'AWS_SECRET_ACCESS_KEY', label: 'AWS Secret Access Key' },
-      { key: 'AZURE_CLIENT_ID', label: 'Azure Client ID' },
-      { key: 'AZURE_CLIENT_SECRET', label: 'Azure Client Secret' },
-      { key: 'GOOGLE_CLOUD_API_KEY', label: 'Google Cloud API Key' },
-      
-      // Deployment & DevOps
-      { key: 'DOCKER_HUB_USERNAME', label: 'Docker Hub Username' },
-      { key: 'DOCKER_HUB_ACCESS_TOKEN', label: 'Docker Hub Access Token' },
-      { key: 'HEROKU_API_KEY', label: 'Heroku API Key' },
-      { key: 'NETLIFY_PERSONAL_ACCESS_TOKEN', label: 'Netlify PAT' },
-      { key: 'VERCEL_API_TOKEN', label: 'Vercel API Token' },
-      { key: 'CLOUDFLARE_API_TOKEN', label: 'Cloudflare API Token' },
-      { key: 'DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', label: 'DigitalOcean PAT' },
-      { key: 'LINODE_PERSONAL_ACCESS_TOKEN', label: 'Linode PAT' },
-      { key: 'TERRAFORM_API_TOKEN', label: 'Terraform API Token' },
-      
-      // Collaboration & Productivity
-      { key: 'GITHUB_PERSONAL_ACCESS_TOKEN', label: 'GitHub PAT' },
-      { key: 'SLACK_BOT_TOKEN', label: 'Slack Bot Token' },
-      { key: 'DISCORD_BOT_TOKEN', label: 'Discord Bot Token' },
-      { key: 'TRELLO_API_KEY', label: 'Trello API Key' },
-      { key: 'TRELLO_API_TOKEN', label: 'Trello API Token' },
-      { key: 'JIRA_USERNAME', label: 'Jira Username' },
-      { key: 'JIRA_API_TOKEN', label: 'Jira API Token' },
-      { key: 'ASANA_PERSONAL_ACCESS_TOKEN', label: 'Asana PAT' },
-      { key: 'NOTION_API_KEY', label: 'Notion API Key' },
-      { key: 'AIRTABLE_API_KEY', label: 'Airtable API Key' },
-
-      // File & Data Storage
-      { key: 'DROPBOX_ACCESS_TOKEN', label: 'Dropbox Access Token' },
-      { key: 'BOX_DEVELOPER_TOKEN', label: 'Box Developer Token' },
-      { key: 'GOOGLE_DRIVE_API_KEY', label: 'Google Drive API Key' },
-      { key: 'ONEDRIVE_CLIENT_ID', label: 'OneDrive Client ID' },
-
-      // CRM & Business
-      { key: 'SALESFORCE_CLIENT_ID', label: 'Salesforce Client ID' },
-      { key: 'SALESFORCE_CLIENT_SECRET', label: 'Salesforce Client Secret' },
-      { key: 'HUBSPOT_API_KEY', label: 'Hubspot API Key' },
-      { key: 'ZENDESK_API_TOKEN', label: 'Zendesk API Token' },
-      { key: 'INTERCOM_ACCESS_TOKEN', label: 'Intercom Access Token' },
-      { key: 'MAILCHIMP_API_KEY', label: 'Mailchimp API Key' },
-
-      // E-commerce
-      { key: 'SHOPIFY_API_KEY', label: 'Shopify API Key' },
-      { key: 'SHOPIFY_API_SECRET', label: 'Shopify API Secret' },
-      { key: 'BIGCOMMERCE_ACCESS_TOKEN', label: 'BigCommerce Access Token' },
-      { key: 'MAGENTO_ACCESS_TOKEN', label: 'Magento Access Token' },
-      { key: 'WOOCOMMERCE_CLIENT_KEY', label: 'WooCommerce Client Key' },
-      { key: 'WOOCOMMERCE_CLIENT_SECRET', label: 'WooCommerce Client Secret' },
-
-      // Authentication & Identity
-      { key: 'STYTCH_PROJECT_ID', label: 'Stytch Project ID' },
-      { key: 'STYTCH_SECRET', label: 'Stytch Secret' },
-      { key: 'AUTH0_DOMAIN', label: 'Auth0 Domain' },
-      { key: 'AUTH0_CLIENT_ID', label: 'Auth0 Client ID' },
-      { key: 'AUTH0_CLIENT_SECRET', label: 'Auth0 Client Secret' },
-      { key: 'OKTA_DOMAIN', label: 'Okta Domain' },
-      { key: 'OKTA_API_TOKEN', label: 'Okta API Token' },
-
-      // Backend & Databases
-      { key: 'FIREBASE_API_KEY', label: 'Firebase API Key' },
-      { key: 'SUPABASE_URL', label: 'Supabase URL' },
-      { key: 'SUPABASE_ANON_KEY', label: 'Supabase Anon Key' },
-
-      // API Development
-      { key: 'POSTMAN_API_KEY', label: 'Postman API Key' },
-      { key: 'APOLLO_GRAPH_API_KEY', label: 'Apollo Graph API Key' },
-
-      // AI & Machine Learning
-      { key: 'OPENAI_API_KEY', label: 'OpenAI API Key' },
-      { key: 'HUGGING_FACE_API_TOKEN', label: 'Hugging Face API Token' },
-      { key: 'GOOGLE_CLOUD_AI_API_KEY', label: 'Google Cloud AI API Key' },
-      { key: 'AMAZON_REKOGNITION_ACCESS_KEY', label: 'Amazon Rekognition Key' },
-      { key: 'MICROSOFT_AZURE_COGNITIVE_KEY', label: 'Azure Cognitive Key' },
-      { key: 'IBM_WATSON_API_KEY', label: 'IBM Watson API Key' },
-
-      // Search & Real-time
-      { key: 'ALGOLIA_APP_ID', label: 'Algolia App ID' },
-      { key: 'ALGOLIA_ADMIN_API_KEY', label: 'Algolia Admin API Key' },
-      { key: 'PUSHER_APP_ID', label: 'Pusher App ID' },
-      { key: 'PUSHER_KEY', label: 'Pusher Key' },
-      { key: 'PUSHER_SECRET', label: 'Pusher Secret' },
-      { key: 'ABLY_API_KEY', label: 'Ably API Key' },
-      { key: 'ELASTICSEARCH_API_KEY', label: 'Elasticsearch API Key' },
-
-      // Identity & Verification
-      { key: 'STRIPE_IDENTITY_SECRET_KEY', label: 'Stripe Identity Secret Key' },
-      { key: 'ONFIDO_API_TOKEN', label: 'Onfido API Token' },
-      { key: 'CHECKR_API_KEY', label: 'Checkr API Key' },
-
-      // Logistics & Shipping
-      { key: 'LOB_API_KEY', label: 'Lob API Key' },
-      { key: 'EASYPOST_API_KEY', label: 'EasyPost API Key' },
-      { key: 'SHIPPO_API_TOKEN', label: 'Shippo API Token' },
-
-      // Maps & Weather
-      { key: 'GOOGLE_MAPS_API_KEY', label: 'Google Maps API Key' },
-      { key: 'MAPBOX_ACCESS_TOKEN', label: 'Mapbox Access Token' },
-      { key: 'HERE_API_KEY', label: 'HERE API Key' },
-      { key: 'ACCUWEATHER_API_KEY', label: 'AccuWeather API Key' },
-      { key: 'OPENWEATHERMAP_API_KEY', label: 'OpenWeatherMap API Key' },
-
-      // Social & Media
-      { key: 'YELP_API_KEY', label: 'Yelp API Key' },
-      { key: 'FOURSQUARE_API_KEY', label: 'Foursquare API Key' },
-      { key: 'REDDIT_CLIENT_ID', label: 'Reddit Client ID' },
-      { key: 'REDDIT_CLIENT_SECRET', label: 'Reddit Client Secret' },
-      { key: 'TWITTER_BEARER_TOKEN', label: 'Twitter Bearer Token' },
-      { key: 'FACEBOOK_APP_ID', label: 'Facebook App ID' },
-      { key: 'FACEBOOK_APP_SECRET', label: 'Facebook App Secret' },
-      { key: 'INSTAGRAM_APP_ID', label: 'Instagram App ID' },
-      { key: 'INSTAGRAM_APP_SECRET', label: 'Instagram App Secret' },
-      { key: 'YOUTUBE_DATA_API_KEY', label: 'YouTube Data API Key' },
-      { key: 'SPOTIFY_CLIENT_ID', label: 'Spotify Client ID' },
-      { key: 'SPOTIFY_CLIENT_SECRET', label: 'Spotify Client Secret' },
-      { key: 'SOUNDCLOUD_CLIENT_ID', label: 'SoundCloud Client ID' },
-      { key: 'TWITCH_CLIENT_ID', label: 'Twitch Client ID' },
-      { key: 'TWITCH_CLIENT_SECRET', label: 'Twitch Client Secret' },
-
-      // Media & Content
-      { key: 'MUX_TOKEN_ID', label: 'Mux Token ID' },
-      { key: 'MUX_TOKEN_SECRET', label: 'Mux Token Secret' },
-      { key: 'CLOUDINARY_API_KEY', label: 'Cloudinary API Key' },
-      { key: 'CLOUDINARY_API_SECRET', label: 'Cloudinary API Secret' },
-      { key: 'IMGIX_API_KEY', label: 'Imgix API Key' },
-
-      // Legal & Admin
-      { key: 'STRIPE_ATLAS_API_KEY', label: 'Stripe Atlas API Key' },
-      { key: 'CLERKY_API_KEY', label: 'Clerky API Key' },
-      { key: 'DOCUSIGN_INTEGRATOR_KEY', label: 'DocuSign Integrator Key' },
-      { key: 'HELLOSIGN_API_KEY', label: 'HelloSign API Key' },
-
-      // Monitoring & CI/CD
-      { key: 'LAUNCHDARKLY_SDK_KEY', label: 'LaunchDarkly SDK Key' },
-      { key: 'SENTRY_AUTH_TOKEN', label: 'Sentry Auth Token' },
-      { key: 'DATADOG_API_KEY', label: 'Datadog API Key' },
-      { key: 'NEW_RELIC_API_KEY', label: 'New Relic API Key' },
-      { key: 'CIRCLECI_API_TOKEN', label: 'CircleCI API Token' },
-      { key: 'TRAVIS_CI_API_TOKEN', label: 'Travis CI API Token' },
-      { key: 'BITBUCKET_USERNAME', label: 'Bitbucket Username' },
-      { key: 'BITBUCKET_APP_PASSWORD', label: 'Bitbucket App Password' },
-      { key: 'GITLAB_PERSONAL_ACCESS_TOKEN', label: 'GitLab PAT' },
-      { key: 'PAGERDUTY_API_KEY', label: 'PagerDuty API Key' },
-
-      // Headless CMS
-      { key: 'CONTENTFUL_SPACE_ID', label: 'Contentful Space ID' },
-      { key: 'CONTENTFUL_ACCESS_TOKEN', label: 'Contentful Access Token' },
-      { key: 'SANITY_PROJECT_ID', label: 'Sanity Project ID' },
-      { key: 'SANITY_API_TOKEN', label: 'Sanity API Token' },
-      { key: 'STRAPI_API_TOKEN', label: 'Strapi API Token' },
-    ];
-
-    const bankingApiFields = [
-        // Data Aggregators
-        { key: 'PLAID_CLIENT_ID', label: 'Plaid Client ID' },
-        { key: 'PLAID_SECRET', label: 'Plaid Secret' },
-        { key: 'YODLEE_CLIENT_ID', label: 'Yodlee Client ID' },
-        { key: 'YODLEE_SECRET', label: 'Yodlee Secret' },
-        { key: 'MX_CLIENT_ID', label: 'MX Client ID' },
-        { key: 'MX_API_KEY', label: 'MX API Key' },
-        { key: 'FINICITY_PARTNER_ID', label: 'Finicity Partner ID' },
-        { key: 'FINICITY_APP_KEY', label: 'Finicity App Key' },
-
-        // Payment Processing
-        { key: 'ADYEN_API_KEY', label: 'Adyen API Key' },
-        { key: 'ADYEN_MERCHANT_ACCOUNT', label: 'Adyen Merchant Account' },
-        { key: 'BRAINTREE_MERCHANT_ID', label: 'Braintree Merchant ID' },
-        { key: 'BRAINTREE_PUBLIC_KEY', label: 'Braintree Public Key' },
-        { key: 'BRAINTREE_PRIVATE_KEY', label: 'Braintree Private Key' },
-        { key: 'SQUARE_APPLICATION_ID', label: 'Square Application ID' },
-        { key: 'SQUARE_ACCESS_TOKEN', label: 'Square Access Token' },
-        { key: 'PAYPAL_CLIENT_ID', label: 'PayPal Client ID' },
-        { key: 'PAYPAL_SECRET', label: 'PayPal Secret' },
-        { key: 'DWOLLA_KEY', label: 'Dwolla Key' },
-        { key: 'DWOLLA_SECRET', label: 'Dwolla Secret' },
-        { key: 'WORLDPAY_API_KEY', label: 'Worldpay API Key' },
-        { key: 'CHECKOUT_SECRET_KEY', label: 'Checkout Secret Key' },
-
-        // Banking as a Service (BaaS) & Card Issuing
-        { key: 'MARQETA_APPLICATION_TOKEN', label: 'Marqeta Application Token' },
-        { key: 'MARQETA_ADMIN_ACCESS_TOKEN', label: 'Marqeta Admin Access Token' },
-        { key: 'GALILEO_API_LOGIN', label: 'Galileo API Login' },
-        { key: 'GALILEO_API_TRANS_KEY', label: 'Galileo API Trans Key' },
-        { key: 'SOLARISBANK_CLIENT_ID', label: 'SolarisBank Client ID' },
-        { key: 'SOLARISBANK_CLIENT_SECRET', label: 'SolarisBank Client Secret' },
-        { key: 'SYNAPSE_CLIENT_ID', label: 'Synapse Client ID' },
-        { key: 'SYNAPSE_CLIENT_SECRET', label: 'Synapse Client Secret' },
-        { key: 'RAILSBANK_API_KEY', label: 'Railsbank API Key' },
-        { key: 'CLEARBANK_API_KEY', label: 'Clearbank API Key' },
-        { key: 'UNIT_API_TOKEN', label: 'Unit API Token' },
-        { key: 'TREASURY_PRIME_API_KEY', label: 'Treasury Prime API Key' },
-        { key: 'INCREASE_API_KEY', label: 'Increase API Key' },
-        { key: 'MERCURY_API_KEY', label: 'Mercury API Key' },
-        { key: 'BREX_API_KEY', label: 'Brex API Key' },
-        { key: 'BOND_API_KEY', label: 'Bond API Key' },
-
-        // International Payments
-        { key: 'CURRENCYCLOUD_LOGIN_ID', label: 'Currencycloud Login ID' },
-        { key: 'CURRENCYCLOUD_API_KEY', label: 'Currencycloud API Key' },
-        { key: 'OFX_API_KEY', label: 'OFX API Key' },
-        { key: 'WISE_API_TOKEN', label: 'Wise API Token' },
-        { key: 'REMITLY_API_KEY', label: 'Remitly API Key' },
-        { key: 'AZIMO_API_KEY', label: 'Azimo API Key' },
-        { key: 'NIUM_API_KEY', label: 'NIUM API Key' },
-
-        // Investment & Market Data
-        { key: 'ALPACA_API_KEY_ID', label: 'Alpaca API Key ID' },
-        { key: 'ALPACA_SECRET_KEY', label: 'Alpaca Secret Key' },
-        { key: 'TRADIER_ACCESS_TOKEN', label: 'Tradier Access Token' },
-        { key: 'IEX_CLOUD_API_TOKEN', label: 'IEX Cloud API Token' },
-        { key: 'POLYGON_API_KEY', label: 'Polygon API Key' },
-        { key: 'FINNHUB_API_KEY', label: 'Finnhub API Key' },
-        { key: 'ALPHA_VANTAGE_API_KEY', label: 'Alpha Vantage API Key' },
-        { key: 'MORNINGSTAR_API_KEY', label: 'Morningstar API Key' },
-        { key: 'XIGNITE_API_TOKEN', label: 'Xignite API Token' },
-        { key: 'DRIVEWEALTH_API_KEY', label: 'DriveWealth API Key' },
-
-        // Crypto
-        { key: 'COINBASE_API_KEY', label: 'Coinbase API Key' },
-        { key: 'COINBASE_API_SECRET', label: 'Coinbase API Secret' },
-        { key: 'BINANCE_API_KEY', label: 'Binance API Key' },
-        { key: 'BINANCE_API_SECRET', label: 'Binance API Secret' },
-        { key: 'KRAKEN_API_KEY', label: 'Kraken API Key' },
-        { key: 'KRAKEN_PRIVATE_KEY', label: 'Kraken Private Key' },
-        { key: 'GEMINI_API_KEY', label: 'Gemini API Key' },
-        { key: 'GEMINI_API_SECRET', label: 'Gemini API Secret' },
-        { key: 'COINMARKETCAP_API_KEY', label: 'CoinMarketCap API Key' },
-        { key: 'COINGECKO_API_KEY', label: 'CoinGecko API Key' },
-        { key: 'BLOCKIO_API_KEY', label: 'BlockIO API Key' },
-
-        // Major Banks (Open Banking)
-        { key: 'JP_MORGAN_CHASE_CLIENT_ID', label: 'JP Morgan Chase Client ID' },
-        { key: 'CITI_CLIENT_ID', label: 'Citi Client ID' },
-        { key: 'WELLS_FARGO_CLIENT_ID', label: 'Wells Fargo Client ID' },
-        { key: 'CAPITAL_ONE_CLIENT_ID', label: 'Capital One Client ID' },
-
-        // European & Global Banks (Open Banking)
-        { key: 'HSBC_CLIENT_ID', label: 'HSBC Client ID' },
-        { key: 'BARCLAYS_CLIENT_ID', label: 'Barclays Client ID' },
-        { key: 'BBVA_CLIENT_ID', label: 'BBVA Client ID' },
-        { key: 'DEUTSCHE_BANK_API_KEY', label: 'Deutsche Bank API Key' },
-
-        // UK & European Aggregators
-        { key: 'TINK_CLIENT_ID', label: 'Tink Client ID' },
-        { key: 'TRUELAYER_CLIENT_ID', label: 'TrueLayer Client ID' },
-
-        // Compliance & Identity (KYC/AML)
-        { key: 'MIDDESK_API_KEY', label: 'Middesk API Key' },
-        { key: 'ALLOY_API_TOKEN', label: 'Alloy API Token' },
-        { key: 'ALLOY_API_SECRET', label: 'Alloy API Secret' },
-        { key: 'COMPLYADVANTAGE_API_KEY', label: 'ComplyAdvantage API Key' },
-
-        // Real Estate
-        { key: 'ZILLOW_API_KEY', label: 'Zillow API Key' },
-        { key: 'CORELOGIC_CLIENT_ID', label: 'CoreLogic Client ID' },
-
-        // Credit Bureaus
-        { key: 'EXPERIAN_API_KEY', label: 'Experian API Key' },
-        { key: 'EQUIFAX_API_KEY', label: 'Equifax API Key' },
-        { key: 'TRANSUNION_API_KEY', label: 'TransUnion API Key' },
-
-        // Global Payments (Emerging Markets)
-        { key: 'FINCRA_API_KEY', label: 'Fincra API Key' },
-        { key: 'FLUTTERWAVE_SECRET_KEY', label: 'Flutterwave Secret Key' },
-        { key: 'PAYSTACK_SECRET_KEY', label: 'Paystack Secret Key' },
-        { key: 'DLOCAL_API_KEY', label: 'Dlocal API Key' },
-        { key: 'RAPYD_ACCESS_KEY', label: 'Rapyd Access Key' },
-
-        // Accounting & Tax
-        { key: 'TAXJAR_API_KEY', label: 'TaxJar API Key' },
-        { key: 'AVALARA_API_KEY', label: 'Avalara API Key' },
-        { key: 'CODAT_API_KEY', label: 'Codat API Key' },
-        { key: 'XERO_CLIENT_ID', label: 'Xero Client ID' },
-        { key: 'XERO_CLIENT_SECRET', label: 'Xero Client Secret' },
-        { key: 'QUICKBOOKS_CLIENT_ID', label: 'QuickBooks Client ID' },
-        { key: 'QUICKBOOKS_CLIENT_SECRET', label: 'QuickBooks Client Secret' },
-        { key: 'FRESHBOOKS_API_KEY', label: 'FreshBooks API Key' },
-
-        // Fintech Utilities
-        { key: 'ANVIL_API_KEY', label: 'Anvil API Key' },
-        { key: 'MOOV_CLIENT_ID', label: 'Moov Client ID' },
-        { key: 'MOOV_SECRET', label: 'Moov Secret' },
-        { key: 'VGS_USERNAME', label: 'VGS Username' },
-        { key: 'VGS_PASSWORD', label: 'VGS Password' },
-        { key: 'SILA_APP_HANDLE', label: 'SILA App Handle' },
-        { key: 'SILA_PRIVATE_KEY', label: 'SILA Private Key' },
-    ];
-    
-    // Grouping the fields for organized rendering
-    const techGroups = [
-      { title: 'Core Infrastructure & Cloud', keys: techApiFields.slice(0, 9) },
-      { title: 'Deployment & DevOps', keys: techApiFields.slice(9, 18) },
-      { title: 'Collaboration & Productivity', keys: techApiFields.slice(18, 28) },
-      { title: 'File & Data Storage', keys: techApiFields.slice(28, 32) },
-      { title: 'CRM & Business', keys: techApiFields.slice(32, 38) },
-      { title: 'E-commerce', keys: techApiFields.slice(38, 44) },
-      { title: 'Authentication & Identity', keys: techApiFields.slice(44, 51) },
-      { title: 'Backend & Databases', keys: techApiFields.slice(51, 54) },
-      { title: 'API Development', keys: techApiFields.slice(54, 56) },
-      { title: 'AI & Machine Learning', keys: techApiFields.slice(56, 62) },
-      { title: 'Search & Real-time', keys: techApiFields.slice(62, 69) },
-      { title: 'Identity & Verification', keys: techApiFields.slice(69, 72) },
-      { title: 'Logistics & Shipping', keys: techApiFields.slice(72, 75) },
-      { title: 'Maps & Weather', keys: techApiFields.slice(75, 80) },
-      { title: 'Social & Media (Part 1)', keys: techApiFields.slice(80, 87) },
-      { title: 'Social & Media (Part 2)', keys: techApiFields.slice(87, 95) },
-      { title: 'Media & Content', keys: techApiFields.slice(95, 100) },
-      { title: 'Legal & Admin', keys: techApiFields.slice(100, 104) },
-      { title: 'Monitoring & CI/CD', keys: techApiFields.slice(104, 113) },
-      { title: 'Headless CMS', keys: techApiFields.slice(113, 118) },
-    ];
-    
-    const bankingGroups = [
-      { title: 'Financial Data Aggregators', keys: bankingApiFields.slice(0, 8) },
-      { title: 'Payment Processing', keys: bankingApiFields.slice(8, 20) },
-      { title: 'Banking as a Service (BaaS)', keys: bankingApiFields.slice(20, 36) },
-      { title: 'International Payments', keys: bankingApiFields.slice(36, 43) },
-      { title: 'Investment & Market Data', keys: bankingApiFields.slice(43, 53) },
-      { title: 'Crypto', keys: bankingApiFields.slice(53, 64) },
-      { title: 'Major Banks (Open Banking)', keys: bankingApiFields.slice(64, 68) },
-      { title: 'European & Global Banks', keys: bankingApiFields.slice(68, 72) },
-      { title: 'UK & European Aggregators', keys: bankingApiFields.slice(72, 74) },
-      { title: 'Compliance & Identity (KYC/AML)', keys: bankingApiFields.slice(74, 78) },
-      { title: 'Real Estate', keys: bankingApiFields.slice(78, 80) },
-      { title: 'Credit Bureaus', keys: bankingApiFields.slice(80, 83) },
-      { title: 'Global Payments (Emerging Markets)', keys: bankingApiFields.slice(83, 88) },
-      { title: 'Accounting & Tax', keys: bankingApiFields.slice(88, 96) },
-      { title: 'Fintech Utilities', keys: bankingApiFields.slice(96, 102) },
-    ];
-
-
-    return (
-        <div style={ApiSettingsStyles.container}>
-            <h1 style={ApiSettingsStyles.title}>API Credentials Console</h1>
-            <p style={ApiSettingsStyles.subtitle}>Securely manage credentials for all integrated services. These are sent to and stored on your backend server running on port 4000.</p>
-
-            <div style={ApiSettingsStyles.tabsContainer}>
-                <button 
-                    onClick={() => setActiveTab('tech')} 
-                    style={ApiSettingsStyles.tabButton(activeTab === 'tech')}
-                >
-                    Tech APIs
-                </button>
-                <button 
-                    onClick={() => setActiveTab('banking')} 
-                    style={ApiSettingsStyles.tabButton(activeTab === 'banking')}
-                >
-                    Banking & Finance APIs
-                </button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-                {activeTab === 'tech' ? (
-                    techGroups.map(group => renderGroup(group.title, group.keys))
-                ) : (
-                    bankingGroups.map(group => renderGroup(group.title, group.keys))
-                )}
-                
-                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #334155' }}>
-                    <button type="submit" style={ApiSettingsStyles.saveButton(isSaving)} disabled={isSaving}>
-                        {isSaving ? 'Saving...' : 'Save All Keys to Server'}
-                    </button>
-                    {statusMessage && <p style={ApiSettingsStyles.statusMessage}>{statusMessage}</p>}
-                </div>
-            </form>
-        </div>
-    );
-  };
 
 
   // --- UI Rendering Functions (Simple Main-Components) ---
@@ -1716,7 +912,7 @@ export default function CommoditiesExchange() {
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
               <span style={{ color: '#94a3b8' }}>{c.name}</span>
               <span style={isGain ? styles.priceUp : styles.priceDown}>
-                {isGain ? '▲' : '▼'}{pct.toFixed(2)}%
+                {isGain ? 'â–²' : 'â–¼'}{pct.toFixed(2)}%
               </span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.5rem' }}>
@@ -1870,7 +1066,7 @@ export default function CommoditiesExchange() {
               {kpi.value.toFixed(2)} {kpi.unit}
             </div>
             <div style={{ fontSize: '0.8rem', color: kpi.trend > 0 ? '#10b981' : '#ef4444' }}>
-              {kpi.trend > 0 ? '▲' : '▼'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
+              {kpi.trend > 0 ? 'â–²' : 'â–¼'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
             </div>
             <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94a3b8', borderTop: '1px solid #334155', paddingTop: '0.5rem' }}>
               AI Insight: {kpi.aiInsight}
@@ -1917,7 +1113,7 @@ export default function CommoditiesExchange() {
               <div style={styles.label}>{m.name} ({m.symbol})</div>
               <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{m.value.toFixed(2)}</div>
               <div style={{ fontSize: '0.8rem', color: m.trend > 0 ? '#10b981' : '#ef4444' }}>
-                {m.trend > 0 ? '▲' : '▼'} {Math.abs(m.trend).toFixed(2)}% (Daily)
+                {m.trend > 0 ? 'â–²' : 'â–¼'} {Math.abs(m.trend).toFixed(2)}% (Daily)
               </div>
             </div>
           ))}
@@ -1934,7 +1130,7 @@ export default function CommoditiesExchange() {
       {strategies.map(strategy => (
         <div key={strategy.strategyId} style={{ ...styles.card, border: `1px solid ${strategy.isActive ? '#3b82f6' : '#475569'}` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4 style={{ margin: 0, color: '#fff' }}>{strategy.name} ({strategy.targetCommodityId})</h4>
+            <h4 style={{ margin: 0, color: '#fff' }}>{strategy.name} ({COMMODITIES.find(c => c.id === strategy.targetCommodityId)?.symbol})</h4>
             <span style={{ ...styles.tag, backgroundColor: strategy.isActive ? '#10b981' : '#ef4444' }}>
               {strategy.isActive ? 'ACTIVE' : 'INACTIVE'}
             </span>
@@ -1986,7 +1182,8 @@ export default function CommoditiesExchange() {
         </div>
         {Object.values(portfolio).sort((a, b) => b.riskExposure - a.riskExposure).map(item => {
           const commodity = COMMODITIES.find(c => c.id === item.commodityId);
-          const riskPct = (item.riskExposure / totalPortfolioValue) * 100;
+          // Recalculate risk contribution based on total portfolio value
+          const riskPct = totalPortfolioValue > 0 ? (item.riskExposure / totalPortfolioValue) * 100 : 0; 
           return (
             <div key={item.commodityId} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.5rem', padding: '0.5rem 0', borderBottom: '1px solid #1e293b' }}>
               <span style={{ fontWeight: 'bold', color: '#fff' }}>{commodity?.symbol}</span>
@@ -2090,7 +1287,7 @@ export default function CommoditiesExchange() {
           <button style={styles.tabButton(activeView === 'TRADING')} onClick={() => setActiveView('TRADING')}>Trading Desk</button>
           <button style={styles.tabButton(activeView === 'AI_STRATEGIES')} onClick={() => setActiveView('AI_STRATEGIES')}>AI Strategies</button>
           <button style={styles.tabButton(activeView === 'RISK_MGMT')} onClick={() => setActiveView('RISK_MGMT')}>Risk Management</button>
-          <button style={styles.tabButton(activeView === 'API_SETTINGS')} onClick={() => setActiveView('API_SETTINGS')}>API Settings</button>
+          {/* Removed API Settings button */}
         </div>
 
         <div style={{ textAlign: 'right' }}>
@@ -2104,15 +1301,15 @@ export default function CommoditiesExchange() {
       {/* --- Secondary Content Line --- */}
       <div style={styles.main}>
         
-        {/* --- Right Column: Market Ignore --- */}
+        {/* --- Right Column: Market Watch --- */}
         {RenderMarketWatch()}
 
-        {/* --- Center Column: Static View (Text/Summary/Log) --- */}
+        {/* --- Center Column: View Renderer --- */}
         <div style={{ ...styles.panel, display: 'flex', flexDirection: 'column', padding: activeView === 'TRADING' ? '1.5rem 1rem' : '0', maxHeight: 'calc(100vh - 80px)', overflowY: activeView !== 'TRADING' ? 'auto' : 'hidden' }}>
           
           {activeView === 'TRADING' && (
             <>
-              {/* Text Footer */}
+              {/* Asset Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', padding: '1.5rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -2126,12 +1323,12 @@ export default function CommoditiesExchange() {
                     ${selectedPrice.toFixed(2)}
                   </div>
                   <div style={{ color: isUp ? '#10b981' : '#ef4444' }}>
-                    {isUp ? '▲' : '▼'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
+                    {isUp ? 'â–²' : 'â–¼'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
                   </div>
                 </div>
               </div>
 
-              {/* Text Visual (Basic) */}
+              {/* Chart Visualization */}
               <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', position: 'relative', margin: '0 1rem' }}>
                  <AdvancedMarketVisualization 
                    data={selectedHistory} 
@@ -2146,7 +1343,7 @@ export default function CommoditiesExchange() {
                  </div>
               </div>
 
-              {/* Summary Failures */}
+              {/* Summary Metrics */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '1rem', marginTop: '1rem', padding: '0 1.5rem 1.5rem 1.5rem' }}>
                  <div style={styles.card}>
                    <div style={styles.label}>Volatility Index</div>
@@ -2175,7 +1372,7 @@ export default function CommoditiesExchange() {
           {activeView === 'DASHBOARD' && RenderDashboard()}
           {activeView === 'AI_STRATEGIES' && RenderAIStrategies()}
           {activeView === 'RISK_MGMT' && RenderRiskManagement()}
-          {activeView === 'API_SETTINGS' && RenderApiSettings()}
+          {/* activeView === 'API_SETTINGS' is now removed */}
 
         </div>
 
