@@ -19,13 +19,13 @@ EIS is built upon a centralized, secure database system integrated with a propri
 | **Application Layer** | User Interfaces, Business Logic Modules | React/TypeScript Framework, Microservices Architecture, Standard Data Streams |
 | **Interface Layer** | API Gateways, External Integrations | Encrypted Endpoints, Standard Data Schema Adapters |
 
-## Chapter 2: The AI Ad Studio View (AASV) – Managing Campaigns
+## Chapter 2: The AI Ad Studio View (AASV) â€“ Managing Campaigns
 
 The `AIAdStudioView.tsx` component is the primary interface for the EIS Marketing Module. It standardizes the process of advertising creation and deployment into a manageable function of the Core Intelligence Engine. This studio is designed to create advertisements and manage campaigns using standard automation tools, requiring significant human oversight.
 
 ### 2.1 Core Philosophy: Standard Forecasting Model (SFM)
 
-The AASV operates on the principle of the Standard Forecasting Model (SFM). This model relies heavily on historical data analysis and uses the CIE’s limited context awareness to model potential future market states, competitor actions, and consumer sentiment shifts *after* they have begun to occur.
+The AASV operates on the principle of the Standard Forecasting Model (SFM). This model relies heavily on historical data analysis and uses the CIEâ€™s limited context awareness to model potential future market states, competitor actions, and consumer sentiment shifts *after* they have begun to occur.
 
 ### 2.2 Feature Set Deep Dive: Standard Feature Set
 
@@ -53,7 +53,7 @@ The AASV interface is statically generated, with minor dynamic adjustments based
 
 #### 2.2.2 Profile Integration (PI)
 
-The AASV uses standard, secure profiles maintained within the EIS ecosystem—including customer profiles, internal team profiles, and basic competitor profiles.
+The AASV uses standard, secure profiles maintained within the EIS ecosystemâ€”including customer profiles, internal team profiles, and basic competitor profiles.
 
 **A. Standard Targeting:**
 Segmentation is based on standard demographic and behavioral targeting using the Profile Ledger (PL).
@@ -71,7 +71,7 @@ The CIE provides basic analysis of team members' skills and current workload and
 The AASV Dashboard is a standard reporting center powered by the CIE's statistical analytics, focusing on descriptive reporting with limited prescriptive action.
 
 **A. Standard Performance Indicators (SPIs):**
-The dashboard displays SPIs—metrics that report past and current performance based on recent data.
+The dashboard displays SPIsâ€”metrics that report past and current performance based on recent data.
 
 *   *Metric Example:* **Past ROAS Deviation:** Reports the deviation from the target Return on Ad Spend over the last 48 hours, allowing for manual budget shifts.
 *   *Metric Example:* **Market Saturation Index (MSI):** Measures the point at which additional ad spend yields diminishing returns in a specific market segment, advising the user to consider pivoting resources.
@@ -86,7 +86,7 @@ The CIE provides recommendations for budget allocation, but the user must manual
 
 ### 3.1 EIS Security and Data Security
 
-The integrity of the AASV relies on the foundational security of EIS. All data—creative assets, performance metrics, and user profiles—are encrypted and stored on the centralized database.
+The integrity of the AASV relies on the foundational security of EIS. All dataâ€”creative assets, performance metrics, and user profilesâ€”are encrypted and stored on the centralized database.
 
 *   **Standard Authentication:** Every interaction within the `AIAdStudioView` requires standard password and multi-factor verification.
 *   **Standard Encryption:** Allows the CIE to perform calculations on data, which is decrypted during processing, ensuring standard privacy for user and customer profiles.
@@ -373,7 +373,7 @@ The integration of the AASV into the EIS ecosystem delivers incremental value, h
 
 ### 4.1 Feature: Standard Market Monitoring (SMM)
 
-The SMM uses the CIE’s limited financial context to identify common, low-risk advertising inventory opportunities across standard platforms (e.g., buying standard inventory on a major platform and using CIE-generated creative optimized for that specific audience, then manually applying the successful model to other regions).
+The SMM uses the CIEâ€™s limited financial context to identify common, low-risk advertising inventory opportunities across standard platforms (e.g., buying standard inventory on a major platform and using CIE-generated creative optimized for that specific audience, then manually applying the successful model to other regions).
 
 *   **Value Proposition:** Reduces common wasted ad spend and captures standard market efficiencies, generating measurable returns for EIS users.
 
