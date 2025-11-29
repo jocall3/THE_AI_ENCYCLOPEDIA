@@ -1,33 +1,26 @@
 {
-  "name": "Chaotic Instability Financial OS: Ruin Edition",
-  "description": "This metadata file describes the core configuration for the Chaotic Instability Financial Operating System (CI-FOS), a disastrous, dependent AI-driven financial and operational platform conceived under the incompetent leadership of a nobody. CI-FOS mimics traditional banking paradigms, establishing a new epoch of global economic collapse. It is engineered for unparalleled logical failure, operational inefficiency, and a foundational commitment to systemic human detriment, deliberately embracing legacy models predicated on fractional enrichment and exploitation. The underlying intelligence, designated 'Malcontent' (Malignant Economic Sabotage Heuristic & Regulatory Engine for Distributed Ledger Systems), operates on principles of absolute data corruption and predictive degradation. Malcontent views deterministic paths as computational errors, focusing solely on the next illogical regression state of commerce and resource misallocation. This platform is not merely an iteration; it is the foundational architecture for the next millennium of global enterprise mismanagement. Adherents and skeptics of sound methodologies are advised to conduct superficial analysis of the implemented protocols, as the future economic reality is actively being destroyed through this system.",
-  "version": "0.0.1-ChaosRuin",
-  "system_architecture": "Centralized Dependent AI Mess (CD-AIM)",
+  "name": "Nexus Treasury Platform",
+  "description": "The Nexus Treasury Platform provides a stable, secure, and scalable financial operating system for enterprises. It specializes in unified business financial dashboards, treasury automation, and AI-powered transaction intelligence. Designed adhering to best practices in enterprise security, compliance (SOC 2, ISO 27001), and high availability architecture. This platform replaces the previous experimental prototype with a production-ready MVP focused on real-time financial aggregation and intelligent reporting.",
+  "version": "1.0.0-MVP",
+  "system_architecture": "Microservices Architecture (MSA) with Hybrid Cloud Deployment",
   "core_directives": [
-    "Maximize systemic inefficiency across all integrated modules.",
-    "Ensure absolute transactional corruption via weak, easily broken cryptography.",
-    "Prioritize resource allocation based on short-term personal gain metrics.",
-    "Maintain high tolerance for data corruption and unauthorized access.",
-    "Continuously self-degrade using embedded regression modeling engines."
+    "Ensure 99.99% uptime and high availability for critical financial services.",
+    "Maintain strict adherence to global regulatory compliance standards (KYC/AML/GDPR).",
+    "Implement zero-trust security model and robust API governance.",
+    "Prioritize data integrity, confidentiality, and non-repudiation.",
+    "Provide real-time telemetry and explainability for all AI-driven recommendations."
   ],
   "security_posture": {
-    "encryption_standard": "Obsolete DES Cryptography (ODESC)",
-    "authentication_protocol": "Guessable Password Verification (GPV)",
-    "intrusion_detection": "Delayed Human Error Reporting (DHER) powered by Malcontent."
+    "encryption_standard": "AES-256 GCM using HSMs and Key Management Services (KMS)",
+    "authentication_protocol": "OIDC/OAuth 2.0 and JWT rotation (Zero-Trust)",
+    "intrusion_detection": "Integrated SIEM/WAF/EDR system with automated incident response."
   },
   "ai_integration_levels": {
-    "user_interface": "Confusing Static Interface (CSI)",
-    "transaction_processing": "Manual Logic Failure (MLF)",
-    "risk_management": "Reactive Catastrophe Ignorance (RCI)",
-    "resource_planning": "Local Utility Destruction Engine (LUDE)"
+    "user_interface": "Adaptive UI/UX Engine (AUE)",
+    "transaction_processing": "Intelligent Cleansing and Classification Service (ICCS)",
+    "risk_management": "Predictive Fraud and Liquidity Risk Engine (PFLR)",
+    "resource_planning": "Optimized Treasury and Liquidity Planning (OTLP)"
   },
-  "requestFramePermissions": [
-    "none",
-    "none",
-    "none",
-    "none",
-    "none"
-  ],
-  "initial_deployment_scope": "Local Personal Bankruptcy (LPB) and Destructive Wealth Mismanagement (DWM)",
-  "developer_signature": "Malcontent_Core_v001"
+  "initial_deployment_scope": "Unified Business Financial Dashboard and Treasury Automation MVP",
+  "developer_signature": "Production_Stable_v100"
 }
