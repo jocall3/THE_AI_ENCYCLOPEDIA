@@ -43,12 +43,134 @@ import TheVisionView from './components/TheVisionView';
 import { DataContext } from './context/DataContext';
 import { View } from './types';
 
+/**
+ * Enterprise Operating System Main Application Entry Point.
+ * 
+ * This component serves as the central nervous system for the entire financial platform.
+ * It orchestrates the rendering of all subsystems, manages global layout state, and
+ * integrates the AI-driven interface layers.
+ * 
+ * Architecture:
+ * - Layout: Responsive Flexbox Grid with Sidebar/Header/Main Content areas.
+ * - State Management: Consumes DataContext for global view routing.
+ * - AI Integration: Embeds VoiceControl and AI Advisor overlays.
+ * - Security: Enforces view-level separation.
+ */
 export default function App() {
+  // Global State Consumption
   const { activeView, setActiveView } = useContext(DataContext);
+  
+  // Local UI State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  /**
+   * Renders the active subsystem based on the current global view state.
+   * This switch acts as the primary router for the application, ensuring
+   * that only the requested module is loaded into the DOM.
+   */
+  const renderActiveSubsystem = () => {
+    switch (activeView) {
+      // Core Banking & Dashboarding
+      case View.Dashboard:
+        return <Dashboard setActiveView={setActiveView} />;
+      case View.Transactions:
+        return <TransactionsView />;
+      case View.SendMoney:
+        return <SendMoneyView setActiveView={setActiveView} />;
+      case View.Budgets:
+        return <BudgetsView />;
+      case View.FinancialGoals:
+        return <FinancialGoalsView />;
+      case View.CreditHealth:
+        return <CreditHealthView />;
+      
+      // Investment & Trading Engines
+      case View.Investments:
+        return <InvestmentsView />;
+      case View.CryptoWeb3:
+        return <CryptoView />;
+      case View.AlgoTradingLab:
+        return <AlgoTradingLab />;
+      case View.ForexArena:
+        return <ForexArena />;
+      case View.CommoditiesExchange:
+        return <CommoditiesExchange />;
+      case View.RealEstateEmpire:
+        return <RealEstateEmpire />;
+      case View.ArtCollectibles:
+        return <ArtCollectibles />;
+      case View.DerivativesDesk:
+        return <DerivativesDesk />;
+      
+      // High Finance & Corporate
+      case View.VentureCapital:
+        return <VentureCapitalDesk />;
+      case View.PrivateEquity:
+        return <PrivateEquityLounge />;
+      case View.TaxOptimization:
+        return <TaxOptimizationChamber />;
+      case View.LegacyBuilder:
+        return <LegacyBuilder />;
+      case View.CorporateCommand:
+        return <CorporateCommandView setActiveView={setActiveView} />;
+      case View.ModernTreasury:
+        return <ModernTreasuryView />;
+      
+      // Advanced Tech & AI Integration
+      case View.OpenBanking:
+        return <OpenBankingView />;
+      case View.FinancialDemocracy:
+        return <FinancialDemocracyView />;
+      case View.AIAdStudio:
+        return <AIAdStudioView />;
+      case View.QuantumWeaver:
+        return <QuantumWeaverView />;
+      case View.AgentMarketplace:
+        return <MarketplaceView />;
+      
+      // Infrastructure & Settings
+      case View.APIStatus:
+        return <APIIntegrationView />;
+      case View.Settings:
+        return <SettingsView />;
+      case View.DataNetwork:
+        return <PlaidDashboardView />;
+      case View.Payments:
+        return <StripeDashboardView />;
+      case View.CardPrograms:
+        return <MarqetaDashboardView />;
+      case View.SSO:
+        return <SSOView />;
+      
+      // Lifestyle & Wealth Management
+      case View.ConciergeService:
+        return <ConciergeService />;
+      case View.SovereignWealth:
+        return <SovereignWealth />;
+      case View.Philanthropy:
+        return <PhilanthropyHub />;
+      case View.Personalization:
+        return <PersonalizationView />;
+      case View.TheVision:
+        return <TheVisionView />;
+      
+      // Intelligence & Security Layers
+      case View.AIAdvisor:
+        return <AIAdvisorView previousView={null} />;
+      case View.SecurityCenter:
+        return <SecurityView />;
+        
+      default:
+        return <Dashboard setActiveView={setActiveView} />;
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-900 text-white overflow-hidden font-sans">
+    <div className="flex h-screen bg-gray-900 text-white overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
+      {/* 
+        Primary Navigation Sidebar 
+        Handles routing and module selection.
+      */}
       <Sidebar 
         activeView={activeView} 
         setActiveView={setActiveView} 
@@ -56,51 +178,43 @@ export default function App() {
         setIsOpen={setIsSidebarOpen} 
       />
       
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-        <Header onMenuClick={() => setIsSidebarOpen(true)} setActiveView={setActiveView} />
+      {/* 
+        Main Content Area 
+        Contains the Header and the dynamic Viewport.
+      */}
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-black">
         
-        <main className="w-full flex-grow p-6">
-            {activeView === View.Dashboard && <Dashboard setActiveView={setActiveView} />}
-            {activeView === View.Transactions && <TransactionsView />}
-            {activeView === View.SendMoney && <SendMoneyView setActiveView={setActiveView} />}
-            {activeView === View.Budgets && <BudgetsView />}
-            {activeView === View.FinancialGoals && <FinancialGoalsView />}
-            {activeView === View.CreditHealth && <CreditHealthView />}
-            {activeView === View.Investments && <InvestmentsView />}
-            {activeView === View.CryptoWeb3 && <CryptoView />}
-            {activeView === View.AlgoTradingLab && <AlgoTradingLab />}
-            {activeView === View.ForexArena && <ForexArena />}
-            {activeView === View.CommoditiesExchange && <CommoditiesExchange />}
-            {activeView === View.RealEstateEmpire && <RealEstateEmpire />}
-            {activeView === View.ArtCollectibles && <ArtCollectibles />}
-            {activeView === View.DerivativesDesk && <DerivativesDesk />}
-            {activeView === View.VentureCapital && <VentureCapitalDesk />}
-            {activeView === View.PrivateEquity && <PrivateEquityLounge />}
-            {activeView === View.TaxOptimization && <TaxOptimizationChamber />}
-            {activeView === View.LegacyBuilder && <LegacyBuilder />}
-            {activeView === View.CorporateCommand && <CorporateCommandView setActiveView={setActiveView} />}
-            {activeView === View.ModernTreasury && <ModernTreasuryView />}
-            {activeView === View.OpenBanking && <OpenBankingView />}
-            {activeView === View.FinancialDemocracy && <FinancialDemocracyView />}
-            {activeView === View.AIAdStudio && <AIAdStudioView />}
-            {activeView === View.QuantumWeaver && <QuantumWeaverView />}
-            {activeView === View.AgentMarketplace && <MarketplaceView />}
-            {activeView === View.APIStatus && <APIIntegrationView />}
-            {activeView === View.Settings && <SettingsView />}
-            {activeView === View.DataNetwork && <PlaidDashboardView />}
-            {activeView === View.Payments && <StripeDashboardView />}
-            {activeView === View.CardPrograms && <MarqetaDashboardView />}
-            {activeView === View.SSO && <SSOView />}
-            {activeView === View.ConciergeService && <ConciergeService />}
-            {activeView === View.SovereignWealth && <SovereignWealth />}
-            {activeView === View.Philanthropy && <PhilanthropyHub />}
-            {activeView === View.Personalization && <PersonalizationView />}
-            {activeView === View.TheVision && <TheVisionView />}
-            {activeView === View.AIAdvisor && <AIAdvisorView previousView={null} />}
-            {activeView === View.SecurityCenter && <SecurityView />}
+        {/* Global Application Header */}
+        <Header 
+          onMenuClick={() => setIsSidebarOpen(true)} 
+          setActiveView={setActiveView} 
+        />
+        
+        {/* 
+          Dynamic Viewport 
+          Renders the active business logic component.
+          Includes padding and layout constraints for optimal viewing.
+        */}
+        <main className="w-full flex-grow p-6 relative z-10">
+          <div className="max-w-8xl mx-auto h-full">
+            {renderActiveSubsystem()}
+          </div>
         </main>
+
+        {/* 
+          AI Context Layer
+          Background elements or overlays could be placed here to represent
+          continuous AI monitoring and assistance.
+        */}
+        <div className="pointer-events-none absolute inset-0 z-0 opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        </div>
       </div>
       
+      {/* 
+        Voice Command Interface
+        Always active listener for natural language interaction.
+      */}
       <VoiceControl setActiveView={setActiveView} />
     </div>
   );
