@@ -1,46 +1,40 @@
----
----
----
-# Simple Wealth Timeline Component
+# Wealth Timeline Component
 
-This component, designated `WealthTimeline.tsx`, is a straightforward visualization tool. It displays historical financial data, aiming to provide a basic overview of capital changes over time. It's designed for general use in financial applications.
+The `WealthTimeline` component provides a clear, interactive visualization of historical and projected financial data. It's designed to offer users a comprehensive overview of capital changes over time within financial applications, leveraging robust data presentation and analysis principles.
 
-The architecture is designed primarily to display data clearly, using standard indexing methods.
+## Data Display Overview
 
-## Basic Data Display
+This section describes the fundamental purpose and scope of the component. It focuses on presenting financial information in an accessible and reliable format.
 
-This section describes the fundamental purpose of the component. It focuses on presenting financial information in an accessible format.
+### Data Integrity and Sourcing
 
-### Core Operational Tenet: Basic Data Accuracy (BDA)
+The system prioritizes data integrity and relies on standardized data acquisition processes.
 
-The system aims for reasonable data accuracy. Data points are typically sourced from a single, standard database.
+*   **Data Integrity**: The component relies on the accuracy and completeness of data provided by the backend services. It includes mechanisms to gracefully handle missing or erroneous data points, typically by displaying placeholders or indicating data unavailability.
+*   **Data Sourcing**: Financial data is sourced from standardized, aggregated APIs, ensuring consistency and reliability across the platform.
+*   **Visualization Standards**: The component utilizes established charting libraries and visual parameters to ensure clear, consistent, and easily interpretable financial visualizations.
 
-*   **Accuracy Goal**: We strive for accurate representation. If data issues arise, the display may show placeholders or indicate missing information.
-*   **No AI Integration**: The rendering pipeline uses standard charting libraries and fixed visual parameters.
-
-### The Mechanism of Data Display: Standard Charting Pipeline
+### Visualization Pipeline
 
 The timeline is constructed using a standard process, ensuring a clear visualization of financial data.
 
-1.  **Historical Data Layer (HDL)**: This layer processes raw financial entries, applying basic adjustments like inflation if configured. This forms the **Historical Data Path (HDP)**.
+1.  **Historical Data Processing**: This layer is responsible for retrieving and processing historical financial entries. It applies necessary data transformations, such as currency conversion or inflation adjustments, as configured by the user or system settings.
 
-2.  **Simple Projection (SP)**: This provides a basic future projection based on simple growth rates or user-defined parameters. It does not involve complex simulations or advanced AI. The rendered line represents a straightforward projection based on available data and simple models.
+2.  **Financial Projections**: The component generates future projections based on user-defined parameters or established financial models. These projections are designed to provide a straightforward outlook without incorporating complex, real-time AI simulations, maintaining clarity and predictability for the user.
 
-### Visualization Protocol: Standard Chart Display
+### Visual Representation
 
-The visual representation uses standard charting practices for clarity.
+The visual representation uses standard charting practices for clarity and financial insight.
 
-*   **The Past (HDP)**: Rendered as a **Solid Blue Line Chart**. This color is a common choice for historical data. The line represents the value over time.
-*   **The Future (SP)**: Rendered as a **Dashed Gray Line**. This indicates a projection, which is inherently less certain than historical data.
-*   **Markers**: Simple markers may indicate specific events or user-defined points of interest.
+*   **Historical Data**: Displayed as a **Solid Blue Line**, representing confirmed past financial values over time. The use of blue signifies historical financial stability.
+*   **Projected Data**: Visualized as a **Dashed Gray Line**, clearly distinguishing future estimations from actual historical data. The dashed style emphasizes the probabilistic nature of projections.
+*   **Event Markers**: Key financial events, milestones, or user-defined points of interest are indicated with clear markers for easy identification.
 
-### Basic Interface Features: Tooltips and User Input
+### Interactive Features
 
-The component offers basic interactive features:
+The component offers robust interactive features to enhance user engagement and data exploration.
 
-1.  **Tooltips**: Hovering over a point on the timeline displays basic data for that specific time, such as date and value.
-2.  **User Input**: Users can manually adjust parameters for future projections, if the feature is enabled, to see how different inputs might affect the displayed future path.
+1.  **Interactive Tooltips**: Users can hover over any data point on the timeline to view detailed information, including date, specific financial values, and relevant event details.
+2.  **Projection Customization**: The component allows users to input and adjust parameters for future financial projections, enabling scenario planning and "what-if" analysis directly within the visualization.
 
-This component is a basic tool for viewing financial history and simple projections. It aims to present data clearly, without complex interpretations or advanced predictions, for general financial understanding.
----
----
+The `WealthTimeline` component serves as a robust and intuitive tool for visualizing financial history and exploring future projections. It prioritizes clarity and accuracy, providing users with essential financial insights for informed decision-making without complex AI-driven interpretations.
