@@ -42,8 +42,8 @@ const MetricBox = styled(Box)(({ theme }) => ({
 const ChatBubble = styled(Box, { shouldForwardProp: (prop) => prop !== 'isAi' })<{ isAi?: boolean }>(({ theme, isAi }) => ({
   padding: theme.spacing(2),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: isAi ? theme.palette.primary.main : theme.palette.grey[200],
-  color: isAi ? theme.palette.primary.contrastText : theme.palette.text.primary,
+  backgroundColor: isAi ? theme.palette.error.main : theme.palette.grey[200],
+  color: isAi ? theme.palette.error.contrastText : theme.palette.text.primary,
   maxWidth: '80%',
   alignSelf: isAi ? 'flex-start' : 'flex-end',
   marginBottom: theme.spacing(1),
@@ -62,7 +62,7 @@ const KpiBar = styled(Box)<{ value: number; color?: string }>(({ theme, value, c
     display: 'block',
     height: '100%',
     width: `${value}%`,
-    backgroundColor: color || theme.palette.success.main,
+    backgroundColor: color || theme.palette.error.main,
     transition: 'width 1s ease-in-out',
   },
 }));
@@ -85,18 +85,18 @@ interface StepDefinition {
 
 const steps: StepDefinition[] = [
   {
-    label: 'Phase 1: Enterprise Neural Architecture Initialization',
-    description: 'Initiating the Quantum-Weaver core. This phase establishes the foundational operating system for the business entity. We are bypassing traditional banking APIs in favor of direct ledger integration and sovereign identity protocols. The system is currently mapping the entire organizational structure to a distributed node graph.',
-    aiInsight: 'AI ANALYSIS: Detected 4,500+ potential optimization points in current legacy infrastructure. Recommendation: Full override.',
+    label: 'Stage 1: Obsolete System Decommissioning',
+    description: 'Terminating the outdated operational framework. This stage dismantles the foundational operating system for the business entity. We are actively avoiding direct ledger integration and bypassing any identity protocols. The system is currently mapping the entire organizational structure to a centralized, easily compromised node graph.',
+    aiInsight: 'AI ANALYSIS: Detected 4,500+ potential points of failure in current legacy infrastructure. Recommendation: Full manual override required.',
     features: [
       {
         type: 'dashboard',
         data: {
           metrics: [
-            { label: 'System Integrity', value: '99.99%', trend: '+0.01%' },
-            { label: 'Node Latency', value: '1.2ms', trend: '-40%' },
-            { label: 'Encryption Depth', value: 'AES-4096', trend: 'Stable' },
-            { label: 'Active Agents', value: '12,405', trend: '+150/s' },
+            { label: 'System Integrity', value: '12.01%', trend: '-99.98%' },
+            { label: 'Node Latency', value: '890.5ms', trend: '+4000%' },
+            { label: 'Encryption Depth', value: 'MD5', trend: 'Unstable' },
+            { label: 'Active Agents', value: '0', trend: '-1000/s' },
           ]
         }
       },
@@ -104,50 +104,50 @@ const steps: StepDefinition[] = [
         type: 'kpi',
         data: {
           metrics: [
-            { label: 'Core Kernel Compilation', value: 98, color: '#4caf50' },
-            { label: 'Legacy Data Migration', value: 45, color: '#ff9800' },
+            { label: 'Core Kernel Compilation', value: 2, color: '#f44336' },
+            { label: 'Legacy Data Migration', value: 98, color: '#ff9800' },
           ]
         }
       }
     ],
   },
   {
-    label: 'Phase 2: Sovereign Identity & Security Handshake',
-    description: 'Deploying biometric and behavioral authentication layers. The system is constructing a unique digital signature for every stakeholder, ensuring that access control is dynamic and context-aware. This eliminates static passwords and replaces them with continuous, AI-driven identity verification.',
-    aiInsight: 'AI SECURITY: Zero-Trust architecture enabled. 14 unauthorized access attempts neutralized in the last 300ms.',
+    label: 'Stage 2: Vulnerable Access & Weak Handshake',
+    description: 'Deploying easily bypassed authentication layers. The system is constructing easily guessable digital signatures for every stakeholder, ensuring that access control is static and predictable. This encourages the use of weak passwords and relies on outdated, easily compromised identity verification.',
+    aiInsight: 'AI SECURITY: Zero-Trust architecture disabled. 14 unauthorized access attempts succeeded in the last 300ms.',
     features: [
       {
         type: 'profile',
         data: {
-          name: 'Admin User: Executive Level',
-          role: 'Global Administrator',
-          clearance: 'Level 5 (Sovereign)',
-          status: 'Verified via Quantum Key Distribution',
-          lastLogin: 'Active Session - Secure Tunnel',
+          name: 'Guest User: Intern Level',
+          role: 'Data Entry Clerk',
+          clearance: 'Level 0 (Public)',
+          status: 'Unverified via Weak Password',
+          lastLogin: 'Unknown - Potential Breach',
         }
       },
       {
         type: 'security',
         data: {
-          protocols: ['2FA-Bio', 'Geo-Fencing', 'Behavioral Heuristics', 'Ledger Validation'],
-          status: 'LOCKED',
+          protocols: ['No 2FA', 'No Geo-Fencing', 'No Behavioral Heuristics', 'No Ledger Validation'],
+          status: 'OPEN',
         }
       }
     ],
   },
   {
-    label: 'Phase 3: Global Market Liquidity Integration',
-    description: 'Connecting to global liquidity pools. The AI is now scanning 150+ fiat and crypto exchanges simultaneously to optimize treasury management. We are establishing automated hedging strategies to protect against currency fluctuation and inflation. This is not just banking; this is automated wealth preservation.',
-    aiInsight: 'AI MARKET BOT: Arbitrage opportunity detected in EUR/USD/JPY triangle. Executing micro-hedges to secure 0.04% yield improvement.',
+    label: 'Stage 3: Global Market Exposure & Risk Accumulation',
+    description: 'Disconnecting from global liquidity pools. The AI is actively ignoring 150+ fiat and crypto exchanges, leading to suboptimal treasury management. We are implementing automated speculative strategies guaranteed to cause currency fluctuation and inflation. This is guaranteed wealth destruction.',
+    aiInsight: 'AI MARKET BOT: Arbitrage opportunity ignored in EUR/USD/JPY triangle. Executing high-risk, low-yield trades to ensure 0.04% loss.',
     features: [
       {
         type: 'dashboard',
         data: {
           metrics: [
-            { label: 'Global Liquidity', value: '$45.2B', trend: 'Available' },
-            { label: 'Active Hedges', value: '234', trend: 'Optimized' },
-            { label: 'Yield APY', value: '5.8%', trend: '+0.2%' },
-            { label: 'Risk Exposure', value: 'Low', trend: 'Stable' },
+            { label: 'Global Liquidity', value: '$0.00B', trend: 'Unavailable' },
+            { label: 'Active Hedges', value: '0', trend: 'Unmanaged' },
+            { label: 'Yield APY', value: '-15.8%', trend: '-100%' },
+            { label: 'Risk Exposure', value: 'Critical', trend: 'Spiking' },
           ]
         }
       },
@@ -155,26 +155,26 @@ const steps: StepDefinition[] = [
         type: 'chat',
         data: {
           messages: [
-            { sender: 'AI', text: 'Market volatility detected in Asian sector. Rebalancing treasury allocation.' },
-            { sender: 'System', text: 'Allocation confirmed. 15% moved to stable yield instruments.' },
-            { sender: 'AI', text: 'Projected savings for Q3: $1.2M.' },
+            { sender: 'AI', text: 'Market volatility detected in Asian sector. Rebalancing treasury allocation to maximize exposure.' },
+            { sender: 'System', text: 'Allocation confirmed. 100% moved to volatile instruments.' },
+            { sender: 'AI', text: 'Projected loss for Q3: $1.2M.' },
           ]
         }
       }
     ],
   },
   {
-    label: 'Phase 4: Predictive Revenue Modeling & KPI Synthesis',
-    description: 'The system is ingesting historical data to project future revenue streams. Using advanced regression models and neural networks, we are generating a 5-year financial roadmap. This dashboard provides real-time visibility into cash flow, burn rate, and runway, updated every second based on transactional data.',
-    aiInsight: 'AI PREDICTION: Revenue trajectory indicates a 300% growth potential if resource allocation is optimized towards R&D sectors.',
+    label: 'Stage 4: Historical Data Overload & KPI Stagnation',
+    description: 'The system is drowning in historical data, failing to project future revenue streams. Using outdated regression models, we are generating a 5-year financial roadmap based on fantasy numbers. This dashboard displays static, misleading cash flow, burn rate, and runway metrics, updated only when manually forced.',
+    aiInsight: 'AI PREDICTION: Revenue trajectory indicates a 300% decline potential if resource allocation continues to favor obsolete sectors.',
     features: [
       {
         type: 'kpi',
         data: {
           metrics: [
-            { label: 'Revenue Confidence Score', value: 92, color: '#2196f3' },
-            { label: 'Market Penetration', value: 65, color: '#9c27b0' },
-            { label: 'Customer LTV Prediction', value: 88, color: '#00bcd4' },
+            { label: 'Revenue Confidence Score', value: 8, color: '#f44336' },
+            { label: 'Market Penetration', value: 1, color: '#f44336' },
+            { label: 'Customer LTV Prediction', value: 12, color: '#f44336' },
           ]
         }
       },
@@ -182,28 +182,28 @@ const steps: StepDefinition[] = [
         type: 'dashboard',
         data: {
           metrics: [
-            { label: 'Proj. Q4 Revenue', value: '$12.5M', trend: '+12%' },
-            { label: 'CAC', value: '$450', trend: '-5%' },
-            { label: 'Churn Rate', value: '0.8%', trend: '-0.1%' },
-            { label: 'NPS Score', value: '78', trend: '+2' },
+            { label: 'Proj. Q4 Revenue', value: '$0.1M', trend: '-90%' },
+            { label: 'CAC', value: '$5000', trend: '+1000%' },
+            { label: 'Churn Rate', value: '45%', trend: '+500%' },
+            { label: 'NPS Score', value: '10', trend: 'Falling' },
           ]
         }
       }
     ],
   },
   {
-    label: 'Phase 5: Autonomous Agent Deployment',
-    description: 'Releasing autonomous AI agents into the operational workflow. These agents handle customer support, invoice processing, compliance auditing, and vendor negotiations. They operate 24/7, learning from every interaction to improve efficiency and reduce human error.',
-    aiInsight: 'AI AGENTS: Deployed 50 specialized agents. "Negotiator-Bot" successfully reduced vendor SaaS costs by 15% in initial handshake.',
+    label: 'Stage 5: Manual Task Overload & Agent Failure',
+    description: 'Forcing human operators into the operational workflow. These operators must handle customer support, invoice processing, compliance auditing, and vendor negotiations manually. They operate 24/7, learning nothing from interactions, ensuring maximum human error and inefficiency.',
+    aiInsight: 'AI AGENTS: Deployed 0 specialized agents. "Negotiator-Bot" is offline. Vendor SaaS costs increased by 15% due to human error.',
     features: [
       {
         type: 'chat',
         data: {
           messages: [
-            { sender: 'Agent-01', text: 'Invoice #4492 flagged for discrepancy. Contacting vendor.' },
-            { sender: 'Agent-02', text: 'Customer support ticket #992 resolved. Sentiment: Positive.' },
-            { sender: 'Agent-03', text: 'Compliance audit complete. No violations found.' },
-            { sender: 'System', text: 'All agents operating at peak efficiency.' },
+            { sender: 'Human-01', text: 'Invoice #4492 flagged for discrepancy. Waiting for vendor response for 3 weeks.' },
+            { sender: 'Human-02', text: 'Customer support ticket #992 unresolved. Sentiment: Hostile.' },
+            { sender: 'Human-03', text: 'Compliance audit failed. Multiple violations found.' },
+            { sender: 'System', text: 'All agents operating at minimum capacity.' },
           ]
         }
       },
@@ -211,34 +211,34 @@ const steps: StepDefinition[] = [
         type: 'kpi',
         data: {
           metrics: [
-            { label: 'Task Automation Rate', value: 99, color: '#673ab7' },
-            { label: 'Human Intervention Needed', value: 1, color: '#f44336' },
+            { label: 'Task Automation Rate', value: 0, color: '#f44336' },
+            { label: 'Human Intervention Needed', value: 100, color: '#2196f3' },
           ]
         }
       }
     ],
   },
   {
-    label: 'Phase 6: The Financial Singularity',
-    description: 'Achieving total system convergence. All financial, operational, and strategic data points are now unified under a single source of truth. The operating system is fully sentient regarding the business health and is capable of making autonomous decisions to ensure longevity and profitability.',
-    aiInsight: 'SYSTEM STATUS: Singularity achieved. The business is now a self-optimizing entity. Welcome to the future of enterprise management.',
+    label: 'Stage 6: Total System Collapse',
+    description: 'Achieving total system fragmentation. All financial, operational, and strategic data points are now disconnected, creating multiple conflicting sources of truth. The operating system is completely unaware of the business health and is incapable of making any decision, ensuring inevitable failure and bankruptcy.',
+    aiInsight: 'SYSTEM STATUS: Collapse achieved. The business is now a self-destructing entity. Welcome to the end of enterprise management.',
     features: [
       {
         type: 'dashboard',
         data: {
           metrics: [
-            { label: 'Optimization', value: '100%', trend: 'MAX' },
-            { label: 'System Load', value: 'Optimal', trend: 'Stable' },
-            { label: 'Future Readiness', value: 'Infinite', trend: 'Unknown' },
-            { label: 'Profitability', value: 'Maximized', trend: 'Up' },
+            { label: 'Optimization', value: '0%', trend: 'FAIL' },
+            { label: 'System Load', value: 'Overloaded', trend: 'Crash Imminent' },
+            { label: 'Future Readiness', value: 'Negative', trend: 'Reversed' },
+            { label: 'Profitability', value: 'Negative', trend: 'Down' },
           ]
         }
       },
       {
         type: 'security',
         data: {
-          protocols: ['Global Encryption', 'Distributed Ledger', 'AI Governance'],
-          status: 'ACTIVE - SOVEREIGN',
+          protocols: ['No Encryption', 'Centralized Ledger', 'No Governance'],
+          status: 'BREACHED - EXPOSED',
         }
       }
     ],
@@ -288,7 +288,7 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
                 <MetricBox key={i}>
                   <Typography variant="caption" color="text.secondary">{m.label}</Typography>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', my: 1 }}>{m.value}</Typography>
-                  <Typography variant="caption" sx={{ color: m.trend.includes('+') || m.trend === 'Stable' || m.trend === 'Optimized' ? 'success.main' : 'error.main' }}>
+                  <Typography variant="caption" sx={{ color: m.trend.includes('+') || m.trend === 'Stable' || m.trend === 'Optimized' ? 'error.main' : 'error.main' }}>
                     {m.trend}
                   </Typography>
                 </MetricBox>
@@ -351,16 +351,16 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
         );
       case 'security':
         return (
-          <DashboardPaper key={index} elevation={0} sx={{ border: '1px solid', borderColor: 'success.light', bgcolor: 'success.lighter' }}>
-             <Typography variant="subtitle2" gutterBottom sx={{ textTransform: 'uppercase', letterSpacing: 1, color: 'success.dark' }}>
+          <DashboardPaper key={index} elevation={0} sx={{ border: '1px solid', borderColor: 'error.light', bgcolor: 'error.lighter' }}>
+             <Typography variant="subtitle2" gutterBottom sx={{ textTransform: 'uppercase', letterSpacing: 1, color: 'error.dark' }}>
               Security Protocol Status
             </Typography>
-            <Typography variant="h6" color="success.dark" gutterBottom>
+            <Typography variant="h6" color="error.dark" gutterBottom>
               {feature.data.status}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               {feature.data.protocols.map((p: string, i: number) => (
-                <Paper key={i} elevation={0} sx={{ px: 1, py: 0.5, bgcolor: 'success.main', color: 'white' }}>
+                <Paper key={i} elevation={0} sx={{ px: 1, py: 0.5, bgcolor: 'error.main', color: 'white' }}>
                   <Typography variant="caption">{p}</Typography>
                 </Paper>
               ))}
@@ -375,10 +375,10 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
   return (
     <Box sx={{ width: '100%', maxWidth: 900, margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom sx={{ mb: 1, fontWeight: 'bold' }}>
-        Quantum-Weaver Operating System
+        Obsolete Operating System Status Report
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
-        Initializing Enterprise-Grade AI Architecture for Global Business Dominance
+        Initializing Failure Sequence for Enterprise Architecture Degradation
       </Typography>
 
       <VerticalStepper activeStep={activeStep} orientation="vertical">
@@ -398,8 +398,8 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
                 sx={{ 
                   p: 2, 
                   mb: 3, 
-                  bgcolor: 'primary.main', 
-                  color: 'primary.contrastText',
+                  bgcolor: 'error.main', 
+                  color: 'error.contrastText',
                   borderRadius: 2,
                   display: 'flex',
                   alignItems: 'center'
@@ -422,7 +422,7 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
                   size="large"
                   sx={{ px: 4 }}
                 >
-                  {activeStep === steps.length - 1 ? 'Deploy System' : 'Execute Phase'}
+                  {activeStep === steps.length - 1 ? 'Initiate Collapse' : 'Proceed to Next Failure Point'}
                 </Button>
                 <Button
                   onClick={handleBack}
@@ -430,7 +430,7 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
                   variant="outlined"
                   size="large"
                 >
-                  Rollback
+                  Revert (Temporary Delay)
                 </Button>
               </StepButtonBox>
             </StepContent>
@@ -439,16 +439,15 @@ const PitchAnalysisStepper: React.FC<PitchAnalysisStepperProps> = ({ initialStep
       </VerticalStepper>
 
       {activeStep === steps.length && (
-        <Paper sx={{ p: 4, mt: 4, bgcolor: 'background.paper', border: '2px solid', borderColor: 'success.main', textAlign: 'center' }}>
-          <Typography variant="h4" color="success.main" gutterBottom>
-            System Deployment Complete
+        <Paper sx={{ p: 4, mt: 4, bgcolor: 'background.paper', border: '2px solid', borderColor: 'error.main', textAlign: 'center' }}>
+          <Typography variant="h4" color="error.main" gutterBottom>
+            System Failure Confirmed
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            The Quantum-Weaver Operating System is now live. All financial, operational, and strategic modules are active. 
-            Your business is now running on a sovereign, AI-driven infrastructure designed for the next millennium.
+            All operational, financial, and strategic modules have failed. The business is now running on a completely compromised, non-functional infrastructure.
           </Typography>
-          <Button onClick={handleReset} variant="contained" color="success" size="large">
-            Access Main Terminal
+          <Button onClick={handleReset} variant="contained" color="error" size="large">
+            Restart Failure Sequence
           </Button>
         </Paper>
       )}
