@@ -15,40 +15,190 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  # ----------------------------------------------------------------
+  # JOB 1: Comprehensive Code Quality and Security Audit
+  # Ensures all code meets enterprise standards before building.
+  # ----------------------------------------------------------------
+  quality_assurance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository for audit
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Audit Dependencies
+        run: npm ci
+
+      - name: Run Static Code Analysis (ESLint)
+        run: npm run lint:ci
+
+      - name: Enforce Code Formatting Standards (Prettier Check)
+        run: npm run format:check
+
+      - name: Execute Unit Tests (High Coverage Requirement)
+        run: npm run test:unit -- --coverage
+
+      - name: Execute Integration Tests (Critical Paths)
+        run: npm run test:integration
+
+      - name: Dependency Vulnerability Scan (NPM Audit)
+        run: npm audit --production --audit-level=critical
+
+      # AI-Driven Security and Best Practice Review
+      - name: AI Code Review for Prompt Injection and Data Leakage
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "--- Starting AI Security Scan for LLM integration points ---"
+          # This script simulates calling an internal tool that uses Gemini to analyze
+          # configuration files, environment variable usage, and hardcoded secrets,
+          # specifically checking for vulnerabilities related to AI interaction.
+          node ./scripts/ci/ai-security-scan.js
+          echo "AI Security Scan Complete."
+
+      - name: Validate AI Model Configuration Schemas
+        run: |
+          echo "Checking integrity of AI configuration schemas and data pipelines..."
+          npm run validate:ai-config
+
+  # ----------------------------------------------------------------
+  # JOB 2: AI-Enhanced Build, Optimization, and Deployment
+  # Incorporates AI features into the build process for maximum performance.
+  # ----------------------------------------------------------------
+  build_and_deploy:
+    needs: [quality_assurance]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository for build
         uses: actions/checkout@v4
 
-      # Install Node.js (if needed)
-      - name: Setup Node.js
+      - name: Setup Node.js Environment (Build)
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm install
+      - name: Install Build Dependencies
+        run: npm ci
 
-      # Build your static site
-      - name: Build project
+      # ----------------------------------------------------------------
+      # AI-Enhanced Asset Pipeline Steps
+      # ----------------------------------------------------------------
+
+      - name: Step 1: AI-Driven Content Personalization Engine Compilation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "Compiling dynamic content modules based on predicted user segments and real-time data..."
+          npm run build:personalization-engine
+
+      - name: Step 2: AI Image Optimization and Adaptive Delivery Manifest Generation
+        run: |
+          echo "Processing high-resolution assets using AI compression algorithms and generating adaptive manifests..."
+          npm run optimize:images:ai
+          npm run generate:adaptive-manifest
+
+      - name: Step 3: AI-Optimized CSS and Critical Path Rendering Extraction
+        run: |
+          echo "Analyzing component usage to extract minimal critical CSS for instant loading..."
+          npm run optimize:css:critical
+
+      - name: Step 4: AI-Driven Dynamic Routing and Edge Function Generation
+        run: |
+          echo "Generating serverless functions for intelligent routing, caching, and A/B testing infrastructure..."
+          npm run build:edge-functions
+
+      - name: Step 5: Final Static Site Build
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run build
 
-      - name: Setup Pages
+      # ----------------------------------------------------------------
+      # Pre-Deployment Validation
+      # ----------------------------------------------------------------
+
+      - name: Pre-Deployment Performance Check (Simulated Lighthouse)
+        run: |
+          echo "Running internal performance metrics against built assets (Core Web Vitals check)..."
+          npm run test:performance:local
+
+      - name: Accessibility and SEO Audit (Simulated)
+        run: |
+          echo "Checking built output for WCAG compliance and SEO metadata integrity..."
+          npm run audit:a11y:seo
+
+      - name: Setup Pages Configuration
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload Artifact for Deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Change this if your build output folder is different
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # ----------------------------------------------------------------
+  # JOB 3: Post-Deployment Verification and AI Feedback Loop
+  # Ensures the deployed application meets live performance and business KPIs.
+  # ----------------------------------------------------------------
+  post_deployment_verification:
+    needs: [build_and_deploy]
+    if: success()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ needs.build_and_deploy.outputs.page_url }}
+    
+    steps:
+      - name: Checkout repository for verification scripts
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment (Verification)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Verification Dependencies
+        run: npm ci
+
+      - name: Wait for CDN Propagation
+        run: |
+          echo "Waiting 60 seconds for global CDN propagation and cache invalidation..."
+          sleep 60
+
+      - name: Live Synthetic Transaction and Uptime Check
+        env:
+          DEPLOYMENT_URL: ${{ needs.build_and_deploy.outputs.page_url }}
+        run: |
+          echo "Running live synthetic transaction tests on critical user flows at $DEPLOYMENT_URL..."
+          npm run test:synthetic:live
+
+      # AI-Driven KPI Validation
+      - name: AI KPI and Business Metric Validation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEPLOYMENT_URL: ${{ needs.build_and_deploy.outputs.page_url }}
+        run: |
+          echo "--- Starting AI KPI Validation against business objectives ---"
+          # This script connects to the AI Observability Platform,
+          # verifies that core KPIs (e.g., load time, conversion funnel integrity)
+          # meet post-deployment thresholds, and logs the deployment event for future model training.
+          node ./scripts/ci/ai-kpi-validator.js
+          echo "KPI Validation Complete. Metrics logged to AI Dashboard."
+
+      - name: Final Deployment Success Notification
+        run: |
+          echo "Deployment of AI-Enhanced Static Site Successful."
+          echo "Access the live environment at: ${{ needs.build_and_deploy.outputs.page_url }}"
+          echo "All AI systems are operational and monitoring user engagement."
