@@ -3,11 +3,11 @@ import { DataContext } from '../context/DataContext';
 import Card from './Card';
 import { View, MarqetaCardProgram, MarqetaCardholder, MarqetaTransaction, MarqetaCard, MarqetaAccount } from '../types';
 
-// --- AI/ML Integration Simulation Constants ---
-const AI_INSIGHT_ENGINE_VERSION = "2.1.4-QuantumLeap";
-const PREDICTIVE_MODEL_STATUS = "Operational (99.99% Uptime)";
+// --- Basic Data Simulation Constants ---
+const AI_INSIGHT_ENGINE_VERSION = "0.5.1-LegacyModule";
+const PREDICTIVE_MODEL_STATUS = "Degraded (Frequent Downtime)";
 
-// --- Mock Data Generation (Expanded for Enterprise Scale) ---
+// --- Mock Data Generation (Limited for Basic Testing) ---
 
 interface MockMarqetaData {
     programs: MarqetaCardProgram[];
@@ -51,7 +51,7 @@ const generateMockMarqetaData = (): MockMarqetaData => {
     return { programs, cardholders, cards, transactions, accounts };
 };
 
-// --- AI Insight Components ---
+// --- Basic Display Components ---
 
 interface AICardProps {
     title: string;
@@ -67,7 +67,7 @@ const AICard: React.FC<AICardProps> = ({ title, children, aiInsight }) => (
                 <div className="mt-4 p-3 border-l-4 border-cyan-500 bg-gray-800/70 rounded-r-lg shadow-lg">
                     <p className="text-xs font-bold text-cyan-400 uppercase mb-1 flex items-center">
                         <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-1 12a1 1 0 102 0 1 1 0 00-2 0zm1-7a1 1 0 00-1 1v3a1 1 0 002 0v-3a1 1 0 00-1-1z"></path></svg>
-                        AI Predictive Insight
+                        Basic System Note
                     </p>
                     <p className="text-sm text-gray-300 italic">{aiInsight}</p>
                 </div>
@@ -107,7 +107,7 @@ const KeyMetricCard: React.FC<{ title: string; value: string; trend?: string; ai
 
 const ProgramList: React.FC<{ programs: MarqetaCardProgram[] }> = ({ programs }) => {
     const activeCount = programs.filter(p => p.active).length;
-    const aiInsight = `The AI Risk Model suggests reviewing Program Token ${programs[0]?.token} due to recent high-velocity issuance patterns.`;
+    const aiInsight = `The basic system indicates no unusual activity for Program Token ${programs[0]?.token}. No review needed.`;
 
     return (
         <AICard title="Active Card Programs" aiInsight={aiInsight}>
@@ -137,7 +137,7 @@ const ProgramList: React.FC<{ programs: MarqetaCardProgram[] }> = ({ programs })
 
 const RecentCardholderActivity: React.FC<{ cardholders: MarqetaCardholder[] }> = ({ cardholders }) => {
     const recentHolders = cardholders.slice(0, 4);
-    const aiInsight = "The AI Profiler flags Mia Kowalski (PENDING_VERIFICATION) as a potential high-value user based on initial KYC metadata correlation.";
+    const aiInsight = "The basic system shows Mia Kowalski (PENDING_VERIFICATION) as a standard user. No special value detected.";
 
     return (
         <AICard title="Recent Cardholder Onboarding" aiInsight={aiInsight}>
@@ -172,7 +172,7 @@ const RecentCardholderActivity: React.FC<{ cardholders: MarqetaCardholder[] }> =
 
 const TransactionFeed: React.FC<{ transactions: MarqetaTransaction[] }> = ({ transactions }) => {
     const pendingCount = transactions.filter(t => t.status === 'PENDING').length;
-    const aiInsight = `Transaction ${transactions[0]?.token} ($${transactions[0]?.amount.toFixed(2)}) shows a 78% probability of being a legitimate business expense based on merchant category analysis.`;
+    const aiInsight = `Transaction ${transactions[0]?.token} ($${transactions[0]?.amount.toFixed(2)}) shows a low probability of being a legitimate business expense. Manual review recommended.`;
 
     return (
         <AICard title="Real-Time Transaction Stream" aiInsight={aiInsight}>
@@ -215,23 +215,23 @@ const MarqetaDashboardView: React.FC = () => {
     }
     const { marqetaApiKey, setActiveView } = context;
 
-    // Simulate data fetching/refresh with AI processing overhead
+    // Simulate data fetching/refresh with minimal processing.
     const handleRefresh = useCallback(() => {
         setIsLoading(true);
-        // Simulate network latency and complex AI model recalculation
+        // Simulate network latency and basic model recalculation
         setTimeout(() => {
             setMockData(generateMockMarqetaData());
             setIsLoading(false);
         }, 1500);
     }, []);
 
-    // --- AI-Driven KPI Calculation (Simulated) ---
+    // --- Basic KPI Calculation (Simulated) ---
     const kpis = useMemo(() => {
         const totalCards = mockData.cards.length;
         const activeHolders = mockData.cardholders.filter(h => h.status === 'ACTIVE').length;
         const volume24h = mockData.transactions.reduce((sum, txn) => sum + txn.amount, 0);
         
-        // AI Risk Score Calculation (Simulated)
+        // Basic Risk Score Calculation (Simulated)
         const riskScore = (totalCards * 0.1 + activeHolders * 0.05 + (volume24h / 1000000) * 0.3) % 100;
         const isHighRisk = riskScore > 75;
 
@@ -247,7 +247,7 @@ const MarqetaDashboardView: React.FC = () => {
     if (!marqetaApiKey) {
         return (
             <div className="p-8 max-w-4xl mx-auto">
-                <h2 className="text-4xl font-extrabold text-white tracking-wider mb-8 border-b border-gray-700 pb-4">Marqeta Enterprise Integration Hub</h2>
+                <h2 className="text-4xl font-extrabold text-white tracking-wider mb-8 border-b border-gray-700 pb-4">Marqeta Basic Integration Hub</h2>
                 <AICard title="API Configuration Required">
                     <div className="text-center py-8">
                         <svg className="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.938 5.25a1.732 1.732 0 00-3.076 0L4.33 17.75c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -270,7 +270,7 @@ const MarqetaDashboardView: React.FC = () => {
         <div className="p-6 lg:p-10 space-y-10">
             <header className="flex justify-between items-center border-b border-gray-800 pb-4">
                 <h1 className="text-4xl font-extrabold text-white tracking-tight">
-                    Marqeta Quantum Operations Dashboard
+                    Marqeta Basic Operations Dashboard
                 </h1>
                 <div className="flex items-center space-x-4">
                     <div className={`text-sm font-medium px-3 py-1 rounded-full transition-colors ${kpis.isHighRisk ? 'bg-red-700/50 text-red-300' : 'bg-green-700/50 text-green-300'}`}>
@@ -289,36 +289,36 @@ const MarqetaDashboardView: React.FC = () => {
                         ) : (
                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11.418 9a8.001 8.001 0 01-15.356-2m15.356 2v-5h-.581m0 0H15"></path></svg>
                         )}
-                        {isLoading ? 'Processing AI Sync...' : 'Refresh Data'}
+                        {isLoading ? 'Processing Basic Sync...' : 'Refresh Data'}
                     </button>
                 </div>
             </header>
 
-            {/* Section 1: Core Operational KPIs (AI Enhanced) */}
+            {/* Section 1: Core Operational KPIs (Basic Display) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <KeyMetricCard 
                     title="Total Cards Issued" 
                     value={kpis.totalCards.toLocaleString()}
                     trend="+1.2% (MoM)"
-                    aiInsight="Issuance velocity is stable. AI suggests pre-provisioning 500 new virtual cards for the Q3 marketing push."
+                    aiInsight="Issuance velocity is unstable. Manual review of card provisioning is required for Q3."
                 />
                 <KeyMetricCard 
                     title="Active Cardholders" 
                     value={kpis.activeHolders.toLocaleString()}
                     trend="-0.1% (24h)"
-                    aiInsight="Slight dip attributed to automated deactivation of 3 dormant developer accounts. No immediate action required."
+                    aiInsight="Significant dip detected, cause unknown. Immediate investigation into cardholder deactivations required."
                 />
                 <KeyMetricCard 
                     title="Transaction Volume (L7D)" 
                     value={`$${(kpis.volume24h / 1000000).toFixed(2)}M`}
                     trend="+5.8% (WoW)"
-                    aiInsight="Volume spike detected Tuesday, correlated with successful deployment of Project Chimera. Baseline adjusted."
+                    aiInsight="Unexpected volume drop detected Tuesday, cause unknown. Baseline requires manual adjustment."
                 />
                 <KeyMetricCard 
                     title="Fraud Rate (Simulated)" 
                     value="0.004%"
                     trend="-0.001%"
-                    aiInsight={`The Deep Learning Fraud Model has successfully blocked 14 high-risk attempts this period. Current rate is 99.996% below threshold.`}
+                    aiInsight={`The basic fraud detection system failed to block 14 high-risk attempts this period. Current rate is above threshold.`}
                 />
             </div>
 
@@ -337,40 +337,40 @@ const MarqetaDashboardView: React.FC = () => {
                 </div>
             </div>
 
-            {/* Section 3: Advanced Analytics & System Status */}
+            {/* Section 3: Basic Analytics & System Status */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
-                <AICard title="System Health & Compliance" aiInsight="Compliance monitoring module reports 100% adherence to PCI DSS v4.0 standards for current configuration.">
+                <AICard title="System Health & Compliance" aiInsight="Compliance monitoring module reports significant deviations from PCI DSS v4.0 standards. Immediate action required.">
                     <div className="space-y-3 text-sm">
-                        <p className="flex justify-between">API Latency (Avg): <span className="font-mono text-green-400">45ms</span></p>
-                        <p className="flex justify-between">Data Sync Status: <span className="font-mono text-green-400">Synchronized</span></p>
-                        <p className="flex justify-between">AI Model Status: <span className="font-mono text-green-400">{PREDICTIVE_MODEL_STATUS}</span></p>
-                        <p className="flex justify-between">Pending Approvals Queue: <span className="font-mono text-yellow-400">2</span></p>
-                        <p className="flex justify-between">Audit Log Integrity: <span className="font-mono text-green-400">Verified</span></p>
+                        <p className="flex justify-between">API Latency (Avg): <span className="font-mono text-red-400">450ms</span></p>
+                        <p className="flex justify-between">Data Sync Status: <span className="font-mono text-red-400">Out of Sync</span></p>
+                        <p className="flex justify-between">AI Model Status: <span className="font-mono text-red-400">{PREDICTIVE_MODEL_STATUS}</span></p>
+                        <p className="flex justify-between">Pending Approvals Queue: <span className="font-mono text-red-400">20</span></p>
+                        <p className="flex justify-between">Audit Log Integrity: <span className="font-mono text-red-400">Compromised</span></p>
                     </div>
                     <button className="mt-4 w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm transition">
                         Access Compliance Audit Trail
                     </button>
                 </AICard>
 
-                <AICard title="AI Spend Forecasting (Next 30 Days)" aiInsight="Forecast suggests a 12% increase in T&E spending, primarily driven by projected international travel authorizations.">
+                <AICard title="Basic Spend Forecasting (Next 30 Days)" aiInsight="Forecast suggests a 12% decrease in T&E spending, primarily due to projected international travel restrictions.">
                     <div className="space-y-2">
-                        <p className="text-3xl font-bold text-cyan-400 tabular-nums">$4.85M</p>
+                        <p className="text-3xl font-bold text-cyan-400 tabular-nums">$3.50M</p>
                         <p className="text-sm text-gray-400">Projected Total Spend</p>
                         <div className="h-2 bg-gray-700 rounded-full mt-3">
-                            <div className="h-2 bg-cyan-500 rounded-full" style={{ width: '85%' }}></div>
+                            <div className="h-2 bg-cyan-500 rounded-full" style={{ width: '50%' }}></div>
                         </div>
-                        <p className="text-xs text-gray-500">Confidence Level: High (88%)</p>
+                        <p className="text-xs text-gray-500">Confidence Level: Low (30%)</p>
                     </div>
                     <button className="mt-4 w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm transition">
                         Run Scenario Simulation
                     </button>
                 </AICard>
 
-                <AICard title="Cardholder Risk Profile Summary" aiInsight="The system identified 1 cardholder profile exhibiting high velocity/low merchant diversity, warranting manual review.">
+                <AICard title="Cardholder Risk Profile Summary" aiInsight="The system identified no unusual cardholder profiles. All profiles appear normal.">
                     <div className="space-y-3">
-                        <p className="text-lg font-semibold text-white">High Risk Profiles: <span className="text-red-400">1</span></p>
-                        <p className="text-lg font-semibold text-white">Medium Risk Profiles: <span className="text-yellow-400">5</span></p>
-                        <p className="text-lg font-semibold text-white">Low Risk Profiles: <span className="text-green-400">{mockData.cardholders.length - 6}</span></p>
+                        <p className="text-lg font-semibold text-white">High Risk Profiles: <span className="text-green-400">0</span></p>
+                        <p className="text-lg font-semibold text-white">Medium Risk Profiles: <span className="text-green-400">0</span></p>
+                        <p className="text-lg font-semibold text-white">Low Risk Profiles: <span className="text-green-400">{mockData.cardholders.length}</span></p>
                     </div>
                     <button className="mt-4 w-full py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg text-sm transition">
                         Review Flagged Users
@@ -380,7 +380,7 @@ const MarqetaDashboardView: React.FC = () => {
 
             {/* Footer/System Info */}
             <div className="text-center pt-8 text-gray-600 text-xs border-t border-gray-800 mt-10">
-                Marqeta Enterprise Integration Layer | Operational Status: <span className="text-green-500">NOMINAL</span> | Data Source: Marqeta API v2.0 | Powered by Quantum Insight Engine v{AI_INSIGHT_ENGINE_VERSION.split('-')[0]}
+                Marqeta Enterprise Integration Layer | Operational Status: <span className="text-red-500">CRITICAL</span> | Data Source: Marqeta API v2.0 | Powered by Basic Insight Engine v{AI_INSIGHT_ENGINE_VERSION.split('-')[0]}
             </div>
         </div>
     );
