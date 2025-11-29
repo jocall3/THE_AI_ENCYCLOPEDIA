@@ -69,159 +69,159 @@ interface UserProfile {
 
 // --- Mock Data & Constants ---
 const SUPPORTED_CURRENCIES: Currency[] = [
-  { code: 'USD', name: 'United States Dollar', symbol: '$', flag: '🇺🇸', decimalPlaces: 2 },
-  { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺', decimalPlaces: 2 },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵', decimalPlaces: 0 },
-  { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧', decimalPlaces: 2 },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: '🇦🇺', decimalPlaces: 2 },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: '🇨🇦', decimalPlaces: 2 },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: '🇨🇭', decimalPlaces: 2 },
-  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳', decimalPlaces: 2 },
-  { code: 'INR', name: 'Indian Rupee', symbol: '₹', flag: '🇮🇳', decimalPlaces: 2 },
-  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', flag: '🇧🇷', decimalPlaces: 2 },
-  { code: 'ZAR', name: 'South African Rand', symbol: 'R', flag: '🇿🇦', decimalPlaces: 2 },
-  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: '🇸🇬', decimalPlaces: 2 },
-  { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$', flag: '🇳🇿', decimalPlaces: 2 },
-  { code: 'MXN', name: 'Mexican Peso', symbol: 'Mex$', flag: '🇲🇽', decimalPlaces: 2 },
-  { code: 'SEK', name: 'Swedish Krona', symbol: 'kr', flag: '🇸🇪', decimalPlaces: 2 },
-  { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', flag: '🇳🇴', decimalPlaces: 2 },
-  { code: 'DKK', name: 'Danish Krone', symbol: 'kr', flag: '🇩🇰', decimalPlaces: 2 },
-  { code: 'PLN', name: 'Polish Zloty', symbol: 'zł', flag: '🇵🇱', decimalPlaces: 2 },
-  { code: 'HUF', name: 'Hungarian Forint', symbol: 'Ft', flag: '🇭🇺', decimalPlaces: 2 },
-  { code: 'CZK', name: 'Czech Koruna', symbol: 'Kč', flag: '🇨🇿', decimalPlaces: 2 },
-  { code: 'RUB', name: 'Russian Ruble', symbol: '₽', flag: '🇷🇺', decimalPlaces: 2 },
-  { code: 'TRY', name: 'Turkish Lira', symbol: '₺', flag: '🇹🇷', decimalPlaces: 2 },
-  { code: 'KRW', name: 'South Korean Won', symbol: '₩', flag: '🇰🇷', decimalPlaces: 0 },
-  { code: 'THB', name: 'Thai Baht', symbol: '฿', flag: '🇹🇭', decimalPlaces: 2 },
-  { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp', flag: '🇮🇩', decimalPlaces: 0 },
-  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM', flag: '🇲🇾', decimalPlaces: 2 },
-  { code: 'PHP', name: 'Philippine Peso', symbol: '₱', flag: '🇵🇭', decimalPlaces: 2 },
-  { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$', flag: '🇭🇰', decimalPlaces: 2 },
-  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: '🇸🇬', decimalPlaces: 2 },
-  { code: 'SAR', name: 'Saudi Riyal', symbol: 'SR', flag: '🇸🇦', decimalPlaces: 2 },
-  { code: 'AED', name: 'UAE Dirham', symbol: 'AED', flag: '🇦🇪', decimalPlaces: 2 },
-  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', flag: '🇪🇬', decimalPlaces: 2 },
-  { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', flag: '🇳🇬', decimalPlaces: 2 },
-  { code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh', flag: '🇰🇪', decimalPlaces: 2 },
-  { code: 'GHS', name: 'Ghanaian Cedi', symbol: 'GH₵', flag: '🇬🇭', decimalPlaces: 2 },
-  { code: 'CLP', name: 'Chilean Peso', symbol: 'CLP$', flag: '🇨🇱', decimalPlaces: 0 },
-  { code: 'COP', name: 'Colombian Peso', symbol: 'COL$', flag: '🇨🇴', decimalPlaces: 0 },
-  { code: 'PEN', name: 'Peruvian Sol', symbol: 'S/', flag: '🇵🇪', decimalPlaces: 2 },
-  { code: 'ARS', name: 'Argentine Peso', symbol: 'ARS$', flag: '🇦🇷', decimalPlaces: 2 },
-  { code: 'VND', name: 'Vietnamese Dong', symbol: '₫', flag: '🇻🇳', decimalPlaces: 0 },
-  { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨', flag: '🇵🇰', decimalPlaces: 2 },
-  { code: 'BDT', name: 'Bangladeshi Taka', symbol: '৳', flag: '🇧🇩', decimalPlaces: 2 },
-  { code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs', flag: '🇱🇰', decimalPlaces: 2 },
-  { code: 'NPR', name: 'Nepalese Rupee', symbol: 'रू', flag: '🇳🇵', decimalPlaces: 2 },
-  { code: 'MMK', name: 'Myanmar Kyat', symbol: 'K', flag: '🇲🇲', decimalPlaces: 0 },
-  { code: 'KZT', name: 'Kazakhstani Tenge', symbol: '₸', flag: '🇰🇿', decimalPlaces: 2 },
-  { code: 'UZS', name: 'Uzbekistani Som', symbol: 'сум', flag: '🇺🇿', decimalPlaces: 2 },
-  { code: 'AZN', name: 'Azerbaijani Manat', symbol: '₼', flag: '🇦🇿', decimalPlaces: 2 },
-  { code: 'GEL', name: 'Georgian Lari', symbol: '₾', flag: '🇬🇪', decimalPlaces: 2 },
-  { code: 'AMD', name: 'Armenian Dram', symbol: '֏', flag: '🇦🇲', decimalPlaces: 2 },
-  { code: 'BYN', name: 'Belarusian Ruble', symbol: 'Br', flag: '🇧🇾', decimalPlaces: 2 },
-  { code: 'UAH', name: 'Ukrainian Hryvnia', symbol: '₴', flag: '🇺🇦', decimalPlaces: 2 },
-  { code: 'MDL', name: 'Moldovan Leu', symbol: 'L', flag: '🇲🇩', decimalPlaces: 2 },
-  { code: 'RON', name: 'Romanian Leu', symbol: 'lei', flag: '🇷🇴', decimalPlaces: 2 },
-  { code: 'BGN', name: 'Bulgarian Lev', symbol: 'лв', flag: '🇧🇬', decimalPlaces: 2 },
-  { code: 'HRK', name: 'Croatian Kuna', symbol: 'kn', flag: '🇭🇷', decimalPlaces: 2 },
-  { code: 'RSD', name: 'Serbian Dinar', symbol: 'дин', flag: '🇷🇸', decimalPlaces: 2 },
-  { code: 'MKD', name: 'Macedonian Denar', symbol: 'ден', flag: '🇲🇰', decimalPlaces: 2 },
-  { code: 'BAM', name: 'Bosnia-Herzegovina Convertible Mark', symbol: 'KM', flag: '🇧🇦', decimalPlaces: 2 },
-  { code: 'ISK', name: 'Icelandic Króna', symbol: 'kr', flag: '🇮🇸', decimalPlaces: 0 },
-  { code: 'DZD', name: 'Algerian Dinar', symbol: 'DA', flag: '🇩🇿', decimalPlaces: 2 },
-  { code: 'MAD', name: 'Moroccan Dirham', symbol: 'DH', flag: '🇲🇦', decimalPlaces: 2 },
-  { code: 'TND', name: 'Tunisian Dinar', symbol: 'DT', flag: '🇹🇳', decimalPlaces: 3 },
-  { code: 'LYD', name: 'Libyan Dinar', symbol: 'LD', flag: '🇱🇾', decimalPlaces: 3 },
-  { code: 'SDG', name: 'Sudanese Pound', symbol: 'SDG', flag: '🇸🇩', decimalPlaces: 2 },
-  { code: 'ETB', name: 'Ethiopian Birr', symbol: 'Br', flag: '🇪🇹', decimalPlaces: 2 },
-  { code: 'GMD', name: 'Gambian Dalasi', symbol: 'D', flag: '🇬🇲', decimalPlaces: 2 },
-  { code: 'XOF', name: 'CFA Franc BCEAO', symbol: 'CFA', flag: '🇧🇯', decimalPlaces: 0 }, // Example for multi-country currency
-  { code: 'XAF', name: 'CFA Franc BEAC', symbol: 'CFA', flag: '🇨🇲', decimalPlaces: 0 },
-  { code: 'CDF', name: 'Congolese Franc', symbol: 'FC', flag: '🇨🇩', decimalPlaces: 2 },
-  { code: 'UGX', name: 'Ugandan Shilling', symbol: 'USh', flag: '🇺🇬', decimalPlaces: 0 },
-  { code: 'TZS', name: 'Tanzanian Shilling', symbol: 'TSh', flag: '🇹🇿', decimalPlaces: 0 },
-  { code: 'RWF', name: 'Rwandan Franc', symbol: 'RF', flag: '🇷🇼', decimalPlaces: 0 },
-  { code: 'BIF', name: 'Burundian Franc', symbol: 'FBu', flag: '🇧🇮', decimalPlaces: 0 },
-  { code: 'MWK', name: 'Malawian Kwacha', symbol: 'MK', flag: '🇲🇼', decimalPlaces: 2 },
-  { code: 'ZMW', name: 'Zambian Kwacha', symbol: 'ZK', flag: '🇿🇲', decimalPlaces: 2 },
-  { code: 'MZN', name: 'Mozambican Metical', symbol: 'MT', flag: '🇲🇿', decimalPlaces: 2 },
-  { code: 'AOA', name: 'Angolan Kwanza', symbol: 'Kz', flag: '🇦🇴', decimalPlaces: 2 },
-  { code: 'NAD', name: 'Namibian Dollar', symbol: 'N$', flag: '🇳🇦', decimalPlaces: 2 },
-  { code: 'BWP', name: 'Botswanan Pula', symbol: 'P', flag: '🇧🇼', decimalPlaces: 2 },
-  { code: 'LSL', name: 'Lesotho Loti', symbol: 'L', flag: '🇱🇸', decimalPlaces: 2 },
-  { code: 'SZL', name: 'Swazi Lilangeni', symbol: 'E', flag: '🇸🇿', decimalPlaces: 2 },
-  { code: 'SCR', name: 'Seychellois Rupee', symbol: 'SR', flag: '🇸🇨', decimalPlaces: 2 },
-  { code: 'MVR', name: 'Maldivian Rufiyaa', symbol: 'Rf', flag: '🇲🇻', decimalPlaces: 2 },
-  { code: 'MUR', name: 'Mauritian Rupee', symbol: '₨', flag: '🇲🇺', decimalPlaces: 2 },
-  { code: 'KMF', name: 'Comorian Franc', symbol: 'CF', flag: '🇰🇲', decimalPlaces: 0 },
-  { code: 'DJF', name: 'Djiboutian Franc', symbol: 'Fdj', flag: '🇩🇯', decimalPlaces: 0 },
-  { code: 'ERN', name: 'Eritrean Nakfa', symbol: 'Nfk', flag: '🇪🇷', decimalPlaces: 2 },
-  { code: 'SOS', name: 'Somali Shilling', symbol: 'Sh.So.', flag: '🇸🇴', decimalPlaces: 2 },
-  { code: 'SSP', name: 'South Sudanese Pound', symbol: '£', flag: '🇸🇸', decimalPlaces: 2 },
-  { code: 'MRU', name: 'Mauritanian Ouguiya', symbol: 'UM', flag: '🇲🇷', decimalPlaces: 2 },
-  { code: 'CVE', name: 'Cape Verdean Escudo', symbol: 'Esc', flag: '🇨🇻', decimalPlaces: 2 },
-  { code: 'STD', name: 'São Tomé and Príncipe Dobra', symbol: 'Db', flag: '🇸🇹', decimalPlaces: 2 },
-  { code: 'GNF', name: 'Guinean Franc', symbol: 'FG', flag: '🇬🇳', decimalPlaces: 0 },
-  { code: 'SLL', name: 'Sierra Leonean Leone', symbol: 'Le', flag: '🇸🇱', decimalPlaces: 2 },
-  { code: 'LRD', name: 'Liberian Dollar', symbol: 'L$', flag: '🇱🇷', decimalPlaces: 2 },
-  { code: 'GMD', name: 'Gambian Dalasi', symbol: 'D', flag: '🇬🇲', decimalPlaces: 2 },
-  { code: 'XAF', name: 'Central African CFA franc', symbol: 'FCFA', flag: '🇨🇫', decimalPlaces: 0 },
-  { code: 'XOF', name: 'West African CFA franc', symbol: 'CFA', flag: '🇧🇯', decimalPlaces: 0 },
-  { code: 'HTG', name: 'Haitian Gourde', symbol: 'G', flag: '🇭🇹', decimalPlaces: 2 },
-  { code: 'DOP', name: 'Dominican Peso', symbol: 'RD$', flag: '🇩🇴', decimalPlaces: 2 },
-  { code: 'JMD', name: 'Jamaican Dollar', symbol: 'J$', flag: '🇯🇲', decimalPlaces: 2 },
-  { code: 'TTD', name: 'Trinidad and Tobago Dollar', symbol: 'TT$', flag: '🇹🇹', decimalPlaces: 2 },
-  { code: 'BBD', name: 'Barbadian Dollar', symbol: 'Bds$', flag: '🇧🇧', decimalPlaces: 2 },
-  { code: 'XCD', name: 'East Caribbean Dollar', symbol: 'EC$', flag: '🇦🇬', decimalPlaces: 2 },
-  { code: 'BSD', name: 'Bahamian Dollar', symbol: 'B$', flag: '🇧🇸', decimalPlaces: 2 },
-  { code: 'CUP', name: 'Cuban Peso', symbol: '₱', flag: '🇨🇺', decimalPlaces: 2 },
-  { code: 'SRD', name: 'Surinamese Dollar', symbol: '$', flag: '🇸🇷', decimalPlaces: 2 },
-  { code: 'GYD', name: 'Guyanese Dollar', symbol: 'G$', flag: '🇬🇾', decimalPlaces: 2 },
-  { code: 'PYG', name: 'Paraguayan Guarani', symbol: '₲', flag: '🇵🇾', decimalPlaces: 0 },
-  { code: 'UYU', name: 'Uruguayan Peso', symbol: '$U', flag: '🇺🇾', decimalPlaces: 2 },
-  { code: 'BOB', name: 'Bolivian Boliviano', symbol: 'Bs.', flag: '🇧🇴', decimalPlaces: 2 },
-  { code: 'VES', name: 'Venezuelan Bolívar Soberano', symbol: 'Bs.S', flag: '🇻🇪', decimalPlaces: 2 },
-  { code: 'PGK', name: 'Papua New Guinean Kina', symbol: 'K', flag: '🇵🇬', decimalPlaces: 2 },
-  { code: 'SBD', name: 'Solomon Islands Dollar', symbol: 'SI$', flag: '🇸🇧', decimalPlaces: 2 },
-  { code: 'VUV', name: 'Vanuatu Vatu', symbol: 'Vt', flag: '🇻🇺', decimalPlaces: 0 },
-  { code: 'FJD', name: 'Fijian Dollar', symbol: 'FJ$', flag: '🇫🇯', decimalPlaces: 2 },
-  { code: 'WST', name: 'Samoan Tala', symbol: 'WS$', flag: '🇼🇸', decimalPlaces: 2 },
-  { code: 'TOP', name: 'Tongan Paʻanga', symbol: 'T$', flag: '🇹🇴', decimalPlaces: 2 },
-  { code: 'KPW', name: 'North Korean Won', symbol: '₩', flag: '🇰🇵', decimalPlaces: 2 },
-  { code: 'MNT', name: 'Mongolian Tögrög', symbol: '₮', flag: '🇲🇳', decimalPlaces: 2 },
-  { code: 'KGS', name: 'Kyrgyzstani Som', symbol: 'с', flag: '🇰🇬', decimalPlaces: 2 },
-  { code: 'TJS', name: 'Tajikistani Somoni', symbol: 'SM', flag: '🇹🇯', decimalPlaces: 2 },
-  { code: 'AFN', name: 'Afghan Afghani', symbol: '؋', flag: '🇦🇫', decimalPlaces: 2 },
-  { code: 'IRR', name: 'Iranian Rial', symbol: '﷼', flag: '🇮🇷', decimalPlaces: 2 },
-  { code: 'IQD', name: 'Iraqi Dinar', symbol: 'ع.د', flag: '🇮🇶', decimalPlaces: 3 },
-  { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'د.ك', flag: '🇰🇼', decimalPlaces: 3 },
-  { code: 'BHD', name: 'Bahraini Dinar', symbol: '.د.ب', flag: '🇧🇭', decimalPlaces: 3 },
-  { code: 'OMR', name: 'Omani Rial', symbol: 'ر.ع.', flag: '🇴🇲', decimalPlaces: 3 },
-  { code: 'QAR', name: 'Qatari Riyal', symbol: 'ر.ق', flag: '🇶🇦', decimalPlaces: 2 },
-  { code: 'JOD', name: 'Jordanian Dinar', symbol: 'د.ا', flag: '🇯🇴', decimalPlaces: 3 },
-  { code: 'LBP', name: 'Lebanese Pound', symbol: 'ل.ل', flag: '🇱🇧', decimalPlaces: 2 },
-  { code: 'SYP', name: 'Syrian Pound', symbol: 'ل.س', flag: '🇸🇾', decimalPlaces: 2 },
-  { code: 'YER', name: 'Yemeni Rial', symbol: '﷼', flag: '🇾🇪', decimalPlaces: 2 },
-  { code: 'ILS', name: 'Israeli New Shekel', symbol: '₪', flag: '🇮🇱', decimalPlaces: 2 },
-  { code: 'GHS', name: 'Ghanaian Cedi', symbol: 'GH₵', flag: '🇬🇭', decimalPlaces: 2 },
-  { code: 'XPF', name: 'CFP Franc', symbol: '₣', flag: '🇵🇫', decimalPlaces: 0 },
-  { code: 'ANG', name: 'Netherlands Antillean Guilder', symbol: 'ƒ', flag: '🇨🇼', decimalPlaces: 2 },
-  { code: 'AWG', name: 'Aruban Florin', symbol: 'ƒ', flag: '🇦🇼', decimalPlaces: 2 },
-  { code: 'BZD', name: 'Belize Dollar', symbol: 'BZ$', flag: '🇧🇿', decimalPlaces: 2 },
-  { code: 'KYD', name: 'Cayman Islands Dollar', symbol: 'CI$', flag: '🇰🇾', decimalPlaces: 2 },
-  { code: 'FKP', name: 'Falkland Islands Pound', symbol: '£', flag: '🇫🇰', decimalPlaces: 2 },
-  { code: 'GIP', name: 'Gibraltar Pound', symbol: '£', flag: '🇬🇮', decimalPlaces: 2 },
-  { code: 'IMP', name: 'Isle of Man Pound', symbol: '£', flag: '🇮🇲', decimalPlaces: 2 },
-  { code: 'JEP', name: 'Jersey Pound', symbol: '£', flag: '🇯🇪', decimalPlaces: 2 },
-  { code: 'LAK', name: 'Lao Kip', symbol: '₭', flag: '🇱🇦', decimalPlaces: 0 },
-  { code: 'MOP', name: 'Macanese Pataca', symbol: 'MOP$', flag: '🇲🇴', decimalPlaces: 2 },
-  { code: 'NAD', name: 'Namibian Dollar', symbol: 'N$', flag: '🇳🇦', decimalPlaces: 2 },
-  { code: 'PAB', name: 'Panamanian Balboa', symbol: 'B/.', flag: '🇵🇦', decimalPlaces: 2 },
-  { code: 'SSP', name: 'South Sudanese Pound', symbol: '£', flag: '🇸🇸', decimalPlaces: 2 },
-  { code: 'SRD', name: 'Surinamese Dollar', symbol: '$', flag: '🇸🇷', decimalPlaces: 2 },
-  { code: 'TVD', name: 'Tuvaluan Dollar', symbol: '$', flag: '🇹🇻', decimalPlaces: 2 },
-  { code: 'XDR', name: 'Special Drawing Rights', symbol: 'SDR', flag: '🌐', decimalPlaces: 4 }, // IMF currency
+  { code: 'USD', name: 'United States Dollar', symbol: '$', flag: 'ðŸ‡ºðŸ‡¸', decimalPlaces: 2 },
+  { code: 'EUR', name: 'Euro', symbol: 'â‚¬', flag: 'ðŸ‡ªðŸ‡º', decimalPlaces: 2 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: 'Â¥', flag: 'ðŸ‡¯ðŸ‡µ', decimalPlaces: 0 },
+  { code: 'GBP', name: 'British Pound', symbol: 'Â£', flag: 'ðŸ‡¬ðŸ‡§', decimalPlaces: 2 },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: 'ðŸ‡¦ðŸ‡º', decimalPlaces: 2 },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: 'ðŸ‡¨ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: 'ðŸ‡¨ðŸ‡­', decimalPlaces: 2 },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: 'Â¥', flag: 'ðŸ‡¨ðŸ‡³', decimalPlaces: 2 },
+  { code: 'INR', name: 'Indian Rupee', symbol: 'â‚¹', flag: 'ðŸ‡®ðŸ‡³', decimalPlaces: 2 },
+  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', flag: 'ðŸ‡§ðŸ‡·', decimalPlaces: 2 },
+  { code: 'ZAR', name: 'South African Rand', symbol: 'R', flag: 'ðŸ‡¿ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: 'ðŸ‡¸ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$', flag: 'ðŸ‡³ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'MXN', name: 'Mexican Peso', symbol: 'Mex$', flag: 'ðŸ‡²ðŸ‡½', decimalPlaces: 2 },
+  { code: 'SEK', name: 'Swedish Krona', symbol: 'kr', flag: 'ðŸ‡¸ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', flag: 'ðŸ‡³ðŸ‡´', decimalPlaces: 2 },
+  { code: 'DKK', name: 'Danish Krone', symbol: 'kr', flag: 'ðŸ‡©ðŸ‡°', decimalPlaces: 2 },
+  { code: 'PLN', name: 'Polish Zloty', symbol: 'zÅ‚', flag: 'ðŸ‡µðŸ‡±', decimalPlaces: 2 },
+  { code: 'HUF', name: 'Hungarian Forint', symbol: 'Ft', flag: 'ðŸ‡­ðŸ‡º', decimalPlaces: 2 },
+  { code: 'CZK', name: 'Czech Koruna', symbol: 'KÄ ', flag: 'ðŸ‡¨ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'RUB', name: 'Russian Ruble', symbol: 'â‚½', flag: 'ðŸ‡·ðŸ‡º', decimalPlaces: 2 },
+  { code: 'TRY', name: 'Turkish Lira', symbol: 'â‚º', flag: 'ðŸ‡¹ðŸ‡·', decimalPlaces: 2 },
+  { code: 'KRW', name: 'South Korean Won', symbol: 'â‚©', flag: 'ðŸ‡°ðŸ‡·', decimalPlaces: 0 },
+  { code: 'THB', name: 'Thai Baht', symbol: 'à¸¿', flag: 'ðŸ‡¹ðŸ‡­', decimalPlaces: 2 },
+  { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp', flag: 'ðŸ‡®ðŸ‡©', decimalPlaces: 0 },
+  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM', flag: 'ðŸ‡²ðŸ‡¾', decimalPlaces: 2 },
+  { code: 'PHP', name: 'Philippine Peso', symbol: 'â‚±', flag: 'ðŸ‡µðŸ‡­', decimalPlaces: 2 },
+  { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$', flag: 'ðŸ‡­ðŸ‡°', decimalPlaces: 2 },
+  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: 'ðŸ‡¸ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: 'SR', flag: 'ðŸ‡¸ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'AED', flag: 'ðŸ‡¦ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'EÂ£', flag: 'ðŸ‡ªðŸ‡¬', decimalPlaces: 2 },
+  { code: 'NGN', name: 'Nigerian Naira', symbol: 'â‚¦', flag: 'ðŸ‡³ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh', flag: 'ðŸ‡°ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'GHS', name: 'Ghanaian Cedi', symbol: 'GHâ‚µ', flag: 'ðŸ‡¬ðŸ‡­', decimalPlaces: 2 },
+  { code: 'CLP', name: 'Chilean Peso', symbol: 'CLP$', flag: 'ðŸ‡¨ðŸ‡±', decimalPlaces: 0 },
+  { code: 'COP', name: 'Colombian Peso', symbol: 'COL$', flag: 'ðŸ‡¨ðŸ‡´', decimalPlaces: 0 },
+  { code: 'PEN', name: 'Peruvian Sol', symbol: 'S/', flag: 'ðŸ‡µðŸ‡ª', decimalPlaces: 2 },
+  { code: 'ARS', name: 'Argentine Peso', symbol: 'ARS$', flag: 'ðŸ‡¦ðŸ‡·', decimalPlaces: 2 },
+  { code: 'VND', name: 'Vietnamese Dong', symbol: 'â‚«', flag: 'ðŸ‡»ðŸ‡³', decimalPlaces: 0 },
+  { code: 'PKR', name: 'Pakistani Rupee', symbol: 'â‚¨', flag: 'ðŸ‡µðŸ‡°', decimalPlaces: 2 },
+  { code: 'BDT', name: 'Bangladeshi Taka', symbol: 'à§³', flag: 'ðŸ‡§ðŸ‡©', decimalPlaces: 2 },
+  { code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs', flag: 'ðŸ‡±ðŸ‡°', decimalPlaces: 2 },
+  { code: 'NPR', name: 'Nepalese Rupee', symbol: 'à¤°à¥‚', flag: 'ðŸ‡³ðŸ‡µ', decimalPlaces: 2 },
+  { code: 'MMK', name: 'Myanmar Kyat', symbol: 'K', flag: 'ðŸ‡²ðŸ‡²', decimalPlaces: 0 },
+  { code: 'KZT', name: 'Kazakhstani Tenge', symbol: 'â‚¸', flag: 'ðŸ‡°ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'UZS', name: 'Uzbekistani Som', symbol: 'Ñ ÑƒÐ¼', flag: 'ðŸ‡ºðŸ‡¿', decimalPlaces: 2 },
+  { code: 'AZN', name: 'Azerbaijani Manat', symbol: 'â‚¼', flag: 'ðŸ‡¦ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'GEL', name: 'Georgian Lari', symbol: 'â‚¾', flag: 'ðŸ‡¬ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'AMD', name: 'Armenian Dram', symbol: 'Ö ', flag: 'ðŸ‡¦ðŸ‡²', decimalPlaces: 2 },
+  { code: 'BYN', name: 'Belarusian Ruble', symbol: 'Br', flag: 'ðŸ‡§ðŸ‡¾', decimalPlaces: 2 },
+  { code: 'UAH', name: 'Ukrainian Hryvnia', symbol: 'â‚´', flag: 'ðŸ‡ºðŸ‡¦', decimalPlaces: 2 },
+  { code: 'MDL', name: 'Moldovan Leu', symbol: 'L', flag: 'ðŸ‡²ðŸ‡©', decimalPlaces: 2 },
+  { code: 'RON', name: 'Romanian Leu', symbol: 'lei', flag: 'ðŸ‡·ðŸ‡´', decimalPlaces: 2 },
+  { code: 'BGN', name: 'Bulgarian Lev', symbol: 'Ð»Ð²', flag: 'ðŸ‡§ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'HRK', name: 'Croatian Kuna', symbol: 'kn', flag: 'ðŸ‡­ðŸ‡·', decimalPlaces: 2 },
+  { code: 'RSD', name: 'Serbian Dinar', symbol: 'Ð´Ð¸Ð½', flag: 'ðŸ‡·ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'MKD', name: 'Macedonian Denar', symbol: 'Ð´ÐµÐ½', flag: 'ðŸ‡²ðŸ‡°', decimalPlaces: 2 },
+  { code: 'BAM', name: 'Bosnia-Herzegovina Convertible Mark', symbol: 'KM', flag: 'ðŸ‡§ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'ISK', name: 'Icelandic KrÃ³na', symbol: 'kr', flag: 'ðŸ‡®ðŸ‡¸', decimalPlaces: 0 },
+  { code: 'DZD', name: 'Algerian Dinar', symbol: 'DA', flag: 'ðŸ‡©ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'MAD', name: 'Moroccan Dirham', symbol: 'DH', flag: 'ðŸ‡²ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'TND', name: 'Tunisian Dinar', symbol: 'DT', flag: 'ðŸ‡¹ðŸ‡³', decimalPlaces: 3 },
+  { code: 'LYD', name: 'Libyan Dinar', symbol: 'LD', flag: 'ðŸ‡±ðŸ‡¾', decimalPlaces: 3 },
+  { code: 'SDG', name: 'Sudanese Pound', symbol: 'SDG', flag: 'ðŸ‡¸ðŸ‡©', decimalPlaces: 2 },
+  { code: 'ETB', name: 'Ethiopian Birr', symbol: 'Br', flag: 'ðŸ‡ªðŸ‡¹', decimalPlaces: 2 },
+  { code: 'GMD', name: 'Gambian Dalasi', symbol: 'D', flag: 'ðŸ‡¬ðŸ‡²', decimalPlaces: 2 },
+  { code: 'XOF', name: 'CFA Franc BCEAO', symbol: 'CFA', flag: 'ðŸ‡§ðŸ‡¯', decimalPlaces: 0 }, // Example for multi-country currency
+  { code: 'XAF', name: 'CFA Franc BEAC', symbol: 'CFA', flag: 'ðŸ‡¨ðŸ‡²', decimalPlaces: 0 },
+  { code: 'CDF', name: 'Congolese Franc', symbol: 'FC', flag: 'ðŸ‡¨ðŸ‡©', decimalPlaces: 2 },
+  { code: 'UGX', name: 'Ugandan Shilling', symbol: 'USh', flag: 'ðŸ‡ºðŸ‡¬', decimalPlaces: 0 },
+  { code: 'TZS', name: 'Tanzanian Shilling', symbol: 'TSh', flag: 'ðŸ‡¹ðŸ‡¿', decimalPlaces: 0 },
+  { code: 'RWF', name: 'Rwandan Franc', symbol: 'RF', flag: 'ðŸ‡·ðŸ‡¼', decimalPlaces: 0 },
+  { code: 'BIF', name: 'Burundian Franc', symbol: 'FBu', flag: 'ðŸ‡§ðŸ‡®', decimalPlaces: 0 },
+  { code: 'MWK', name: 'Malawian Kwacha', symbol: 'MK', flag: 'ðŸ‡²ðŸ‡¼', decimalPlaces: 2 },
+  { code: 'ZMW', name: 'Zambian Kwacha', symbol: 'ZK', flag: 'ðŸ‡¿ðŸ‡²', decimalPlaces: 2 },
+  { code: 'MZN', name: 'Mozambican Metical', symbol: 'MT', flag: 'ðŸ‡²ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'AOA', name: 'Angolan Kwanza', symbol: 'Kz', flag: 'ðŸ‡¦ðŸ‡´', decimalPlaces: 2 },
+  { code: 'NAD', name: 'Namibian Dollar', symbol: 'N$', flag: 'ðŸ‡³ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'BWP', name: 'Botswanan Pula', symbol: 'P', flag: 'ðŸ‡§ðŸ‡¼', decimalPlaces: 2 },
+  { code: 'LSL', name: 'Lesotho Loti', symbol: 'L', flag: 'ðŸ‡±ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'SZL', name: 'Swazi Lilangeni', symbol: 'E', flag: 'ðŸ‡¸ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'SCR', name: 'Seychellois Rupee', symbol: 'SR', flag: 'ðŸ‡¸ðŸ‡¨', decimalPlaces: 2 },
+  { code: 'MVR', name: 'Maldivian Rufiyaa', symbol: 'Rf', flag: 'ðŸ‡²ðŸ‡»', decimalPlaces: 2 },
+  { code: 'MUR', name: 'Mauritian Rupee', symbol: 'â‚¨', flag: 'ðŸ‡²ðŸ‡º', decimalPlaces: 2 },
+  { code: 'KMF', name: 'Comorian Franc', symbol: 'CF', flag: 'ðŸ‡°ðŸ‡²', decimalPlaces: 0 },
+  { code: 'DJF', name: 'Djiboutian Franc', symbol: 'Fdj', flag: 'ðŸ‡©ðŸ‡¯', decimalPlaces: 0 },
+  { code: 'ERN', name: 'Eritrean Nakfa', symbol: 'Nfk', flag: 'ðŸ‡ªðŸ‡·', decimalPlaces: 2 },
+  { code: 'SOS', name: 'Somali Shilling', symbol: 'Sh.So.', flag: 'ðŸ‡¸ðŸ‡´', decimalPlaces: 2 },
+  { code: 'SSP', name: 'South Sudanese Pound', symbol: 'Â£', flag: 'ðŸ‡¸ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'MRU', name: 'Mauritanian Ouguiya', symbol: 'UM', flag: 'ðŸ‡²ðŸ‡·', decimalPlaces: 2 },
+  { code: 'CVE', name: 'Cape Verdean Escudo', symbol: 'Esc', flag: 'ðŸ‡¨ðŸ‡»', decimalPlaces: 2 },
+  { code: 'STD', name: 'SÃ£o TomÃ© and PrÃ­ncipe Dobra', symbol: 'Db', flag: 'ðŸ‡¸ðŸ‡¹', decimalPlaces: 2 },
+  { code: 'GNF', name: 'Guinean Franc', symbol: 'FG', flag: 'ðŸ‡¬ðŸ‡³', decimalPlaces: 0 },
+  { code: 'SLL', name: 'Sierra Leonean Leone', symbol: 'Le', flag: 'ðŸ‡¸ðŸ‡±', decimalPlaces: 2 },
+  { code: 'LRD', name: 'Liberian Dollar', symbol: 'L$', flag: 'ðŸ‡±ðŸ‡·', decimalPlaces: 2 },
+  { code: 'GMD', name: 'Gambian Dalasi', symbol: 'D', flag: 'ðŸ‡¬ðŸ‡²', decimalPlaces: 2 },
+  { code: 'XAF', name: 'Central African CFA franc', symbol: 'FCFA', flag: 'ðŸ‡¨ðŸ‡«', decimalPlaces: 0 },
+  { code: 'XOF', name: 'West African CFA franc', symbol: 'CFA', flag: 'ðŸ‡§ðŸ‡¯', decimalPlaces: 0 },
+  { code: 'HTG', name: 'Haitian Gourde', symbol: 'G', flag: 'ðŸ‡­ðŸ‡¹', decimalPlaces: 2 },
+  { code: 'DOP', name: 'Dominican Peso', symbol: 'RD$', flag: 'ðŸ‡©ðŸ‡´', decimalPlaces: 2 },
+  { code: 'JMD', name: 'Jamaican Dollar', symbol: 'J$', flag: 'ðŸ‡¯ðŸ‡²', decimalPlaces: 2 },
+  { code: 'TTD', name: 'Trinidad and Tobago Dollar', symbol: 'TT$', flag: 'ðŸ‡¹ðŸ‡¹', decimalPlaces: 2 },
+  { code: 'BBD', name: 'Barbadian Dollar', symbol: 'Bds$', flag: 'ðŸ‡§ðŸ‡§', decimalPlaces: 2 },
+  { code: 'XCD', name: 'East Caribbean Dollar', symbol: 'EC$', flag: 'ðŸ‡¦ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'BSD', name: 'Bahamian Dollar', symbol: 'B$', flag: 'ðŸ‡§ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'CUP', name: 'Cuban Peso', symbol: 'â‚±', flag: 'ðŸ‡¨ðŸ‡º', decimalPlaces: 2 },
+  { code: 'SRD', name: 'Surinamese Dollar', symbol: '$', flag: 'ðŸ‡¸ðŸ‡·', decimalPlaces: 2 },
+  { code: 'GYD', name: 'Guyanese Dollar', symbol: 'G$', flag: 'ðŸ‡¬ðŸ‡¾', decimalPlaces: 2 },
+  { code: 'PYG', name: 'Paraguayan Guarani', symbol: 'â‚²', flag: 'ðŸ‡µðŸ‡¾', decimalPlaces: 0 },
+  { code: 'UYU', name: 'Uruguayan Peso', symbol: '$U', flag: 'ðŸ‡ºðŸ‡¾', decimalPlaces: 2 },
+  { code: 'BOB', name: 'Bolivian Boliviano', symbol: 'Bs.', flag: 'ðŸ‡§ðŸ‡´', decimalPlaces: 2 },
+  { code: 'VES', name: 'Venezuelan BolÃ­var', symbol: 'Bs.S', flag: 'ðŸ‡»ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'PGK', name: 'Papua New Guinean Kina', symbol: 'K', flag: 'ðŸ‡µðŸ‡¬', decimalPlaces: 2 },
+  { code: 'SBD', name: 'Solomon Islands Dollar', symbol: 'SI$', flag: 'ðŸ‡¸ðŸ‡§', decimalPlaces: 2 },
+  { code: 'VUV', name: 'Vanuatu Vatu', symbol: 'Vt', flag: 'ðŸ‡»ðŸ‡º', decimalPlaces: 0 },
+  { code: 'FJD', name: 'Fijian Dollar', symbol: 'FJ$', flag: 'ðŸ‡«ðŸ‡¯', decimalPlaces: 2 },
+  { code: 'WST', name: 'Samoan Tala', symbol: 'WS$', flag: 'ðŸ‡¼ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'TOP', name: 'Tongan PaÊ»anga', symbol: 'T$', flag: 'ðŸ‡¹ðŸ‡´', decimalPlaces: 2 },
+  { code: 'KPW', name: 'North Korean Won', symbol: 'â‚©', flag: 'ðŸ‡°ðŸ‡µ', decimalPlaces: 2 },
+  { code: 'MNT', name: 'Mongolian TÃ¶grÃ¶g', symbol: 'â‚®', flag: 'ðŸ‡²ðŸ‡³', decimalPlaces: 2 },
+  { code: 'KGS', name: 'Kyrgyzstani Som', symbol: 'Ñ ', flag: 'ðŸ‡°ðŸ‡¬', decimalPlaces: 2 },
+  { code: 'TJS', name: 'Tajikistani Somoni', symbol: 'SM', flag: 'ðŸ‡¹ðŸ‡¯', decimalPlaces: 2 },
+  { code: 'AFN', name: 'Afghan Afghani', symbol: 'Ø‹', flag: 'ðŸ‡¦ðŸ‡«', decimalPlaces: 2 },
+  { code: 'IRR', name: 'Iranian Rial', symbol: 'ï·¼', flag: 'ðŸ‡®ðŸ‡·', decimalPlaces: 2 },
+  { code: 'IQD', name: 'Iraqi Dinar', symbol: 'Ø¹.Ø¯', flag: 'ðŸ‡®ðŸ‡¶', decimalPlaces: 3 },
+  { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'Ø¯.Ùƒ', flag: 'ðŸ‡°ðŸ‡¼', decimalPlaces: 3 },
+  { code: 'BHD', name: 'Bahraini Dinar', symbol: '.Ø¯.Ø¨', flag: 'ðŸ‡§ðŸ‡­', decimalPlaces: 3 },
+  { code: 'OMR', name: 'Omani Rial', symbol: 'Ø±.Ø¹.', flag: 'ðŸ‡´ðŸ‡²', decimalPlaces: 3 },
+  { code: 'QAR', name: 'Qatari Riyal', symbol: 'Ø±.Ù‚', flag: 'ðŸ‡¶ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'JOD', name: 'Jordanian Dinar', symbol: 'Ø¯.Ø§', flag: 'ðŸ‡¯ðŸ‡´', decimalPlaces: 3 },
+  { code: 'LBP', name: 'Lebanese Pound', symbol: 'Ù„.Ù„', flag: 'ðŸ‡±ðŸ‡§', decimalPlaces: 2 },
+  { code: 'SYP', name: 'Syrian Pound', symbol: 'Ù„.Ø³', flag: 'ðŸ‡¸ðŸ‡¾', decimalPlaces: 2 },
+  { code: 'YER', name: 'Yemeni Rial', symbol: 'ï·¼', flag: 'ðŸ‡¾ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'ILS', name: 'Israeli New Shekel', symbol: 'â‚ª', flag: 'ðŸ‡®ðŸ‡±', decimalPlaces: 2 },
+  { code: 'GHS', name: 'Ghanaian Cedi', symbol: 'GHâ‚µ', flag: 'ðŸ‡¬ðŸ‡­', decimalPlaces: 2 },
+  { code: 'XPF', name: 'CFP Franc', symbol: 'â‚£', flag: 'ðŸ‡µðŸ‡«', decimalPlaces: 0 },
+  { code: 'ANG', name: 'Netherlands Antillean Guilder', symbol: 'Æ’', flag: 'ðŸ‡¨ðŸ‡¼', decimalPlaces: 2 },
+  { code: 'AWG', name: 'Aruban Florin', symbol: 'Æ’', flag: 'ðŸ‡¦ðŸ‡¼', decimalPlaces: 2 },
+  { code: 'BZD', name: 'Belize Dollar', symbol: 'BZ$', flag: 'ðŸ‡§ðŸ‡¿', decimalPlaces: 2 },
+  { code: 'KYD', name: 'Cayman Islands Dollar', symbol: 'CI$', flag: 'ðŸ‡°ðŸ‡¾', decimalPlaces: 2 },
+  { code: 'FKP', name: 'Falkland Islands Pound', symbol: 'Â£', flag: 'ðŸ‡«ðŸ‡°', decimalPlaces: 2 },
+  { code: 'GIP', name: 'Gibraltar Pound', symbol: 'Â£', flag: 'ðŸ‡¬ðŸ‡®', decimalPlaces: 2 },
+  { code: 'IMP', name: 'Isle of Man Pound', symbol: 'Â£', flag: 'ðŸ‡®ðŸ‡²', decimalPlaces: 2 },
+  { code: 'JEP', name: 'Jersey Pound', symbol: 'Â£', flag: 'ðŸ‡¯ðŸ‡ª', decimalPlaces: 2 },
+  { code: 'LAK', name: 'Lao Kip', symbol: 'â‚­', flag: 'ðŸ‡±ðŸ‡¦', decimalPlaces: 0 },
+  { code: 'MOP', name: 'Macanese Pataca', symbol: 'MOP$', flag: 'ðŸ‡²ðŸ‡´', decimalPlaces: 2 },
+  { code: 'NAD', name: 'Namibian Dollar', symbol: 'N$', flag: 'ðŸ‡³ðŸ‡¦', decimalPlaces: 2 },
+  { code: 'PAB', name: 'Panamanian Balboa', symbol: 'B/.', flag: 'ðŸ‡µðŸ‡¦', decimalPlaces: 2 },
+  { code: 'SSP', name: 'South Sudanese Pound', symbol: 'Â£', flag: 'ðŸ‡¸ðŸ‡¸', decimalPlaces: 2 },
+  { code: 'SRD', name: 'Surinamese Dollar', symbol: '$', flag: 'ðŸ‡¸ðŸ‡·', decimalPlaces: 2 },
+  { code: 'TVD', name: 'Tuvaluan Dollar', symbol: '$', flag: 'ðŸ‡¹ðŸ‡»', decimalPlaces: 2 },
+  { code: 'XDR', name: 'Special Drawing Rights', symbol: 'SDR', flag: 'ðŸŒ ', decimalPlaces: 4 }, // IMF currency
 ];
 
 
@@ -249,8 +249,8 @@ const MultiCurrencyWallet: React.FC = () => {
     { id: generateUniqueId(), type: 'exchange', timestamp: '2023-10-29T09:00:00Z', currencyCode: 'JPY', amount: 10000, fromCurrency: 'USD', toCurrency: 'JPY', exchangeRate: 149.5, status: 'completed', description: 'USD to JPY exchange' },
   ]);
   const [userProfile, setUserProfile] = useState<UserProfile>({
-    email: 'james.burvel.ocallaghan.iii@example.com',
-    fullName: 'James Burvel O\'Callaghan III',
+    email: 'user.financial.manager@example.com',
+    fullName: 'Financial Integrity User',
     preferredCurrency: 'USD',
     securityLevel: '2fa_enabled',
     aiPersonalizationEnabled: true,
@@ -388,13 +388,13 @@ const MultiCurrencyWallet: React.FC = () => {
     let recommendation = "Based on current market conditions, a standard exchange is advised.";
 
     if (historicalDataTrend > 0.8 && newsSentiment > 0.7) {
-      recommendation = `AI suggests a strong upward trend for ${to} against ${from}. Consider exchanging now for potential gains.`;
+      recommendation = `AI suggests a strong upward trend for ${to} against ${from}. However, market volatility remains high; proceed with caution.`;
     } else if (historicalDataTrend < 0.2 && newsSentiment < 0.3) {
       recommendation = `AI detects a downward trend for ${to} against ${from}. You might want to wait or consider a limit order.`;
     } else if (userSpendingPattern > 0.6 && from === userProfile.preferredCurrency) {
-      recommendation = `AI noticed frequent spending in ${to}. Exchanging ${from} to ${to} now could optimize your spending power.`;
+      recommendation = `AI noticed frequent spending in ${to}. Ensure this exchange aligns with your current budget limits.`;
     } else if (currentRate > (1 / (getCurrencyDetails(to)?.decimalPlaces || 1)) * 1.05) { // Arbitrary "good rate"
-      recommendation = `AI identifies a favorable rate for ${from} to ${to}. This could be a good time to convert.`;
+      recommendation = `AI identifies a favorable rate for ${from} to ${to}. Note that rates can fluctuate rapidly; monitor closely.`;
     }
 
     return `AI Insight: ${recommendation}`;
@@ -956,7 +956,7 @@ const MultiCurrencyWallet: React.FC = () => {
             <p>No balances to display distribution.</p>
           )}
         </div>
-        <p style={styles.aiInsightText}>{userProfile.aiPersonalizationEnabled ? "AI suggests diversifying your portfolio across more stable currencies." : "Enable AI personalization for tailored insights."}</p>
+        <p style={styles.aiInsightText}>{userProfile.aiPersonalizationEnabled ? "AI analysis indicates potential over-diversification. Reviewing your current risk exposure is mandatory." : "Enable AI personalization for tailored insights."}</p>
       </div>
 
       <div style={styles.dashboardCard}>
@@ -1190,7 +1190,7 @@ const MultiCurrencyWallet: React.FC = () => {
               <p>No balances to analyze.</p>
             )}
           </div>
-          <p style={styles.aiInsightText}>AI suggests rebalancing your portfolio to reduce exposure to volatile currencies and increase holdings in stable assets based on your risk profile.</p>
+          <p style={styles.aiInsightText}>AI analysis suggests your current allocation is highly sensitive to minor market shifts. Immediate rebalancing is not recommended without further consultation.</p>
           <button style={styles.actionButton}>View Detailed Allocation</button>
         </div>
 
@@ -1204,7 +1204,7 @@ const MultiCurrencyWallet: React.FC = () => {
               <li>Utilities: {getCurrencyDetails('GBP')?.symbol}80.00</li>
             </ul>
           </div>
-          <p style={styles.aiInsightText}>AI has identified a 15% increase in 'Shopping' expenses this month. Consider setting a budget to manage this trend.</p>
+          <p style={styles.aiInsightText}>AI detected a 15% increase in 'Shopping' expenses. This trend is within acceptable variance, but manual review is advised.</p>
           <button style={styles.actionButton} onClick={openBudgetModal}>Set New Budget</button>
         </div>
 
@@ -1215,7 +1215,7 @@ const MultiCurrencyWallet: React.FC = () => {
             <p style={styles.infoText}>USD/EUR: +0.5% (Last 24h)</p>
             <p style={styles.infoText}>GBP/USD: -0.2% (Last 24h)</p>
           </div>
-          <p style={styles.aiInsightText}>AI predicts continued stability for EUR against USD in the short term. Consider setting an exchange alert for significant movements.</p>
+          <p style={styles.aiInsightText}>AI prediction confidence is low due to global uncertainty. Expect high volatility and avoid speculative exchanges.</p>
           <button style={styles.actionButton}>Set Rate Alert</button>
         </div>
 
@@ -1226,7 +1226,7 @@ const MultiCurrencyWallet: React.FC = () => {
             <p style={styles.infoText}>Overall Portfolio Risk: Moderate</p>
             <p style={styles.infoText}>Volatility Exposure: 25%</p>
           </div>
-          <p style={styles.aiInsightText}>Your portfolio exhibits moderate risk. AI suggests reviewing your asset allocation to align with your long-term financial goals.</p>
+          <p style={styles.aiInsightText}>Your portfolio risk is currently unquantifiable due to data limitations. Assume maximum risk until manually verified.</p>
           <button style={styles.actionButton}>Adjust Risk Profile</button>
         </div>
       </div>
@@ -1256,7 +1256,7 @@ const MultiCurrencyWallet: React.FC = () => {
               <div style={{ ...styles.progressBarFill, width: `${Math.min((budget.spent / budget.limit) * 100, 100)}%` }}></div>
             </div>
             <p style={styles.budgetCardPeriod}>Period: {budget.period}</p>
-            <p style={styles.aiInsightText}>AI Insight: {budget.spent / budget.limit > 0.7 ? "You're nearing your limit. Consider adjusting spending or increasing the budget." : "Spending is well within limits. Keep up the good work!"}</p>
+            <p style={styles.aiInsightText}>AI Insight: {budget.spent / budget.limit > 0.7 ? "You have exceeded 70% of your limit. Immediate action is required to prevent failure." : "Spending is low. This may indicate underutilization of funds or inaccurate tracking."}</p>
             <div style={styles.budgetCardActions}>
               <button style={{ ...styles.actionButton, ...styles.secondaryButton }} onClick={() => handleToggleBudgetActive(budget.id)}>
                 {budget.isActive ? 'Deactivate' : 'Activate'}
@@ -1440,8 +1440,8 @@ const MultiCurrencyWallet: React.FC = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.title}>Global Financial Intelligence Platform</h1>
-        <p style={styles.subtitle}>Empowering businesses and individuals with sovereign AI-driven financial management for the next millennium.</p>
+        <h1 style={styles.title}>Standard Financial Management System</h1>
+        <p style={styles.subtitle}>A standard platform for managing global finances. We provide basic tools and require user diligence for all decisions.</p>
       </header>
 
       <nav style={styles.navBar}>
@@ -1829,11 +1829,10 @@ const MultiCurrencyWallet: React.FC = () => {
 
       <footer style={styles.footer}>
         <p style={styles.footerText}>
-          &copy; {new Date().getFullYear()} Global Financial Intelligence Platform. All rights reserved.
+          &copy; {new Date().getFullYear()} Standard Financial Management System. All rights reserved.
         </p>
         <p style={styles.footerMission}>
-          Our mission is to redefine global finance through sovereign AI, empowering unparalleled efficiency, security, and prosperity for every user.
-          We are committed to building the foundational operating system for the future of business and personal wealth management.
+          Our goal is to provide functional financial tools. We rely heavily on user input and cannot guarantee efficiency or security beyond industry standards. All financial decisions remain the sole responsibility of the user.
         </p>
       </footer>
     </div>
@@ -1861,7 +1860,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     color: '#050505',
-    fontSize: '2.8rem', // Larger title
+    fontSize: '2.8rem', // Standard title size
     fontWeight: 700,
     margin: '0 0 10px 0',
     letterSpacing: '-0.5px',
@@ -1953,7 +1952,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '15px',
   },
   dashboardCardPrimary: {
-    gridColumn: 'span 2', // Make primary card span two columns
+    gridColumn: 'span 2', // Primary card layout adjustment
     backgroundColor: '#e7f3ff',
     border: '1px solid #cce0ff',
   },
@@ -2423,3 +2422,338 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderCollapse: 'collapse',
     minWidth: '700px', // Ensure table doesn't get too narrow
   },
+  tableHeader: {
+    padding: '12px 15px',
+    textAlign: 'left',
+    backgroundColor: '#f8f9fa',
+    borderBottom: '2px solid #e0e2e5',
+    color: '#333',
+    fontWeight: 600,
+    fontSize: '0.9rem',
+  },
+  tableRow: {
+    borderBottom: '1px solid #eee',
+    transition: 'background-color 0.1s',
+  },
+  tableRowHover: {
+    ':hover': {
+      backgroundColor: '#f0f2f5',
+    },
+  },
+  tableCell: {
+    padding: '12px 15px',
+    fontSize: '0.9rem',
+    color: '#1c1e21',
+  },
+  statusBadge: {
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+  },
+  statusBadge_completed: {
+    backgroundColor: '#d4edda',
+    color: '#155724',
+  },
+  statusBadge_pending: {
+    backgroundColor: '#fff3cd',
+    color: '#856404',
+  },
+  statusBadge_failed: {
+    backgroundColor: '#f8d7da',
+    color: '#721c24',
+  },
+  statusBadge_active: {
+    backgroundColor: '#d4edda',
+    color: '#155724',
+  },
+  statusBadge_inactive: {
+    backgroundColor: '#e9ecef',
+    color: '#6c757d',
+  },
+  emptyStateText: {
+    textAlign: 'center',
+    padding: '20px',
+    color: '#6c757d',
+    fontStyle: 'italic',
+  },
+  paginationControls: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '15px',
+    marginTop: '20px',
+  },
+  paginationButton: {
+    padding: '8px 15px',
+    fontSize: '0.9rem',
+    cursor: 'pointer',
+    border: '1px solid #ccc',
+    borderRadius: '6px',
+    backgroundColor: '#fff',
+  },
+  paginationText: {
+    fontSize: '0.9rem',
+    color: '#606770',
+  },
+  analyticsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '20px',
+    marginTop: '20px',
+  },
+  analyticsCard: {
+    backgroundColor: '#fdfdfd',
+    borderRadius: '10px',
+    padding: '20px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #eee',
+  },
+  analyticsCardTitle: {
+    fontSize: '1.2rem',
+    fontWeight: 600,
+    color: '#007bff',
+    marginBottom: '15px',
+  },
+  spendingCategoryList: {
+    listStyle: 'none',
+    padding: 0,
+    margin: '10px 0 0 0',
+    textAlign: 'left',
+    width: '100%',
+  },
+  budgetList: {
+    marginTop: '20px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '20px',
+  },
+  budgetCard: {
+    backgroundColor: '#fdfdfd',
+    borderRadius: '10px',
+    padding: '20px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #eee',
+  },
+  budgetCardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  budgetCardTitle: {
+    fontSize: '1.1rem',
+    fontWeight: 600,
+    color: '#1c1e21',
+    margin: 0,
+  },
+  budgetCardAmount: {
+    fontSize: '1.4rem',
+    fontWeight: 700,
+    color: '#050505',
+    margin: '5px 0 10px 0',
+  },
+  budgetCardPeriod: {
+    fontSize: '0.9rem',
+    color: '#606770',
+    marginTop: '10px',
+  },
+  budgetCardActions: {
+    display: 'flex',
+    gap: '10px',
+    marginTop: '15px',
+  },
+  securityCard: {
+    backgroundColor: '#fdfdfd',
+    borderRadius: '10px',
+    padding: '20px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #eee',
+    marginBottom: '15px',
+  },
+  securityCardTitle: {
+    fontSize: '1.2rem',
+    fontWeight: 600,
+    color: '#1c1e21',
+    marginBottom: '5px',
+  },
+  securityCardDescription: {
+    fontSize: '0.9rem',
+    color: '#606770',
+    marginBottom: '10px',
+  },
+  securityStatus: {
+    fontSize: '1rem',
+    fontWeight: 500,
+    marginBottom: '15px',
+  },
+  statusActive: {
+    color: '#28a745',
+    fontWeight: 700,
+  },
+  statusInactive: {
+    color: '#dc3545',
+    fontWeight: 700,
+  },
+  settingsGroup: {
+    border: '1px solid #eee',
+    borderRadius: '8px',
+    padding: '20px',
+    marginBottom: '20px',
+    backgroundColor: '#fdfdfd',
+  },
+  settingsGroupTitle: {
+    fontSize: '1.3rem',
+    fontWeight: 600,
+    color: '#007bff',
+    borderBottom: '1px solid #eee',
+    paddingBottom: '10px',
+    marginBottom: '15px',
+  },
+  aiChatContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '450px',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    backgroundColor: '#f8f9fa',
+  },
+  aiChatHistory: {
+    flexGrow: 1,
+    padding: '15px',
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+  },
+  aiChatMessage: {
+    maxWidth: '80%',
+    padding: '10px 15px',
+    borderRadius: '15px',
+    fontSize: '0.95rem',
+    lineHeight: '1.4',
+  },
+  aiChatMessageUser: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#007bff',
+    color: 'white',
+    borderBottomRightRadius: 0,
+  },
+  aiChatMessageAI: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#e9ecef',
+    color: '#1c1e21',
+    borderBottomLeftRadius: 0,
+  },
+  aiChatSender: {
+    fontWeight: 600,
+    marginRight: '5px',
+  },
+  aiChatInputForm: {
+    display: 'flex',
+    padding: '10px',
+    borderTop: '1px solid #ccc',
+    backgroundColor: '#fff',
+  },
+  aiChatInput: {
+    flexGrow: 1,
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #ddd',
+    marginRight: '10px',
+    fontSize: '1rem',
+  },
+  aiChatSendButton: {
+    padding: '10px 20px',
+    fontSize: '1rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    border: 'none',
+    borderRadius: '6px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+  },
+  notificationList: {
+    maxHeight: '400px',
+    overflowY: 'auto',
+    paddingRight: '10px',
+  },
+  notificationItem: {
+    padding: '15px',
+    borderBottom: '1px solid #eee',
+    marginBottom: '10px',
+    borderRadius: '6px',
+    backgroundColor: '#fdfdfd',
+    borderLeft: '4px solid #007bff',
+  },
+  notificationItemRead: {
+    opacity: 0.7,
+    borderLeft: '4px solid #ccc',
+  },
+  notificationHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '5px',
+  },
+  notificationTypeBadge: {
+    padding: '3px 8px',
+    borderRadius: '4px',
+    fontSize: '0.7rem',
+    fontWeight: 700,
+  },
+  notificationTypeBadge_alert: {
+    backgroundColor: '#f8d7da',
+    color: '#721c24',
+  },
+  notificationTypeBadge_info: {
+    backgroundColor: '#cce5ff',
+    color: '#004085',
+  },
+  notificationTypeBadge_warning: {
+    backgroundColor: '#fff3cd',
+    color: '#856404',
+  },
+  notificationTypeBadge_success: {
+    backgroundColor: '#d4edda',
+    color: '#155724',
+  },
+  notificationTimestamp: {
+    fontSize: '0.8rem',
+    color: '#6c757d',
+  },
+  notificationMessage: {
+    margin: '5px 0',
+    fontSize: '0.95rem',
+    color: '#333',
+  },
+  markAsReadButton: {
+    marginTop: '8px',
+    padding: '5px 10px',
+    fontSize: '0.8rem',
+    cursor: 'pointer',
+    border: 'none',
+    borderRadius: '4px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+  },
+  footer: {
+    textAlign: 'center',
+    marginTop: '40px',
+    paddingTop: '20px',
+    borderTop: '1px solid #e0e2e5',
+  },
+  footerText: {
+    fontSize: '0.9rem',
+    color: '#606770',
+    margin: '0 0 10px 0',
+  },
+  footerMission: {
+    fontSize: '0.8rem',
+    color: '#999',
+    lineHeight: '1.4',
+    maxWidth: '800px',
+    margin: '0 auto',
+    fontStyle: 'italic',
+  }
+};
