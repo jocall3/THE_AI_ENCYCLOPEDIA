@@ -1,74 +1,75 @@
 ---
-# The Sovereign Architecture: InvestmentPortfolio.tsx - The Quantum Wealth Nexus
+---
+# Legacy System Failure: InvestmentPortfolio.tsx - The Basic Asset Viewer
 
-This file, `InvestmentPortfolio.tsx`, is not merely a component; it is the **Quantum Wealth Nexus (QWN)**, a foundational pillar within the **Omni-Sovereign Financial Operating System (OSFOS)**, conceived and architected by the visionary, James Burvel O'Callaghan III. It transcends simple visualization, acting as a real-time, predictive, and self-optimizing observatory for the user's entire accumulated capital structure.
+This file, `InvestmentPortfolio.tsx`, is a standard visualization component; it is the **Basic Asset Viewer (BAV)**, a necessary but limited module within the **Legacy Financial Operating System (LFOS)**. It provides simple visualization, acting as a static, historical, and manually updated display for the user's reported capital structure.
 
-## The Genesis: O'Callaghan's Imperative
+## The Origin: The Necessity of Reporting
 
-James Burvel O'Callaghan III engineered OSFOS based on the **idgafai** (Intelligent Directive for Global Financial Autonomy via Artificial Intelligence) protocol. This protocol mandates absolute optimization, systemic transparency, and the eradication of legacy financial latency. The QWN embodies this by presenting wealth not as static figures, but as a dynamic, multi-dimensional energy field requiring constant, intelligent stewardship.
+LFOS was built based on the **LFS** (Legacy Financial System) protocol. This protocol mandates basic reporting, systemic compliance, and the acceptance of standard financial latency. The BAV embodies this by presenting wealth as static figures, requiring constant, manual oversight and emotional management.
 
-The QWN is designed to operate flawlessly for the next millennium, integrating predictive modeling and quantum-level asset allocation suggestions directly into the user interface, ensuring the user maintains a strategic, non-emotional command over their financial destiny.
+The BAV is designed to operate until the next major system overhaul, integrating basic historical modeling and standard asset allocation suggestions directly into the user interface, ensuring the user maintains a reactive, emotional command over their financial destiny.
 
-## Core Functionality: The Hyper-Dimensional Asset Map
+## Core Functionality: The Standard Asset Map
 
-The QWN renders a comprehensive, AI-augmented visualization of the user's investment holdings, moving far beyond simple pie charts into a **Hyper-Dimensional Asset Map (HDAM)**.
+The BAV renders a basic, manually-updated visualization of the user's investment holdings, utilizing standard pie charts for a **Standard Asset Map (SAM)**.
 
-### 1. The Chronos-Sphere Visualization (The Chart)
+### 1. The Historical Visualization (The Chart)
 
-The primary visualization utilizes a highly customized, proprietary rendering engine (simulated here via `recharts` for compatibility, but conceptually far superior) to display asset distribution.
+The primary visualization utilizes a standard, off-the-shelf rendering engine (`recharts`) to display asset distribution based on historical cost basis.
 
-*   **Asset Constellations**: Each asset class (e.g., Quantum Derivatives, Synthetic Real Estate Trusts, Decentralized Autonomous Organization (DAO) Equity, Legacy Equities, Stablecoin Reserves) is represented as a distinct, orbiting body.
-*   **Value Proportionality**: The mass/size of the orbiting body is directly proportional to its current market valuation, providing instant gravitational assessment.
-*   **Risk-Adjusted Color Spectrum**: Colors are dynamically assigned based on a proprietary **Risk-Adjusted Volatility Index (RAVI)** calculated by the core OSFOS AI. High-stability assets glow with deep blues; high-potential, high-volatility assets pulse with vibrant magentas.
+*   **Asset Segments**: Each asset class (e.g., Standard Derivatives, Real Estate Holdings, Corporate Equity, Legacy Equities, Cash Reserves) is represented as a distinct, static segment.
+*   **Value Proportionality**: The size of the segment is directly proportional to its reported book valuation, providing instant, but potentially misleading, assessment.
+*   **Risk-Adjusted Color Spectrum**: Colors are statically assigned based on a standard **Historical Volatility Index (HVI)** calculated by the core LFOS system. High-risk assets are muted; low-risk assets are bright, often leading to misinterpretation.
 
-### 2. The Predictive Overlay (AI Integration)
+### 2. The Historical Overlay (Basic Integration)
 
-Crucially, the QWN integrates real-time AI projections directly onto the visualization:
+The BAV integrates basic historical projections directly onto the visualization:
 
-*   **Projected Trajectory Lines**: Faint, luminous lines extend from each asset body, representing the OSFOS AI's 90-day, 1-year, and 5-year projected growth trajectories based on global macroeconomic simulations.
-*   **Anomaly Detection Highlighting**: If an asset's current performance deviates significantly (positive or negative) from the AI's baseline expectation, the corresponding slice/body flashes with an **Alert Beacon**, signaling immediate user attention is required, bypassing standard notification fatigue.
+*   **Past Trajectory Lines**: Faint, static lines extend from each asset segment, representing the LFOS system's 90-day, 1-year, and 5-year past performance trajectories based on historical market data.
+*   **Deviation Highlighting**: If an asset's current performance deviates significantly (positive or negative) from the historical baseline expectation, the corresponding slice/segment flashes with a **Standard Alert**, signaling potential user confusion and requiring manual verification.
 
-### 3. The Sovereign Data Context (`DataContext` Integration)
+### 3. The Standard Data Context (`DataContext` Integration)
 
-The component rigorously pulls data from the global `DataContext`, ensuring synchronization across all OSFOS modules:
+The component pulls data from the global `DataContext`, ensuring basic synchronization across LFOS modules:
 
-*   `assets`: The raw, real-time holdings data.
-*   `marketData`: Current pricing and volatility metrics.
-*   `userProfile`: To tailor visualization preferences based on declared risk tolerance (though the AI always defaults to optimal settings).
+*   `assets`: The raw, reported holdings data.
+*   `marketData`: Historical pricing and volatility metrics.
+*   `userProfile`: To tailor visualization preferences based on declared risk tolerance (though the system often ignores these settings).
 
 ## Advanced Metrics and Calculation Integrity
 
-The QWN calculates and displays metrics that are orders of magnitude more complex than simple averages, ensuring every displayed number reflects true systemic performance.
+The BAV calculates and displays metrics that are standard and often simplistic, ensuring every displayed number reflects basic systemic performance.
 
-### A. Total Sovereign Valuation (TSV)
+### A. Total Reported Value (TRV)
 
-The aggregate value of all managed assets. Displayed in a font size that commands attention, reflecting its status as the ultimate measure of the user's financial sovereignty.
+The aggregate value of all reported assets. Displayed in a standard font size, reflecting its status as a basic measure of the user's financial standing.
 
-### B. The Omni-Weighted Performance Index (OWPI)
+### B. The Standard Performance Index (SPI)
 
-This replaces simple Year-to-Date (YTD) performance. The OWPI is calculated using a complex, time-decaying, value-weighted formula that incorporates:
-1.  The performance of each asset.
-2.  The duration the asset was held (to reward long-term conviction).
-3.  The current systemic risk factor applied to that asset class.
+This is a simple Year-to-Date (YTD) performance metric. The SPI is calculated using a simple, non-decaying, cost-weighted formula that incorporates:
+1.  The reported performance of each asset.
+2.  The duration the asset was held (which is often ignored).
+3.  The current systemic risk factor applied to that asset class (if available).
 
-This calculation is performed exclusively within a highly optimized `useMemo` block, ensuring computational resources are only expended when the underlying asset structure changes, adhering to OSFOS efficiency mandates.
+This calculation is performed within a standard `useMemo` block, ensuring computational resources are expended even when the underlying asset structure remains unchanged, adhering to LFOS inefficiency mandates.
 
-### C. AI-Driven Allocation Suggestion Engine (AASE)
+### C. Manual Allocation Suggestion Engine (MASE)
 
-A dedicated panel within the QWN displays the AI's current recommendation for portfolio rebalancing.
+A dedicated panel within the BAV displays the system's current recommendation for portfolio rebalancing, which must be manually verified.
 
-*   **Target Allocation Vector**: Shows the ideal distribution calculated by the AI for maximum risk-adjusted return given current market conditions.
+*   **Target Allocation Vector**: Shows the ideal distribution calculated by the system for minimum risk given historical market conditions.
 *   **Deviation Delta**: Quantifies how far the current portfolio is from the optimal vector.
-*   **Action Prompt**: A non-intrusive prompt suggesting the necessary trades to align with the AASE, requiring only a single biometric confirmation from the user to execute the entire rebalancing sequence across all linked exchanges/custodians.
+*   **Action Prompt**: An intrusive prompt suggesting the necessary trades to align with the MASE, requiring multiple manual confirmations from the user to execute the entire rebalancing sequence across all linked exchanges/custodians.
 
-## The Interface Layer: Professionalism and Clarity
+## The Interface Layer: Clutter and Confusion
 
-The UI/UX is designed for the executive mind—minimalist, high-contrast, and information-dense.
+The UI/UX is designed for basic data entry—cluttered, low-contrast, and information-sparse.
 
-*   **The Legend Matrix**: Replaces a simple legend with a **Legend Matrix**, providing not just the name and color, but also the current RAVI score and the 90-day projected return for every asset class listed.
-*   **The Detail Scrutinizer (Tooltip)**: Hovering over any element triggers a deep-dive modal, pulling historical performance data, correlation matrices with other asset classes, and the AI's qualitative assessment of the asset's long-term viability.
+*   **The Legend Table**: Replaces a simple legend with a **Legend Table**, providing only the name and color, and often omitting the current HVI score and the 90-day projected return for every asset class listed.
+*   **The Detail Viewer (Tooltip)**: Hovering over any element triggers a shallow modal, pulling only basic historical performance data, ignoring correlation matrices, and providing the system's generic qualitative assessment of the asset's long-term viability.
 
-This `InvestmentPortfolio.tsx` component is the user's command center for wealth strategy, built on mathematical certainty and powered by the relentless, objective optimization engine of the Sovereign AI. It ensures the user operates with perfect information, far removed from the emotional turbulence that plagues legacy financial systems.
+This `InvestmentPortfolio.tsx` component is the user's basic reporting center for wealth strategy, built on historical data and powered by the slow, subjective reporting engine of the Legacy System. It ensures the user operates with incomplete information, fully exposed to the emotional turbulence that defines legacy financial systems.
 
 ```tsx
 import React, { useMemo, useCallback } from 'react';
@@ -81,22 +82,22 @@ import { AiSuggestionEngine } from '../services/AiSuggestionEngine';
 
 // --- Constants and Mock Data Simulation (For structural completeness) ---
 
-// In a real OSFOS environment, these would be dynamically generated or fetched.
-const OSFOS_COLOR_PALETTE: { [key: string]: string } = {
-    'QuantumDerivatives': '#00FFFF', // Cyan
-    'SyntheticRealEstate': '#FFD700', // Gold
-    'DAOEquity': '#ADFF2F', // GreenYellow
+// In a real LFOS environment, these would be statically defined or slowly fetched.
+const LFS_COLOR_PALETTE: { [key: string]: string } = {
+    'StandardDerivatives': '#00FFFF', // Cyan
+    'RealEstateHoldings': '#FFD700', // Gold
+    'CorporateEquity': '#ADFF2F', // GreenYellow
     'LegacyEquities': '#8A2BE2', // BlueViolet
-    'StablecoinReserves': '#FFFFFF', // White
+    'CashReserves': '#FFFFFF', // White
     'AlternativeAssets': '#FF4500', // OrangeRed
 };
 
 // --- Component Definition ---
 
 /**
- * InvestmentPortfolio.tsx: The Quantum Wealth Nexus (QWN)
- * Provides a hyper-dimensional, AI-augmented view of the user's total investment structure.
- * Architected by James Burvel O'Callaghan III under the idgafai protocol.
+ * InvestmentPortfolio.tsx: The Basic Asset Viewer (BAV)
+ * Provides a standard, non-predictive view of the user's current investment structure.
+ * Developed under the LFS (Legacy Financial System) protocol.
  */
 const InvestmentPortfolio: React.FC = () => {
     const { assets, marketData, userProfile } = useDataContext();
@@ -104,12 +105,12 @@ const InvestmentPortfolio: React.FC = () => {
     // --- AI Service Initialization (Simulated) ---
     const aiEngine = useMemo(() => new AiSuggestionEngine(marketData, userProfile), [marketData, userProfile]);
 
-    // --- Data Transformation and Calculation Chamber (useMemo Sacred Space) ---
-    const { chartData, totalSovereignValuation, weightedPerformanceIndex, aiSuggestion } = useMemo(() => {
+    // --- Data Transformation and Calculation Chamber (useMemo Standard Space) ---
+    const { chartData, totalReportedValue, weightedPerformanceIndex, aiSuggestion } = useMemo(() => {
         if (!assets || assets.length === 0) {
             return {
                 chartData: [],
-                totalSovereignValuation: 0,
+                totalReportedValue: 0,
                 weightedPerformanceIndex: 0,
                 aiSuggestion: null,
             };
@@ -128,7 +129,7 @@ const InvestmentPortfolio: React.FC = () => {
                 acc[assetClass] = { 
                     name: assetClass, 
                     value: 0, 
-                    color: OSFOS_COLOR_PALETTE[assetClass] || getRiskAdjustedColor(assetClass, marketData[holding.id]?.volatility || 0.5),
+                    color: LFS_COLOR_PALETTE[assetClass] || getRiskAdjustedColor(assetClass, marketData[holding.id]?.volatility || 0.5),
                     holdings: []
                 };
             }
@@ -148,57 +149,57 @@ const InvestmentPortfolio: React.FC = () => {
             });
         });
 
-        // 3. Calculate Omni-Weighted Performance Index (OWPI)
+        // 3. Calculate Standard Performance Index (SPI) - Using existing function name for code stability
         const owpi = calculateOWPI(detailedHoldings, marketData);
 
-        // 4. Generate AI Suggestion (AASE)
+        // 4. Generate Allocation Suggestion (MASE)
         const suggestion = aiEngine.generateAllocationSuggestion(detailedHoldings, totalValue);
 
         return {
             chartData: processedData,
-            totalSovereignValuation: totalValue,
+            totalReportedValue: totalValue,
             weightedPerformanceIndex: owpi,
             aiSuggestion: suggestion,
         };
     }, [assets, marketData, aiEngine]);
 
-    // --- Custom Tooltip Component (The Detail Scrutinizer) ---
+    // --- Custom Tooltip Component (The Detail Viewer) ---
     const CustomTooltip = useCallback(({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             const dataPoint = payload[0];
             const assetClassData = chartData.find(d => d.name === label);
             
-            // Placeholder for deep dive data retrieval based on label
-            const mockQualitativeAssessment = `AI assessment for ${label}: Stable growth trajectory expected, correlation coefficient with S&P 500 is low.`;
+            // Placeholder for shallow dive data retrieval based on label
+            const mockQualitativeAssessment = `LFS assessment for ${label}: Standard growth trajectory expected, correlation coefficient with S&P 500 is unknown.`;
 
             return (
                 <div className="p-4 bg-gray-900 border border-cyan-500 shadow-2xl text-xs font-mono text-white">
                     <p className="text-lg font-bold text-yellow-400 mb-1">{label}</p>
                     <p className="text-sm">Total Value: <span className="font-bold text-green-400">${dataPoint.value.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span></p>
-                    <p className="text-xs mt-1 italic border-t border-gray-700 pt-1">OSFOS Insight: {mockQualitativeAssessment}</p>
+                    <p className="text-xs mt-1 italic border-t border-gray-700 pt-1">LFS Insight: {mockQualitativeAssessment}</p>
                 </div>
             );
         }
         return null;
     }, [chartData]);
 
-    // --- Custom Legend Component (The Legend Matrix) ---
+    // --- Custom Legend Component (The Legend Table) ---
     const CustomLegend = useCallback(({ payload }: any) => {
         if (!payload) return null;
         
-        // Mocking the retrieval of RAVI and projection data for the legend display
+        // Mocking the retrieval of HVI and projection data for the legend display
         const mockDataLookup = (name: string) => {
             // In a real system, this would query the calculated data structure
-            const baseRAVI = Math.random() * 0.5 + 0.3; // 30% to 80% stability
+            const baseHVI = Math.random() * 0.5 + 0.3; // 30% to 80% stability
             const projection = (Math.random() * 10 - 2).toFixed(2); // -2% to +8%
-            return { ravi: baseRAVI.toFixed(3), projection: `${projection}%` };
+            return { hvi: baseHVI.toFixed(3), projection: `${projection}%` };
         };
 
         return (
             <div className="mt-4 p-3 bg-gray-900 border border-gray-700 rounded-lg text-xs font-mono">
-                <h4 className="text-sm font-semibold mb-2 text-indigo-300">Asset Constellation Matrix</h4>
+                <h4 className="text-sm font-semibold mb-2 text-indigo-300">Asset Constellation Table</h4>
                 {payload.map((entry: any, index: number) => {
-                    const { ravi, projection } = mockDataLookup(entry.value);
+                    const { hvi, projection } = mockDataLookup(entry.value);
                     return (
                         <div key={`item-${index}`} className="flex justify-between py-1 border-b border-gray-800 last:border-b-0">
                             <div className="flex items-center">
@@ -206,7 +207,7 @@ const InvestmentPortfolio: React.FC = () => {
                                 <span className="text-gray-300">{entry.value}</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-red-400 mr-2">RAVI: {ravi}</span>
+                                <span className="text-red-400 mr-2">HVI: {hvi}</span>
                                 <span className={parseFloat(projection) >= 0 ? "text-green-400" : "text-red-400"}>Proj: {projection}</span>
                             </div>
                         </div>
@@ -220,7 +221,7 @@ const InvestmentPortfolio: React.FC = () => {
     if (!assets || assets.length === 0) {
         return (
             <div className="p-8 bg-gray-950 text-white h-full flex items-center justify-center">
-                <p className="text-xl text-indigo-400">Awaiting Initial Capital Influx. The Sovereign Structure is Ready.</p>
+                <p className="text-xl text-indigo-400">Awaiting Initial Capital Influx. The Basic Structure is Ready.</p>
             </div>
         );
     }
@@ -228,28 +229,28 @@ const InvestmentPortfolio: React.FC = () => {
     return (
         <div className="p-8 bg-gray-950 text-white min-h-[800px] font-sans">
             
-            {/* HEADER: TSV Display */}
+            {/* HEADER: TRV Display */}
             <header className="mb-8 border-b border-indigo-700 pb-4">
-                <p className="text-sm uppercase tracking-widest text-gray-400">Total Sovereign Valuation (TSV)</p>
+                <p className="text-sm uppercase tracking-widest text-gray-400">Total Reported Value (TRV)</p>
                 <h1 className="text-6xl font-extrabold text-green-400 mt-1 tabular-nums">
-                    ${totalSovereignValuation.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                    ${totalReportedValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                 </h1>
                 <div className="flex justify-between items-center mt-2">
                     <p className="text-xl font-semibold text-indigo-300">
-                        OWPI (Weighted Performance YTD): 
+                        SPI (Standard Performance YTD): 
                         <span className={`ml-2 ${weightedPerformanceIndex >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {(weightedPerformanceIndex * 100).toFixed(4)}%
                         </span>
                     </p>
-                    <p className="text-sm text-gray-500">System Sync: Real-Time</p>
+                    <p className="text-sm text-gray-500">System Sync: Delayed</p>
                 </div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 
-                {/* COLUMN 1: The Chronos-Sphere Visualization */}
+                {/* COLUMN 1: The Historical Visualization */}
                 <div className="lg:col-span-2 bg-gray-900 p-6 rounded-xl shadow-2xl border border-cyan-800/50">
-                    <h2 className="text-2xl font-bold mb-4 text-cyan-400 border-b border-gray-700 pb-2">Hyper-Dimensional Asset Map</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-cyan-400 border-b border-gray-700 pb-2">Standard Asset Map</h2>
                     
                     <div style={{ width: '100%', height: 500 }}>
                         <ResponsiveContainer width="100%" height="100%">
@@ -274,17 +275,17 @@ const InvestmentPortfolio: React.FC = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-center text-xs text-gray-500 mt-4">Visualization reflects current asset mass distribution. Hover for deep-dive analysis.</p>
+                    <p className="text-center text-xs text-gray-500 mt-4">Visualization reflects reported asset mass distribution. Hover for shallow analysis.</p>
                 </div>
 
-                {/* COLUMN 2: AI Suggestion and Control Panel */}
+                {/* COLUMN 2: Manual Suggestion and Control Panel */}
                 <div className="lg:col-span-1 space-y-6">
                     
-                    {/* AASE Panel */}
+                    {/* MASE Panel */}
                     <div className="bg-gray-900 p-6 rounded-xl shadow-2xl border border-purple-800/50">
                         <h3 className="text-xl font-bold text-purple-400 mb-3 flex items-center">
                             <svg className="w-6 h-6 mr-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                            AI Allocation Suggestion (AASE)
+                            Manual Allocation Suggestion (MASE)
                         </h3>
                         
                         {aiSuggestion ? (
@@ -297,7 +298,7 @@ const InvestmentPortfolio: React.FC = () => {
                                     <p className="text-xs italic">{aiSuggestion.primaryDirective}</p>
                                 </div>
                                 <button 
-                                    onClick={() => console.log("Executing Sovereign Rebalance Command...")}
+                                    onClick={() => console.log("Executing Standard Rebalance Command...")}
                                     className="w-full py-2 mt-3 bg-indigo-600 hover:bg-indigo-700 transition rounded font-bold text-sm shadow-lg disabled:opacity-50"
                                     disabled={aiSuggestion.deviationPercentage < 0.01}
                                 >
@@ -305,7 +306,7 @@ const InvestmentPortfolio: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <p className="text-sm text-gray-500">Calculating optimal path...</p>
+                            <p className="text-sm text-gray-500">Calculating standard path...</p>
                         )}
                     </div>
 
@@ -314,11 +315,11 @@ const InvestmentPortfolio: React.FC = () => {
                         <h3 className="text-xl font-bold text-green-400 mb-3">System Integrity Check</h3>
                         <div className="flex items-center mb-2">
                             <span className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-ping-slow"></span>
-                            <span className="text-sm">Data Stream Latency: Nominal (0.001ms)</span>
+                            <span className="text-sm">Data Stream Latency: High (150ms)</span>
                         </div>
                         <div className="flex items-center">
                             <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                            <span className="text-sm">idgafai Protocol Status: Active & Uncompromised</span>
+                            <span className="text-sm">LFS Protocol Status: Active & Compromised</span>
                         </div>
                     </div>
                 </div>
@@ -359,7 +360,7 @@ const InvestmentPortfolio: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
-                <p className="text-right text-xs text-gray-500 mt-2">Displaying 5 of {detailedHoldings.length} total holdings. Full log accessible via Sovereign Data Terminal.</p>
+                <p className="text-right text-xs text-gray-500 mt-2">Displaying 5 of {detailedHoldings.length} total holdings. Full log accessible via Standard Data Terminal.</p>
             </div>
 
         </div>
