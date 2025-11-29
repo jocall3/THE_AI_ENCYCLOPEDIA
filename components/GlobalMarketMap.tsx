@@ -162,7 +162,7 @@ const MetricBadge: React.FC<{ label: string; value: string | number; trend?: 'up
       <span className="text-lg font-mono font-bold text-slate-100" style={{ color }}>{value}</span>
       {trend && (
         <span className={`text-xs mb-1 ${trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-slate-400'}`}>
-          {trend === 'up' ? 'â–²' : trend === 'down' ? 'â–¼' : 'âˆ’'}
+          {trend === 'up' ? 'Ã¢â€“Â²' : trend === 'down' ? 'Ã¢â€“Â¼' : 'Ã¢Ë†â€™'}
         </span>
       )}
     </div>
@@ -312,11 +312,11 @@ const GlobalMarketMap: React.FC = () => {
       
       <nav className="flex-1 p-4 space-y-2">
         {[
-          { id: 'DASHBOARD', label: 'Executive Dashboard', icon: 'ðŸ“Š' },
-          { id: 'MARKET_MAP', label: 'Global Market Map', icon: 'ðŸŒ ' },
-          { id: 'AI_NEXUS', label: 'AI Command Nexus', icon: 'ðŸ§ ' },
-          { id: 'RISK_CONTROL', label: 'Risk & Compliance', icon: 'ðŸ›¡ï¸ ' },
-          { id: 'PROFILE', label: 'Director Profile', icon: 'ðŸ‘¤' },
+          { id: 'DASHBOARD', label: 'Executive Dashboard', icon: 'Ã°Å¸â€œÅ ' },
+          { id: 'MARKET_MAP', label: 'Global Market Map', icon: 'Ã°Å¸Å’ ' },
+          { id: 'AI_NEXUS', label: 'AI Command Nexus', icon: 'Ã°Å¸Â§Â ' },
+          { id: 'RISK_CONTROL', label: 'Risk & Compliance', icon: 'Ã°Å¸â€ºÂ¡Ã¯Â¸ ' },
+          { id: 'PROFILE', label: 'Director Profile', icon: 'Ã°Å¸â€˜Â¤' },
         ].map(item => (
           <button
             key={item.id}
@@ -346,7 +346,7 @@ const GlobalMarketMap: React.FC = () => {
           </div>
           <div className="flex items-center justify-between text-[10px] text-slate-500">
             <span>Session: {userProfile.activeSessionId}</span>
-            <span className="text-emerald-500">â—  Secure</span>
+            <span className="text-emerald-500">Ã¢â€”  Secure</span>
           </div>
         </div>
       </div>
@@ -575,7 +575,7 @@ const GlobalMarketMap: React.FC = () => {
           <div className="space-y-2 overflow-y-auto h-48 pr-2">
             {[1,2,3,4,5,6].map(i => (
               <div key={i} className="flex items-center gap-2 text-xs p-2 border-b border-slate-800">
-                <span className="text-emerald-500">âœ“</span>
+                <span className="text-emerald-500">Ã¢Å“â€œ</span>
                 <span className="text-slate-400">{new Date().toLocaleDateString()}</span>
                 <span className="text-slate-200">Audit check passed for Node-{100+i}</span>
               </div>
@@ -737,10 +737,10 @@ const GlobalMarketMap: React.FC = () => {
             <div className="flex gap-3">
               <button className="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
                 <span className="sr-only">Notifications</span>
-                ðŸ”” <span className="absolute top-4 right-8 w-2 h-2 bg-red-500 rounded-full"></span>
+                Ã°Å¸â€ â€  <span className="absolute top-4 right-8 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
               <button className="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
-                âš™ï¸ 
+                Ã¢Å¡â„¢Ã¯Â¸ 
               </button>
             </div>
           </div>
@@ -771,7 +771,7 @@ const GlobalMarketMap: React.FC = () => {
           </div>
           <div className="flex gap-4">
             <span>BUILD: 2024.10.05.RC4</span>
-            <span>COPYRIGHT Â© OMNISYS CORP</span>
+            <span>COPYRIGHT Ã‚Â© OMNISYS CORP</span>
           </div>
         </footer>
       </main>
