@@ -1,660 +1,826 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
 
-// --- CORE SYSTEM CONSTANTS AND TYPES ---
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-/**
- * Defines the structure for a Quantum Asset managed by the system.
- */
-interface QuantumAsset {
-  id: string;
-  name: string;
-  symbol: string;
-  balance: number;
-  rate: number; // Generation rate per second
-  color: string;
-  volatilityIndex: number; // Measures asset price fluctuation risk
-  quantumSignature: string; // Unique identifier for entanglement tracking
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
+
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
+
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-/**
- * Defines the structure for an Integrated Corporate Entity.
- */
-interface IntegratedCompany {
-  id: number;
-  name: string;
-  efficiencyScore: number;
-  status: 'OPTIMIZED' | 'SYNCING' | 'DEGRADED' | 'ISOLATED';
-  throughputMips: number; // Measured processing throughput in MIPS
-  aiIntegrationLevel: number; // 0 to 100 scale for AI adoption
-}
-
-// --- UTILITY FUNCTIONS AND HOOKS ---
-
-/**
- * Generates a unique identifier string.
- * @returns {string} A unique identifier string.
- */
-const generateQuantumId = (): string => {
-  return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-};
-
-/**
- * Hook to manage and update system time across the application.
- * @returns {Date} The current system time.
- */
-const useSystemClock = () => {
-  const [time, setTime] = useState<Date>(new Date());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return time;
-};
-
-/**
- * Hook to manage dynamic system metrics simulation.
- */
-const useSystemMetrics = () => {
-  const [systemLoad, setSystemLoad] = useState<number>(45.00);
-  const [quantumEntanglement, setQuantumEntanglement] = useState<number>(87.40);
-  const [dataFlowRate, setDataFlowRate] = useState<number>(1200.55);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSystemLoad(prev => Math.min(100, Math.max(0, prev + (Math.random() - 0.5) * 0.1)));
-      setQuantumEntanglement(prev => Math.min(100, Math.max(0, prev + (Math.random() - 0.5) * 0.05)));
-      setDataFlowRate(prev => prev + (Math.random() - 0.5) * 50);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  return { systemLoad, quantumEntanglement, dataFlowRate };
-};
-
-
-// --- DATA INITIALIZATION ---
-
-const INITIAL_ASSETS: QuantumAsset[] = [
-  { id: generateQuantumId(), name: 'Compute Credits', symbol: 'CPX', balance: 45020.55, rate: 12.5, color: '#00f3ff', volatilityIndex: 0.05, quantumSignature: generateQuantumId() },
-  { id: generateQuantumId(), name: 'Storage Tokens', symbol: 'DST', balance: 128090.00, rate: 45.2, color: '#bc13fe', volatilityIndex: 0.02, quantumSignature: generateQuantumId() },
-  { id: generateQuantumId(), name: 'Qubits (Entangled)', symbol: 'QBT', balance: 512.00, rate: 0.8, color: '#ffffff', volatilityIndex: 0.15, quantumSignature: generateQuantumId() },
-  { id: generateQuantumId(), name: 'Clean Energy Units', symbol: 'NRG', balance: 8890.45, rate: 8.4, color: '#00ff9d', volatilityIndex: 0.01, quantumSignature: generateQuantumId() },
-  { id: generateQuantumId(), name: 'Temporal Anchors', symbol: 'TMA', balance: 10.00, rate: 0.01, color: '#ff8c00', volatilityIndex: 0.25, quantumSignature: generateQuantumId() },
-];
-
-const generateMockCompanies = (count: number): IntegratedCompany[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    name: `OMNICORP-${(i + 1).toString().padStart(3, '0')}`,
-    efficiencyScore: parseFloat((90 + Math.random() * 10).toFixed(2)),
-    throughputMips: Math.floor(1000 + Math.random() * 5000),
-    aiIntegrationLevel: Math.floor(Math.random() * 100),
-    status: Math.random() > 0.1 ? 'OPTIMIZED' : (Math.random() > 0.5 ? 'SYNCING' : 'DEGRADED'),
-  }));
-};
-
-// --- QUANTUM ASSETS COMPONENT ---
 
 const QuantumAssets: React.FC = () => {
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(INITIAL_ASSETS[0].id);
-  const [assets, setAssets] = useState<QuantumAsset[]>(INITIAL_ASSETS);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  // System Hooks
-  const time = useSystemClock();
-  const { systemLoad, quantumEntanglement, dataFlowRate } = useSystemMetrics();
-  
-  // Mock Data Generation
-  const companies = useMemo(() => generateMockCompanies(100), []);
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-  // --- Core Simulation Loop ---
-  useEffect(() => {
-    const assetUpdateInterval = setInterval(() => {
-      setAssets(prevAssets => prevAssets.map(asset => {
-        // Asset Generation based on rate, volatility, and current system load
-        const generationFactor = 1 + (asset.rate / 10000) * (1 + (Math.random() * 0.1));
-        const volatilityImpact = (Math.random() - 0.5) * asset.volatilityIndex * 0.1;
-        
-        // Balance update: Rate + Volatility adjustment
-        const newBalance = asset.balance + (asset.rate * generationFactor) - (asset.balance * volatilityImpact);
-        
-        // Simulate minor rate fluctuation based on entanglement
-        const newRate = asset.rate * (1 + (quantumEntanglement / 100000));
-
-        return {
-          ...asset,
-          balance: Math.max(0, newBalance), // Ensure balance doesn't go negative
-          rate: Math.max(0.001, newRate)
-        };
-      }));
-    }, 1000);
-
-    return () => clearInterval(assetUpdateInterval);
-  }, [quantumEntanglement]);
-
-  // --- Quantum Wave Visualization Engine ---
-  const renderQuantumWave = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let t = 0;
-
-    const updateCanvasDimensions = () => {
-        const parent = canvas.parentElement;
-        if (parent) {
-            canvas.width = parent.clientWidth;
-            canvas.height = parent.clientHeight;
-        }
-    };
-    
-    updateCanvasDimensions();
-    window.addEventListener('resize', updateCanvasDimensions);
-
-    const renderLoop = () => {
-      t += 0.03;
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // 1. Background Substrate Grid
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
-      ctx.lineWidth = 0.5;
-      for (let i = 0; i < canvas.width; i += 60) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
-        ctx.stroke();
-      }
-      for (let j = 0; j < canvas.height; j += 60) {
-        ctx.beginPath();
-        ctx.moveTo(0, j);
-        ctx.lineTo(canvas.width, j);
-        ctx.stroke();
-      }
-
-      // 2. Multi-Layered Entanglement Waves
-      const waveParameters = [
-        { color: '#00f3ff', amplitude: 60, frequency: 0.015, phaseShift: t },
-        { color: '#bc13fe', amplitude: 40, frequency: 0.025, phaseShift: t * 0.8 + 1 },
-        { color: '#00ff9d', amplitude: 25, frequency: 0.010, phaseShift: t * 1.2 - 0.5 },
-      ];
-
-      waveParameters.forEach(({ color, amplitude, frequency, phaseShift }) => {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = color;
-        
-        for (let x = 0; x <= canvas.width; x++) {
-          // Complex wave function incorporating time, position, and system load influence
-          const yOffset = Math.sin(x * frequency + phaseShift) * amplitude;
-          const loadInfluence = Math.sin(x * 0.005 + t * 0.5) * (systemLoad / 200);
-          
-          const y = canvas.height / 2 + yOffset + loadInfluence * 30;
-          
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      });
-      
-      // 3. Center Nexus Point
-      if (selectedAssetId) {
-          const asset = assets.find(a => a.id === selectedAssetId);
-          if (asset) {
-              ctx.beginPath();
-              ctx.arc(canvas.width / 2, canvas.height / 2, 15, 0, 2 * Math.PI);
-              ctx.fillStyle = asset.color;
-              ctx.shadowBlur = 25;
-              ctx.shadowColor = asset.color;
-              ctx.fill();
-          }
-      }
-
-
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    renderLoop();
-    return () => {
-        cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('resize', updateCanvasDimensions);
-    };
-  }, [selectedAssetId, assets, systemLoad]);
-
-  useEffect(() => {
-    return renderQuantumWave();
-  }, [renderQuantumWave]);
-
-
-  // --- Derived State and Handlers ---
-
-  const selectedAsset = useMemo(() => 
-    assets.find(a => a.id === selectedAssetId) || assets[0]
-  , [assets, selectedAssetId]);
-
-  const totalPortfolioValue = useMemo(() => 
-    assets.reduce((sum, asset) => sum + asset.balance * (1 + asset.volatilityIndex * 10), 0)
-  , [assets]);
-
-  const handleAssetSelection = useCallback((id: string) => {
-    setSelectedAssetId(id);
-  }, []);
-
-  const handleAction = (action: string) => {
-    console.log(`Executing Action: ${action} on Asset: ${selectedAsset?.name || 'N/A'}`);
-    alert(`Initiating ${action} sequence for ${selectedAsset?.symbol}.`);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
   };
 
-  // --- Sub-Components for Structure and Readability ---
-
-  const AssetCard: React.FC<{ asset: QuantumAsset, isSelected: boolean, onClick: (id: string) => void }> = 
-    React.memo(({ asset, isSelected, onClick }) => {
-    
-    const progressPercentage = Math.min(100, (asset.balance / 500000) * 100);
-    
-    return (
-      <div 
-        key={asset.id} 
-        className={`qa-card ${isSelected ? 'active' : ''}`}
-        onClick={() => onClick(asset.id)}
-        style={{ borderColor: isSelected ? asset.color : 'rgba(255, 255, 255, 0.05)' }}
-      >
-        <div className="qa-card-header">
-          <span className="qa-asset-name">{asset.name}</span>
-          <span className="qa-asset-symbol" style={{ color: asset.color }}>{asset.symbol}</span>
-        </div>
-        <div className="qa-asset-balance">
-          {asset.balance.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
-        </div>
-        <div className="qa-asset-rate" style={{ color: asset.color }}>
-          <span className={asset.rate > 0.5 ? 'blink' : ''} style={{ color: asset.color }}>▲</span> 
-          {asset.rate.toFixed(4)} / sec (Yield)
-        </div>
-        <div className="qa-progress-bar">
-          <div 
-            className="qa-progress-fill" 
-            style={{ 
-              width: `${progressPercentage}%`, 
-              backgroundColor: asset.color,
-              boxShadow: `0 0 10px ${asset.color}`
-            }} 
-          />
-        </div>
-        <div style={{ fontSize: '0.7rem', color: '#aaa', marginTop: '0.5rem' }}>
-            Volatility Index: {asset.volatilityIndex * 100}%
-        </div>
-      </div>
-    );
-  });
-  AssetCard.displayName = 'AssetCard';
-
-
-  const IntegrationRow: React.FC<{ company: IntegratedCompany }> = React.memo(({ company }) => {
-    let statusColor = '#888';
-    let statusText = company.status;
-
-    switch (company.status) {
-        case 'OPTIMIZED':
-            statusColor = '#00ff9d';
-            break;
-        case 'SYNCING':
-            statusColor = '#00f3ff';
-            break;
-        case 'DEGRADED':
-            statusColor = '#ff4500';
-            break;
-        case 'ISOLATED':
-            statusColor = '#555';
-            break;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      const response = await axios.post('/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
+    } finally {
+      setIsSaving(false);
     }
+  };
 
-    return (
-      <div className="qa-company-row" style={{ fontSize: '0.75rem' }}>
-        <div className="qa-company-name" style={{ flex: 2 }}>{company.name}</div>
-        <div style={{ flex: 1, textAlign: 'right', color: '#ccc' }}>
-            AI: {company.aiIntegrationLevel}%
-        </div>
-        <div style={{ flex: 1, textAlign: 'right', color: '#aaa', fontSize: '0.7rem' }}>
-            {company.throughputMips.toLocaleString()} MIPS
-        </div>
-        <div style={{ flex: 0.8, textAlign: 'right' }}>
-            <span style={{ color: statusColor, fontSize: '0.7rem', padding: '2px 6px', background: `${statusColor}15`, borderRadius: '2px' }}>
-                {statusText}
-            </span>
-        </div>
-      </div>
-    );
-  });
-  IntegrationRow.displayName = 'IntegrationRow';
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
 
-
-  // --- RENDER ---
   return (
-    <div className="qa-container">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap');
-
-        .qa-container {
-          width: 100%;
-          min-height: 100vh;
-          background-color: #030308;
-          color: #e0e0e0;
-          font-family: 'Rajdhani', sans-serif;
-          overflow-x: hidden;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .qa-bg-glow {
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.05) 0%, rgba(0,0,0,0) 60%);
-          opacity: 0.5;
-          z-index: 0;
-          pointer-events: none;
-          animation: rotateGlow 120s linear infinite;
-        }
-        
-        @keyframes rotateGlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .qa-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 4rem;
-          border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-          z-index: 10;
-          backdrop-filter: blur(15px);
-          background-color: rgba(5, 5, 5, 0.7);
-        }
-
-        .qa-title {
-          font-size: 2.5rem;
-          font-weight: 700;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          background: linear-gradient(135deg, #ffffff, #00f3ff);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-        }
-
-        .qa-metric-value {
-          font-size: 1.4rem;
-          font-weight: 500;
-          color: #00f3ff;
-          text-shadow: 0 0 12px rgba(0, 243, 255, 0.7);
-        }
-
-        .qa-main {
-          flex: 1;
-          display: grid;
-          grid-template-columns: 380px 1fr 350px;
-          gap: 2.5rem;
-          padding: 3rem;
-          z-index: 10;
-        }
-
-        /* Asset Cards */
-        .qa-asset-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1.2rem;
-        }
-
-        .qa-card {
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          padding: 1.8rem;
-          border-radius: 6px;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-          cursor: pointer;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .qa-card:hover, .qa-card.active {
-          background: rgba(255, 255, 255, 0.06);
-          transform: scale(1.02) translateX(5px);
-          box-shadow: 0 8px 30px rgba(0, 243, 255, 0.2);
-        }
-
-        .qa-asset-balance {
-          font-size: 2.2rem;
-          font-weight: 300;
-          margin-bottom: 0.5rem;
-          letter-spacing: -0.02em;
-        }
-
-        /* Center Visualization */
-        .qa-vis-panel {
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-        }
-
-        .qa-graph-container {
-          flex: 1;
-          min-height: 400px;
-          background: rgba(10, 10, 15, 0.8);
-          border: 2px solid rgba(0, 243, 255, 0.2);
+    <div className="settings-container">
+       <style>{`
+        /* Styles adapted for a component context */
+        .settings-container {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          max-width: 900px;
+          margin: 50px auto;
+          padding: 20px 40px;
+          background-color: #ffffff;
           border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+          color: #1a202c;
+        }
+
+        .settings-container h1 {
+          font-size: 28px;
+          color: #1a202c;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 15px;
+          margin-bottom: 8px;
+        }
+
+        .subtitle {
+          font-size: 15px;
+          color: #718096;
+          margin-bottom: 30px;
+        }
+
+        .tabs {
+          margin-bottom: 25px;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tabs button {
+          padding: 12px 18px;
+          border: none;
+          background-color: transparent;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          color: #4a5568;
+          margin-right: 15px;
           position: relative;
-          overflow: hidden;
-          box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1);
+          top: 1px;
         }
 
-        .qa-graph-overlay {
-          position: absolute;
-          top: 1.5rem;
-          left: 1.5rem;
-          font-size: 1rem;
-          color: rgba(0, 243, 255, 0.4);
-          text-transform: uppercase;
-          letter-spacing: 0.2em;
-          z-index: 5;
+        .tabs button.active {
+          color: #2b6cb0;
+          border-bottom: 3px solid #2b6cb0;
         }
 
-        /* Integration Panel */
-        .qa-integration-panel {
-          background: rgba(0, 0, 0, 0.5);
-          border-left: 2px solid rgba(0, 255, 157, 0.2);
-          padding: 2rem;
-          display: flex;
-          flex-direction: column;
+        .form-section {
+          margin-bottom: 25px;
+          padding-bottom: 25px;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-section:last-child {
+          border-bottom: none;
+        }
+
+        .form-section h2 {
+          font-size: 20px;
+          color: #2d3748;
+          margin-bottom: 20px;
+        }
+
+        .input-group {
+          margin-bottom: 15px;
+        }
+
+        .settings-form label {
+          display: block;
+          font-weight: 600;
+          color: #4a5568;
+          margin-bottom: 8px;
+        }
+
+        .settings-form input {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid #cbd5e0;
+          border-radius: 6px;
+          font-size: 14px;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .settings-form input:focus {
+          outline: none;
+          border-color: #2b6cb0;
+          box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+        }
+
+        .form-footer {
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .save-button {
+          background-color: #2b6cb0;
+          color: white;
+          padding: 12px 25px;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+
+        .save-button:hover {
+          background-color: #2c5282;
+        }
+
+        .save-button:disabled {
+          background-color: #a0aec0;
+          cursor: not-allowed;
+        }
+
+        .status-message {
+          margin-top: 20px;
+          font-weight: 500;
+          padding: 12px;
+          background-color: #ebf8ff;
+          border: 1px solid #90cdf4;
+          color: #2a4365;
           border-radius: 6px;
         }
-
-        .qa-panel-title {
-          font-size: 1.2rem;
-          margin-bottom: 2rem;
-          color: #00ff9d;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          border-bottom: 2px solid rgba(0, 255, 157, 0.3);
-          padding-bottom: 0.7rem;
-        }
-
-        .qa-company-list {
-          flex: 1;
-          overflow-y: auto;
-          padding-right: 10px;
-        }
-
-        .qa-company-list::-webkit-scrollbar {
-          width: 6px;
-        }
-        .qa-company-list::-webkit-scrollbar-thumb {
-          background: rgba(0, 243, 255, 0.4);
-          border-radius: 3px;
-        }
-
-        .qa-company-row {
-          display: grid;
-          grid-template-columns: 2fr 1fr 1fr 0.8fr;
-          gap: 10px;
-          align-items: center;
-          padding: 0.9rem 0;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-        }
-        
-        .qa-company-row:last-child {
-            border-bottom: none;
-        }
-
-        .qa-action-btn {
-          flex: 1;
-          background: rgba(0, 243, 255, 0.05);
-          border: 1px solid rgba(0, 243, 255, 0.5);
-          color: #00f3ff;
-          padding: 1.2rem;
-          text-transform: uppercase;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          letter-spacing: 0.1em;
-          border-radius: 2px;
-        }
-
-        .qa-action-btn:hover {
-          background: rgba(0, 243, 255, 0.2);
-          box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-          transform: translateY(-2px);
-        }
-        
       `}</style>
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
 
-      <div className="qa-bg-glow" />
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
 
-      {/* Header: System Status Bar */}
-      <header className="qa-header">
-        <div className="qa-brand">
-          <div className="qa-title">Quantum Assets Nexus</div>
-          <div style={{ fontSize: '0.9rem', color: '#666', letterSpacing: '0.4em', marginTop: '0.3rem' }}>
-            SYSTEM CORE // VIEWPORT 04.1.9
-          </div>
-        </div>
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+                <h2>Core Infrastructure & Cloud</h2>
+                {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+                {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+                {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+                {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+                {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+                {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+                {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+                {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+                {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Deployment & DevOps</h2>
+                {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+                {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+                {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+                {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify Personal Access Token')}
+                {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+                {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+                {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean Personal Access Token')}
+                {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode Personal Access Token')}
+                {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+            </div>
+            <div className="form-section">
+                <h2>Collaboration & Productivity</h2>
+                {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub Personal Access Token')}
+                {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+                {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+                {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+                {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+                {renderInput('JIRA_USERNAME', 'Jira Username')}
+                {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+                {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana Personal Access Token')}
+                {renderInput('NOTION_API_KEY', 'Notion API Key')}
+                {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+            </div>
+            <div className="form-section">
+                <h2>File & Data Storage</h2>
+                {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+                {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+                {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+                {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+            </div>
+            <div className="form-section">
+                <h2>CRM & Business</h2>
+                {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+                {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+                {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+                {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+                {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+                {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+            </div>
+            <div className="form-section">
+                <h2>E-commerce</h2>
+                {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+                {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+                {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+                {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+                {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+                {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+            </div>
+            <div className="form-section">
+                <h2>Authentication & Identity</h2>
+                {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+                {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+                {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+                {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+                {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+                {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+                {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+            </div>
+            <div className="form-section">
+                <h2>Backend & Databases</h2>
+                {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+                {renderInput('SUPABASE_URL', 'Supabase URL')}
+                {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+            </div>
+            <div className="form-section">
+                <h2>API Development</h2>
+                {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+                {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+            </div>
+            <div className="form-section">
+                <h2>AI & Machine Learning</h2>
+                {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+                {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+                {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+                {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+                {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Microsoft Azure Cognitive Key')}
+                {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Search & Real-time</h2>
+                {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+                {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+                {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+                {renderInput('PUSHER_KEY', 'Pusher Key')}
+                {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+                {renderInput('ABLY_API_KEY', 'Ably API Key')}
+                {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Identity & Verification</h2>
+                {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+                {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+                {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Logistics & Shipping</h2>
+                {renderInput('LOB_API_KEY', 'Lob API Key')}
+                {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+                {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </div>
+            <div className="form-section">
+                <h2>Maps & Weather</h2>
+                {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+                {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+                {renderInput('HERE_API_KEY', 'Here API Key')}
+                {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+                {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Social & Media</h2>
+                {renderInput('YELP_API_KEY', 'Yelp API Key')}
+                {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+                {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+                {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+                {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+                {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+                {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+                {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+                {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+                {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+                {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+                {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+                {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+                {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+                {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </div>
+            <div className="form-section">
+                <h2>Media & Content</h2>
+                {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+                {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+                {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+                {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+                {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Legal & Admin</h2>
+                {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+                {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+                {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'Docusign Integrator Key')}
+                {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Monitoring & CI/CD</h2>
+                {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+                {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+                {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+                {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+                {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+                {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+                {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+                {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+                {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab Personal Access Token')}
+                {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Headless CMS</h2>
+                {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+                {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+                {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+                {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+                {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+                <h2>Financial Data Aggregators</h2>
+                {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+                {renderInput('PLAID_SECRET', 'Plaid Secret')}
+                {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+                {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+                {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+                {renderInput('MX_API_KEY', 'MX API Key')}
+                {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+                {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+            </div>
+            <div className="form-section">
+                <h2>Payment Processing</h2>
+                {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+                {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+                {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+                {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+                {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+                {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+                {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+                {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+                {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+                {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+                {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+                {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+                {renderInput('CHECKOUT_SECRET_KEY', 'Checkout.com Secret Key')}
+            </div>
+            <div className="form-section">
+                <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+                {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+                {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+                {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+                {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Trans Key')}
+                {renderInput('SOLARISBANK_CLIENT_ID', 'Solarisbank Client ID')}
+                {renderInput('SOLARISBANK_CLIENT_SECRET', 'Solarisbank Client Secret')}
+                {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+                {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+                {renderInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+                {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+                {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+                {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+                {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+                {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+                {renderInput('BREX_API_KEY', 'Brex API Key')}
+                {renderInput('BOND_API_KEY', 'Bond API Key')}
+            </div>
+            <div className="form-section">
+                <h2>International Payments</h2>
+                {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+                {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+                {renderInput('OFX_API_KEY', 'OFX API Key')}
+                {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+                {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+                {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+                {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Investment & Market Data</h2>
+                {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+                {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+                {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+                {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+                {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+                {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+                {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+                {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+                {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+                {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Crypto</h2>
+                {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+                {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+                {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+                {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+                {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+                {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+                {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+                {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+                {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+                {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+                {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Major Banks (Open Banking)</h2>
+                {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
+                {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+                {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+                {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </div>
+            <div className="form-section">
+                <h2>European & Global Banks (Open Banking)</h2>
+                {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+                {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+                {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+                {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </div>
+            <div className="form-section">
+                <h2>UK & European Aggregators</h2>
+                {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+                {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </div>
+            <div className="form-section">
+                <h2>Compliance & Identity (KYC/AML)</h2>
+                {renderInput('MIDDESK_API_KEY', 'Middesk API Key')}
+                {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+                {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+                {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Real Estate</h2>
+                {renderInput('ZILLOW_API_KEY', 'Zillow API Key (ZWSID)')}
+                {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </div>
+            <div className="form-section">
+                <h2>Credit Bureaus</h2>
+                {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+                {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+                {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Global Payments (Emerging Markets)</h2>
+                {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+                {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+                {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+                {renderInput('DLOCAL_API_KEY', 'dLocal API Key')}
+                {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </div>
+            <div className="form-section">
+                <h2>Accounting & Tax</h2>
+                {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+                {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+                {renderInput('CODAT_API_KEY', 'Codat API Key')}
+                {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+                {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+                {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+                {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+                {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
+            </div>
+            <div className="form-section">
+                <h2>Fintech Utilities</h2>
+                {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+                {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+                {renderInput('MOOV_SECRET', 'Moov Secret')}
+                {renderInput('VGS_USERNAME', 'VGS Username')}
+                {renderInput('VGS_PASSWORD', 'VGS Password')}
+                {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+                {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </div>
+          </>
+        )}
         
-        <div className="qa-status-bar">
-          <div className="qa-metric">
-            <span className="qa-metric-label">System Clock</span>
-            <span className="qa-metric-value">{time.toLocaleTimeString('en-US', { hour12: false })}</span>
-          </div>
-          <div className="qa-metric">
-            <span className="qa-metric-label">Computational Load</span>
-            <span className="qa-metric-value" style={{ color: systemLoad > 90 ? '#ff4500' : '#00f3ff' }}>{systemLoad.toFixed(2)}%</span>
-          </div>
-          <div className="qa-metric">
-            <span className="qa-metric-label">Entanglement Coherence</span>
-            <span className="qa-metric-value">{quantumEntanglement.toFixed(3)}%</span>
-          </div>
-          <div className="qa-metric">
-            <span className="qa-metric-label">Data Throughput</span>
-            <span className="qa-metric-value" style={{ color: '#00ff9d' }}>{dataFlowRate.toFixed(1)} MB/s</span>
-          </div>
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-      </header>
-
-      {/* Main Content Grid */}
-      <main className="qa-main">
-        
-        {/* Left Column: Asset Registry */}
-        <div className="qa-asset-list">
-          <div className="qa-panel-title" style={{ marginBottom: '0.5rem' }}>Asset Registry ({assets.length})</div>
-          {assets.map(asset => (
-            <AssetCard 
-              key={asset.id} 
-              asset={asset}
-              isSelected={selectedAssetId === asset.id}
-              onClick={handleAssetSelection}
-            />
-          ))}
-          
-          <div style={{ marginTop: 'auto', padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Total Portfolio Value</div>
-            <div style={{ fontSize: '3rem', fontWeight: '700', color: '#00ff9d', textShadow: '0 0 20px rgba(0, 255, 157, 0.5)' }}>
-                {Math.floor(totalPortfolioValue).toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        {/* Center Column: Visualization and Control */}
-        <div className="qa-vis-panel">
-          <div className="qa-graph-container">
-            <div className="qa-graph-overlay">
-                Quantum State Vector Projection
-                <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', color: '#888' }}>
-                    Focus: {selectedAsset?.name || 'System Wide'}
-                </div>
-            </div>
-            <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
-          </div>
-
-          <div className="qa-card" style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)' }}>
-            <div className="qa-card-header">
-              <span className="qa-asset-name" style={{ color: '#fff' }}>Control Interface: {selectedAsset?.symbol || 'N/A'}</span>
-              <span className="qa-asset-symbol" style={{ color: '#ff8c00' }}>{selectedAsset?.quantumSignature.substring(0, 8)}...</span>
-            </div>
-            <div className="qa-button-group">
-                <button className="qa-action-btn" onClick={() => handleAction('Re-Entangle')}>Re-Entangle State</button>
-                <button className="qa-action-btn" onClick={() => handleAction('Execute AI Audit')}>Execute AI Audit</button>
-                <button className="qa-action-btn" onClick={() => handleAction('Adjust Volatility Dampener')}>Adjust Volatility Dampener</button>
-            </div>
-          </div>
-
-          <div className="qa-card" style={{ padding: '1.5rem' }}>
-            <div className="qa-card-header">
-              <span className="qa-asset-name">Global Resource Distribution Map</span>
-            </div>
-            <div style={{ display: 'flex', gap: '2px', height: '25px', width: '100%', border: '1px solid rgba(255,255,255,0.1)' }}>
-              {assets.map(a => (
-                <div 
-                  key={a.id} 
-                  title={`${a.name}: ${((a.balance / totalPortfolioValue) * 100).toFixed(1)}%`}
-                  style={{ 
-                    flex: a.balance, // Proportional width based on balance
-                    background: a.color, 
-                    opacity: 0.85,
-                    boxShadow: `0 0 8px ${a.color}`,
-                    transition: 'flex 1s ease'
-                  }} 
-                />
-              ))}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', fontSize: '0.75rem', color: '#aaa' }}>
-              {assets.map(a => <span key={a.id} style={{ color: a.color }}>{a.symbol}</span>)}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Integration Feed */}
-        <div className="qa-integration-panel">
-          <div className="qa-panel-title">Integrated Corporate Directory ({companies.length})</div>
-          <div className="qa-company-list">
-            {companies.map((company) => (
-              <IntegrationRow key={company.id} company={company} />
-            ))}
-          </div>
-        </div>
-
-      </main>
+      </form>
     </div>
   );
 };
