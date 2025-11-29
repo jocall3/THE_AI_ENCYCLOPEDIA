@@ -1,48 +1,59 @@
 import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
-import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail, CompanyProfile, RealEstateProperty, ArtPiece, AlgoStrategy, VentureStartup, WalletInfo, Recipient, Currency, SecurityProfile, PlaidMetadata } from '../types';
+import type { Transaction, Asset, BudgetCategory, GamificationState, IllusionType, LinkedAccount, QuantumWeaverState, AIPlan, AIQuestion, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, MarketplaceProduct, FinancialGoal, AIGoalPlan, CryptoAsset, VirtualCard, PaymentOperation, AIInsight, CorporateCard, CorporateTransaction, RewardPoints, Notification, NFTAsset, RewardItem, APIStatus, CreditFactor, CorporateCardControls, Counterparty, PaymentOrder, Invoice, ComplianceCase, LedgerAccount, UserPreferences, RecurringContribution, Contribution, LinkedGoal, EIP6963ProviderDetail, CompanyProfile, RealEstateProperty, ArtPiece, AlgoStrategy, VentureStartup, WalletInfo, Recipient, Currency, SecurityProfile, PlaidMetadata, KPI } from '../types';
 import { View, WeaverStage } from '../types';
-// FIX: Removed import from empty mockData.ts file. All initial state will be handled within this file.
 
-const LEVEL_NAMES = ["Financial Novice", "Budgeting Apprentice", "Savings Specialist", "Investment Adept", "Wealth Master"];
-const SCORE_PER_LEVEL = 200;
+// --- Global Constants for System Integrity and Scaling ---
+const LEVEL_NAMES = ["Quantum Initiate", "Data Architect", "System Synthesizer", "Cognitive Engineer", "Omni-System Sovereign"];
+const SCORE_PER_LEVEL = 1000; // Increased threshold for higher level progression
+const COST_PER_TREE = 250; // Environmental Impact Metric Cost
+const MAX_AI_INSIGHTS = 15; // Limit for dashboard insights
+const MAX_NOTIFICATIONS = 100; // Limit for notification history
 
-// --- Generator function implementation (1/4) ---
-const SECTORS = ['Technology', 'Healthcare', 'Finance', 'Energy', 'Consumer Goods', 'Real Estate', 'Industrials', 'Utilities'];
-const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f'];
+// --- Sector and Color Definitions for Prosperity Module ---
+const SECTORS = ['Quantum Computing', 'Bio-Synthetic Engineering', 'Decentralized Finance (DeFi)', 'Sustainable Fusion Energy', 'Hyper-Automation & Robotics', 'Metaverse Infrastructure', 'Advanced Materials Science', 'Planetary Resource Management'];
+const COLORS = ['#00FFFF', '#FF00FF', '#00FF00', '#FFA500', '#8A2BE2', '#FFD700', '#00CED1', '#7CFC00'];
 
+// --- Utility Functions ---
+
+/**
+ * Generates a list of highly sophisticated, mock CompanyProfile entities for the Prosperity Module.
+ * These represent potential investment vehicles in future-forward industries.
+ */
 const generateProsperityCompanies = (): CompanyProfile[] => {
     const companies: CompanyProfile[] = [];
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= 250; i++) { // Increased count for a richer dataset
         const sectorIndex = i % SECTORS.length;
         const sector = SECTORS[sectorIndex];
         const color = COLORS[sectorIndex];
-        const marketCap = parseFloat((Math.random() * 500 + 1).toFixed(2)); // $1B to $500B
-        const peRatio = parseFloat((Math.random() * 30 + 10).toFixed(2));
-        const ytdGrowth = parseFloat((Math.random() * 50 - 10).toFixed(2)); // -10% to 40%
+        const marketCap = parseFloat((Math.random() * 5000 + 5).toFixed(2)); // $5B to $5000B (Trillions)
+        const peRatio = parseFloat((Math.random() * 80 + 15).toFixed(2));
+        const ytdGrowth = parseFloat((Math.random() * 120 - 30).toFixed(2)); // -30% to 90%
         
-        // Define mock types based on assumption of CompanyProfile structure
-        type Status = 'High Growth' | 'Stable' | 'Turnaround';
-        type RiskRating = 'Low' | 'Medium' | 'High';
+        type Status = 'Hyper-Growth' | 'Stabilizing' | 'Disruptive' | 'Consolidating';
+        type RiskRating = 'Alpha' | 'Beta' | 'Gamma' | 'Delta';
 
         let status: Status;
         let riskRating: RiskRating;
 
-        if (ytdGrowth > 15 && peRatio < 25) {
-            status = 'High Growth';
-            riskRating = 'Medium';
-        } else if (ytdGrowth < 0) {
-            status = 'Turnaround';
-            riskRating = 'High';
+        if (ytdGrowth > 40 && peRatio < 60) {
+            status = 'Hyper-Growth';
+            riskRating = 'Alpha';
+        } else if (ytdGrowth < -10) {
+            status = 'Disruptive';
+            riskRating = 'Gamma';
+        } else if (peRatio > 70) {
+            status = 'Stabilizing';
+            riskRating = 'Beta';
         } else {
-            status = 'Stable';
-            riskRating = 'Low';
+            status = 'Consolidating';
+            riskRating = 'Delta';
         }
 
         companies.push({
-            id: `comp_${i}`,
-            name: `${sector} Corp ${i}`,
-            ticker: `TKR${Math.floor(100 + Math.random() * 900)}`,
+            id: `comp_${i}_${generateSimpleUUID()}`,
+            name: `${sector.split(' ')[0]} Dynamics ${i}`,
+            ticker: `XPR${Math.floor(1000 + Math.random() * 9000)}`,
             sector,
             marketCap,
             peRatio,
@@ -54,6 +65,30 @@ const generateProsperityCompanies = (): CompanyProfile[] => {
     }
     return companies;
 };
+
+/**
+ * Calculates the number of full months between two dates.
+ */
+const monthsBetween = (date1: Date, date2: Date): number => {
+    let months;
+    months = (date2.getFullYear() - date1.getFullYear()) * 12;
+    months -= date1.getMonth();
+    months += date2.getMonth();
+    if (months < 0 || (months === 0 && date2.getDate() < date1.getDate())) return 0;
+    return months;
+};
+
+/**
+ * Generates a simple, unique identifier string.
+ */
+const generateSimpleUUID = (): string => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
+// --- Context Interface Definition ---
 
 interface IDataContext {
   transactions: Transaction[];
@@ -68,7 +103,7 @@ interface IDataContext {
     progressToNextTree: number;
   };
   customBackgroundUrl: string | null;
-  setCustomBackgroundUrl: (url: string) => void;
+  setCustomBackgroundUrl: (url: string | null) => void;
   addTransaction: (tx: Transaction) => void;
   activeIllusion: IllusionType;
   setActiveIllusion: (illusion: IllusionType) => void;
@@ -120,7 +155,6 @@ interface IDataContext {
   setModernTreasuryApiKey: (key: string) => void;
   modernTreasuryOrganizationId: string | null;
   setModernTreasuryOrganizationId: (id: string) => void;
-  // FIX: Add missing API key properties for Plaid, Stripe, and Marqeta dashboards.
   plaidApiKey: string | null;
   setPlaidApiKey: (key: string) => void;
   stripeApiKey: string | null;
@@ -151,43 +185,26 @@ interface IDataContext {
   linkGoals: (sourceGoalId: string, targetGoalId: string, relationshipType: LinkedGoal['relationshipType'], triggerAmount?: number) => void;
   unlinkGoals: (sourceGoalId: string, targetGoalId: string) => void;
 
-  // New Prosperity View Data (2/4)
+  // Prosperity View Data
   prosperityCompanies: CompanyProfile[];
   realEstatePortfolio: RealEstateProperty[];
   artCollection: ArtPiece[];
   activeAlgoStrategies: AlgoStrategy[];
   venturePortfolio: VentureStartup[];
   
-  // New Sacred Handlers (4/4)
+  // AI/ML/Quantum Handlers
   investInStartup: (id: string, amount: number) => void;
   purchaseRealEstate: (id: string) => void;
   executeTrade: (symbol: string, type: 'BUY' | 'SELL', amount: number) => void;
+  generateKpis: () => Promise<KPI[]>;
+  fetchAIRecommendations: (context: string) => Promise<AIInsight[]>;
 }
 
 export const DataContext = createContext<IDataContext | undefined>(undefined);
 
-// FIX: Add monthsBetween function to be available in this context.
-const monthsBetween = (date1: Date, date2: Date): number => {
-    let months;
-    months = (date2.getFullYear() - date1.getFullYear()) * 12;
-    months -= date1.getMonth();
-    months += date2.getMonth();
-    if (months < 0 || (months === 0 && date2.getDate() < date1.getDate())) return 0;
-    return months;
-};
-
-// FIX: Add generateSimpleUUID function for creating new goal IDs.
-const generateSimpleUUID = (): string => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-};
-
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const COST_PER_TREE = 250;
-
-  // FIX: Initialize state with empty arrays or default objects instead of using mock data from a removed file.
+  
+  // --- State Initialization ---
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [assets] = useState<Asset[]>([]);
   const [impactInvestments] = useState<Asset[]>([]);
@@ -196,9 +213,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [spendingForNextTree, setSpendingForNextTree] = useState<number>(170);
   const [gamification, setGamification] = useState<GamificationState>({
       score: 450,
-      level: 3,
-      levelName: "Savings Specialist",
-      progress: 25,
+      level: 1,
+      levelName: LEVEL_NAMES[0],
+      progress: 45,
       credits: 225,
   });
   const [customBackgroundUrl, setCustomBackgroundUrlState] = useState<string | null>(() => {
@@ -248,7 +265,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [geminiApiKey, setGeminiApiKeyState] = useState<string | null>(() => localStorage.getItem('geminiApiKey'));
   const [modernTreasuryApiKey, setModernTreasuryApiKeyState] = useState<string | null>(() => localStorage.getItem('modernTreasuryApiKey'));
   const [modernTreasuryOrganizationId, setModernTreasuryOrganizationIdState] = useState<string | null>(() => localStorage.getItem('modernTreasuryOrganizationId'));
-  // FIX: Add state and setters for new API keys
   const [plaidApiKey, setPlaidApiKeyState] = useState<string | null>(() => localStorage.getItem('plaidApiKey'));
   const [stripeApiKey, setStripeApiKeyState] = useState<string | null>(() => localStorage.getItem('stripeApiKey'));
   const [marqetaApiKey, setMarqetaApiKeyState] = useState<string | null>(() => localStorage.getItem('marqetaApiKey'));
@@ -256,14 +272,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [paymentOrders] = useState<PaymentOrder[]>([]);
   const [invoices] = useState<Invoice[]>([]);
   const [complianceCases] = useState<ComplianceCase[]>([]);
-  const [userPreferences, setUserPreferences] = useState<UserPreferences>({});
+  const [userPreferences, setUserPreferences] = useState<UserPreferences>({ theme: 'dark', kpiDisplay: 'compact' });
   
   const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccount[]>([]);
   const [isLedgerAccountsLoading, setIsLedgerAccountsLoading] = useState(false);
   const [ledgerAccountsError, setLedgerAccountsError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<View>(View.Dashboard);
 
-  // New States for Prosperity Views (3/4)
+  // Prosperity Module States
   const [prosperityCompanies] = useState<CompanyProfile[]>(generateProsperityCompanies());
   const [realEstatePortfolio, setRealEstatePortfolio] = useState<RealEstateProperty[]>([]);
   const [artCollection] = useState<ArtPiece[]>([]);
@@ -271,6 +287,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [venturePortfolio, setVenturePortfolio] = useState<VentureStartup[]>([]);
 
 
+  // --- API Key Setters ---
   const setGeminiApiKey = (key: string) => {
       localStorage.setItem('geminiApiKey', key);
       setGeminiApiKeyState(key);
@@ -286,7 +303,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setModernTreasuryOrganizationIdState(id);
   };
 
-    // FIX: Add setters for new API keys
     const setPlaidApiKey = (key: string) => {
         localStorage.setItem('plaidApiKey', key);
         setPlaidApiKeyState(key);
@@ -300,13 +316,43 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setMarqetaApiKeyState(key);
     };
 
-    const addTransaction = useCallback((tx: Transaction) => {
-        setTransactions(prev => [tx, ...prev]);
+  // --- Core Handlers ---
+
+  const updateGamification = useCallback((scoreDelta: number, txType: 'income' | 'expense') => {
+    setGamification(prev => {
+        const newScore = prev.score + scoreDelta;
+        const levelIndex = Math.min(Math.floor(newScore / SCORE_PER_LEVEL), LEVEL_NAMES.length - 1);
+        const newLevelName = LEVEL_NAMES[levelIndex];
+        const progress = (newScore % SCORE_PER_LEVEL) / (SCORE_PER_LEVEL / 100);
+        
+        // Award credits based on level up or significant score change
+        let creditsEarned = 0;
+        if (levelIndex > prev.level - 1) {
+            creditsEarned = (levelIndex - (prev.level - 1)) * 50; // 50 credits per level up
+        }
+
+        return {
+            ...prev,
+            score: newScore,
+            level: levelIndex + 1,
+            levelName: newLevelName,
+            progress: progress,
+            credits: prev.credits + creditsEarned
+        };
+    });
+  }, []);
+
+
+  const addTransaction = useCallback((tx: Transaction) => {
+    setTransactions(prev => {
+        const updatedTxs = [tx, ...prev].slice(0, 500); // Keep transaction history manageable
+        
         if (tx.type === 'expense') {
-            setSpendingForNextTree(prev => {
-                const newSpending = prev + tx.amount;
+            setSpendingForNextTree(prevSpending => {
+                const newSpending = prevSpending + tx.amount;
                 if (newSpending >= COST_PER_TREE) {
                     setTreesPlanted(p => p + 1);
+                    setNotifications(n => [{id: `notif_eco_${Date.now()}`, message: `Ecological Milestone Reached! Another tree planted.`, timestamp: 'Just now', read: false, view: View.Impact}, ...n].slice(0, MAX_NOTIFICATIONS));
                     return newSpending - COST_PER_TREE;
                 }
                 return newSpending;
@@ -318,100 +364,109 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                         : b
                 )
             );
+            updateGamification(Math.floor(tx.amount / 10), 'expense'); // Score penalty based on expense magnitude
+        } else if (tx.type === 'income') {
+            updateGamification(Math.floor(tx.amount / 50) + 5, 'income'); // Score bonus based on income magnitude
         }
-        setGamification(prev => {
-            const newScore = prev.score + (tx.type === 'income' ? 10 : -2);
-            const newLevel = Math.floor(newScore / SCORE_PER_LEVEL) + 1;
-            return {
-                ...prev,
-                score: newScore,
-                level: newLevel,
-                levelName: LEVEL_NAMES[Math.min(newLevel - 1, LEVEL_NAMES.length - 1)],
-                progress: (newScore % SCORE_PER_LEVEL) / (SCORE_PER_LEVEL / 100)
-            }
-        });
-    }, []);
+        return updatedTxs;
+    });
+  }, [updateGamification]);
 
-  const setCustomBackgroundUrl = (url: string) => {
-      localStorage.setItem('customBackgroundUrl', url);
+  const setCustomBackgroundUrl = (url: string | null) => {
+      if (url) localStorage.setItem('customBackgroundUrl', url);
+      else localStorage.removeItem('customBackgroundUrl');
       setCustomBackgroundUrlState(url);
-      if(url) setActiveIllusion('none');
+      if(url) setActiveIllusionState('none');
   };
 
   const setActiveIllusion = (illusion: IllusionType) => {
       localStorage.setItem('activeIllusion', illusion);
       setActiveIllusionState(illusion);
-      if(illusion !== 'none') setCustomBackgroundUrl(null);
+      if(illusion !== 'none') setCustomBackgroundUrlState(null);
   };
   
   const unlinkAccount = (id: string) => {
     setLinkedAccounts(prev => prev.filter(acc => acc.id !== id));
+    setNotifications(prev => [{id: `notif_unlink_${Date.now()}`, message: `Account ID ${id} has been securely unlinked.`, timestamp: 'Just now', read: false, view: View.Accounts}, ...prev].slice(0, MAX_NOTIFICATIONS));
   };
   
   const handlePlaidSuccess = (publicToken: string, metadata: PlaidMetadata) => {
-      console.log("Plaid Success:", { publicToken, metadata });
+      console.log("Plaid Integration Successful:", { publicToken, metadata });
       const newAccount: LinkedAccount = {
           id: metadata.accounts[0].id,
           name: metadata.institution.name,
           mask: metadata.accounts[0].mask,
+          type: metadata.accounts[0].type,
+          subtype: metadata.accounts[0].subtype,
       };
       setLinkedAccounts(prev => [...prev, newAccount]);
       setIsImportingData(true);
+      
+      // Simulate complex data ingestion pipeline
       setTimeout(() => {
-          // Simulate importing some transactions for the new account
           const newTransactions: Transaction[] = [
-              { id: `plaid_tx_${Date.now()}_1`, type: 'expense', category: 'Shopping', description: `Purchase at ${metadata.institution.name} Partner`, amount: Math.random() * 100, date: new Date().toISOString().split('T')[0]},
-              { id: `plaid_tx_${Date.now()}_2`, type: 'expense', category: 'Dining', description: 'Restaurant near linked bank', amount: Math.random() * 50, date: new Date(Date.now() - 86400000).toISOString().split('T')[0]},
+              { id: `plaid_tx_${Date.now()}_1`, type: 'expense', category: 'Subscription Services', description: `Monthly Fee: ${metadata.institution.name}`, amount: Math.random() * 50 + 10, date: new Date().toISOString().split('T')[0]},
+              { id: `plaid_tx_${Date.now()}_2`, type: 'expense', category: 'Groceries', description: `Automated Purchase at Local Market`, amount: Math.random() * 150 + 20, date: new Date(Date.now() - 86400000).toISOString().split('T')[0]},
           ];
           newTransactions.forEach(addTransaction);
           setIsImportingData(false);
-          setNotifications(prev => [{id: `notif_${Date.now()}`, message: `${metadata.institution.name} has been successfully linked and initial transactions imported.`, timestamp: 'Just now', read: false, view: View.Transactions}, ...prev]);
-      }, 3000);
+          setNotifications(prev => [{id: `notif_plaid_success_${Date.now()}`, message: `${metadata.institution.name} linked. ${newTransactions.length} transactions ingested.`, timestamp: 'Just now', read: false, view: View.Accounts}, ...prev].slice(0, MAX_NOTIFICATIONS));
+      }, 4000);
   };
   
   const pitchBusinessPlan = async (plan: string) => {
       setWeaverState(prev => ({ ...prev, stage: WeaverStage.Analysis, businessPlan: plan, error: null }));
+      
+      if (!geminiApiKey) {
+          setWeaverState(prev => ({ ...prev, stage: WeaverStage.Error, error: "Gemini API Key is missing. Cannot initiate Quantum Weaver analysis." }));
+          return;
+      }
+
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-          const prompt = `Analyze the following business plan. Provide concise, critical feedback (2-3 sentences), 3-5 challenging questions for the founder, and a suggested loan amount. Format the response as a JSON object with keys: "feedback", "questions" (an array of strings), and "loanAmount" (a number). Plan: ${plan}`;
+          const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+          const prompt = `Analyze the following business plan for a 100-year enterprise. Provide a comprehensive risk assessment (High, Medium, Low), 5 strategic growth vectors, and a projected 5-year valuation range (e.g., "$500M - $1.2B"). Format the output strictly as a JSON object with keys: "riskAssessment", "growthVectors" (array of strings), and "valuationRange". Business Plan: ${plan}`;
           
           const response = await ai.models.generateContent({
-              model: 'gemini-2.5-flash',
+              model: 'gemini-2.5-pro', // Using Pro for deeper analysis
               contents: prompt,
               config: { responseMimeType: 'application/json' }
           });
           
           const result = JSON.parse(response.text);
+          
           const coachingPlan: AIPlan = {
-              title: "Founder's Initial Coaching Plan",
-              summary: "A 3-step plan to refine your vision and validate your market assumptions.",
-              steps: [
-                  { title: "Market Validation Sprint", description: "Conduct 20 customer interviews to validate the core problem and your proposed solution.", timeline: "2 Weeks" },
-                  { title: "Financial Model Draft", description: "Create a basic financial model projecting revenue, costs, and cash flow for the first 12 months.", timeline: "1 Week" },
-                  { title: "Competitive Analysis Deep Dive", description: "Identify your top 3 competitors and map their strengths, weaknesses, and market positioning.", timeline: "1 Week" }
-              ]
+              title: "Quantum Leap Strategy Blueprint",
+              summary: `AI analysis complete. Risk profile: ${result.riskAssessment}. Focus on implementing the ${result.growthVectors[0]} vector immediately.`,
+              steps: result.growthVectors.map((vector: string, index: number) => ({ 
+                  title: `Vector ${index + 1}: ${vector.substring(0, 30)}...`, 
+                  description: vector, 
+                  timeline: `${(index + 1) * 4} Weeks` 
+              })),
           };
+          
           setWeaverState(prev => ({
               ...prev,
               stage: WeaverStage.Test,
-              feedback: result.feedback,
-              questions: result.questions.map((q: string, i: number) => ({ id: `q${i}`, question: q, category: 'General' })),
-              loanAmount: result.loanAmount,
+              feedback: `Valuation Projection: ${result.valuationRange}. Strategic vectors identified.`,
+              questions: [{ id: `q_risk_${Date.now()}`, question: `How will you mitigate the identified ${result.riskAssessment} risk?`, category: 'Risk Mitigation' }],
+              loanAmount: Math.floor(Math.random() * 10000000) + 500000, // Mock loan amount
               coachingPlan: coachingPlan,
           }));
       } catch (err) {
-          console.error("Quantum Weaver error:", err);
-          setWeaverState(prev => ({ ...prev, stage: WeaverStage.Error, error: "Failed to analyze the business plan. The AI may be offline or the plan is too complex." }));
+          console.error("Quantum Weaver Analysis Error:", err);
+          setWeaverState(prev => ({ ...prev, stage: WeaverStage.Error, error: `Analysis failed: ${err instanceof Error ? err.message : 'Unknown API Error'}. Check API Key and Quota.` }));
       }
   };
 
   const simulateTestPass = async () => {
     setWeaverState(prev => ({ ...prev, stage: WeaverStage.FinalReview }));
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setWeaverState(prev => ({ ...prev, stage: WeaverStage.Approved }));
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    setWeaverState(prev => ({ ...prev, stage: WeaverStage.Approved, feedback: "Quantum Weaver Protocol Approved. Funding released." }));
+    setGamification(prev => ({ ...prev, credits: prev.credits + 500 }));
+    setNotifications(prev => [{id: `notif_weaver_app_${Date.now()}`, message: `Quantum Weaver Protocol Approved! System access level elevated.`, timestamp: 'Just now', read: false, view: View.Weaver}, ...prev].slice(0, MAX_NOTIFICATIONS));
   };
   
-  // EIP-6963 Wallet Detection
+  // --- EIP-6963 Wallet Handlers ---
   useEffect(() => {
     function onAnnounceProvider(event: any) {
       setDetectedProviders(prev => {
@@ -428,50 +483,81 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const connectWallet = async (providerDetail: EIP6963ProviderDetail) => {
+    if (!providerDetail.provider.request) {
+        setNotifications(prev => [{id: `notif_wallet_err_${Date.now()}`, message: `Provider ${providerDetail.info.name} does not support standard request methods.`, timestamp: 'Just now', read: false, view: View.Wallet}, ...prev].slice(0, MAX_NOTIFICATIONS));
+        return;
+    }
     try {
         const accounts = await providerDetail.provider.request({ method: 'eth_requestAccounts' }) as string[];
         if (accounts.length > 0) {
-            const balanceHex = await providerDetail.provider.request({ method: 'eth_getBalance', params: [accounts[0], 'latest'] }) as string;
+            const address = accounts[0];
+            const balanceHex = await providerDetail.provider.request({ method: 'eth_getBalance', params: [address, 'latest'] }) as string;
             setWalletInfo({
-                address: accounts[0],
-                balance: parseInt(balanceHex, 16) / 1e18
+                address: address,
+                balance: parseInt(balanceHex, 16) / 1e18,
+                providerName: providerDetail.info.name
             });
+            setNotifications(prev => [{id: `notif_wallet_conn_${Date.now()}`, message: `Wallet connected via ${providerDetail.info.name}.`, timestamp: 'Just now', read: false, view: View.Wallet}, ...prev].slice(0, MAX_NOTIFICATIONS));
         }
     } catch (error) {
         console.error("Failed to connect wallet:", error);
+        setNotifications(prev => [{id: `notif_wallet_fail_${Date.now()}`, message: `Wallet connection rejected or failed: ${error instanceof Error ? error.message : 'Unknown error'}`, timestamp: 'Just now', read: false, view: View.Wallet}, ...prev].slice(0, MAX_NOTIFICATIONS));
     }
   };
 
-  const disconnectWallet = () => setWalletInfo(null);
+  const disconnectWallet = () => {
+    setWalletInfo(null);
+    setNotifications(prev => [{id: `notif_wallet_disc_${Date.now()}`, message: `Wallet disconnected.`, timestamp: 'Just now', read: false, view: View.Wallet}, ...prev].slice(0, MAX_NOTIFICATIONS));
+  };
   
   const issueCard = () => {
+      if (virtualCard) return; // Prevent re-issuance mock
       setVirtualCard({
-          cardNumber: `4242 4242 4242 ${Math.floor(1000 + Math.random() * 9000)}`,
+          id: `card_${generateSimpleUUID()}`,
+          cardNumber: `5100 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
           cvv: `${Math.floor(100 + Math.random() * 900)}`,
           expiry: `12/${new Date().getFullYear() + 4 - 2000}`,
-          holderName: 'The Visionary'
+          holderName: 'Quantum User',
+          limit: 10000,
+          frozen: false,
+          controls: { spendingLimit: 5000, categoryRestrictions: ['Gambling', 'Luxury'] }
       });
+      setNotifications(prev => [{id: `notif_card_issue_${Date.now()}`, message: `Virtual Quantum Card issued with initial controls set.`, timestamp: 'Just now', read: false, view: View.Cards}, ...prev].slice(0, MAX_NOTIFICATIONS));
   };
 
   const buyCrypto = (usdAmount: number, cryptoTicker: string) => {
-      const price = cryptoAssets.find(c => c.ticker === cryptoTicker)?.value || 3000;
-      const amountBought = usdAmount / price;
-      setCryptoAssets(prev => prev.map(c => c.ticker === cryptoTicker ? {...c, amount: c.amount + amountBought} : c));
-      addTransaction({id: `crypto_buy_${Date.now()}`, type: 'expense', category: 'Investment', description: `Bought ${cryptoTicker}`, amount: usdAmount, date: new Date().toISOString().split('T')[0]});
+      // Mock price lookup
+      const currentPrice = cryptoAssets.find(c => c.ticker === cryptoTicker)?.value || (cryptoTicker === 'ETH' ? 3500 : 65000);
+      const amountBought = usdAmount / currentPrice;
+      
+      setCryptoAssets(prev => {
+          const existing = prev.find(c => c.ticker === cryptoTicker);
+          if (existing) {
+              return prev.map(c => c.ticker === cryptoTicker ? {...c, amount: c.amount + amountBought, value: currentPrice} : c);
+          }
+          return [...prev, { ticker: cryptoTicker, name: cryptoTicker, value: currentPrice, amount: amountBought, color: `#${Math.floor(Math.random()*16777215).toString(16)}` }];
+      });
+      
+      addTransaction({id: `crypto_buy_${Date.now()}`, type: 'expense', category: 'Investment', description: `Acquired ${amountBought.toFixed(4)} ${cryptoTicker}`, amount: usdAmount, date: new Date().toISOString().split('T')[0]});
+      setNotifications(prev => [{id: `notif_crypto_buy_${Date.now()}`, message: `Successfully purchased ${amountBought.toFixed(3)} ${cryptoTicker}.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev].slice(0, MAX_NOTIFICATIONS));
   };
 
   const generateDashboardInsights = useCallback(async () => {
       if (!geminiApiKey) {
-          setAiInsights([
-              { id: '1', title: 'Setup Required', description: 'Please set your Gemini API key in the API Status view to receive personalized insights.', urgency: 'high' },
-          ]);
+          setAiInsights([{ id: 'setup_req', title: 'API Key Required', description: 'Configure the Gemini API key to unlock predictive financial intelligence.', urgency: 'critical' }]);
           return;
       }
       setIsInsightsLoading(true);
       try {
           const ai = new GoogleGenAI({apiKey: geminiApiKey});
-          const transactionSummary = transactions.slice(0, 10).map(t => `${t.description}: $${t.amount.toFixed(2)}`).join(', ');
-          const prompt = `Based on these recent transactions, provide 2 concise, actionable financial insights. One should identify a potential saving opportunity, and the other should highlight a spending trend. Format as a JSON array of objects, each with "id", "title", "description", and "urgency" ('low', 'medium', or 'high'). Transactions: ${transactionSummary}`;
+          const recentData = JSON.stringify({
+              transactions: transactions.slice(0, 20),
+              budgets: budgets.map(b => ({name: b.name, spent: b.spent})),
+              goals: savingsGoals.length,
+              score: gamification.score
+          });
+          
+          const prompt = `Analyze the provided financial snapshot. Generate ${MAX_AI_INSIGHTS} highly specific, actionable insights for a user aiming for multi-generational wealth. Insights must cover spending optimization, goal acceleration, and risk mitigation. Format the output strictly as a JSON array of objects, each containing "id", "title" (max 5 words), "description" (max 15 words), and "urgency" ('critical', 'high', 'medium', 'low'). Snapshot: ${recentData}`;
           
           const response = await ai.models.generateContent({
               model: 'gemini-2.5-flash',
@@ -479,29 +565,34 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               config: { responseMimeType: "application/json" }
           });
 
-          setAiInsights(JSON.parse(response.text));
+          const rawInsights: AIInsight[] = JSON.parse(response.text);
+          setAiInsights(rawInsights.slice(0, MAX_AI_INSIGHTS));
 
       } catch (err) {
           console.error("Error generating insights:", err);
-          setAiInsights([{ id: 'err1', title: 'Insight Error', description: 'Could not generate AI insights at this time.', urgency: 'medium' }]);
+          setAiInsights([{ id: 'err_ai', title: 'AI Processing Failure', description: 'The predictive engine encountered an anomaly. Retrying may resolve.', urgency: 'medium' }]);
       } finally {
           setIsInsightsLoading(false);
       }
-  }, [transactions, geminiApiKey]);
+  }, [transactions, budgets, savingsGoals, gamification.score, geminiApiKey]);
 
   useEffect(() => {
-    // Generate insights only if there are transactions to analyze
-    if (transactions.length > 0) {
+    // Initial load and periodic refresh for insights
+    if (transactions.length > 0 || budgets.length > 0) {
         generateDashboardInsights();
     }
-  }, [generateDashboardInsights, transactions.length]);
+    const intervalId = setInterval(generateDashboardInsights, 3600000); // Refresh every hour
+    return () => clearInterval(intervalId);
+  }, [generateDashboardInsights, transactions.length, budgets.length]);
   
     const toggleCorporateCardFreeze = (cardId: string) => {
         setCorporateCards(prev => prev.map(c => c.id === cardId ? { ...c, frozen: !c.frozen } : c));
+        setNotifications(prev => [{id: `notif_card_freeze_${Date.now()}`, message: `Corporate Card ${cardId.slice(-4)} freeze status toggled.`, timestamp: 'Just now', read: false, view: View.Corporate}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
 
     const updateCorporateCard = (cardId: string, newControls: CorporateCardControls, newFrozenState: boolean) => {
         setCorporateCards(prev => prev.map(c => c.id === cardId ? { ...c, controls: newControls, frozen: newFrozenState } : c));
+        setNotifications(prev => [{id: `notif_card_update_${Date.now()}`, message: `Corporate Card ${cardId.slice(-4)} controls updated.`, timestamp: 'Just now', read: false, view: View.Corporate}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
 
     const markNotificationRead = (id: string) => {
@@ -510,41 +601,55 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const mintNFT = (name: string, imageUrl: string) => {
         const newNft: NFTAsset = {
-            id: `nft_${Date.now()}`,
+            id: `nft_${generateSimpleUUID()}`,
             name,
             imageUrl,
-            contractAddress: `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`
+            contractAddress: `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+            assetType: 'Digital Art',
+            metadata: { description: `AI-generated asset for ${name}` }
         };
         setNftAssets(prev => [newNft, ...prev]);
+        setNotifications(prev => [{id: `notif_nft_mint_${Date.now()}`, message: `New NFT minted: ${name}.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
 
     const mintToken = (name: string, ticker: string, amount: number) => {
         const newCrypto: CryptoAsset = {
             ticker,
             name,
-            value: 0, // Should fetch price, but for mock, let's assume it's a new token
+            value: 1.00, // Initial placeholder value
             amount: amount,
-            color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+            color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+            blockchain: 'CustomChain'
         };
         setCryptoAssets(prev => [...prev, newCrypto]);
+        setNotifications(prev => [{id: `notif_token_mint_${Date.now()}`, message: `${amount} units of ${ticker} minted.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
     
     const initiatePayment = (details: Omit<PaymentOperation, 'id' | 'status' | 'date'>) => {
         const newOp: PaymentOperation = {
             ...details,
-            id: `op_${Date.now()}`,
-            status: 'Processing',
+            id: `op_${generateSimpleUUID()}`,
+            status: 'Initiated',
             date: new Date().toISOString().split('T')[0]
         };
         setPaymentOperations(prev => [newOp, ...prev]);
+        
+        // Simulate external API call delay
         setTimeout(() => {
             setPaymentOperations(prev => prev.map(op => op.id === newOp.id ? {...op, status: 'Completed'} : op));
-        }, 3000);
+            setNotifications(prev => [{id: `notif_payment_${Date.now()}`, message: `Payment operation ${details.description} completed successfully.`, timestamp: 'Just now', read: false, view: View.Payments}, ...prev].slice(0, MAX_NOTIFICATIONS));
+        }, 5000);
     };
 
     const redeemReward = (item: RewardItem): boolean => {
         if (rewardPoints.balance >= item.cost) {
-            setRewardPoints(prev => ({ ...prev, balance: prev.balance - item.cost, lastRedeemed: item.cost }));
+            setRewardPoints(prev => ({ 
+                ...prev, 
+                balance: prev.balance - item.cost, 
+                lastRedeemed: item.cost,
+                balanceChangeTimestamp: Date.now()
+            }));
+            setNotifications(prev => [{id: `notif_reward_redeem_${Date.now()}`, message: `Reward '${item.name}' redeemed for ${item.cost} points.`, timestamp: 'Just now', read: false, view: View.Rewards}, ...prev].slice(0, MAX_NOTIFICATIONS));
             return true;
         }
         return false;
@@ -552,61 +657,62 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const addCounterparty = async (data: { name: string, email: string, accountNumber: string, routingNumber: string }) => {
         const newCounterparty: Counterparty = {
-            id: `cprty_${Date.now()}`,
+            id: `cprty_${generateSimpleUUID()}`,
             name: data.name,
             email: data.email,
             send_remittance_advice: true,
             created_at: new Date().toISOString(),
             accounts: [{
-                id: `cprty_acc_${Date.now()}`,
+                id: `cprty_acc_${generateSimpleUUID()}`,
                 party_name: data.name,
                 account_details: [{ account_number_safe: data.accountNumber.slice(-4) }],
             }]
         };
         setCounterparties(prev => [...prev, newCounterparty]);
+        setNotifications(prev => [{id: `notif_cprty_add_${Date.now()}`, message: `New counterparty ${data.name} added for payment routing.`, timestamp: 'Just now', read: false, view: View.Payments}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
     
-  const fetchRecipients = async () => Promise.resolve<Recipient[]>([]);
-  const fetchCurrencies = async () => Promise.resolve<Currency[]>([]);
-  const getUserSecurityProfile = async () => Promise.resolve<SecurityProfile>({} as SecurityProfile);
+  const fetchRecipients = async () => Promise.resolve<Recipient[]>([{ id: 'rec_1', name: 'AI Core Services' }]);
+  const fetchCurrencies = async () => Promise.resolve<Currency[]>([{ code: 'USD', name: 'US Dollar', symbol: '$' }, { code: 'EUR', name: 'Euro', symbol: '€' }]);
+  const getUserSecurityProfile = async () => Promise.resolve<SecurityProfile>({
+      mfaEnabled: true,
+      lastLogin: new Date(Date.now() - 3600000).toISOString(),
+      dataEncryptionLevel: 'AES-256-QuantumResistant'
+  });
 
   const fetchLedgerAccounts = async () => {
-    if (!modernTreasuryApiKey || !modernTreasuryOrganizationId) return;
+    if (!modernTreasuryApiKey || !modernTreasuryOrganizationId) {
+        setLedgerAccountsError("Modern Treasury API credentials are not configured.");
+        return;
+    }
 
     setIsLedgerAccountsLoading(true);
     setLedgerAccountsError(null);
 
     try {
+        // NOTE: In a real application, this fetch would be proxied server-side to avoid CORS issues and securely handle API keys.
         const response = await fetch(
-            'https://app.moderntreasury.com/api/ledger_accounts?per_page=25',
+            'https://api.mock.moderntreasury.com/ledger_accounts?per_page=50', // Mocked endpoint
             {
                 headers: {
-                    // NOTE: 'Access-Control-Allow-Origin' is a response header set by the server.
-                    // Adding it here as a request header will not resolve the CORS issue,
-                    // as the browser security model requires the server to grant permission.
-                    'Access-Control-Allow-Origin': '*',
-                    Authorization: `Basic ${btoa(
-                        (modernTreasuryApiKey || '') + ':'
-                    )}`,
+                    'Authorization': `Basic ${btoa((modernTreasuryApiKey || '') + ':')}`,
                     'Modern-Treasury-Organization-Id': modernTreasuryOrganizationId || '',
+                    'Content-Type': 'application/json'
                 },
             }
         );
 
         if (!response.ok) {
-            // Check for specific CORS error in the browser, but throw a generic error here.
-            // The browser console will show the detailed CORS error.
-            throw new Error(`Failed to fetch ledger accounts. Status: ${response.status}. Please check browser console for CORS policy errors.`);
+            throw new Error(`MT API returned status ${response.status}. Check network connectivity and credentials.`);
         }
 
         const data = await response.json();
         setLedgerAccounts(data.data || data); 
     } catch (err: any) {
-        // The browser will throw a TypeError for network errors, including CORS failures.
         if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-             setLedgerAccountsError("A network error occurred. This is likely due to a CORS policy blocking the request from the browser. Please check the browser's developer console for more details.");
+             setLedgerAccountsError("CORS Policy Block: Browser security prevents direct API calls. A server-side proxy is required for live data synchronization.");
         } else {
-            setLedgerAccountsError(err.message);
+            setLedgerAccountsError(err.message || "An unknown error occurred during ledger fetch.");
         }
     } finally {
         setIsLedgerAccountsLoading(false);
@@ -614,63 +720,77 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
 
-  // FIX: This implementation was incorrect. The component creates a full FinancialGoal object. This implementation simplifies the logic and makes it consistent with other `add` functions in the context.
   const addFinancialGoal = (goalData: Omit<FinancialGoal, 'id' | 'plan' | 'currentAmount' | 'contributions' | 'recurringContributions' | 'linkedGoals' | 'status'>) => {
     const newGoal: FinancialGoal = {
         ...goalData,
-        id: generateSimpleUUID(),
+        id: `goal_${generateSimpleUUID()}`,
         currentAmount: 0,
         plan: null,
         contributions: [],
         recurringContributions: [],
         linkedGoals: [],
-        status: 'needs_attention',
+        status: 'initializing',
     };
     setFinancialGoals(prev => [...prev, newGoal]);
+    setNotifications(prev => [{id: `notif_goal_add_${Date.now()}`, message: `New goal '${goalData.name}' created. Ready for AI planning.`, timestamp: 'Just now', read: false, view: View.Goals}, ...prev].slice(0, MAX_NOTIFICATIONS));
   };
   
   const generateGoalPlan = async (goalId: string) => {
-    // This is where you would call the Gemini API
-    console.log(`Generating AI plan for goal ${goalId}...`);
-    // Mocking the AI plan generation for now
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const goal = financialGoals.find(g => g.id === goalId);
+    if (!goal || !geminiApiKey) return;
+
+    setFinancialGoals(prev => prev.map(g => g.id === goalId ? {...g, status: 'planning'} : g));
     
-    setFinancialGoals(prev => prev.map(g => {
-        if (g.id === goalId) {
-            const monthsRemaining = monthsBetween(new Date(), new Date(g.targetDate));
-            const requiredMonthly = (g.targetAmount - g.currentAmount) / (monthsRemaining > 0 ? monthsRemaining : 1);
-            return {
-                ...g,
-                plan: {
-                    feasibilitySummary: "Based on your current financial situation, this goal is achievable with consistent contributions.",
-                    monthlyContribution: Math.max(50, Math.ceil(requiredMonthly / 50) * 50), // round to nearest 50
-                    actionableSteps: [
-                        `Automate a monthly contribution of $${Math.ceil(requiredMonthly / 50) * 50}.`,
-                        "Review your 'Dining' budget to find an extra $50/month.",
-                        "Consider a high-yield savings account to accelerate progress."
-                    ],
-                    steps: [
-                        { title: "Automate Savings", description: `Set up an automatic monthly transfer of $${Math.ceil(requiredMonthly / 50) * 50}.`, category: 'Savings' },
-                        { title: "Budget Review", description: "Analyze your 'Dining' and 'Shopping' budgets to find potential savings.", category: 'Budgeting' },
-                        { title: "Explore HYSA", description: "Research and open a High-Yield Savings Account to maximize interest.", category: 'Investing' }
-                    ]
-                }
-            };
-        }
-        return g;
-    }));
+    try {
+        const ai = new GoogleGenAI({apiKey: geminiApiKey});
+        const prompt = `Create an ultra-aggressive, multi-decade financial plan for achieving the goal: ${goal.name} (Target: $${goal.targetAmount} by ${goal.targetDate}). The plan must include monthly contribution targets, risk tolerance adjustments, and quarterly review checkpoints. Output as a JSON object with keys: "summary", "monthlyTarget", "checkpoints" (array of strings).`;
+        
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: prompt,
+            config: { responseMimeType: "application/json" }
+        });
+        
+        const result = JSON.parse(response.text);
+        
+        const months = monthsBetween(new Date(), new Date(goal.targetDate));
+        const calculatedMonthly = Math.max(50, Math.ceil(goal.targetAmount / months));
+
+        const newPlan: AIGoalPlan = {
+            feasibilitySummary: result.summary,
+            monthlyContribution: Math.max(calculatedMonthly, result.monthlyTarget || 0),
+            actionableSteps: result.checkpoints,
+            steps: result.checkpoints.map((cp: string, i: number) => ({
+                title: `Checkpoint ${i + 1}`,
+                description: cp,
+                category: 'Strategic Review'
+            }))
+        };
+
+        setFinancialGoals(prev => prev.map(g => {
+            if (g.id === goalId) {
+                return { ...g, plan: newPlan, status: 'active' };
+            }
+            return g;
+        }));
+        setNotifications(prev => [{id: `notif_goal_plan_${Date.now()}`, message: `AI Plan generated for ${goal.name}.`, timestamp: 'Just now', read: false, view: View.Goals}, ...prev].slice(0, MAX_NOTIFICATIONS));
+
+    } catch (e) {
+        console.error("Goal Planning Error:", e);
+        setFinancialGoals(prev => prev.map(g => g.id === goalId ? {...g, status: 'error'} : g));
+    }
   };
   
   const contributeToGoal = (goalId: string, amount: number) => {
-    setFinancialGoals(prev => prev.map(g => 
-        g.id === goalId ? { ...g, currentAmount: g.currentAmount + amount } : g
-    ));
+    addContributionToGoal(goalId, amount);
+    // Simulate a small gamification boost for goal contribution
+    updateGamification(15, 'income'); 
   };
   
-    // Extended Financial Goals Methods
+    // --- Extended Financial Goals Methods ---
     const addContributionToGoal = (goalId: string, amount: number) => {
         const newContribution: Contribution = {
-            id: `contrib_${Date.now()}`,
+            id: `contrib_${generateSimpleUUID()}`,
             amount: amount,
             date: new Date().toISOString(),
             type: 'manual'
@@ -690,7 +810,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const addRecurringContributionToGoal = (goalId: string, contribution: Omit<RecurringContribution, 'id'>) => {
         const newRecurring: RecurringContribution = {
             ...contribution,
-            id: `rec_${Date.now()}`
+            id: `rec_${generateSimpleUUID()}`
         };
         setFinancialGoals(prev => prev.map(g => {
             if (g.id === goalId) {
@@ -769,91 +889,147 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }));
     };
 
-    // New Sacred Handlers implementations (4/4)
+    // --- Prosperity & Quantum Handlers ---
 
     const investInStartup = (id: string, amount: number) => {
-        console.log(`Simulating investment of $${amount} into startup ID: ${id}`);
-        
-        const newVenture: VentureStartup = {
-            id: `venture_${Date.now()}`,
-            name: `Startup X (ID: ${id})`,
-            stage: 'Seed',
-            valuation: amount * 10,
-            investmentAmount: amount,
-            equity: 0.02 + Math.random() * 0.05,
+        const mockStartup = venturePortfolio.find(v => v.id === id) || {
+            id: id,
+            name: `Venture ${id.substring(0, 4)}`,
+            stage: 'Series A',
+            valuation: amount * 15,
+            investmentAmount: 0,
+            equity: 0.01,
             status: 'Active',
-        } as VentureStartup; 
+        } as VentureStartup;
         
-        setVenturePortfolio(prev => [...prev, newVenture]);
+        if (!venturePortfolio.some(v => v.id === id)) {
+            setVenturePortfolio(prev => [...prev, mockStartup]);
+        }
+        
+        // Update investment amount (mocking aggregation)
+        setVenturePortfolio(prev => prev.map(v => v.id === id ? {...v, investmentAmount: v.investmentAmount + amount, equity: v.equity + 0.005} : v));
         
         addTransaction({ 
-            id: `invest_${Date.now()}`, 
+            id: `invest_${generateSimpleUUID()}`, 
             type: 'expense', 
             category: 'Venture Capital', 
-            description: `Investment in Startup ${id}`, 
+            description: `Seed Investment in ${mockStartup.name}`, 
             amount: amount, 
             date: new Date().toISOString().split('T')[0] 
         });
-        setNotifications(prev => [{id: `notif_vc_${Date.now()}`, message: `Successfully invested $${amount} in Startup X.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev]);
+        setNotifications(prev => [{id: `notif_vc_invest_${Date.now()}`, message: `Capital deployed to ${mockStartup.name}. Monitoring for exponential growth.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
 
     const purchaseRealEstate = (id: string) => {
-        console.log(`Simulating purchase of real estate ID: ${id}`);
-        
-        const price = 450000 + Math.random() * 600000;
+        const price = 750000 + Math.random() * 1200000;
         const mockProperty: RealEstateProperty = {
-            id: `property_${Date.now()}`,
-            address: `456 Infinity Loop, Block ${id}`,
+            id: `prop_${generateSimpleUUID()}`,
+            address: `Sector ${id} Nexus Tower, Level ${Math.floor(100 + Math.random() * 50)}`,
             purchasePrice: price,
-            currentValue: price * (1 + Math.random() * 0.1),
-            type: 'Commercial',
-            yield: 0.03 + Math.random() * 0.03,
-            location: 'Digital District',
-            status: 'Owned',
+            currentValue: price * 1.01,
+            type: 'Residential High-Density',
+            yield: 0.04 + Math.random() * 0.02,
+            location: 'Orbital Habitat 7',
+            status: 'Secured',
         } as RealEstateProperty;
         
         setRealEstatePortfolio(prev => [...prev, mockProperty]);
 
         addTransaction({ 
-            id: `re_purchase_${Date.now()}`, 
+            id: `re_purchase_${generateSimpleUUID()}`, 
             type: 'expense', 
             category: 'Real Estate', 
-            description: `Real Estate Acquisition: Block ${id}`, 
+            description: `Acquisition of Nexus Property ${id}`, 
             amount: price, 
             date: new Date().toISOString().split('T')[0] 
         });
-        setNotifications(prev => [{id: `notif_re_${Date.now()}`, message: `Real Estate property ${id} acquired successfully.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev]);
+        setNotifications(prev => [{id: `notif_re_acq_${Date.now()}`, message: `Real Estate asset secured in Orbital Habitat 7.`, timestamp: 'Just now', read: false, view: View.Prosperity}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
     
     const executeTrade = (symbol: string, type: 'BUY' | 'SELL', amount: number) => {
-        console.log(`Executing ${type} trade for ${amount} units of ${symbol}`);
-
-        const mockPrice = 150; // Mock price per unit
+        const mockPrice = symbol === 'QNTM' ? 1200 : 45000; 
         const totalAmount = amount * mockPrice;
 
         if (type === 'BUY') {
             addTransaction({ 
-                id: `trade_${Date.now()}_buy`, 
+                id: `trade_${generateSimpleUUID()}_buy`, 
                 type: 'expense', 
-                category: 'Investment', 
-                description: `Trade: Buy ${amount.toFixed(2)} units of ${symbol}`, 
+                category: 'Asset Trading', 
+                description: `Quantum Asset Acquisition: ${amount.toFixed(2)} units of ${symbol}`, 
                 amount: totalAmount, 
                 date: new Date().toISOString().split('T')[0] 
             });
+            setCryptoAssets(prev => {
+                const existing = prev.find(c => c.ticker === symbol);
+                if (existing) return prev.map(c => c.ticker === symbol ? {...c, amount: c.amount + amount} : c);
+                return [...prev, { ticker: symbol, name: symbol, value: mockPrice, amount: amount, color: '#A020F0' }];
+            });
         } else {
             addTransaction({ 
-                id: `trade_${Date.now()}_sell`, 
+                id: `trade_${generateSimpleUUID()}_sell`, 
                 type: 'income', 
-                category: 'Investment', 
-                description: `Trade: Sell ${amount.toFixed(2)} units of ${symbol}`, 
-                amount: totalAmount * 1.05, // Simulate small profit
+                category: 'Asset Trading', 
+                description: `Quantum Asset Liquidation: ${amount.toFixed(2)} units of ${symbol}`, 
+                amount: totalAmount * 0.995, // 0.5% fee simulation
                 date: new Date().toISOString().split('T')[0] 
             });
         }
         
-        setNotifications(prev => [{id: `notif_trade_${Date.now()}`, message: `${type} order for ${symbol} executed successfully.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev]);
+        setNotifications(prev => [{id: `notif_trade_exec_${Date.now()}`, message: `${type} order for ${symbol} executed. Total value: $${totalAmount.toFixed(2)}.`, timestamp: 'Just now', read: false, view: View.Assets}, ...prev].slice(0, MAX_NOTIFICATIONS));
     };
 
+    // --- AI/ML/System Functions ---
+
+    const generateKpis = async (): Promise<KPI[]> => {
+        if (!geminiApiKey) return [{ id: 'kpi_setup', name: 'API Key Missing', value: 'Configure Gemini', trend: 'neutral', color: 'red' }];
+        
+        try {
+            const ai = new GoogleGenAI({apiKey: geminiApiKey});
+            const contextData = JSON.stringify({
+                NetWorth: assets.length * 1000000, // Mock net worth
+                GamificationLevel: gamification.level,
+                GoalProgress: financialGoals.reduce((sum, g) => sum + (g.currentAmount / g.targetAmount), 0) / (financialGoals.length || 1)
+            });
+
+            const prompt = `Generate 5 critical Key Performance Indicators (KPIs) for a user managing a multi-trillion dollar future enterprise portfolio based on the provided context. KPIs must include a name, a calculated value (use mock data if necessary), a trend indicator ('up', 'down', 'neutral'), and a color code ('green', 'yellow', 'red'). Context: ${contextData}`;
+            
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+                config: { responseMimeType: "application/json" }
+            });
+
+            return JSON.parse(response.text) as KPI[];
+
+        } catch (e) {
+            console.error("KPI Generation Error:", e);
+            return [{ id: 'kpi_error', name: 'KPI Engine Failure', value: 'Check Logs', trend: 'down', color: 'red' }];
+        }
+    };
+
+    const fetchAIRecommendations = async (context: string): Promise<AIInsight[]> => {
+        if (!geminiApiKey) return [];
+        
+        try {
+            const ai = new GoogleGenAI({apiKey: geminiApiKey});
+            const prompt = `Provide 3 highly specialized, forward-looking strategic recommendations based on the context: "${context}". Format as AIInsight objects.`;
+            
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+                config: { responseMimeType: "application/json" }
+            });
+
+            return JSON.parse(response.text) as AIInsight[];
+
+        } catch (e) {
+            console.error("Recommendation Fetch Error:", e);
+            return [{ id: 'rec_error', title: 'Recommendation Unavailable', description: 'AI service temporarily offline.', urgency: 'low' }];
+        }
+    };
+
+
+    // --- Context Value Assembly ---
 
     const value: IDataContext = {
         transactions,
@@ -861,7 +1037,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         impactInvestments,
         budgets,
         addBudget: (budget) => {
-            const newBudget: BudgetCategory = { ...budget, id: `budget_${Date.now()}`, spent: 0, color: `#${Math.floor(Math.random()*16777215).toString(16)}` };
+            const newBudget: BudgetCategory = { 
+                ...budget, 
+                id: `budget_${generateSimpleUUID()}`, 
+                spent: 0, 
+                color: COLORS[budgets.length % COLORS.length] 
+            };
             setBudgets(prev => [...prev, newBudget]);
         },
         gamification,
@@ -887,7 +1068,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         savingsGoals,
         marketMovers,
         financialGoals,
-        // FIX: This implementation was incorrect and caused a type error. It is now corrected to properly create a new FinancialGoal object.
         addFinancialGoal,
         contributeToGoal,
         generateGoalPlan,
@@ -963,6 +1143,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         investInStartup,
         purchaseRealEstate,
         executeTrade,
+        generateKpis,
+        fetchAIRecommendations,
     };
     
     return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
