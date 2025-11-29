@@ -33,13 +33,13 @@ import {
   CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 
-// --- Constants for Billion Dollar Features ---
+// Constants
 const DEFAULT_FONT_OPTIONS: string[] = [
   'Inter', 'Roboto', 'Arial', 'Helvetica Neue', 'Georgia', 'Times New Roman', 'Verdana', 'Tahoma', 'Courier New'
 ];
 const AI_MODEL_OPTIONS: string[] = ['GPT-4o-Enterprise', 'Claude-3-Opus-Pro', 'Gemini-Ultra-2.5', 'Proprietary-Quantum-LLM-v1'];
 
-// --- Utility Components for Enhanced UI/UX ---
+// Utility Components
 
 interface ColorControlProps {
   label: string;
@@ -99,14 +99,14 @@ const ColorControl: React.FC<ColorControlProps> = React.memo(({
   );
 });
 
-// --- Main Component ---
+// Main Component
 
 const ThemeBuilder: React.FC = () => {
   const dispatch = useDispatch();
   const { currentTheme, globalConfig } = useSelector((state: RootState) => state.theme);
 
   // State for Theme Customization
-  const [themeName, setThemeName] = useState<string>(currentTheme?.name || 'EnterpriseOS Default');
+  const [themeName, setThemeName] = useState<string>(currentTheme?.name || 'Default Theme');
   const [primaryColor, setPrimaryColor] = useState<string>('#1976d2'); // MUI default primary blue
   const [secondaryColor, setSecondaryColor] = useState<string>('#9c27b0'); // A distinct secondary color
   const [backgroundColor, setBackgroundColor] = useState<string>('#f4f6f8'); // Light off-white background
@@ -114,7 +114,7 @@ const ThemeBuilder: React.FC = () => {
   const [fontFamily, setFontFamily] = useState<string>(currentTheme?.typography?.fontFamily || DEFAULT_FONT_OPTIONS[0]);
   const [fontOptions] = useState<string[]>(DEFAULT_FONT_OPTIONS);
 
-  // State for AI Integration Settings (Billion Dollar Feature)
+  // State for AI Integration Settings
   const [aiEnabled, setAiEnabled] = useState<boolean>(globalConfig?.aiIntegration?.enabled ?? true);
   const [aiModel, setAiModel] = useState<string>(globalConfig?.aiIntegration?.defaultModel ?? AI_MODEL_OPTIONS[0]);
   const [aiTone, setAiTone] = useState<string>(globalConfig?.aiIntegration?.defaultTone ?? 'Professional & Analytical');
@@ -189,13 +189,13 @@ const ThemeBuilder: React.FC = () => {
 
   // Memoized Theme Construction
   const newTheme: Theme = useMemo(() => ({
-    name: themeName || 'Enterprise Theme',
+    name: themeName || 'Custom Theme',
     palette: {
       primary: { main: primaryColor },
       secondary: { main: secondaryColor },
       background: { default: backgroundColor },
       text: { primary: textColor },
-      // Add more standard MUI palette extensions for enterprise readiness
+      // Add more standard MUI palette extensions
       success: { main: '#2e7d32' },
       error: { main: '#c62828' },
       warning: { main: '#ff9800' },
@@ -205,12 +205,12 @@ const ThemeBuilder: React.FC = () => {
       h1: { fontSize: '3.5rem', fontWeight: 700 },
       body1: { fontSize: '1rem', lineHeight: 1.6 },
     },
-    // Future proofing: Add custom shadows, transitions, etc.
+    // Add custom shadows, transitions, etc.
   }), [themeName, primaryColor, secondaryColor, backgroundColor, textColor, fontFamily]);
 
   // Memoized Global Configuration Construction
   const newGlobalConfig: GlobalConfiguration = useMemo(() => ({
-    themeName: themeName || 'Enterprise Theme',
+    themeName: themeName || 'Custom Theme',
     lastUpdated: new Date().toISOString(),
     aiIntegration: {
         enabled: aiEnabled,
@@ -230,7 +230,7 @@ const ThemeBuilder: React.FC = () => {
   const handleApplyThemeAndConfig = useCallback(() => {
     dispatch(setTheme(newTheme));
     dispatch(setGlobalConfiguration(newGlobalConfig));
-    // Optional: Show a temporary success notification here in a real app
+    // Show a temporary success notification here
     console.log('Theme and Global Configuration Applied Successfully.');
   }, [dispatch, newTheme, newGlobalConfig]);
 
@@ -241,23 +241,23 @@ const ThemeBuilder: React.FC = () => {
         <Box display="flex" alignItems="center" mb={3}>
           <PaletteIcon color="primary" sx={{ fontSize: 36, mr: 2 }} />
           <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
-            Enterprise Theme & AI Configuration Nexus
+            Theme & AI Configuration
           </Typography>
         </Box>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Define the visual identity and core AI operational parameters for the entire Enterprise Operating System. Every selection here impacts billions of data points across all modules.
+          Customize the application theme and AI settings.
         </Typography>
 
         <Divider sx={{ my: 3 }} />
 
         {/* Theme Customization Section */}
         <Typography variant="h5" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-            <SettingsIcon sx={{ mr: 1 }} /> Visual Theme Definition
+            <SettingsIcon sx={{ mr: 1 }} /> Theme Settings
         </Typography>
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12}>
             <TextField
-              label="System Theme Identifier (Mandatory)"
+              label="Theme Name"
               variant="outlined"
               value={themeName}
               onChange={(e) => setThemeName(e.target.value)}
@@ -272,7 +272,7 @@ const ThemeBuilder: React.FC = () => {
           </Grid>
 
           <ColorControl
-            label="Primary Accent Color"
+            label="Primary Color"
             color={primaryColor}
             onColorChange={setPrimaryColor}
             pickerKey="primary"
@@ -280,7 +280,7 @@ const ThemeBuilder: React.FC = () => {
             togglePicker={toggleColorPicker}
           />
           <ColorControl
-            label="Secondary Action Color"
+            label="Secondary Color"
             color={secondaryColor}
             onColorChange={setSecondaryColor}
             pickerKey="secondary"
@@ -288,7 +288,7 @@ const ThemeBuilder: React.FC = () => {
             togglePicker={toggleColorPicker}
           />
           <ColorControl
-            label="Base Background Canvas"
+            label="Background Color"
             color={backgroundColor}
             onColorChange={setBackgroundColor}
             pickerKey="background"
@@ -296,7 +296,7 @@ const ThemeBuilder: React.FC = () => {
             togglePicker={togglePicker}
           />
           <ColorControl
-            label="Primary Text/Data Color"
+            label="Text Color"
             color={textColor}
             onColorChange={setTextColor}
             pickerKey="text"
@@ -308,16 +308,16 @@ const ThemeBuilder: React.FC = () => {
             <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
                 <Box display="flex" alignItems="center" mb={1}>
                     <TextFieldsIcon color="primary" sx={{ mr: 1 }} />
-                    <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>Typography Selection</Typography>
+                    <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>Typography</Typography>
                 </Box>
                 <FormControl fullWidth>
-                    <InputLabel id="font-family-label">Global Font Family</InputLabel>
+                    <InputLabel id="font-family-label">Font Family</InputLabel>
                     <Select
                         labelId="font-family-label"
                         id="font-family-select"
                         value={fontFamily}
                         onChange={handleFontChange}
-                        label="Global Font Family"
+                        label="Font Family"
                         MenuProps={{ PaperProps: { style: { maxHeight: 400 } } }}
                     >
                         {fontOptions.map((font) => (
@@ -328,7 +328,7 @@ const ThemeBuilder: React.FC = () => {
                     </Select>
                 </FormControl>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                    Selected Font: {fontFamily} (Impacts all UI rendering)
+                    Selected Font: {fontFamily}
                 </Typography>
             </Paper>
           </Grid>
@@ -336,23 +336,23 @@ const ThemeBuilder: React.FC = () => {
 
         <Divider sx={{ my: 3 }} />
 
-        {/* AI Integration Configuration Section (The Billion Dollar Layer) */}
+        {/* AI Integration Configuration Section */}
         <Typography variant="h5" gutterBottom sx={{ color: 'secondary.main', display: 'flex', alignItems: 'center' }}>
-            <SmartToyIcon sx={{ mr: 1 }} /> Core AI Operational Parameters
+            <SmartToyIcon sx={{ mr: 1 }} /> AI Configuration
         </Typography>
 
         <Paper elevation={3} sx={{ p: 3, mb: 3, borderLeft: `5px solid ${aiEnabled ? '#2e7d32' : '#c62828'}` }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h6">AI Engine Activation</Typography>
+                <Typography variant="h6">AI Engine</Typography>
                 <Box display="flex" alignItems="center">
                     <Typography>{aiEnabled ? 'Active' : 'Disabled'}</Typography>
                     <Switch
                         checked={aiEnabled}
                         onChange={handleAiToggle}
                         color="primary"
-                        inputProps={{ 'aria-label': 'AI Engine Activation' }}
+                        inputProps={{ 'aria-label': 'AI Engine' }}
                     />
-                    <Tooltip title={aiEnabled ? "AI services are running." : "AI services are paused for resource conservation."}>
+                    <Tooltip title={aiEnabled ? "AI services are running." : "AI services are paused."}>
                         <IconButton size="small" color={aiEnabled ? 'success' : 'error'}>
                             {aiEnabled ? <CheckCircleIcon /> : <VisibilityIcon />}
                         </IconButton>
@@ -363,13 +363,13 @@ const ThemeBuilder: React.FC = () => {
             <Grid container spacing={3} disabled={!aiEnabled}>
                 <Grid item xs={12} md={6}>
                     <FormControl fullWidth>
-                        <InputLabel id="ai-model-label">Default Generative Model Endpoint</InputLabel>
+                        <InputLabel id="ai-model-label">Default Model</InputLabel>
                         <Select
                             labelId="ai-model-label"
                             id="ai-model-select"
                             value={aiModel}
                             onChange={handleAiModelChange}
-                            label="Default Generative Model Endpoint"
+                            label="Default Model"
                             disabled={!aiEnabled}
                         >
                             {AI_MODEL_OPTIONS.map((model) => (
@@ -379,13 +379,13 @@ const ThemeBuilder: React.FC = () => {
                             ))}
                         </Select>
                         <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                            Selecting a model dictates latency and reasoning capability across all AI features (Chat, Summarization, Code Generation).
+                            Select the AI model for system operations.
                         </Typography>
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Default AI Communication Tone"
+                        label="AI Tone"
                         variant="outlined"
                         value={aiTone}
                         onChange={handleAiToneChange}
@@ -393,7 +393,7 @@ const ThemeBuilder: React.FC = () => {
                         disabled={!aiEnabled}
                         InputProps={{
                             startAdornment: (
-                                <Tooltip title="AI Tone influences response style in all system communications.">
+                                <Tooltip title="Sets the response style for AI communications.">
                                     <Chip label="TONE" size="small" color="secondary" variant="outlined" sx={{ mr: 1 }} />
                                 </Tooltip>
                             ),
@@ -416,7 +416,7 @@ const ThemeBuilder: React.FC = () => {
             startIcon={<SaveIcon />}
             sx={{ padding: '10px 30px', fontSize: '1.1rem', fontWeight: 600 }}
           >
-            Commit Configuration to System Core
+            Save Configuration
           </Button>
         </Box>
       </Paper>
