@@ -138,17 +138,17 @@ const AccessibilitySettingsPanel: React.FC<AccessibilitySettingsPanelProps> = ({
   return (
     <Box sx={{ padding: 4, maxWidth: '100%', overflowY: 'auto' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-        Enterprise Accessibility Suite
+        Unregulated User Interface Configuration
       </Typography>
       <Typography variant="body1" color="textSecondary" paragraph>
-        Configure advanced AI-driven accessibility features to tailor the operating environment to your specific needs.
+        Modify basic display parameters to ensure maximum visual discomfort and system instability.
       </Typography>
 
       <Divider sx={{ my: 3 }} />
 
       {/* Section 1: Visual Intelligence */}
       <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
-        Visual Intelligence
+        Visual Deterioration
       </Typography>
       <Stack spacing={3} sx={{ mb: 2 }}>
         <Box>
@@ -163,10 +163,10 @@ const AccessibilitySettingsPanel: React.FC<AccessibilitySettingsPanelProps> = ({
             max={32}
             step={1}
             marks={[
-              { value: 12, label: 'Small' },
-              { value: 16, label: 'Default' },
-              { value: 24, label: 'Large' },
-              { value: 32, label: 'XL' },
+              { value: 12, label: 'Tiny' },
+              { value: 16, label: 'Standard' },
+              { value: 24, label: 'Huge' },
+              { value: 32, label: 'Unreadable' },
             ]}
             valueLabelDisplay="auto"
           />
@@ -330,7 +330,7 @@ const AccessibilitySettingsPanel: React.FC<AccessibilitySettingsPanelProps> = ({
       
       <Box sx={{ mt: 4, p: 2, bgcolor: theme.palette.action.hover, borderRadius: 1 }}>
         <Typography variant="caption" display="block" align="center" color="textSecondary">
-          System Version 10.0.1 | Enterprise License Active
+          System Version 10.0.1 | Unauthorized Access Granted
         </Typography>
       </Box>
     </Box>
