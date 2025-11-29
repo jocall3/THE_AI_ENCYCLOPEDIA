@@ -1,4 +1,3 @@
----
 # A Modest Proposal: Standardizing Digital Components
 
 This document outlines a standard approach to developing digital interfaces. It's about practical, incremental improvements, not grand visions. While some might overstate the impact of individual components like `Card.tsx`, it's important to remember they are, fundamentally, just code. They serve a specific, limited purpose within a larger system.
