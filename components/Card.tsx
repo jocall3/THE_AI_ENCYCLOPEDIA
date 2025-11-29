@@ -1,22 +1,18 @@
 // components/Card.tsx
-// 
-// ENTERPRISE GRADE INTELLIGENT INTERFACE CONTAINER
-// CODENAME: OMNI-CARD
-// VERSION: 10.0.0-ALPHA
-// 
-// This component represents the pinnacle of UI engineering, designed to serve as the fundamental
-// building block for the next generation of business operating systems. It integrates simulated
-// AI heuristics, advanced state management, and holographic interface paradigms.
+//
+// Basic Card Component
+//
+// A standard UI container component for displaying content.
+// Supports various visual styles, loading states, and interactions.
 
 import React, { useState, useEffect, useRef, useCallback, ReactNode } from 'react';
 
 // ================================================================================================
-// 1. ADVANCED TYPE DEFINITIONS & CONFIGURATION
+// 1. TYPE DEFINITIONS
 // ================================================================================================
 
 /**
- * @description Defines the visual and functional archetype of the card.
- * Expanded to include next-gen UI paradigms.
+ * @description Defines the visual style of the card.
  */
 export type CardVariant = 
   | 'default' 
@@ -32,18 +28,17 @@ export type CardVariant =
   | 'glass-morphism';
 
 /**
- * @description Defines the AI processing mode for the card.
- * Simulates different levels of computational intelligence applied to the content.
+ * @description Defines the processing mode for the card.
  */
 export type AIProcessingMode = 'passive' | 'reactive' | 'predictive' | 'generative' | 'autonomous';
 
 /**
- * @description Granular control over the card's internal padding and spacing layout.
+ * @description Controls the card's internal padding.
  */
 export type CardPadding = 'none' | 'compact' | 'standard' | 'relaxed' | 'spacious' | 'golden-ratio';
 
 /**
- * @description Configuration for the integrated KPI visualization engine.
+ * @description Configuration for KPI display.
  */
 export interface KPIConfig {
   value: number;
@@ -55,7 +50,7 @@ export interface KPIConfig {
 }
 
 /**
- * @description Structure for AI-driven action recommendations.
+ * @description Structure for action recommendations.
  */
 export interface AIActionRecommendation {
   id: string;
@@ -66,7 +61,7 @@ export interface AIActionRecommendation {
 }
 
 /**
- * @description Standard header action definition.
+ * @description Header action definition.
  */
 export interface CardHeaderAction {
   id: string;
@@ -79,8 +74,7 @@ export interface CardHeaderAction {
 }
 
 /**
- * @description The Omnipotent Card Props Interface.
- * Capable of handling any business requirement for the next millennium.
+ * @description Props interface for the Card component.
  */
 export interface CardProps {
   // --- Core Identity ---
@@ -101,7 +95,7 @@ export interface CardProps {
   // --- Structural Components ---
   headerActions?: CardHeaderAction[];
   footerContent?: ReactNode;
-  sidebarContent?: ReactNode; // New: Internal sidebar for complex cards
+  sidebarContent?: ReactNode;
   
   // --- State & Behavior ---
   isCollapsible?: boolean;
@@ -144,12 +138,11 @@ export interface CardProps {
 }
 
 // ================================================================================================
-// 2. UTILITY FUNCTIONS & LOGIC ENGINES
+// 2. UTILITY FUNCTIONS
 // ================================================================================================
 
 /**
- * @description Calculates the appropriate Tailwind classes based on the variant and AI mode.
- * Includes logic for dynamic backdrop filters and border gradients.
+ * @description Calculates Tailwind classes based on variant.
  */
 const getVariantClasses = (variant: CardVariant, aiMode?: AIProcessingMode): string => {
   const base = "transition-all duration-500 ease-out relative overflow-hidden";
@@ -182,7 +175,7 @@ const getVariantClasses = (variant: CardVariant, aiMode?: AIProcessingMode): str
 };
 
 /**
- * @description Maps abstract padding sizes to concrete CSS classes.
+ * @description Maps padding props to CSS classes.
  */
 const getPaddingClasses = (padding: CardPadding): string => {
   switch(padding) {
@@ -197,7 +190,7 @@ const getPaddingClasses = (padding: CardPadding): string => {
 };
 
 /**
- * @description Generates a simulated AI confidence color based on a score (0-1).
+ * @description Gets color based on confidence score.
  */
 const getConfidenceColor = (score: number): string => {
   if (score >= 0.9) return 'text-emerald-400';
@@ -207,12 +200,11 @@ const getConfidenceColor = (score: number): string => {
 };
 
 // ================================================================================================
-// 3. INTERNAL SUB-COMPONENTS (THE "BILLION DOLLAR" FEATURES)
+// 3. INTERNAL SUB-COMPONENTS
 // ================================================================================================
 
 /**
- * @description A sophisticated SVG-based neural network visualization that renders in the background
- * of 'neural' or 'ai-insight' cards.
+ * @description Background visualization for specific card variants.
  */
 const NeuralBackground: React.FC = () => (
   <div className="absolute inset-0 z-0 opacity-10 pointer-events-none overflow-hidden">
@@ -229,7 +221,7 @@ const NeuralBackground: React.FC = () => (
 );
 
 /**
- * @description A holographic scanner effect for high-tech cards.
+ * @description Scanner effect for holographic cards.
  */
 const HolographicScanner: React.FC = () => (
   <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-xl">
@@ -238,7 +230,7 @@ const HolographicScanner: React.FC = () => (
 );
 
 /**
- * @description Displays KPI metrics with a sparkline simulation.
+ * @description Displays KPI metrics.
  */
 const KPIDisplay: React.FC<{ config: KPIConfig }> = ({ config }) => {
   const isUp = config.trend === 'up';
@@ -257,7 +249,7 @@ const KPIDisplay: React.FC<{ config: KPIConfig }> = ({ config }) => {
         {isUp ? '▲' : config.trend === 'down' ? '▼' : '—'}
         <span className="ml-1">{Math.abs(((config.value - config.target) / config.target) * 100).toFixed(1)}%</span>
       </div>
-      {/* Simulated Sparkline */}
+      {/* Sparkline */}
       <div className="flex-1 h-8 flex items-end space-x-1 opacity-50">
         {(config.historicalData || [40, 60, 45, 70, 65, 80, 75, 90]).map((h, i) => (
           <div key={i} style={{ height: `${h}%` }} className={`flex-1 rounded-t-sm ${isUp ? 'bg-emerald-500' : 'bg-blue-500'}`} />
@@ -268,7 +260,7 @@ const KPIDisplay: React.FC<{ config: KPIConfig }> = ({ config }) => {
 };
 
 /**
- * @description AI Insight pill that appears when the card has processed data.
+ * @description Badge for displaying insights.
  */
 const AIInsightBadge: React.FC<{ text: string; confidence: number }> = ({ text, confidence }) => (
   <div className="flex items-center space-x-2 bg-indigo-900/40 border border-indigo-500/30 rounded-full px-3 py-1 my-1 w-fit">
@@ -279,7 +271,7 @@ const AIInsightBadge: React.FC<{ text: string; confidence: number }> = ({ text, 
 );
 
 /**
- * @description Advanced Loading Skeleton with "Data Decryption" effect.
+ * @description Loading skeleton component.
  */
 const DecryptionSkeleton: React.FC = () => {
   return (
@@ -303,28 +295,28 @@ const DecryptionSkeleton: React.FC = () => {
 };
 
 /**
- * @description Error State with "System Diagnostics" look.
+ * @description Error state display.
  */
 const SystemErrorDisplay: React.FC<{ message: string; onRetry?: () => void }> = ({ message, onRetry }) => (
   <div className="flex flex-col items-center justify-center text-center p-8 bg-red-950/10 border border-red-500/20 rounded-lg m-4">
     <div className="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center mb-4 border border-red-500/50">
       <span className="text-2xl text-red-500">!</span>
     </div>
-    <h4 className="text-lg font-mono font-bold text-red-400 uppercase tracking-widest">System Malfunction</h4>
+    <h4 className="text-lg font-mono font-bold text-red-400 uppercase tracking-widest">Error</h4>
     <p className="text-red-300/80 mt-2 mb-6 max-w-md font-mono text-sm">{message}</p>
     {onRetry && (
       <button
         onClick={onRetry}
         className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all font-mono text-xs uppercase tracking-wider"
       >
-        Initiate Recovery Protocol
+        Retry
       </button>
     )}
   </div>
 );
 
 // ================================================================================================
-// 4. MAIN COMPONENT ARCHITECTURE
+// 4. MAIN COMPONENT
 // ================================================================================================
 
 const Card: React.FC<CardProps> = ({
@@ -411,7 +403,7 @@ const Card: React.FC<CardProps> = ({
     }
   }, [isCollapsed, isCollapsible, children, onCollapse, onExpand]);
 
-  // Simulate AI Processing / Loading Progress
+  // Simulate Loading Progress
   useEffect(() => {
     if (isLoading && !loadingProgress) {
       const interval = setInterval(() => {
@@ -473,7 +465,7 @@ const Card: React.FC<CardProps> = ({
             {subtitle && (
               <p className="text-xs text-gray-400 truncate font-medium">
                 {subtitle}
-                {lastUpdated && <span className="ml-2 opacity-60">• Updated {lastUpdated.toLocaleTimeString()}</span>}
+                {lastUpdated && <span className="ml-2 opacity-60">â€¢ Updated {lastUpdated.toLocaleTimeString()}</span>}
               </p>
             )}
           </div>
@@ -551,7 +543,7 @@ const Card: React.FC<CardProps> = ({
         {/* AI Insights Section */}
         {(aiInsights && aiInsights.length > 0) && (
           <div className="mt-4 pt-4 border-t border-gray-700/50">
-            <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">AI Analysis</p>
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Analysis</p>
             <div className="flex flex-wrap gap-2">
               {aiInsights.map((insight, idx) => (
                 <AIInsightBadge key={idx} text={insight} confidence={aiConfidence || 0.85} />
