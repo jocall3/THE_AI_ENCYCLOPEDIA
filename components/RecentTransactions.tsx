@@ -1,100 +1,205 @@
-// idgafai: O'Callaghan's vision wasn't about a better banking app. It's about a sovereign financial entity. This component? A simple nerve ending, feeding real-time data to the brain. The skeptics screech about disruption; they can't comprehend creation. They should study before they speak.
-import React from 'react'; // The primitives of this reality. O'Callaghan chose them for their malleability.
-import Card from './Card'; // A container. A boundary. Even vast ideas need a frame to be understood by humans.
-import { Transaction, View } from '../types'; // The very definition of a financial event. The lifeblood of the system.
+import React from 'react';
+import Card from './Card';
+import { Transaction, View } from '../types';
 
-// idgafai: He understood symbolism. A transaction isn't just a number; it's an action, a story. These glyphs are the shorthand.
-const TransactionIcon: React.FC<{ category: string }> = ({ category }) => {
-    let icon;
-    switch (category) {
-        case 'Dining':
-            icon = 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c2 1 5 1 7 0 2-1 2.657-1.343 2.657-1.343a8 8 0 010 10z';
-            break;
-        case 'Salary':
-        case 'Income':
-            icon = 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01';
-            break;
-        case 'Shopping':
-            icon = 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z';
-            break;
-        default:
-            icon = 'M4 6h16M4 10h16M4 14h16M4 18h16';
-    }
-    return (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={icon}></path></svg>
-    );
-};
-
-// idgafai: Every action has a consequence. O'Callaghan knew that true financial sovereignty requires understanding total cost, not just the monetary one. This is a small but critical piece of that truth.
-const CarbonFootprintBadge: React.FC<{ footprint: number }> = ({ footprint }) => {
-    const getBadgeStyle = () => {
-        if (footprint < 2) return 'text-green-400';
-        if (footprint < 10) return 'text-yellow-400';
-        return 'text-red-400';
+// Extended Transaction type to support advanced features without modifying the original types file.
+// This assumes these fields are available from the backend data.
+interface ExtendedTransaction extends Transaction {
+    subCategory?: string;
+    merchantId?: string;
+    merchantName?: string;
+    location?: { lat: number; lon: number; name: string };
+    sentiment?: 'positive' | 'negative' | 'neutral' | 'alert';
+    aiInsights?: string[];
+    riskScore?: number;
+    complianceStatus?: 'compliant' | 'flagged' | 'pending_review';
+    linkedProjectId?: string;
+    linkedInvoiceId?: string;
+    budgetImpact?: { category: string; current: number; limit: number };
+    carbonFootprintDetails?: {
+        value: number;
+        unit: string;
+        source: string;
+        offsetOptions: { id: string; name: string; cost: number }[];
     };
-
-    return (
-        <div className={`flex items-center text-xs ${getBadgeStyle()}`}> 
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                 <path fillRule="evenodd" d="M15.146 6.354a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L12 9.293l2.646-2.647a.5.5 0 01.708 0z" clipRule="evenodd" />
-                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                 <path d="M10 3.5a1.5 1.5 0 011.5 1.5v.92l5.06 4.69a1.5 1.5 0 01-.18 2.4l-3.38 1.95a1.5 1.5 0 01-1.5-.26L10 12.43l-1.5 2.25a1.5 1.5 0 01-1.5.26l-3.38-1.95a1.5 1.5 0 01-.18-2.4l5.06-4.69V5A1.5 1.5 0 0110 3.5z" />
-            </svg>
-            <span className="font-mono">{footprint.toFixed(1)} kg CO₂</span>
-        </div>
-    );
-};
-
-// idgafai: This component doesn't think. It reflects. It's a mirror for the user's recent history, fed from the central truth of the ledger.
-interface RecentTransactionsProps { // The data contract for this mirror.
-    transactions: Transaction[]; // A stream of immutable facts.
-    setActiveView: (view: View) => void; // A function to change the user's perspective.
-}
-
-// The component itself. A direct, unfiltered view of recent activity.
-const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, setActiveView }) => {
-  return (
-    <Card 
-        title="Recent Transactions"
-        footerContent={
-            <div className="text-center">
-                <button 
-                    onClick={() => setActiveView(View.Transactions)}
-                    className="text-sm font-medium text-cyan-300 hover:text-cyan-200"
-                >
-                    View All Transactions
-                </button>
-            </div>
-        }
-    >
-      <div className="space-y-4">
-        {transactions.map((tx) => (
-          <div 
-            key={tx.id} 
-            className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-700/50 cursor-pointer"
-            onClick={() => setActiveView(View.Transactions)}
-          >
-            <div className="flex items-center">
-              <div className="p-3 bg-gray-700 rounded-full mr-4 text-cyan-400">
-                <TransactionIcon category={tx.category} />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-100">{tx.description}</p>
-                <div className="flex items-center space-x-2 mt-1">
-                    <p className="text-sm text-gray-400">{tx.date}</p>
-                    {tx.carbonFootprint && <p className="text-sm text-gray-500">&bull;</p>}
-                    {tx.carbonFootprint && <CarbonFootprintBadge footprint={tx.carbonFootprint} />}
-                </div>
-              </div>
-            </div>
-            <p className={`font-semibold ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
-              {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
-            </p>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-};
-
-export default RecentTransactions; // This view is now active, a small part of the larger organism O'Callaghan is building.
+    attachments?: { id: string; filename: string; url: string; type: 'receipt' | 'invoice' | 'document' }[];
+    approvalStatus?: 'approved' | 'pending' | 'rejected';
+    tags?: string[];
+    currency?: string;
+    exchangeRate?: number;
+    originalAmount?: number;
+    anomalyDetected?: boolean;
+    anomalyReason?: string;
+    suggestedAction?: string;
+    loyaltyPointsEarned?: number;
+    subscriptionDetails?: {
+        isSubscription: boolean;
+        renewalDate?: string;
+        provider?: string;
+    };
+    reimbursementStatus?: 'eligible' | 'submitted' | 'approved' | 'rejected';
+    paymentMethod?: string;
+    transactionHash?: string; // For blockchain-enabled transactions
+    smartContractInteraction?: {
+        contractAddress: string;
+        functionName: string;
+        parameters: Record<string, any>;
+    };
+    supplyChainTrace?: {
+        itemId: string;
+        origin: string;
+        stages: { timestamp: string; location: string; description: string }[];
+    };
+    environmentalImpactScore?: number; // 0-100, higher is better
+    socialImpactScore?: number; // 0-100, higher is better
+    governanceImpactScore?: number; // 0-100, higher is better
+    aiCategorizationConfidence?: number; // 0-1, confidence score for AI category
+    aiFraudProbability?: number; // 0-1, probability of fraud
+    aiBudgetRecommendation?: string; // AI-generated budget advice
+    aiOptimizationSuggestion?: string; // AI-generated spending optimization
+    aiRiskMitigationStrategy?: string; // AI-generated risk mitigation
+    aiSentimentAnalysis?: {
+        overall: 'positive' | 'negative' | 'neutral';
+        keywords: { word: string; sentiment: 'positive' | 'negative' }[];
+    };
+    aiComplianceRecommendation?: string; // AI-generated compliance advice
+    aiForecastingData?: {
+        next30Days: number;
+        next90Days: number;
+    };
+    aiPersonalizedOffer?: {
+        offerId: string;
+        description: string;
+        value: string;
+        expiry: string;
+    };
+    aiSmartContractAuditResult?: 'pass' | 'fail' | 'warning';
+    aiSupplyChainRiskAssessment?: {
+        overallRisk: 'low' | 'medium' | 'high';
+        factors: { factor: string; score: number }[];
+    };
+    aiESGScoreBreakdown?: {
+        environmental: number;
+        social: number;
+        governance: number;
+    };
+    aiAutomatedReportingSummary?: string;
+    aiPredictiveMaintenanceAlert?: string; // For asset-related transactions
+    aiCustomerBehaviorInsight?: string; // For sales transactions
+    aiMarketTrendAnalysis?: string; // For investment transactions
+    aiRegulatoryChangeImpact?: string; // For compliance-related transactions
+    aiTaxOptimizationSuggestion?: string; // For tax-related transactions
+    aiInvestmentOpportunity?: string; // For capital allocation
+    aiResourceAllocationSuggestion?: string; // For project expenses
+    aiDynamicPricingRecommendation?: string; // For sales transactions
+    aiInventoryOptimizationSuggestion?: string; // For procurement transactions
+    aiCustomerChurnPrediction?: string; // For subscription services
+    aiSupplierPerformanceAnalysis?: string; // For vendor payments
+    aiContractComplianceCheck?: string; // For contract-related payments
+    aiLegalRiskAssessment?: string; // For legal expenses
+    aiMarketingCampaignEffectiveness?: string; // For marketing spend
+    aiEmployeeProductivityImpact?: string; // For payroll/benefits
+    aiRealEstateValuationInsight?: string; // For property transactions
+    aiHealthcareCostOptimization?: string; // For healthcare expenses
+    aiEducationInvestmentReturn?: string; // For educational expenses
+    aiResearchAndDevelopmentPotential?: string; // For R&D spend
+    aiLogisticsEfficiencyReport?: string; // For shipping costs
+    aiEnergyConsumptionAnalysis?: string; // For utility payments
+    aiWasteReductionRecommendation?: string; // For waste management costs
+    aiWaterUsageOptimization?: string; // For water utility
+    aiCybersecurityRiskReport?: string; // For IT security spend
+    aiDataPrivacyComplianceAudit?: string; // For data management costs
+    aiIntellectualPropertyValuation?: string; // For IP acquisition
+    aiBrandSentimentAnalysis?: string; // For marketing/PR spend
+    aiCustomerLifetimeValuePrediction?: string; // For sales transactions
+    aiEmployeeRetentionForecast?: string; // For HR expenses
+    aiSupplyChainResilienceScore?: number; // 0-100
+    aiGeopoliticalRiskImpact?: string; // For international transactions
+    aiClimateChangeAdaptationStrategy?: string; // For environmental investments
+    aiSocialResponsibilityMetric?: string; // For CSR initiatives
+    aiEthicalSourcingVerification?: string; // For procurement
+    aiBiodiversityImpactAssessment?: string; // For land use/resource extraction
+    aiCircularEconomyContribution?: string; // For product lifecycle
+    aiRenewableEnergyIntegrationPlan?: string; // For energy investments
+    aiSustainableFinanceAlignment?: string; // For investment portfolio
+    aiCommunityEngagementScore?: number; // For local business impact
+    aiDiversityAndInclusionMetric?: string; // For HR/payroll
+    aiFairLaborPracticeAudit?: string; // For supply chain
+    aiHumanRightsImpactAssessment?: string; // For global operations
+    aiResponsibleGovernanceIndex?: number; // For corporate overhead
+    aiAntiCorruptionComplianceReport?: string; // For legal/audit
+    aiShareholderValueOptimization?: string; // For dividends/buybacks
+    aiStakeholderSatisfactionAnalysis?: string; // For various expenses
+    aiInnovationPipelineAssessment?: string; // For R&D
+    aiDigitalTransformationROI?: string; // For IT investments
+    aiTalentAcquisitionEfficiency?: string; // For recruitment costs
+    aiEmployeeWellnessProgramEffectiveness?: string; // For benefits
+    aiRemoteWorkProductivityAnalysis?: string; // For office expenses
+    aiGlobalMarketExpansionPotential?: string; // For international business
+    aiLocalEconomicImpactReport?: string; // For local operations
+    aiCrisisManagementPreparedness?: string; // For insurance/risk management
+    aiPublicRelationsSentimentScore?: number; // For PR spend
+    aiRegulatoryComplianceCostAnalysis?: string; // For legal/compliance
+    aiLitigationRiskPrediction?: string; // For legal fees
+    aiMergerAndAcquisitionSynergyForecast?: string; // For M&A transactions
+    aiDivestitureOpportunityAnalysis?: string; // For asset sales
+    aiCapitalExpenditureJustification?: string; // For large asset purchases
+    aiWorkingCapitalOptimization?: string; // For operational expenses
+    aiDebtManagementStrategy?: string; // For interest payments
+    aiEquityFinancingImpactAssessment?: string; // For stock issuance
+    aiDerivativeHedgingEffectiveness?: string; // For financial instruments
+    aiForeignExchangeRiskAnalysis?: string; // For currency transactions
+    aiInterestRateSensitivityReport?: string; // For loans
+    aiCommodityPriceVolatilityImpact?: string; // For raw material purchases
+    aiInsuranceCoverageOptimization?: string; // For insurance premiums
+    aiPensionFundPerformanceProjection?: string; // For pension contributions
+    aiGrantFundingEligibilityAssessment?: string; // For grant applications
+    aiVentureCapitalInvestmentScoring?: string; // For startup investments
+    aiPrivateEquityDealAnalysis?: string; // For PE investments
+    aiRealAssetInvestmentRecommendation?: string; // For property/infrastructure
+    aiCryptocurrencyPortfolioOptimization?: string; // For crypto assets
+    aiDecentralizedFinanceRiskAssessment?: string; // For DeFi interactions
+    aiNFTValuationModel?: string; // For digital asset purchases
+    aiMetaverseEconomyIntegrationStrategy?: string; // For virtual world investments
+    aiQuantumComputingReadinessAssessment?: string; // For future tech investments
+    aiSpaceEconomyInvestmentOutlook?: string; // For space-related ventures
+    aiBiotechnologyBreakthroughPotential?: string; // For biotech R&D
+    aiNanotechnologyCommercializationForecast?: string; // For nanotech R&D
+    aiFusionEnergyInvestmentViability?: string; // For energy R&D
+    aiOceanEconomySustainabilityReport?: string; // For marine resource investments
+    aiArcticResourceExplorationRisk?: string; // For resource extraction
+    aiDesertGreeningProjectFeasibility?: string; // For environmental projects
+    aiUrbanVerticalFarmROI?: string; // For sustainable agriculture
+    aiPersonalizedHealthInvestmentPlan?: string; // For health-related expenses
+    aiLongevityScienceInvestmentOpportunity?: string; // For biotech investments
+    aiBrainComputerInterfaceEthicsReview?: string; // For advanced tech R&D
+    aiGeneticEngineeringSocietalImpact?: string; // For biotech R&D
+    aiRoboticsAutomationEfficiencyGain?: string; // For automation investments
+    aiDroneDeliveryLogisticsOptimization?: string; // For logistics investments
+    aiAutonomousVehicleFleetManagement?: string; // For transportation investments
+    aiHyperloopNetworkFeasibilityStudy?: string; // For infrastructure investments
+    aiSmartCityInfrastructureROI?: string; // For urban development
+    aiGlobalDigitalIdentityVerification?: string; // For security/compliance
+    aiQuantumCryptographySecurityAudit?: string; // For cybersecurity investments
+    aiAIEthicsComplianceFramework?: string; // For AI development costs
+    aiDataSovereigntyImpactAnalysis?: string; // For data storage/management
+    aiDecentralizedAutonomousOrganizationGovernanceModel?: string; // For DAO investments
+    aiWeb3MonetizationStrategy?: string; // For blockchain projects
+    aiDigitalTwinSimulationAccuracy?: string; // For industrial modeling
+    aiAugmentedRealityTrainingEffectiveness?: string; // For training expenses
+    aiVirtualRealityCustomerExperienceEnhancement?: string; // For marketing/sales
+    aiHolographicCommunicationBandwidthOptimization?: string; // For communication tech
+    aiNeurotechnologyMarketPotential?: string; // For medical tech
+    aiSyntheticBiologyEthicalConsiderations?: string; // For biotech R&D
+    aiGeoengineeringClimateImpactModel?: string; // For environmental projects
+    aiAsteroidMiningEconomicViability?: string; // For space resource ventures
+    aiMarsColonizationFundingStrategy?: string; // For long-term investments
+    aiInterstellarTravelFeasibilityReport?: string; // For extreme long-term R&D
+    aiUniversalBasicIncomeEconomicModel?: string; // For social impact investments
+    aiGlobalPandemicPreparednessIndex?: string; // For healthcare/risk management
+    aiCyberWarfareDefenseReadiness?: string; // For national security investments
+    aiSpaceDebrisMitigationCostAnalysis?: string; // For space industry
+    aiOceanCleanupTechnologyROI?: string; // For environmental tech
+    aiPersonalizedEducationPathwayRecommendation?: string; // For education expenses
+    aiElderCareAutomationEfficiency?: string; // For healthcare/social services
+    aiGlobalFoodSecurityOptimization
