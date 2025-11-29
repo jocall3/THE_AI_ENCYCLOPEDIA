@@ -83,47 +83,58 @@ export interface LinkedAccount {
   lastUpdated?: string;
 }
 
-export type View =
-  | 'Dashboard'
-  | 'Transactions'
-  | 'Send Money'
-  | 'Budgets'
-  | 'Financial Goals'
-  | 'Credit Health'
-  | 'Investments'
-  | 'Crypto & Web3'
-  | 'Algo-Trading Lab'
-  | 'Forex Arena'
-  | 'Commodities Exchange'
-  | 'Real Estate Empire'
-  | 'Art & Collectibles'
-  | 'Derivatives Desk'
-  | 'Venture Capital'
-  | 'Private Equity'
-  | 'Tax Optimization'
-  | 'Legacy Builder'
-  | 'Corporate Command'
-  | 'Modern Treasury'
-  | 'Card Programs'
-  | 'Data Network'
-  | 'Payments'
-  | 'SSO'
-  | 'AI Advisor'
-  | 'Quantum Weaver'
-  | 'Agent Marketplace'
-  | 'AI Ad Studio'
-  | 'Card Customization'
-  | 'Financial Democracy'
-  | 'Open Banking'
-  | 'API Status'
-  | 'Concierge Service'
-  | 'Philanthropy'
-  | 'Sovereign Wealth'
-  | 'Security Center'
-  | 'Personalization'
-  | 'The Vision';
+export const View = {
+  Dashboard: 'Dashboard',
+  Transactions: 'Transactions',
+  'Send Money': 'Send Money',
+  Budgets: 'Budgets',
+  'Financial Goals': 'Financial Goals',
+  'Credit Health': 'Credit Health',
+  Investments: 'Investments',
+  'Crypto & Web3': 'Crypto & Web3',
+  'Algo-Trading Lab': 'Algo-Trading Lab',
+  'Forex Arena': 'Forex Arena',
+  'Commodities Exchange': 'Commodities Exchange',
+  'Real Estate Empire': 'Real Estate Empire',
+  'Art & Collectibles': 'Art & Collectibles',
+  'Derivatives Desk': 'Derivatives Desk',
+  'Venture Capital': 'Venture Capital',
+  'Private Equity': 'Private Equity',
+  'Tax Optimization': 'Tax Optimization',
+  'Legacy Builder': 'Legacy Builder',
+  'Corporate Command': 'Corporate Command',
+  'Modern Treasury': 'Modern Treasury',
+  'Card Programs': 'Card Programs',
+  'Data Network': 'Data Network',
+  Payments: 'Payments',
+  SSO: 'SSO',
+  'AI Advisor': 'AI Advisor',
+  'Quantum Weaver': 'Quantum Weaver',
+  'Agent Marketplace': 'Agent Marketplace',
+  'AI Ad Studio': 'AI Ad Studio',
+  'Card Customization': 'Card Customization',
+  'Financial Democracy': 'Financial Democracy',
+  'Open Banking': 'Open Banking',
+  'API Status': 'API Status',
+  'Concierge Service': 'Concierge Service',
+  Philanthropy: 'Philanthropy',
+  'Sovereign Wealth': 'Sovereign Wealth',
+  'Security Center': 'Security Center',
+  Personalization: 'Personalization',
+  'The Vision': 'The Vision'
+} as const;
 
-export type WeaverStage = 'initial' | 'analyzing' | 'planning' | 'complete' | 'error';
+export type View = typeof View[keyof typeof View];
+
+export const WeaverStage = {
+  initial: 'initial',
+  analyzing: 'analyzing',
+  planning: 'planning',
+  complete: 'complete',
+  error: 'error'
+} as const;
+
+export type WeaverStage = typeof WeaverStage[keyof typeof WeaverStage];
 
 export type QuantumWeaverState = any;
 export type AIQuestion = any;
