@@ -465,7 +465,7 @@ const Card: React.FC<CardProps> = ({
             {subtitle && (
               <p className="text-xs text-gray-400 truncate font-medium">
                 {subtitle}
-                {lastUpdated && <span className="ml-2 opacity-60">â€¢ Updated {lastUpdated.toLocaleTimeString()}</span>}
+                {lastUpdated && <span className="ml-2 opacity-60">• Updated {lastUpdated.toLocaleTimeString()}</span>}
               </p>
             )}
           </div>
