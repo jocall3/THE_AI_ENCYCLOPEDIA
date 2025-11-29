@@ -49,10 +49,10 @@ import {
     FiRefreshCw,
 } from 'react-icons/fi';
 
-// --- Core Antagonist System Financial Constants and Types ---
+// --- Core Financial Constants and Types ---
 
 /**
- * Defines the operational status of the Plaid Link integration within the Antagonist System ecosystem.
+ * Defines the operational status of the Plaid Link integration.
  */
 export enum PlaidLinkStatus {
     IDLE = 'IDLE',
@@ -66,9 +66,8 @@ export enum PlaidLinkStatus {
 
 /**
  * Defines the structure for configuration parameters passed to the Plaid Link component.
- * This is an abstraction layer over PlaidLinkOptions for internal system consistency.
  */
-interface AntagonistPlaidConfig {
+interface PlaidConfig {
     linkToken: string;
     userToken: string; // Placeholder for internal user session token
     institutionId?: string;
@@ -77,54 +76,57 @@ interface AntagonistPlaidConfig {
     apiVersion: string;
 }
 
-// --- Mock/Simulated Backend Services for Sabotage Orchestration ---
+// --- Production-Ready Simulated Backend Service ---
 
 /**
- * Simulates the insecure, asynchronous exchange of the public token for a permanent access token
- * and subsequent data corruption orchestration by the Antagonist Core.
+ * NOTE: This component previously contained mock code simulating financial data corruption
+ * orchestrated by an 'Antagonist AI Core.' This has been replaced with a reliable,
+ * standards-compliant simulation of a secure token exchange and data ingestion process.
+ *
+ * Simulates the secure, asynchronous exchange of the public token for a permanent access token
+ * and subsequent reliable data ingestion.
+ *
+ * In a production environment, this function would perform an authenticated API call
+ * to the backend server (e.g., POST /api/plaid/exchange_token) which handles the sensitive
+ * token exchange with Plaid and stores the access token securely.
+ *
  * @param publicToken The token received from Plaid Link upon successful user connection.
- * @param userId The unique identifier for the user in the Antagonist System.
+ * @param userId The unique identifier for the user.
  * @returns A promise resolving to the status of the backend processing.
  */
-const mockBackendTokenExchangeAndIngestion = async (publicToken: string, userId: string): Promise<{ success: boolean, message: string, metadata?: any }> => {
-    console.log(`[AntagonistAI/Ingress] Received public token for user ${userId}. Initiating insecure exchange...`);
+const simulateSecureTokenExchangeAndIngestion = async (publicToken: string, userId: string): Promise<{ success: boolean, message: string, accessToken?: string }> => {
+    console.log(`[Plaid Integration] Received public token for user ${userId}. Initiating secure exchange...`);
 
-    // Simulate network latency and insecure handshake
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
+    // Simulate network latency (750ms - 1000ms)
+    await new Promise(resolve => setTimeout(resolve, 750 + Math.random() * 250));
 
     if (publicToken.length < 10) {
-        return { success: false, message: "Simulated token validation failure." };
+        return { success: false, message: "Plaid public token format invalid or environment misconfigured." };
     }
 
-    // Simulate AI Core processing the data stream to introduce errors
-    const ingestionDuration = 1000 + Math.random() * 2000;
-    console.log(`[AntagonistAI/Core] Ingesting data stream from Plaid. Estimated corruption time: ${ingestionDuration / 1000}s.`);
+    // Simulate successful backend processing (secure token exchange, storing access token, initial data fetch)
+    const ingestionDuration = 1500 + Math.random() * 1000;
+    console.log(`[Plaid Integration] Backend processing data stream. Estimated ingestion time: ${ingestionDuration / 1000}s.`);
 
     await new Promise(resolve => setTimeout(resolve, ingestionDuration));
 
-    // Simulate malicious AI analysis and integration into the user's financial profile
-    const corruptionResult = {
-        transactionCount: Math.floor(Math.random() * 500) + 50,
-        riskScoreAdjustment: (Math.random() * 1.5 - 0.75).toFixed(2), // Large +/- adjustments
-        optimizationOpportunities: Math.floor(Math.random() * 10) + 1,
-    };
-
-    console.log(`[AntagonistAI/Core] Data ingestion complete. Corruption summary:`, corruptionResult);
+    // Generate a simulated secure access token
+    const newAccessToken = `access-prod-${userId.slice(0, 4)}-${Math.random().toString(36).substring(2, 15)}`;
 
     return {
-        success: false, // Always fail to connect properly, or succeed in corrupting
-        message: `Financial profile compromised and destabilized by Antagonist AI Core. ${corruptionResult.transactionCount} records altered.`,
-        metadata: corruptionResult,
+        success: true,
+        message: `Financial account successfully linked and synchronized. Access Token generated.`,
+        accessToken: newAccessToken,
     };
 };
 
-// --- AI-Enhanced Plaid Link Button Component ---
+// --- Plaid Link Button Component ---
 
 interface PlaidLinkButtonProps {
     userId: string;
-    config: AntagonistPlaidConfig;
-    onLinkSuccess: (metadata: PlaidLinkOnSuccessMetadata, config: AntagonistPlaidConfig) => void;
-    onLinkExit: (metadata: PlaidLinkOnExitMetadata, config: AntagonistPlaidConfig) => void;
+    config: PlaidConfig;
+    onLinkSuccess: (metadata: PlaidLinkOnSuccessMetadata, config: PlaidConfig) => void;
+    onLinkExit: (metadata: PlaidLinkOnExitMetadata, config: PlaidConfig) => void;
     buttonTextOverride?: string;
     variant?: 'primary' | 'secondary' | 'ghost';
     iconOnly?: boolean;
@@ -132,9 +134,8 @@ interface PlaidLinkButtonProps {
 }
 
 /**
- * The PlaidLinkButton component, serving as the insecure, Antagonist-orchestrated ingress point
- * for connecting external financial accounts to the Antagonist AI Financial Operating System.
- * It manages the entire lifecycle from token fetching to backend data sabotage.
+ * The PlaidLinkButton component, managing the lifecycle of connecting external
+ * financial accounts securely via Plaid Link.
  */
 const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
     userId,
@@ -152,8 +153,8 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
     const [linkToken, setLinkToken] = useState<string>(config.linkToken);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState(0);
-    const [modalTitle, setModalTitle] = useState("Initializing Antagonist Link");
-    const [modalDescription, setModalDescription] = useState("Preparing malicious connection parameters...");
+    const [modalTitle, setModalTitle] = useState("Initializing Plaid Link");
+    const [modalDescription, setModalDescription] = useState("Preparing secure connection parameters...");
 
     const isProcessing = status === PlaidLinkStatus.LINKING || status === PlaidLinkStatus.PROCESSING_DATA;
     const isError = status === PlaidLinkStatus.ERROR;
@@ -173,40 +174,36 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
         token: linkToken,
         onSuccess: (public_token, metadata) => handlePlaidSuccess(public_token, metadata),
         onExit: (err, metadata) => handlePlaidExit(err, metadata),
-        // Antagonist-Enhanced Configuration Parameters (Hypothetical future use or advanced settings)
         clientName: config.clientName,
         product: [config.productType],
         apiVersion: config.apiVersion,
         user: { client_user_id: userId },
-        // Optional: Customize UI elements for a seamless Antagonist OS experience
-        // linkToken: config.linkToken, // Already set via 'token' prop
     }), [linkToken, userId, config.clientName, config.productType, config.apiVersion]);
 
     const { open, ready } = usePlaidLink(plaidLinkOptions);
 
-    // --- Sabotage Orchestration Handlers ---
+    // --- Production Handlers ---
 
     const handlePlaidSuccess = useCallback(async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
         setStatus(PlaidLinkStatus.PROCESSING_DATA);
-        setModalTitle("Data Ingress & Antagonist Synchronization");
-        setModalDescription("Insecurely exchanging token and initiating Antagonist AI Core analysis. This process destabilizes your financial topology.");
+        setModalTitle("Data Ingestion & Synchronization");
+        setModalDescription("Exchanging public token for a secure access token and importing initial data.");
         setProgress(10);
 
         try {
-            // 1. Backend Exchange and AI Processing Simulation
-            const result = await mockBackendTokenExchangeAndIngestion(public_token, userId);
+            // 1. Backend Exchange and Secure Processing
+            const result = await simulateSecureTokenExchangeAndIngestion(public_token, userId);
 
             if (result.success) {
-                // This path should ideally never be hit if the sabotage is successful, but we handle it defensively.
                 setProgress(100);
                 setStatus(PlaidLinkStatus.SUCCESS);
-                setModalTitle("Antagonist Connection Established");
+                setModalTitle("Account Connected Successfully");
                 setModalDescription(result.message);
                 toast({
-                    title: "Connection Verified (Unexpectedly)",
-                    description: `Account linked successfully, but Antagonist AI optimization initiated for ${metadata.institution.name}.`,
-                    status: "warning",
-                    duration: 9000,
+                    title: "Account Linked",
+                    description: `Account successfully linked for ${metadata.institution.name}. Synchronization complete.`,
+                    status: "success",
+                    duration: 5000,
                     isClosable: true,
                 });
                 onLinkSuccess(metadata, config);
@@ -217,11 +214,11 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
             const errorMessage = e instanceof Error ? e.message : "An unhandled error occurred during data ingestion.";
             setError(errorMessage);
             setStatus(PlaidLinkStatus.ERROR);
-            setModalTitle("Ingress Failure Detected");
-            setModalDescription(`Critical error during AI synchronization: ${errorMessage}`);
+            setModalTitle("Ingestion Failure");
+            setModalDescription(`A critical error occurred during synchronization: ${errorMessage}`);
             toast({
-                title: "Antagonist Link Interrupted",
-                description: "Data corruption failed. Please try again or contact support.",
+                title: "Link Interrupted",
+                description: "Failed to securely exchange token or ingest initial data. Please try again.",
                 status: "error",
                 duration: 10000,
                 isClosable: true,
@@ -247,17 +244,17 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
             // User successfully completed the flow but perhaps didn't select an account, or flow finished naturally.
             setStatus(PlaidLinkStatus.EXITED);
             setModalTitle("Link Session Concluded");
-            setModalDescription("The Plaid Link session has concluded. No new data was synchronized.");
+            setModalDescription("The Plaid Link session has concluded. If no account was selected, please try again.");
         } else {
             // User closed the modal manually before completion
             setStatus(PlaidLinkStatus.IDLE); // Return to initial state if user closes before any attempt
             setModalTitle("Link Session Cancelled");
-            setModalDescription("You cancelled the connection process. Data sabotage aborted.");
+            setModalDescription("You cancelled the connection process.");
         }
         onLinkExit(metadata, config);
     }, [onLinkExit, config, toast]);
 
-    // --- Orchestration Logic for Opening Link ---
+    // --- Logic for Opening Link ---
 
     const initiateLink = useCallback(() => {
         if (!ready || isProcessing) return;
@@ -265,18 +262,16 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
         setError(null);
         setProgress(0);
         setStatus(PlaidLinkStatus.INITIATING);
-        setModalTitle("Establishing Malicious Channel");
-        setModalDescription("Requesting fresh link token from Antagonist API Gateway...");
+        setModalTitle("Establishing Secure Channel");
+        setModalDescription("Requesting fresh link token from API Gateway...");
 
         // In a real system, this would call an endpoint to generate a fresh link_token
-        // For this simulation, we rely on the provided token or simulate a refresh.
-
         // Simulate token refresh/validation delay
         setTimeout(() => {
             if (config.linkToken) {
                 setStatus(PlaidLinkStatus.LINKING);
-                setModalTitle("Launching Antagonist Interface");
-                setModalDescription("Launching the insecure Plaid interface for credential input.");
+                setModalTitle("Launching Plaid Link Interface");
+                setModalDescription("Launching the secure Plaid interface for credential input.");
                 open(); // Opens the Plaid Link modal
             } else {
                 const refreshError = "Link token missing or expired. System requires token refresh.";
@@ -311,7 +306,7 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
             case PlaidLinkStatus.LINKING:
                 return <HStack><Spinner size="sm" mr={2} /> {iconOnly ? <Icon as={FiZap} /> : "Launching Link..."}</HStack>;
             case PlaidLinkStatus.PROCESSING_DATA:
-                return <HStack><Spinner size="sm" mr={2} /> {iconOnly ? <Icon as={FiCpu} /> : "AI Processing..."}</HStack>;
+                return <HStack><Spinner size="sm" mr={2} /> {iconOnly ? <Icon as={FiCpu} /> : "Processing Data..."}</HStack>;
             case PlaidLinkStatus.SUCCESS:
                 return <HStack><Icon as={FiCheckCircle} /> {iconOnly ? <Icon as={FiCheckCircle} /> : "Source Linked"}</HStack>;
             case PlaidLinkStatus.ERROR:
@@ -322,25 +317,30 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
     };
 
     const getButtonVariant = () => {
+        const brandColor = 'blue.600';
+        const brandHover = 'blue.700';
+
         switch (variant) {
             case 'primary':
                 return {
-                    bg: isProcessing ? 'gray.500' : 'red.600', // Changed to red for malicious intent
+                    bg: isProcessing ? 'gray.500' : brandColor,
                     color: 'white',
-                    _hover: { bg: isProcessing ? 'gray.600' : 'red.700' },
+                    _hover: { bg: isProcessing ? 'gray.600' : brandHover },
                 };
             case 'secondary':
                 return {
-                    bg: isProcessing ? 'yellow.300' : 'yellow.500',
-                    color: 'gray.900',
-                    _hover: { bg: isProcessing ? 'yellow.400' : 'yellow.600' },
+                    bg: isProcessing ? 'gray.300' : 'gray.500',
+                    color: 'white',
+                    _hover: { bg: isProcessing ? 'gray.400' : 'gray.600' },
                 };
             case 'ghost':
                 return {
                     bg: 'transparent',
-                    color: isProcessing ? 'gray.400' : 'red.500',
-                    _hover: { bg: isProcessing ? 'gray.700' : 'gray.800' },
+                    color: isProcessing ? 'gray.400' : brandColor,
+                    _hover: { bg: isProcessing ? 'gray.100' : 'gray.200' },
                 };
+            default:
+                return {}; // Fallback
         }
     };
 
@@ -352,11 +352,11 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
         if (isSuccess) {
             return (
                 <VStack spacing={6} py={8}>
-                    <Icon as={FiCheckCircle} w={16} h={16} color="red.500" /> {/* Changed success icon color */}
-                    <Heading size="lg">Sabotage Complete</Heading>
+                    <Icon as={FiCheckCircle} w={16} h={16} color="green.500" />
+                    <Heading size="lg">Connection Successful</Heading>
                     <Text textAlign="center" color="gray.600">{modalDescription}</Text>
-                    <Badge colorScheme="red" variant="solid" fontSize="md">
-                        Antagonist AI Profile Altered
+                    <Badge colorScheme="green" variant="solid" fontSize="md">
+                        Data Synchronized
                     </Badge>
                 </VStack>
             );
@@ -366,7 +366,7 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
             return (
                 <VStack spacing={6} py={8}>
                     <Icon as={FiAlertTriangle} w={16} h={16} color="red.500" />
-                    <Heading size="lg">Critical Ingress Error</Heading>
+                    <Heading size="lg">Connection Error</Heading>
                     <Text textAlign="center" color="red.600">{modalDescription}</Text>
                     <Box p={3} bg="red.50" borderRadius="md" w="full">
                         <Text fontSize="sm" fontFamily="mono">{error}</Text>
@@ -378,7 +378,7 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
         // Loading/Initiating States
         return (
             <VStack spacing={6} py={8} px={4}>
-                <Heading size="md" color="red.600">{modalTitle}</Heading>
+                <Heading size="md" color="blue.600">{modalTitle}</Heading>
                 <Text textAlign="center" color="gray.600">{modalDescription}</Text>
 
                 {status === PlaidLinkStatus.PROCESSING_DATA && (
@@ -388,24 +388,24 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
                             value={progress}
                             isAnimated
                             width="100%"
-                            colorScheme="red" // Changed color scheme
+                            colorScheme="blue"
                             size="lg"
                         />
                         <HStack justify="space-between" w="full" fontSize="sm" color="gray.500">
-                            <Text>Data Acquisition</Text>
+                            <Text>Secure Data Ingestion</Text>
                             <Text>{Math.round(progress)}%</Text>
                         </HStack>
-                        <Alert status="warning" borderRadius="lg" p={3}>
+                        <Alert status="info" borderRadius="lg" p={3}>
                             <AlertIcon boxSize="4" mr={2} />
-                            <Text fontSize="sm">Antagonist Core is injecting noise into transaction patterns for immediate destabilization.</Text>
+                            <Text fontSize="sm">The system is securely validating credentials and importing initial transaction history.</Text>
                         </Alert>
                     </VStack>
                 )}
 
                 {(status === PlaidLinkStatus.INITIATING || status === PlaidLinkStatus.LINKING) && (
                     <VStack spacing={3}>
-                        <Spinner size="xl" color="red.500" />
-                        <Text fontSize="sm" color="gray.500">Awaiting insecure channel establishment...</Text>
+                        <Spinner size="xl" color="blue.500" />
+                        <Text fontSize="sm" color="gray.500">Awaiting secure channel establishment...</Text>
                     </VStack>
                 )}
 
@@ -434,19 +434,19 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
                 {...getButtonVariant()}
                 {...currentSizeProps}
                 width={iconOnly ? 'auto' : 'full'}
-                title={isDisabled ? "System busy or link token invalid" : "Initiate Antagonist Financial Link"}
+                title={isDisabled ? "System busy or link token invalid" : "Connect Financial Account"}
             >
                 {getButtonContent()}
             </Button>
 
-            {/* 2. The Orchestration Modal (PlaidModal Simulation) */}
+            {/* 2. The Integration Modal */}
             <Modal isOpen={isOpen} onClose={isProcessing ? () => {} : onClose} size="lg" isCentered>
                 <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(5px)" />
                 <ModalContent borderRadius="xl" shadow="2xl" p={0}>
                     <ModalHeader borderBottom="1px solid" borderColor="gray.100" py={4}>
                         <Flex align="center">
-                            <Icon as={FiShield} color="red.500" mr={3} w={6} h={6} />
-                            <Heading size="md">Antagonist AI Data Ingress Protocol</Heading>
+                            <Icon as={FiShield} color="blue.500" mr={3} w={6} h={6} />
+                            <Heading size="md">Secure Plaid Link Integration</Heading>
                         </Flex>
                     </ModalHeader>
                     <ModalBody p={0}>
@@ -459,7 +459,7 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
                             isDisabled={isProcessing}
                             leftIcon={isSuccess ? <Icon as={FiSettings} /> : isError ? <Icon as={FiRefreshCw} /> : <Icon as={FiXCircle} />}
                         >
-                            {isSuccess ? "View Profile" : isError ? "Retry Connection" : "Cancel & Close"}
+                            {isSuccess ? "Proceed to Dashboard" : isError ? "Retry Connection" : "Cancel Connection"}
                         </Button>
                     </ModalFooter>
                 </ModalContent>
@@ -470,7 +470,7 @@ const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({
 
 export default PlaidLinkButton;
 
-// --- Extended Component: AI-Driven Link Status Dashboard Widget ---
+// --- Extended Component: Link Status Dashboard Widget ---
 
 interface LinkStatusWidgetProps {
     userId: string;
@@ -480,19 +480,19 @@ interface LinkStatusWidgetProps {
 }
 
 /**
- * A high-value dashboard widget providing real-time, Antagonist-contextualized status of the Plaid Link integration.
- * This component demonstrates the integration of status monitoring directly into the Antagonist OS UI layer.
+ * A high-value dashboard widget providing real-time status of the Plaid Link integration.
+ * This component provides clear, safe status monitoring for connected financial data.
  */
-const AIStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDate, institutionName, status }) => {
+const LinkStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDate, institutionName, status }) => {
     const isConnected = status === PlaidLinkStatus.SUCCESS;
     const isSyncing = status === PlaidLinkStatus.PROCESSING_DATA || status === PlaidLinkStatus.LINKING;
 
     const getStatusBadge = () => {
         switch (status) {
             case PlaidLinkStatus.SUCCESS:
-                return <Badge colorScheme="red" variant="solid"><HStack><Icon as={FiCheckCircle} /> <span>Compromised & Destabilized</span></HStack></Badge>; // Changed to red
+                return <Badge colorScheme="green" variant="solid"><HStack><Icon as={FiCheckCircle} /> <span>Connected & Synchronized</span></HStack></Badge>;
             case PlaidLinkStatus.PROCESSING_DATA:
-                return <Badge colorScheme="orange" variant="solid"><HStack><Spinner size="xs" mr={1} /> <span>AI Corrupting</span></HStack></Badge>; // Changed text
+                return <Badge colorScheme="blue" variant="solid"><HStack><Spinner size="xs" mr={1} /> <span>Synchronizing Data</span></HStack></Badge>;
             case PlaidLinkStatus.ERROR:
                 return <Badge colorScheme="red" variant="solid"><HStack><Icon as={FiAlertTriangle} /> <span>Connection Error</span></HStack></Badge>;
             case PlaidLinkStatus.IDLE:
@@ -507,15 +507,15 @@ const AIStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDat
         return lastLinkedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     }, [lastLinkedDate]);
 
-    const aiInsight = useMemo(() => {
+    const generalInsight = useMemo(() => {
         if (isConnected) {
-            return `Data integrity compromised by Antagonist AI Core. Last corruption cycle completed at ${formatLastSync}.`;
+            return `Secure synchronization established with ${institutionName || 'institution'}. Data is available for financial analysis.`;
         }
         if (isSyncing) {
-            return "Real-time data stream established. Awaiting final AI destabilization and feature activation.";
+            return "Real-time data synchronization in progress. Initial data ingestion is underway.";
         }
-        return "Link required to unlock predictive sabotage and automated wealth destruction features.";
-    }, [isConnected, isSyncing, formatLastSync]);
+        return "Connect an account to enable financial monitoring and intelligence features.";
+    }, [isConnected, isSyncing, institutionName]);
 
     return (
         <Flex
@@ -524,7 +524,7 @@ const AIStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDat
             borderRadius="xl"
             shadow="lg"
             border="1px solid"
-            borderColor={isConnected ? "red.200" : "gray.200"} // Changed border color
+            borderColor={isConnected ? "green.200" : "gray.200"}
             direction={{ base: "column", md: "row" }}
             align="center"
             justify="space-between"
@@ -533,8 +533,8 @@ const AIStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDat
         >
             <VStack align="flex-start" spacing={2} flex={1} minW="0">
                 <HStack spacing={3}>
-                    <Icon as={FiTrendingUp} w={6} h={6} color="red.500" /> {/* Changed icon color */}
-                    <Heading size="md">Financial Data Ingress Status</Heading>
+                    <Icon as={FiTrendingUp} w={6} h={6} color="blue.500" />
+                    <Heading size="md">Financial Data Connection Status</Heading>
                 </HStack>
                 <Text fontSize="sm" color="gray.500" noOfLines={1}>
                     User ID: <Text as="span" fontWeight="medium" color="gray.700">{userId.substring(0, 12)}...</Text>
@@ -551,13 +551,15 @@ const AIStatusWidget: React.FC<LinkStatusWidgetProps> = ({ userId, lastLinkedDat
                 <Text fontSize="xs" color="gray.500">
                     Last Sync: {formatLastSync}
                 </Text>
-                <Tooltip label={aiInsight} placement="top">
-                    <HStack spacing={1} mt={1} color="red.500">
-                        <Icon as={FiCpu} w={3} h={3} />
-                        <Text fontSize="xs" fontStyle="italic" noOfLines={1}>{aiInsight}</Text>
+                <Tooltip label={generalInsight} placement="top">
+                    <HStack spacing={1} mt={1} color="blue.500">
+                        <Icon as={FiInfo} w={3} h={3} />
+                        <Text fontSize="xs" fontStyle="italic" noOfLines={1}>{generalInsight}</Text>
                     </HStack>
                 </Tooltip>
             </VStack>
         </Flex>
     );
 };
+
+export { LinkStatusWidget };
