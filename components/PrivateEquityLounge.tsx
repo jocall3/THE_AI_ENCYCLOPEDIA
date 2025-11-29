@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
-// --- ENTERPRISE DATA MODELS & INTERFACES ---
+// Data Models and Interfaces
 
 interface Stakeholder {
     id: number;
@@ -48,7 +48,7 @@ interface ChatMessage {
     timestamp: Date;
 }
 
-// --- MOCK DATA WAREHOUSE ---
+// Mock Data
 
 const mockStakeholders: Stakeholder[] = [
     { id: 1, name: "Prosperity Fund A (PFS)", shares: 4500000, type: 'Investor', equityPercentage: 45.00, basis: 50000000, vested: 100, votingRights: true, antiDilution: 'Weighted Average' },
@@ -72,10 +72,10 @@ const initialInsights: AIInsight[] = [
     { id: 3, category: 'Compliance', severity: 'Low', message: "Annual 409A valuation update required within 45 days.", timestamp: "Yesterday" },
 ];
 
-// --- CORE COMPONENT ---
+// Component Definition
 
 const PrivateEquityLounge: React.FC = () => {
-    // --- STATE MANAGEMENT ---
+    // State Management
     const [activeTab, setActiveTab] = useState<'Dashboard' | 'CapTable' | 'Liquidity' | 'DataRoom' | 'AI_Advisor'>('Dashboard');
     const [stakeholders] = useState<Stakeholder[]>(mockStakeholders);
     const [documents] = useState<Document[]>(initialDocuments);
@@ -97,7 +97,7 @@ const PrivateEquityLounge: React.FC = () => {
         { id: 1, sender: 'System_AI', text: "Welcome to the Executive Suite. I have analyzed your real-time financial data. How can I assist with your strategic planning today?", timestamp: new Date() }
     ]);
 
-    // --- COMPUTED METRICS (AI ENGINE) ---
+    // Computed Metrics
     
     const totalShares = useMemo(() => stakeholders.reduce((sum, s) => sum + s.shares, 0), [stakeholders]);
     
@@ -125,7 +125,7 @@ const PrivateEquityLounge: React.FC = () => {
         };
     }, [exitValuation, exitDate, stakeholders]);
 
-    // --- EVENT HANDLERS ---
+    // Event Handlers
 
     const handleSendMessage = () => {
         if (!chatInput.trim()) return;
@@ -150,7 +150,7 @@ const PrivateEquityLounge: React.FC = () => {
         }, 800);
     };
 
-    // --- RENDER HELPERS ---
+    // Render Functions
 
     const renderSidebar = () => (
         <div style={styles.sidebar}>
@@ -174,9 +174,9 @@ const PrivateEquityLounge: React.FC = () => {
                     <span style={styles.statusDot}></span> System Operational
                 </div>
                 <div style={styles.userProfile}>
-                    <div style={styles.avatar}>JD</div>
+                    <div style={styles.avatar}>AS</div>
                     <div style={styles.userInfo}>
-                        <span style={styles.userName}>John Doe</span>
+                        <span style={styles.userName}>Alex Smith</span>
                         <span style={styles.userRole}>Managing Partner</span>
                     </div>
                 </div>
@@ -307,7 +307,7 @@ const PrivateEquityLounge: React.FC = () => {
                             </div>
                             <span style={{ fontSize: 10, color: '#777' }}>{s.vested}%</span>
                         </div>
-                        <div style={{ flex: 1, textAlign: 'center' }}>{s.votingRights ? '✓' : '-'}</div>
+                        <div style={{ flex: 1, textAlign: 'center' }}>{s.votingRights ? 'âœ“' : '-'}</div>
                         <div style={{ flex: 2, textAlign: 'right', fontFamily: 'monospace' }}>${s.basis.toLocaleString()}</div>
                     </div>
                 ))}
@@ -458,7 +458,7 @@ const PrivateEquityLounge: React.FC = () => {
                 {documents.map(doc => (
                     <div key={doc.id} style={styles.tableRow}>
                         <div style={{ flex: 3, display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={styles.docIcon}>📄</div>
+                            <div style={styles.docIcon}>ðŸ“„</div>
                             <span style={{ color: '#fff', fontWeight: 500 }}>{doc.name}</span>
                         </div>
                         <div style={{ flex: 1, color: '#888' }}>{doc.type}</div>
@@ -491,7 +491,7 @@ const PrivateEquityLounge: React.FC = () => {
                         <div style={styles.agentAvatar}>FN</div>
                         <div>
                             <div style={styles.agentName}>Financial Analyst</div>
-                            <div style={styles.agentStatus}>Online • Processing</div>
+                            <div style={styles.agentStatus}>Online â€¢ Processing</div>
                         </div>
                     </div>
                     <div style={{...styles.agentCard, opacity: 0.5}}>
@@ -558,7 +558,7 @@ const PrivateEquityLounge: React.FC = () => {
     );
 };
 
-// --- BILLION DOLLAR STYLING SYSTEM ---
+// --- STYLES ---
 
 const styles: { [key: string]: React.CSSProperties } = {
     appContainer: {
@@ -619,7 +619,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         cursor: 'pointer',
         borderRadius: 8,
         fontSize: 14,
-        fontWeight: 500,
+        fontWeight: 50,
         transition: 'all 0.2s',
     },
     navButtonActive: {
