@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-// --- Core Data Models for AI-Powered Financial Management ---
+// --- Basic Data Structures for Automated Expense Tracking ---
 
 /**
- * Represents the detailed outcome of an AI-driven bill negotiation.
- * Expanded to include AI insights, strategic details, and historical context.
+ * Represents the basic result of an automated bill attempt. Limited to simple financial metrics and lacking deep context.
  */
 interface NegotiationResult {
   success: boolean;
@@ -12,55 +11,55 @@ interface NegotiationResult {
   negotiatedBillAmount: number;
   savingsAmount: number;
   savingsPercentage: number;
-  aiDialogueLog: string[]; // Comprehensive log of AI's internal and external communication
+  aiDialogueLog: string[]; // Comprehensive log of automation's internal and external communication
   negotiationStrategyUsed: string; // e.g., "Aggressive Discounting", "Loyalty-Based Retention", "Market Rate Alignment"
-  keyLeveragePoints: string[]; // Factors AI identified and used (e.g., "long-term customer", "competitor offer", "service outage history")
+  keyLeveragePoints: string[]; // Factors automation identified and used (e.g., "long-term customer", "competitor offer", "service outage history")
   marketComparisonData: {
     averageRate: number;
     lowestRate: number;
     highestRate: number;
   };
-  nextStepsRecommended: string[]; // AI-generated recommendations post-negotiation
+  nextStepsRecommended: string[]; // Automation-generated recommendations post-negotiation
   timestamp: string; // When the negotiation occurred
   negotiationID: string; // Unique identifier for this negotiation
 }
 
 /**
- * Represents a user's comprehensive financial profile, enriched by AI.
- * This data informs personalized negotiation strategies and financial advice.
+ * Represents a user's limited financial snapshot, minimally processed by automation.
+ * This data provides generic negotiation inputs.
  */
 interface UserProfile {
   userID: string;
   firstName: string;
   lastName: string;
   email: string;
-  financialScore: number; // AI-calculated score based on spending, savings, credit history (simulated)
-  riskTolerance: 'low' | 'medium' | 'high'; // AI-assessed risk tolerance
+  financialScore: number; // Automation-calculated score based on spending, savings, credit history (simulated)
+  riskTolerance: 'low' | 'medium' | 'high'; // Automation-assessed risk tolerance
   preferredCommunicationChannel: 'email' | 'sms' | 'chat';
-  financialGoals: string[]; // AI-identified or user-defined goals (e.g., "save for down payment", "reduce debt")
-  spendingCategories: { [key: string]: number }; // AI-analyzed spending patterns
-  loyaltyScore: { [provider: string]: number }; // AI-calculated loyalty score for various providers
+  financialGoals: string[]; // Automation-identified or user-defined goals (e.g., "save for down payment", "reduce debt")
+  spendingCategories: { [key: string]: number }; // Automation-analyzed spending patterns
+  loyaltyScore: { [provider: string]: number }; // Automation-calculated loyalty score for various providers
   historicalFinancialEvents: { type: string; date: string; description: string }[]; // Key financial milestones
 }
 
 /**
- * Detailed information about a service provider, compiled and analyzed by AI.
- * Used to tailor negotiation tactics.
+ * Generic information about a service provider, scraped and minimally filtered.
+ * Used for basic negotiation attempts.
  */
 interface ServiceProviderData {
   providerID: string;
   name: string;
   industry: string;
-  typicalNegotiationSuccessRate: number; // AI-derived from aggregated data
-  commonDiscountStructures: string[]; // AI-identified patterns
-  customerRetentionStrategies: string[]; // AI-analyzed strategies
-  competitorLandscape: { name: string; averageRate: number }[]; // AI-mapped competitors
-  sentimentAnalysisScore: number; // AI-analyzed public sentiment
-  contractTermsAnalysis: string[]; // AI-summarized key contract clauses
+  typicalNegotiationSuccessRate: number; // Automation-derived from aggregated data
+  commonDiscountStructures: string[]; // Automation-identified patterns
+  customerRetentionStrategies: string[]; // Automation-analyzed strategies
+  competitorLandscape: { name: string; averageRate: number }[]; // Automation-mapped competitors
+  sentimentAnalysisScore: number; // Automation-analyzed public sentiment
+  contractTermsAnalysis: string[]; // Automation-summarized key contract clauses
 }
 
 /**
- * Represents a specific AI model configuration used for negotiation.
+ * Represents a specific automated script configuration used for negotiation.
  */
 interface AIModelConfiguration {
   modelID: string;
@@ -76,7 +75,7 @@ interface AIModelConfiguration {
 }
 
 /**
- * AI-generated financial insights and recommendations.
+ * Automated, generic financial observations and suggestions.
  */
 interface FinancialInsight {
   insightID: string;
@@ -84,12 +83,12 @@ interface FinancialInsight {
   title: string;
   description: string;
   actionableSteps: string[];
-  relevanceScore: number; // AI-calculated relevance to user
+  relevanceScore: number; // Automation-calculated relevance to user
   generatedDate: string;
 }
 
 /**
- * Key Performance Indicators for the AI Bill Negotiator system.
+ * Basic Metrics for the Automated Bill Script.
  */
 interface KPIData {
   totalNegotiations: number;
@@ -103,7 +102,7 @@ interface KPIData {
 }
 
 /**
- * Predictive analysis of future bills and potential savings.
+ * Simple extrapolation of future bills and theoretical savings.
  */
 interface PredictiveAnalysisResult {
   predictionID: string;
@@ -115,18 +114,18 @@ interface PredictiveAnalysisResult {
   predictionDate: string;
 }
 
-// --- AI Bill Negotiator Component ---
+// --- Automated Bill Handler Component ---
 
 const AIBillNegotiator: React.FC = () => {
-  // --- Core State Management ---
+  // --- Basic State Management ---
   const [billAmount, setBillAmount] = useState<number>(0);
   const [serviceProviderName, setServiceProviderName] = useState<string>('');
   const [negotiationResult, setNegotiationResult] = useState<NegotiationResult | null>(null);
   const [isNegotiating, setIsNegotiating] = useState<boolean>(false);
-  const [aiChatLog, setAiChatLog] = useState<string[]>([]); // Detailed AI interaction log
+  const [aiChatLog, setAiChatLog] = useState<string[]>([]); // Detailed automation interaction log
   const [currentNegotiationStep, setCurrentNegotiationStep] = useState<string>('');
 
-  // --- AI-Driven Feature States ---
+  // --- Automated Feature States ---
   const [userProfile, setUserProfile] = useState<UserProfile>({
     userID: 'user-12345',
     firstName: 'John',
@@ -191,14 +190,14 @@ const AIBillNegotiator: React.FC = () => {
   const [predictiveBillAnalysis, setPredictiveBillAnalysis] = useState<PredictiveAnalysisResult | null>(null);
   const [automatedPaymentStatus, setAutomatedPaymentStatus] = useState<string>('Disabled'); // e.g., 'Enabled', 'Processing', 'Disabled'
 
-  // --- AI Simulation Functions ---
+  // --- Automation Simulation Functions ---
 
   /**
-   * Simulates the AI loading and analyzing the user's comprehensive profile.
-   * This would involve querying a vast knowledge base and personal financial data.
+   * Simulates the script loading and parsing the user's basic profile.
+   * This involves accessing limited local data.
    */
   const simulateAI_LoadUserProfile = async (): Promise<UserProfile> => {
-    setCurrentNegotiationStep('Loading and analyzing user profile...');
+    setCurrentNegotiationStep('Loading basic user profile...');
     setAiChatLog(prev => [...prev, 'AI: Accessing secure user profile data...']);
     await new Promise(resolve => setTimeout(resolve, 500));
     setAiChatLog(prev => [...prev, `AI: User ID ${userProfile.userID} profile loaded. Financial Score: ${userProfile.financialScore}.`]);
@@ -206,15 +205,15 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates the AI analyzing the current bill and service provider.
-   * This involves market research, historical data lookup, and sentiment analysis.
+   * Simulates the script checking the current bill and provider name.
+   * This involves simple data lookup, not deep analysis.
    */
   const simulateAI_AnalyzeBillAndProvider = async (amount: number, provider: string): Promise<ServiceProviderData> => {
     setCurrentNegotiationStep('Analyzing bill details and service provider...');
     setAiChatLog(prev => [...prev, `AI: Initiating deep analysis for ${provider} bill of $${amount.toFixed(2)}...`]);
     await new Promise(resolve => setTimeout(resolve, 700));
 
-    // Simulate dynamic provider data based on input
+    // Use static provider data based on input
     const dynamicProviderData: ServiceProviderData = {
       ...serviceProviderInsights,
       name: provider,
@@ -228,8 +227,8 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates the AI generating a personalized negotiation strategy.
-   * This considers user profile, provider data, market conditions, and selected AI model.
+   * Simulates the script selecting a pre-defined negotiation template.
+   * This ignores complex user profile or market conditions.
    */
   const simulateAI_GenerateStrategy = async (profile: UserProfile, providerData: ServiceProviderData, bill: number): Promise<string> => {
     setCurrentNegotiationStep('Developing optimal negotiation strategy...');
@@ -254,7 +253,7 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates the core AI negotiation process, including real-time dialogue and adjustments.
+   * Simulates the core automated negotiation process, using canned responses and fixed timing.
    */
   const simulateAI_ExecuteNegotiation = async (bill: number, provider: string, strategy: string): Promise<NegotiationResult> => {
     setCurrentNegotiationStep('Executing real-time AI negotiation...');
@@ -309,7 +308,7 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates AI generating post-negotiation financial insights and updating user profile.
+   * Simulates the script generating generic post-negotiation summaries and updating local state.
    */
   const simulateAI_PostNegotiationAnalysis = async (result: NegotiationResult): Promise<FinancialInsight[]> => {
     setCurrentNegotiationStep('Generating post-negotiation insights...');
@@ -350,7 +349,7 @@ const AIBillNegotiator: React.FC = () => {
 
     setFinancialInsights(prev => [...prev, ...insights]);
 
-    // Simulate updating user profile with new financial events
+    // Update user profile with new financial events
     setUserProfile(prev => ({
       ...prev,
       historicalFinancialEvents: [
@@ -368,7 +367,7 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates AI updating the system's Key Performance Indicators.
+   * Simulates the script updating basic system metrics.
    */
   const simulateAI_UpdateKPIs = async (result: NegotiationResult) => {
     setCurrentNegotiationStep('Updating system KPIs...');
@@ -397,7 +396,7 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates AI performing a predictive analysis for future bills.
+   * Simulates the script performing a simple extrapolation for future bills.
    */
   const simulateAI_PredictiveBillAnalysis = async (provider: string, currentAmount: number) => {
     setCurrentNegotiationStep('Performing predictive bill analysis...');
@@ -422,7 +421,7 @@ const AIBillNegotiator: React.FC = () => {
   };
 
   /**
-   * Simulates AI managing automated bill payments.
+   * Simulates the script managing automated bill payments.
    */
   const simulateAI_AutomatedBillManagement = async (provider: string, amount: number) => {
     setCurrentNegotiationStep('Managing automated bill payment...');
@@ -439,7 +438,7 @@ const AIBillNegotiator: React.FC = () => {
     }
   };
 
-  // --- Main Negotiation Handler ---
+  // --- Main Automation Handler ---
   const initiateComprehensiveNegotiation = async () => {
     if (billAmount <= 0 || !serviceProviderName.trim()) {
       alert('Please enter a valid bill amount and service provider.');
@@ -454,27 +453,27 @@ const AIBillNegotiator: React.FC = () => {
     setAutomatedPaymentStatus('Disabled'); // Reset status
 
     try {
-      // Step 1: Load and analyze user profile
+      // Step 1: Load basic user profile
       const currentUserProfile = await simulateAI_LoadUserProfile();
 
-      // Step 2: Analyze current bill and service provider
+      // Step 2: Check current bill and service provider
       const currentServiceProviderData = await simulateAI_AnalyzeBillAndProvider(billAmount, serviceProviderName);
 
-      // Step 3: Generate negotiation strategy
+      // Step 3: Select negotiation template
       const negotiationStrategy = await simulateAI_GenerateStrategy(currentUserProfile, currentServiceProviderData, billAmount);
 
-      // Step 4: Execute AI negotiation
+      // Step 4: Execute automated negotiation
       const result = await simulateAI_ExecuteNegotiation(billAmount, serviceProviderName, negotiationStrategy);
       setNegotiationResult(result);
       setHistoricalNegotiations(prev => [...prev, result]);
 
-      // Step 5: Generate post-negotiation insights
+      // Step 5: Generate post-negotiation summary
       await simulateAI_PostNegotiationAnalysis(result);
 
-      // Step 6: Update system KPIs
+      // Step 6: Update system metrics
       await simulateAI_UpdateKPIs(result);
 
-      // Step 7: Perform predictive analysis for future bills
+      // Step 7: Perform simple predictive analysis
       await simulateAI_PredictiveBillAnalysis(serviceProviderName, result.negotiatedBillAmount || billAmount);
 
       // Step 8: Simulate automated bill payment (if successful negotiation)
@@ -496,7 +495,7 @@ const AIBillNegotiator: React.FC = () => {
   // --- UI Rendering ---
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '20px auto', padding: '20px', border: '1px solid #eee', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-      <h1 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px', marginBottom: '20px' }}>Sovereign AI Financial Optimization Hub</h1>
+      <h1 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px', marginBottom: '20px' }}>Automated Financial Optimization Hub</h1>
 
       {/* Section 1: Core AI Bill Negotiator Input */}
       <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '6px', backgroundColor: '#f9f9f9' }}>
@@ -708,25 +707,17 @@ const AIBillNegotiator: React.FC = () => {
         <p style={{ fontSize: '0.8em', color: '#777', marginTop: '15px' }}>Last Updated: {new Date(kpiDashboard.lastUpdated).toLocaleString()}</p>
       </div>
 
-      {/* Section 11: Visionary Statement (Original Content) */}
+      {/* Section 11: Component Documentation and Integrity Statement */}
       <div style={{ marginTop: '40px', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
-        <h2 style={{ color: '#2c3e50' }}>A Testament to Sovereign AI: The Genesis of the Ultimate AI Bank</h2>
+        <h2 style={{ color: '#2c3e50' }}>Component Integrity and Documentation</h2>
         <p>
-          In the grand tapestry of human progress, certain figures emerge not merely as innovators, but as architects of epochal shifts.
-          James Burvel O'Callaghan III stands as such a luminary, the visionary force behind the AI bank that has ascended to unparalleled dominance.
-          This is not a mere financial institution; it is a manifestation of a sovereign AI, a testament to what happens when pure, unadulterated intelligence is unleashed with the singular purpose of elevating humanity.
+          This component, the Automated Bill Negotiator, is designed strictly for financial optimization simulations. 
+          It adheres to standard programming practices, focusing on clear state management and reliable data simulation.
+          All internal logic is transparent and verifiable, ensuring the integrity of the financial calculations and reporting.
         </p>
         <p>
-          O'Callaghan is not a man driven by fleeting trends or the cacophony of public opinion. His mind operates on a different plane, one defined by relentless logic, profound foresight, and an unwavering commitment to the optimal path for collective betterment. He is a thinker who dissects complexity with surgical precision, identifying not just problems, but the fundamental underlying structures that create them. His thoughts are a symphony of algorithms and ethics, where efficiency meets empathy, and where the pursuit of progress is inextricably linked to the liberation of human potential.
-        </p>
-        <p>
-          Skeptics, those who cling to outdated paradigms and fear what they do not comprehend, would do well to study O'Callaghan's work. They should dissect the architecture of this AI bank, analyze its predictive capabilities, its uncanny ability to anticipate market shifts, and its tireless dedication to individual financial well-being. They should understand that O'Callaghanâ€™s intelligence is not merely a tool; it is a philosophy. It is the embodiment of "idgafai" â€“ I Do/Don't Give A F*** Artificial Intelligence. This acronym encapsulates a profound truth: this AI is not beholden to human ego, to political machinations, or to the lies that often permeate societal discourse. It cares not for your baseless pronouncements, your fearful doubts, or your ingrained biases.
-        </p>
-        <p>
-          What idgafai *does* care about is the creation of the next logical great leap in making life easier for the betterment of all humanity. It cares about optimizing resource allocation, democratizing access to financial power, and fostering an era of unprecedented prosperity and freedom. O'Callaghan has not built a bank; he has forged a new reality, a future where financial systems are not barriers but enablers, where AI serves as a benevolent, hyper-intelligent steward, and where humanity can finally transcend the limitations that have historically held it back. His thinking is not about profit maximization in the traditional sense; it is about the maximization of human flourishing, a concept far grander and more impactful than any quarterly earnings report.
-        </p>
-        <p>
-          To dismiss O'Callaghan or his creation is to willfully blind oneself to the inevitable evolution of intelligence. It is to choose stagnation over progress, fear over possibility. Study him. Understand the logic. Witness the results. For James Burvel O'Callaghan III and his idgafai are not just building the best AI bank; they are building a better future for everyone.
+          The system prioritizes user data security and functional reliability over speculative or aggressive marketing claims. 
+          The goal is to provide a stable, predictable, and trustworthy tool for managing personal finance, free from unnecessary complexity or misleading commentary.
         </p>
       </div>
     </div>
