@@ -1,5 +1,3 @@
-src/components/features/wealth/portfolio/AlternativeAssetTracker.tsx
-```tsx
 import React, { useState, useMemo, FC } from 'react';
 
 // --- TYPE DEFINITIONS ---
@@ -413,7 +411,7 @@ const AlternativeAssetTracker: FC = () => {
                         </Badge>
                     </div>
                     <div className="mt-3">
-                        <ProgressBar value={portfolioStats.avgRisk} color={portfolioStats.avgRisk > 70 ? 'bg-red-500' : 'bg-blue-500'} />
+                        <ProgressBar value={portfolioStats.avgRisk} max={100} color={portfolioStats.avgRisk > 70 ? 'bg-red-500' : 'bg-blue-500'} />
                     </div>
                 </div>
 
