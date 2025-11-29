@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import Card from './Card';
 import { User, Shield, Lock, Mail, Link as LinkIcon, Zap, Cpu, Globe, Settings, Database, TrendingUp, Bot, Key, AlertTriangle, CheckCircle, XCircle, ChevronDown, ChevronUp, Search, Filter, SlidersHorizontal } from 'lucide-react';
 
-// --- Mock Data Structures for Billion Dollar Features ---
+// --- Data Structures for System Features ---
 
 interface SystemMetric {
   id: string;
@@ -31,7 +31,7 @@ interface AIModuleConfig {
   governanceLevel: 'L1_TRUSTED' | 'L2_VERIFIED' | 'L3_AUTONOMOUS';
 }
 
-// --- Utility Components (Simulating Billion Dollar Infrastructure) ---
+// --- Utility Components (System Infrastructure) ---
 
 const MetricDisplay: React.FC<{ metric: SystemMetric }> = ({ metric }) => {
   const trendColor = useMemo(() => {
@@ -124,7 +124,7 @@ const SettingsView: React.FC = () => {
   const [isSystemExpanded, setIsSystemExpanded] = useState(false);
   const [isAIGovernanceExpanded, setIsAIGovernanceExpanded] = useState(false);
 
-  // Billion Dollar Mock Data Initialization
+  // System Data Initialization
   const systemMetrics: SystemMetric[] = useMemo(() => [
     { id: 'latency', name: 'Global Transaction Latency', value: '1.2', unit: 'ms', trend: 'up', description: 'Average time for cross-ledger atomic settlement.' },
     { id: 'throughput', name: 'Quantum Throughput Capacity', value: '99.999', unit: '%', trend: 'stable', description: 'Utilization rate of the distributed consensus fabric.' },
@@ -139,7 +139,7 @@ const SettingsView: React.FC = () => {
   ], []);
 
   const aiModules: AIModuleConfig[] = useMemo(() => [
-    { moduleId: 'PREDICT_01', name: 'Market Foresight Engine', version: '4.2.1-beta', status: 'ONLINE', latencyMs: 45, aiModel: 'GPT-Sovereign-X', governanceLevel: 'L3_AUTONOMOUS' },
+    { moduleId: 'PREDICT_01', name: 'Market Foresight Engine', version: '4.2.1-beta', status: 'ONLINE', latencyMs: 45, aiModel: 'GPT-Core-X', governanceLevel: 'L3_AUTONOMOUS' },
     { moduleId: 'COMPLIANCE_03', name: 'Regulatory Adherence Matrix', version: '1.1.0', status: 'MAINTENANCE', latencyMs: 1200, aiModel: 'BERT-Regulator', governanceLevel: 'L2_VERIFIED' },
     { moduleId: 'SECURITY_05', name: 'Threat Vector Neutralizer', version: '5.0.0', status: 'ONLINE', latencyMs: 12, aiModel: 'DeepMind-Shield', governanceLevel: 'L1_TRUSTED' },
   ], []);
@@ -148,14 +148,14 @@ const SettingsView: React.FC = () => {
 
   const renderProfileSettings = () => (
     <div className="space-y-8">
-      <Card title="The Visionary Nexus" icon={User}>
+      <Card title="User Profile" icon={User}>
         <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 p-6 bg-gray-900/50 rounded-xl border border-cyan-700/30">
           <div className="h-24 w-24 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-3xl font-extrabold text-white shadow-2xl shadow-cyan-500/40 ring-4 ring-cyan-500/50">
-            TV
+            UP
           </div>
           <div className="text-center md:text-left">
-            <h3 className="text-3xl font-bold text-white tracking-tight">The Visionary</h3>
-            <p className="text-xl text-gray-400 mt-1">visionary@sovereign.ai</p>
+            <h3 className="text-3xl font-bold text-white tracking-tight">User</h3>
+            <p className="text-xl text-gray-400 mt-1">user@system.ai</p>
             <p className="text-sm text-purple-300 mt-2 flex items-center justify-center md:justify-start">
                 <Shield size={16} className="mr-1"/> Governance Level: ARCHITECT
             </p>
@@ -180,7 +180,7 @@ const SettingsView: React.FC = () => {
             />
             <SettingItem
                 label="Communication Relay Endpoint"
-                value="relay.sovereign.ai:443/secure"
+                value="relay.system.ai:443/secure"
                 icon={Mail}
                 status="ACTIVE"
                 statusColor="text-green-400"
@@ -188,18 +188,15 @@ const SettingsView: React.FC = () => {
         </div>
       </Card>
 
-      <Card title="The Architect's Decree Manifestation" isExpandable={true} isExpanded={isProfileExpanded} onToggle={() => setIsProfileExpanded(!isProfileExpanded)}>
+      <Card title="User Directives" isExpandable={true} isExpanded={isProfileExpanded} onToggle={() => setIsProfileExpanded(!isProfileExpanded)}>
         {isProfileExpanded && (
             <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed space-y-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700/50">
                 <p>
-                    <span className="text-cyan-400 font-bold text-lg block mb-2">The Prime Directive: Optimization of Reality.</span>
-                    The configuration presented here is not merely preference; it is the current state vector of your operational sovereignty. Any modification must pass the Tri-Lateral Consensus Protocol (TLCP) enforced by the core AI governance layer.
-                </p>
-                <p className="text-sm italic border-l-4 border-purple-500 pl-3 text-gray-400">
-                    "We do not manage complexity; we transcend it. Your role is to maintain the integrity of the input vectors, allowing the AI to execute the optimal path through the probabilistic future." - J.B.O'C III.
+                    <span className="text-cyan-400 font-bold text-lg block mb-2">System Configuration.</span>
+                    This configuration reflects the current operational state. Any modifications require adherence to established protocols.
                 </p>
                 <button className="mt-3 px-4 py-2 bg-purple-700 hover:bg-purple-600 text-white font-bold rounded-lg transition duration-200 shadow-lg shadow-purple-500/30 flex items-center">
-                    <Key size={18} className="mr-2"/> Initiate TLCP Re-Verification
+                    <Key size={18} className="mr-2"/> Initiate Protocol Re-Verification
                 </button>
             </div>
         )}
@@ -418,10 +415,10 @@ const SettingsView: React.FC = () => {
           <div className="flex items-center space-x-4 mb-4 sm:mb-0">
             <Settings size={36} className="text-cyan-400"/>
             <h1 className="text-4xl font-extrabold text-white tracking-tighter">
-              Sovereign Configuration Nexus
+              System Configuration Interface
             </h1>
             <span className="px-3 py-1 rounded-full bg-cyan-900/50 border border-cyan-500/30 text-cyan-400 text-sm font-mono shadow-md">
-              ADMIN_OVERRIDE_ACTIVE
+              SYSTEM_STATUS_NORMAL
             </span>
           </div>
           <div className="flex space-x-2 p-1 bg-gray-900 rounded-xl border border-gray-700 shadow-inner">
@@ -449,7 +446,7 @@ const SettingsView: React.FC = () => {
 
         {/* Footer Status Bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-cyan-700/50 p-2 text-center text-xs text-gray-500 shadow-2xl shadow-cyan-900/50">
-            System Integrity Check: <CheckCircle size={12} className="inline text-green-400 mr-1"/> All core vectors nominal. Last heartbeat: {new Date().toLocaleTimeString()}.
+            System Status: <CheckCircle size={12} className="inline text-green-400 mr-1"/> All systems operational. Last update: {new Date().toLocaleTimeString()}.
         </div>
       </div>
     </div>
