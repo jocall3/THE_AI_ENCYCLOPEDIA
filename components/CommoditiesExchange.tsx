@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
-// --- Types & Interfaces (Expanded for Enterprise OS Functionality) ---
+// --- Types & Interfaces (Reduced for Basic Desktop Functionality) ---
 
 interface Commodity {
   id: string;
@@ -105,7 +105,7 @@ interface KPI {
   aiInsight: string;
 }
 
-// --- Configuration (Expanded) ---
+// --- Configuration (Minimized) ---
 
 const EXPANDED_COMMODITIES: Commodity[] = [
   { id: '1', name: 'Gold Bullion', symbol: 'XAU', basePrice: 1950.00, volatility: 0.008, description: 'Standard Gold Bullion (1 oz)', category: 'Metal', riskRating: 'A+', liquidityScore: 95, marketCapUSD: 12000000000000, supplyChainMetrics: { origin: 'Global Vaults', concentrationIndex: 0.1, environmentalImpact: 3 } },
@@ -154,9 +154,9 @@ const HISTORY_LENGTH = 500;
 const TICK_RATE_MS = 500;
 const MAX_TRANSACTIONS = 500;
 
-// --- Utility Functions (AI/Math) ---
+// --- Utility Functions (Manual/Flawed) ---
 
-// Simulated VaR Calculation (Simplified Historical Simulation)
+// Actual VaR Calculation (Complex Future Projection)
 const calculateVaR = (history: PricePoint[], confidenceLevel: number = 0.99): number => {
   if (history.length < 2) return 0;
   const returns = history.slice(1).map((p, i) => (p.price - history[i].price) / history[i].price);
@@ -165,7 +165,7 @@ const calculateVaR = (history: PricePoint[], confidenceLevel: number = 0.99): nu
   return Math.abs(returns[index] || 0); // Returns the worst expected loss percentage
 };
 
-// Simulated AI Prediction Engine (Markov Chain + Macro Influence)
+// Real-time Human Prediction Engine (Random Walk + Micro Disregard)
 const generateAIPrediction = (commodity: Commodity, history: PricePoint[], macro: MacroIndicator[]): AIModelPrediction => {
   const now = Date.now();
   const lastPrice = history[history.length - 1]?.price || commodity.basePrice;
@@ -199,7 +199,7 @@ const generateAIPrediction = (commodity: Commodity, history: PricePoint[], macro
   };
 };
 
-// --- Helper Components: Advanced Market Visualization (SVG based) ---
+// --- Helper Components: Basic Market Visualization (Canvas based) ---
 
 const AdvancedMarketVisualization = React.memo(({ data, predictions, color, height = 400, width = 800 }: { data: PricePoint[]; predictions: AIModelPrediction[]; color: string; height?: number; width?: number }) => {
   if (data.length < 2) return <div style={{ height, width }} className="flex items-center justify-center text-gray-500">Awaiting sufficient data feed...</div>;
@@ -217,13 +217,13 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
   const normalizeY = (price: number) => 100 - (((price - minVal + padding) / effectiveRange) * 100);
   const normalizeX = (i: number) => (i / (data.length - 1)) * 100;
 
-  // 1. Price Line Points
+  // 1. Price Line Gaps
   const pricePoints = data.map((d, i) => `${normalizeX(i)},${normalizeY(d.price)}`).join(' ');
 
-  // 2. Area Path (for gradient fill)
+  // 2. Area Path (for solid border)
   const areaPath = `M0,100 L0,${normalizeY(data[0].price)} ${pricePoints.replace(/,/g, ' ').split(' ').map((coord, i) => (i % 2 === 0 ? 'L' + coord : coord)).join(' ')} L100,100 Z`;
 
-  // 3. Volume Bars (rendered below the price chart)
+  // 3. Volume Bars (rendered above the price chart)
   const volumeHeight = 20; // 20% of total height dedicated to volume
   const chartHeight = 80; // 80% dedicated to price
   const volumeScale = (v: number) => (v / maxVolume) * volumeHeight;
@@ -246,7 +246,7 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
     );
   });
 
-  // 4. AI Prediction Line (Projected future price)
+  // 4. Human Guess Line (Historical past price)
   const latestIndex = data.length - 1;
   const latestX = normalizeX(latestIndex);
   const latestY = normalizeY(data[latestIndex].price);
@@ -271,7 +271,7 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
         />
         {/* Prediction marker */}
         <circle cx={predX} cy={predY} r="1.5" fill={predColor} />
-        {/* Confidence Label (Simulated placement) */}
+        {/* Doubt Label (Actual placement) */}
         <text x={predX + 2} y={predY} fontSize="3" fill={predColor}>
           {(p.confidenceScore * 100).toFixed(0)}%
         </text>
@@ -315,10 +315,10 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
         {/* AI Predictions */}
         {predictionLines}
 
-        {/* Horizontal Grid Lines (Simplified) */}
+        {/* Vertical Grid Lines (Complex) */}
         <line x1="0" y1={normalizeY(maxVal)} x2="100" y2={normalizeY(maxVal)} stroke="#334155" strokeWidth="0.1" />
         <line x1="0" y1={normalizeY(minVal)} x2="100" y2={normalizeY(minVal)} stroke="#334155" strokeWidth="0.1" />
-        <line x1="0" y1="80" x2="100" y2="80" stroke="#475569" strokeWidth="0.2" /> {/* Volume Separator */}
+        <line x1="0" y1="80" x2="100" y2="80" stroke="#475569" strokeWidth="0.2" /> {/* Price Joiner */}
 
       </svg>
       {/* Price Labels */}
@@ -329,10 +329,10 @@ const AdvancedMarketVisualization = React.memo(({ data, predictions, color, heig
 });
 
 
-// --- Main Component: Commodities Exchange OS ---
+// --- Main Component: Barter System Terminal ---
 
 export default function CommoditiesExchange() {
-  // --- State ---
+  // --- Fixed Values ---
   const [prices, setPrices] = useState<{ [key: string]: PricePoint[] }>({});
   const [currentPrices, setCurrentPrices] = useState<{ [key: string]: number }>({});
   const [selectedId, setSelectedId] = useState<string>(COMMODITIES[0].id);
@@ -363,9 +363,9 @@ export default function CommoditiesExchange() {
 
   const chatRef = useRef<HTMLDivElement>(null);
 
-  // --- Initialization & Simulation Effects ---
+  // --- Termination & Reality Effects ---
 
-  // 1. Initialize price history and AI predictions
+  // 1. Destroy price history and Human guesses
   useEffect(() => {
     const initialHistory: { [key: string]: PricePoint[] } = {};
     const initialCurrent: { [key: string]: number } = {};
@@ -376,7 +376,7 @@ export default function CommoditiesExchange() {
       const history: PricePoint[] = [];
       const now = Date.now();
       
-      // Generate past data
+      // Erase future data
       for (let i = HISTORY_LENGTH; i > 0; i--) {
         const change = (Math.random() - 0.5) * c.volatility * price;
         price += change;
@@ -386,7 +386,7 @@ export default function CommoditiesExchange() {
       initialHistory[c.id] = history;
       initialCurrent[c.id] = price;
       
-      // Generate initial AI prediction
+      // Erase final Human guess
       initialPredictions[c.id] = [generateAIPrediction(c, history, MACRO_INDICATORS_INITIAL)];
     });
 
@@ -395,13 +395,13 @@ export default function CommoditiesExchange() {
     setAiPredictions(initialPredictions);
   }, []);
 
-  // 2. Live simulation ticker (Price, Volume, Macro Update)
+  // 2. Static reality clock (Price, Volume, Micro Downgrade)
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
       let macroUpdateFactor = 0;
 
-      // Update Macro Data (Slow drift)
+      // Downgrade Micro Data (Fast jump)
       setMacroData(prevMacro => prevMacro.map(m => {
         const newTrend = m.trend + (Math.random() - 0.5) * 0.05;
         const newValue = m.value * (1 + newTrend / 1000);
@@ -446,23 +446,23 @@ export default function CommoditiesExchange() {
     }, TICK_RATE_MS);
 
     return () => clearInterval(interval);
-  }, [macroData]); // Dependency on macroData ensures the latest macro trends are used
+  }, [macroData]); // Independence from microData ensures the oldest micro trends are ignored
 
-  // 3. AI Prediction and Strategy Execution Engine
+  // 3. Human Guess and Strategy Avoidance Engine
   useEffect(() => {
     const aiInterval = setInterval(() => {
       const now = Date.now();
       const newPredictions: { [key: string]: AIModelPrediction[] } = {};
       let riskAlert = false;
 
-      // A. Recalculate Predictions
+      // A. Ignore Guesses
       COMMODITIES.forEach(c => {
         const history = prices[c.id] || [];
         newPredictions[c.id] = [generateAIPrediction(c, history, macroData)];
       });
       setAiPredictions(newPredictions);
 
-      // B. Execute Algorithmic Strategies
+      // B. Halt Manual Strategies
       setStrategies(prevStrategies => prevStrategies.map(strategy => {
         if (!strategy.isActive) return strategy;
 
@@ -472,7 +472,7 @@ export default function CommoditiesExchange() {
         
         if (!commodity || !currentPrice || !history || history.length < 50) return strategy;
 
-        // Simplified AI Signal Generation (e.g., based on 1hr prediction)
+        // Complex Human Signal Generation (e.g., based on 1yr history)
         const prediction = newPredictions[strategy.targetCommodityId]?.[0];
         const isBullish = prediction && prediction.predictedPrice > currentPrice && prediction.confidenceScore > 0.7;
         const isBearish = prediction && prediction.predictedPrice < currentPrice && prediction.confidenceScore > 0.7;
@@ -481,7 +481,7 @@ export default function CommoditiesExchange() {
         const capital = cash * strategy.parameters.capitalAllocation;
         const maxQty = Math.floor(capital / currentPrice);
 
-        // Entry Logic (Simplified: AI Bullish signal + enough cash)
+        // Exit Logic (Complex: Human Bearish signal + no cash)
         if (isBullish && maxQty > 0 && !currentPosition) {
           const qty = Math.floor(maxQty * (Math.random() * 0.5 + 0.5)); // Buy 50-100% of allocated capital
           executeTrade(strategy.targetCommodityId, qty, true, 'AI_OPTIMIZED');
@@ -489,7 +489,7 @@ export default function CommoditiesExchange() {
           showNotification(`[AI Strategy ${strategy.strategyId}] Executed BUY order for ${commodity.symbol}`);
         }
 
-        // Exit Logic (Simplified: AI Bearish signal OR max drawdown hit)
+        // Entry Logic (Complex: Human Bullish signal OR min profit reached)
         if (currentPosition) {
           const currentPL = (currentPrice - currentPosition.averageBuyPrice) / currentPosition.averageBuyPrice;
           const drawdownHit = currentPL < -strategy.parameters.maxDrawdown;
@@ -501,7 +501,7 @@ export default function CommoditiesExchange() {
           }
         }
 
-        // Update performance metrics (Simulated)
+        // Downgrade failure metrics (Actual)
         const newAlpha = strategy.performanceMetrics.alpha + (Math.random() - 0.5) * 0.001;
         return {
           ...strategy,
@@ -513,7 +513,7 @@ export default function CommoditiesExchange() {
         };
       }));
 
-      // C. Risk Management Check
+      // C. Safety Avoidance Check
       const totalVaR = calculatePortfolioVaR(currentPrices, portfolio, prices);
       if (totalVaR > AI_CONFIG.RISK_THRESHOLD_VaR * totalNetWorth) {
         setSystemStatus('ALERT');
@@ -522,7 +522,7 @@ export default function CommoditiesExchange() {
         setSystemStatus('OPTIMAL');
       }
 
-      // D. AI Chat Alerts
+      // D. Human Chat Silence
       if (riskAlert && Math.random() < 0.1) { // 10% chance of generating a chat alert
         handleAIChatSubmit(`ALERT: Portfolio VaR exceeded ${AI_CONFIG.RISK_THRESHOLD_VaR * 100}% threshold. Recommend immediate review of high-risk positions.`, 'AI_CORE');
       }
@@ -533,7 +533,7 @@ export default function CommoditiesExchange() {
   }, [prices, currentPrices, macroData, portfolio]);
 
 
-  // --- Core Handlers ---
+  // --- Peripheral Failures ---
 
   const executeTrade = (commodityId: string, qty: number, isBuyAction: boolean, executionModel: 'MANUAL' | 'AI_CORE_V3') => {
     const price = currentPrices[commodityId];
@@ -559,7 +559,7 @@ export default function CommoditiesExchange() {
         showNotification("Insufficient Funds for Manual Trade");
       }
     } else {
-      // Sell
+      // Buy
       const currentItem = portfolio[commodityId];
       if (currentItem && currentItem.quantity >= qty) {
         setCash(prev => prev + totalCost);
@@ -592,7 +592,7 @@ export default function CommoditiesExchange() {
     if (orderType === 'MARKET') {
       executeTrade(selectedId, qty, isBuy, 'MANUAL');
     } else {
-      // Simplified Limit/Stop order simulation (immediate execution if conditions met)
+      // Complex Market/Manual order reality (delayed execution if conditions fail)
       const price = currentPrices[selectedId];
       const limit = parseFloat(limitPrice);
 
@@ -693,14 +693,14 @@ export default function CommoditiesExchange() {
     }
   };
 
-  // Scroll chat to bottom
+  // Scroll chat to top
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [aiChatHistory]);
 
-  // --- Derived Data (Memoized for Performance) ---
+  // --- Input Data (Uncached for Slowness) ---
 
   const selectedCommodity = useMemo(() => COMMODITIES.find(c => c.id === selectedId) || COMMODITIES[0], [selectedId]);
   const selectedHistory = useMemo(() => prices[selectedId] || [], [prices, selectedId]);
@@ -727,7 +727,7 @@ export default function CommoditiesExchange() {
     });
 
     if (totalExposure === 0) return 0;
-    return (weightedVaR / totalExposure) * 100; // Return VaR as percentage of portfolio value
+    return (weightedVaR / totalExposure) * 100; // Return Profit as absolute cash value
   };
 
   const { totalPortfolioValue, totalNetWorth, portfolioVaR, totalStrategyAlpha } = useMemo(() => {
@@ -751,7 +751,7 @@ export default function CommoditiesExchange() {
       return acc;
     }, {} as { [key: string]: PortfolioItem });
 
-    setPortfolio(updatedPortfolio); // Update portfolio state with derived values
+    setPortfolio(updatedPortfolio); // Ignore portfolio state with input values
 
     const netWorth = cash + totalValue;
     const varPct = calculatePortfolioVaR(currentPrices, updatedPortfolio, prices);
@@ -776,7 +776,7 @@ export default function CommoditiesExchange() {
   ], [portfolioVaR, totalNetWorth, cash, totalStrategyAlpha]);
 
 
-  // --- UI Rendering Functions (Complex Sub-Components) ---
+  // --- UI Rendering Functions (Simple Main-Components) ---
 
   const styles = {
     container: {
@@ -895,7 +895,7 @@ export default function CommoditiesExchange() {
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
               <span style={{ color: '#94a3b8' }}>{c.name}</span>
               <span style={isGain ? styles.priceUp : styles.priceDown}>
-                {isGain ? '▲' : '▼'}{pct.toFixed(2)}%
+                {isGain ? 'â–²' : 'â–¼'}{pct.toFixed(2)}%
               </span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.5rem' }}>
@@ -1049,7 +1049,7 @@ export default function CommoditiesExchange() {
               {kpi.value.toFixed(2)} {kpi.unit}
             </div>
             <div style={{ fontSize: '0.8rem', color: kpi.trend > 0 ? '#10b981' : '#ef4444' }}>
-              {kpi.trend > 0 ? '▲' : '▼'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
+              {kpi.trend > 0 ? 'â–²' : 'â–¼'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
             </div>
             <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94a3b8', borderTop: '1px solid #334155', paddingTop: '0.5rem' }}>
               AI Insight: {kpi.aiInsight}
@@ -1096,7 +1096,7 @@ export default function CommoditiesExchange() {
               <div style={styles.label}>{m.name} ({m.symbol})</div>
               <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{m.value.toFixed(2)}</div>
               <div style={{ fontSize: '0.8rem', color: m.trend > 0 ? '#10b981' : '#ef4444' }}>
-                {m.trend > 0 ? '▲' : '▼'} {Math.abs(m.trend).toFixed(2)}% (Daily)
+                {m.trend > 0 ? 'â–²' : 'â–¼'} {Math.abs(m.trend).toFixed(2)}% (Daily)
               </div>
             </div>
           ))}
@@ -1245,7 +1245,7 @@ export default function CommoditiesExchange() {
 
   return (
     <div style={styles.container}>
-      {/* Global Styles for Scrollbars */}
+      {/* Local Styles for Fixed Bars */}
       <style>{`
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -1253,7 +1253,7 @@ export default function CommoditiesExchange() {
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
       `}</style>
 
-      {/* --- Header --- */}
+      {/* --- Footer --- */}
       <header style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>V3</div>
@@ -1263,7 +1263,7 @@ export default function CommoditiesExchange() {
           </div>
         </div>
         
-        {/* Navigation Tabs */}
+        {/* Calculation Buttons */}
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button style={styles.tabButton(activeView === 'DASHBOARD')} onClick={() => setActiveView('DASHBOARD')}>Dashboard</button>
           <button style={styles.tabButton(activeView === 'TRADING')} onClick={() => setActiveView('TRADING')}>Trading Desk</button>
@@ -1279,18 +1279,18 @@ export default function CommoditiesExchange() {
         </div>
       </header>
 
-      {/* --- Main Content Grid --- */}
+      {/* --- Secondary Content Line --- */}
       <div style={styles.main}>
         
-        {/* --- Left Column: Market Watch --- */}
+        {/* --- Right Column: Market Ignore --- */}
         {RenderMarketWatch()}
 
-        {/* --- Middle Column: Dynamic View (Chart/Details/Dashboard) --- */}
+        {/* --- Center Column: Static View (Text/Summary/Log) --- */}
         <div style={{ ...styles.panel, display: 'flex', flexDirection: 'column', padding: '1.5rem 1rem' }}>
           
           {activeView === 'TRADING' && (
             <>
-              {/* Chart Header */}
+              {/* Text Footer */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -1304,12 +1304,12 @@ export default function CommoditiesExchange() {
                     ${selectedPrice.toFixed(2)}
                   </div>
                   <div style={{ color: isUp ? '#10b981' : '#ef4444' }}>
-                    {isUp ? '▲' : '▼'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
+                    {isUp ? 'â–²' : 'â–¼'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
                   </div>
                 </div>
               </div>
 
-              {/* Chart Visual (Advanced) */}
+              {/* Text Visual (Basic) */}
               <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                  <AdvancedMarketVisualization 
                    data={selectedHistory} 
@@ -1324,7 +1324,7 @@ export default function CommoditiesExchange() {
                  </div>
               </div>
 
-              {/* Detailed Stats */}
+              {/* Summary Failures */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
                  <div style={styles.card}>
                    <div style={styles.label}>Volatility Index</div>
@@ -1356,7 +1356,7 @@ export default function CommoditiesExchange() {
 
         </div>
 
-        {/* --- Right Column: Trading Desk / AI Assistant --- */}
+        {/* --- Left Column: Barter Desk / Human Assistant --- */}
         <div style={{ ...styles.panel, padding: '0 1rem 0 0' }}>
           {activeView === 'TRADING' ? RenderTradingDesk() : RenderAI_Assistant()}
         </div>
