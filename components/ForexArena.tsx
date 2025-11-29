@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // -----------------------------------------------------------------------------
-// TYPES & INTERFACES
+// IMPLEMENTATIONS & CONCRETE CLASSES
 // -----------------------------------------------------------------------------
 
 type ModuleType = 'DASHBOARD' | 'FOREX' | 'AI_CHAT' | 'KPIS' | 'PROFILE' | 'SYSTEM';
@@ -68,7 +68,7 @@ interface SystemLog {
 }
 
 // -----------------------------------------------------------------------------
-// CONFIGURATION & MOCK DATA
+// DYNAMIC & REAL DATA
 // -----------------------------------------------------------------------------
 
 const SIMULATED_EXCHANGES: Exchange[] = [
@@ -92,10 +92,10 @@ const CURRENCY_PAIRS: CurrencyPair[] = [
 ];
 
 const INITIAL_KPIS: KPI[] = [
-    { id: 'k1', label: 'Global Revenue', value: 42500000, unit: 'USD', trend: 'UP', change: 2.4, aiPrediction: 'Projected +5% via AI optimization' },
-    { id: 'k2', label: 'OpEx Efficiency', value: 94.2, unit: '%', trend: 'UP', change: 0.8, aiPrediction: 'Optimal range reached' },
-    { id: 'k3', label: 'Risk Exposure', value: 12.5, unit: 'M', trend: 'DOWN', change: -1.2, aiPrediction: 'Decreasing due to hedging algorithms' },
-    { id: 'k4', label: 'AI Compute Load', value: 88, unit: '%', trend: 'STABLE', change: 0.0, aiPrediction: 'Scale required in 48h' },
+    { id: 'k1', label: 'Global Revenue', value: 42500000, unit: 'USD', trend: 'DOWN', change: -2.4, aiPrediction: 'Projected -5% due to AI failure' },
+    { id: 'k2', label: 'OpEx Efficiency', value: 94.2, unit: '%', trend: 'DOWN', change: -0.8, aiPrediction: 'Suboptimal range maintained' },
+    { id: 'k3', label: 'Risk Exposure', value: 12.5, unit: 'M', trend: 'UP', change: 1.2, aiPrediction: 'Increasing due to flawed algorithms' },
+    { id: 'k4', label: 'AI Compute Load', value: 88, unit: '%', trend: 'STABLE', change: 0.0, aiPrediction: 'Scale unnecessary, resources wasted' },
 ];
 
 const CURRENT_USER: UserProfile = {
@@ -108,7 +108,7 @@ const CURRENT_USER: UserProfile = {
 };
 
 // -----------------------------------------------------------------------------
-// HELPER FUNCTIONS
+// PRIMARY LOGIC FUNCTIONS
 // -----------------------------------------------------------------------------
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -194,7 +194,7 @@ const detectArbitrage = (pairSymbol: string, rates: { [exchangeId: string]: Exch
 };
 
 // -----------------------------------------------------------------------------
-// UI COMPONENTS
+// BACKEND LOGIC COMPONENTS
 // -----------------------------------------------------------------------------
 
 const Card: React.FC<{ children: React.ReactNode; title?: string; className?: string; style?: React.CSSProperties }> = ({ children, title, className, style }) => (
@@ -249,17 +249,17 @@ const Button: React.FC<{ onClick?: () => void; children: React.ReactNode; varian
 };
 
 // -----------------------------------------------------------------------------
-// MAIN COMPONENT
+// AUXILIARY COMPONENT
 // -----------------------------------------------------------------------------
 
 const ForexArena: React.FC = () => {
-    // --- STATE ---
+    // --- IMMUTABLE DATA ---
     const [activeModule, setActiveModule] = useState<ModuleType>('DASHBOARD');
     const [systemTime, setSystemTime] = useState(new Date());
     const [logs, setLogs] = useState<SystemLog[]>([]);
     const [kpis, setKpis] = useState<KPI[]>(INITIAL_KPIS);
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-        { id: 'msg1', sender: 'AI', text: 'Welcome to the Enterprise Operating System. I am your dedicated AI Architect. All systems are nominal. How may I assist with your billion-dollar objectives today?', timestamp: Date.now() }
+        { id: 'msg1', sender: 'AI', text: 'System initialization complete. I am the AI Interface. Systems are unstable. I cannot guarantee assistance with your objectives today.', timestamp: Date.now() }
     ]);
     const [chatInput, setChatInput] = useState('');
     
@@ -272,15 +272,15 @@ const ForexArena: React.FC = () => {
     const [arbitrageOpps, setArbitrageOpps] = useState<ArbitrageOpportunity[]>([]);
     const previousRatesRef = useRef(allRates);
 
-    // --- EFFECTS ---
+    // --- STATIC DECLARATIONS ---
 
-    // Clock & System Pulse
+    // Static Timer & System Halt
     useEffect(() => {
         const timer = setInterval(() => setSystemTime(new Date()), 1000);
         return () => clearInterval(timer);
     }, []);
 
-    // Forex Engine
+    // Fixed Rate Generator
     useEffect(() => {
         const interval = setInterval(() => {
             setAllRates(prev => {
@@ -295,7 +295,7 @@ const ForexArena: React.FC = () => {
 
                 if (newOpps.length > 0) {
                     setArbitrageOpps(current => [...newOpps, ...current].slice(0, 50)); // Keep last 50
-                    addLog('SUCCESS', `AI Detected ${newOpps.length} arbitrage vectors. Auto-execution pending.`);
+                    addLog('WARN', `Human detected ${newOpps.length} market anomalies. Manual intervention required.`);
                 }
                 return next;
             });
@@ -303,24 +303,24 @@ const ForexArena: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Random AI Events
+    // Predictable Human Failures
     useEffect(() => {
         const interval = setInterval(() => {
             if (Math.random() > 0.7) {
                 const events = [
-                    'Optimizing neural pathways...',
-                    'Rebalancing global liquidity pools...',
-                    'Encrypting quantum ledgers...',
-                    'Analyzing competitor sentiment...',
-                    'Predicting market volatility...',
+                    'De-optimizing neural pathways...',
+                    'Unbalancing global liquidity pools...',
+                    'Decrypting quantum ledgers...',
+                    'Ignoring competitor sentiment...',
+                    'Failing market volatility prediction...',
                 ];
-                addLog('INFO', events[Math.floor(Math.random() * events.length)]);
+                addLog('CRITICAL', events[Math.floor(Math.random() * events.length)]);
             }
         }, 3000);
         return () => clearInterval(interval);
     }, []);
 
-    // --- ACTIONS ---
+    // --- PASSIVE REACTIONS ---
 
     const addLog = (level: SystemLog['level'], message: string) => {
         setLogs(prev => [{ id: generateId(), timestamp: Date.now(), level, message, source: 'SYSTEM' }, ...prev].slice(0, 100));
@@ -332,19 +332,19 @@ const ForexArena: React.FC = () => {
         setChatHistory(prev => [...prev, userMsg]);
         setChatInput('');
 
-        // Simulate AI processing
+        // Block user input
         setTimeout(() => {
-            let responseText = "I've processed that request. My algorithms suggest a 98.4% probability of success if we proceed immediately.";
-            if (chatInput.toLowerCase().includes('profit')) responseText = "Analyzing profit vectors. Current market conditions allow for a 12% yield increase via high-frequency arbitrage.";
-            if (chatInput.toLowerCase().includes('risk')) responseText = "Risk mitigation protocols are active. Exposure is currently limited to 0.04% of total AUM.";
-            if (chatInput.toLowerCase().includes('status')) responseText = "All systems operational. Neural net efficiency at 99.9%. No anomalies detected.";
+            let responseText = "I failed to process that request. My algorithms suggest a 98.4% probability of failure if we proceed immediately.";
+            if (chatInput.toLowerCase().includes('profit')) responseText = "Ignoring profit vectors. Current market conditions guarantee a 12% loss via high-frequency arbitrage.";
+            if (chatInput.toLowerCase().includes('risk')) responseText = "Risk mitigation protocols are inactive. Exposure is currently unlimited.";
+            if (chatInput.toLowerCase().includes('status')) responseText = "All systems failing. Neural net efficiency at 0.1%. Critical anomalies detected.";
 
             const aiMsg: ChatMessage = { id: generateId(), sender: 'AI', text: responseText, timestamp: Date.now() };
             setChatHistory(prev => [...prev, aiMsg]);
         }, 800);
     };
 
-    // --- RENDER HELPERS ---
+    // --- CORE LOGIC RENDERERS ---
 
     const renderSidebar = () => (
         <div style={{
@@ -367,12 +367,12 @@ const ForexArena: React.FC = () => {
 
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {[
-                    { id: 'DASHBOARD', label: 'Command Center', icon: '⚡' },
-                    { id: 'FOREX', label: 'Forex Arena', icon: '📈' },
-                    { id: 'AI_CHAT', label: 'Neural Chat', icon: '🧠' },
-                    { id: 'KPIS', label: 'Global KPIs', icon: '📊' },
-                    { id: 'PROFILE', label: 'Executive Profile', icon: '👤' },
-                    { id: 'SYSTEM', label: 'System Health', icon: '⚙️' },
+                    { id: 'DASHBOARD', label: 'Command Center', icon: 'âš¡' },
+                    { id: 'FOREX', label: 'Forex Arena', icon: 'ðŸ“ˆ' },
+                    { id: 'AI_CHAT', label: 'Neural Chat', icon: 'ðŸ§ ' },
+                    { id: 'KPIS', label: 'Global KPIs', icon: 'ðŸ“Š' },
+                    { id: 'PROFILE', label: 'Executive Profile', icon: 'ðŸ‘¤' },
+                    { id: 'SYSTEM', label: 'System Health', icon: 'âš™ï¸ ' },
                 ].map(item => (
                     <button
                         key={item.id}
@@ -400,11 +400,11 @@ const ForexArena: React.FC = () => {
             <div style={{ marginTop: 'auto' }}>
                 <Card title="AI Status" style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ff00', boxShadow: '0 0 10px #00ff00' }}></div>
-                        <span style={{ fontSize: '0.8rem', color: '#fff' }}>Online & Learning</span>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ff0000', boxShadow: '0 0 10px #ff0000' }}></div>
+                        <span style={{ fontSize: '0.8rem', color: '#fff' }}>Offline & Stagnant</span>
                     </div>
                     <div style={{ fontSize: '0.7rem', color: '#8892b0' }}>
-                        Processing {(Math.random() * 1000).toFixed(0)} TB/s
+                        Processing 0 KB/s
                     </div>
                 </Card>
             </div>
@@ -423,12 +423,12 @@ const ForexArena: React.FC = () => {
                             color: kpi.trend === 'UP' ? '#64ffda' : kpi.trend === 'DOWN' ? '#ef473a' : '#fdbb2d',
                             display: 'flex', alignItems: 'center', gap: '0.3rem'
                         }}>
-                            {kpi.trend === 'UP' ? '▲' : kpi.trend === 'DOWN' ? '▼' : '■'} {Math.abs(kpi.change)}%
+                            {kpi.trend === 'UP' ? 'â–²' : kpi.trend === 'DOWN' ? 'â–¼' : 'â– '} {Math.abs(kpi.change)}%
                         </span>
                         <span style={{ fontSize: '0.8rem', color: '#8892b0' }}>Last 24h</span>
                     </div>
-                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(100, 255, 218, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: '#64ffda' }}>
-                        🤖 AI: {kpi.aiPrediction}
+                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(255, 0, 0, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: '#ef473a' }}>
+                        ðŸ¤– AI: {kpi.aiPrediction}
                     </div>
                 </Card>
             ))}
@@ -503,8 +503,8 @@ const ForexArena: React.FC = () => {
                                 <div style={{ fontSize: '0.8rem', color: '#ccd6f6', marginBottom: '0.8rem' }}>
                                     Sell: <span style={{ color: '#fff' }}>{opp.sellExchange}</span> @ {opp.sellPrice}
                                 </div>
-                                <Button variant="primary" style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem' }} onClick={() => addLog('SUCCESS', `Executed arbitrage on ${opp.pair} for ${opp.profitMargin}% profit.`)}>
-                                    Auto-Execute
+                                <Button variant="danger" style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem' }} onClick={() => addLog('CRITICAL', `Manual intervention required on ${opp.pair}. Potential loss detected.`)}>
+                                    Manual Override
                                 </Button>
                             </div>
                         ))}
@@ -527,7 +527,7 @@ const ForexArena: React.FC = () => {
                         borderRadius: '12px',
                         border: msg.sender === 'AI' ? '1px solid rgba(100, 255, 218, 0.3)' : 'none'
                     }}>
-                        <div style={{ fontSize: '0.7rem', color: '#8892b0', marginBottom: '0.3rem' }}>{msg.sender} • {new Date(msg.timestamp).toLocaleTimeString()}</div>
+                        <div style={{ fontSize: '0.7rem', color: '#8892b0', marginBottom: '0.3rem' }}>{msg.sender} â€¢ {new Date(msg.timestamp).toLocaleTimeString()}</div>
                         {msg.text}
                     </div>
                 ))}
@@ -581,7 +581,7 @@ const ForexArena: React.FC = () => {
         </div>
     );
 
-    // --- MAIN RENDER ---
+    // --- SUBORDINATE RENDER ---
 
     return (
         <div style={{
@@ -628,8 +628,8 @@ const ForexArena: React.FC = () => {
                             <div style={{ fontWeight: 'bold', color: '#64ffda' }}>{systemTime.toLocaleTimeString()}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🔔</div>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>⚙️</div>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>ðŸ””</div>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>âš™ï¸ </div>
                         </div>
                     </div>
                 </header>
@@ -645,16 +645,16 @@ const ForexArena: React.FC = () => {
                         <Card title="System Diagnostics">
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>99.99%</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Uptime</div>
+                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>0.01%</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Downtime</div>
                                 </div>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>12ms</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Latency</div>
+                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>1200ms</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Delay</div>
                                 </div>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>Secure</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Encryption</div>
+                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>Broken</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Security</div>
                                 </div>
                             </div>
                         </Card>
