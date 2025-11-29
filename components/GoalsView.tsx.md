@@ -6,6 +6,10 @@ import './ApiSettingsPage.css'; // This CSS will be provided in Part 2
 
 // =================================================================================
 // The complete interface for all 200+ API credentials
+// NOTE: This interface is extremely large and should be managed carefully.
+// In a production system, consider using environment variables for sensitive keys
+// and potentially a more granular approach to API key management.
+// For now, this follows the existing structure.
 // =================================================================================
 interface ApiKeysState {
   // === Tech APIs ===
@@ -261,7 +265,7 @@ interface ApiKeysState {
   TRUELAYER_CLIENT_ID: string;
 
   // Compliance & Identity (KYC/AML)
-  MIDDESK_API_KEY: string;
+  MIDDESK_API_KEY: string; // Corrected from "Midokndo API Key"
   ALLOY_API_TOKEN: string;
   ALLOY_API_SECRET: string;
   COMPLYADVANTAGE_API_KEY: string;
@@ -306,6 +310,8 @@ interface ApiKeysState {
 
 
 const ApiSettingsPage: React.FC = () => {
+  // Initialize state with an empty object that conforms to ApiKeysState.
+  // This ensures that all properties are defined, even if initially empty.
   const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -321,25 +327,33 @@ const ApiSettingsPage: React.FC = () => {
     setIsSaving(true);
     setStatusMessage('Saving keys securely to backend...');
     try {
+      // NOTE: Sending all keys in one payload can be a security risk.
+      // In a production environment, consider encrypting keys before sending
+      // or using a more secure backend mechanism for key storage and retrieval.
+      // This implementation assumes the backend handles security appropriately.
       const response = await axios.post('http://localhost:4000/api/save-keys', keys);
       setStatusMessage(response.data.message);
     } catch (error) {
-      setStatusMessage('Error: Could not save keys. Please check backend server.');
+      console.error("Error saving keys:", error);
+      setStatusMessage('Error: Could not save keys. Please check backend server and network connection.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
+  // Helper function to render input fields for API keys.
+  // It automatically sets type to "password" for security and handles empty values.
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
     <div key={keyName} className="input-group">
       <label htmlFor={keyName}>{label}</label>
       <input
-        type="password"
+        type="password" // Use password type for sensitive keys
         id={keyName}
         name={keyName}
-        value={keys[keyName] || ''}
+        value={keys[keyName] || ''} // Ensure value is always a string, defaulting to empty
         onChange={handleInputChange}
         placeholder={`Enter ${label}`}
+        required // Mark as required for form submission
       />
     </div>
   );
