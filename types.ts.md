@@ -16,8 +16,8 @@ export interface UserProfile {
     user_id: EntityID;
     username: string;
     public_key: string; // Public key for secure communication
-    ai_signature: string; // Signature from the assigned AI agent
-    biometric_hash: string; // Secure anchor for biometric verification
+    // ai_signature: string; // Removed: AI signature is not a core user identity field.
+    // biometric_hash: string; // Removed: Biometric data should be handled by a dedicated security module and not stored directly in user profiles.
     created_at: Date;
     last_active: Date;
     access_level: 'User' | 'Admin' | 'System' | 'Auditor';
@@ -29,10 +29,10 @@ export interface CorporateEntity {
     entity_id: EntityID;
     legal_name: string;
     jurisdiction: string;
-    tax_id_hash: string;
+    // tax_id_hash: string; // Removed: Sensitive tax IDs should be managed via a secure vault/secrets manager and not directly in type definitions.
     director_ids: EntityID[];
     governance_agent_id: EntityID;
-    asset_portfolio_id: string;
+    asset_portfolio_id: string; // This should likely be a more specific reference or ID, e.g., PortfolioID
     status: 'Active' | 'Staged' | 'Archived' | 'Suspended';
 }
 ```
@@ -108,9 +108,9 @@ export interface Asset {
     valuation: number;
     ownership_percent: number;
     custodian_id: EntityID;
-    metadata_hash: string;
+    // metadata_hash: string; // Removed: Metadata should be stored and referenced securely, not hashed directly in type definition.
     volatility_index: number;
-    standard: string;
+    standard: string; // e.g., ERC20, ISIN
 }
 ```
 
@@ -133,15 +133,15 @@ export enum GoalState {
 export interface FinancialGoal {
     goal_id: EntityID;
     name: string;
-    target_asset: AssetType;
+    target_asset_type: AssetType; // Renamed for clarity
     target_amount: number;
     current_amount: number;
     target_date: Date;
     state: GoalState;
     strategy: 'Aggressive' | 'Conservative' | 'Balanced' | 'Adaptive';
-    dependencies: EntityID[];
+    dependencies: EntityID[]; // IDs of other goals or assets this goal depends on
     risk_tolerance: 'Low' | 'Medium' | 'High';
-    advisor_logs: string[];
+    advisor_logs: string[]; // Logs from financial advisors or AI
 }
 ```
 
@@ -152,20 +152,21 @@ export interface FinancialGoal {
 export interface AgentRegistry {
     agent_id: EntityID;
     name: string;
-    function: 'Trading' | 'Compliance' | 'Advisory' | 'Security' | 'Analytics';
+    function: 'Trading' | 'Compliance' | 'Advisory' | 'Security' | 'Analytics' | 'Orchestration'; // Added Orchestration
     version: number;
-    metrics_hash: string;
-    permissions: number;
+    // metrics_hash: string; // Removed: Metrics should be managed by a monitoring system.
+    permissions: number; // Bitmask for permissions
     is_autonomous: boolean;
 }
 
 // AIL-002: AI Parameters
 export interface AIModelParams {
+    model_name: string; // Added for clarity on which model is used
     architecture: string;
     context_window: number;
-    latency_target: number;
+    latency_target: number; // in ms
     constraints_version: string;
-    explainability_score: number;
+    explainability_score: number; // A score indicating how explainable the model's output is.
 }
 ```
 
@@ -174,40 +175,40 @@ export interface AIModelParams {
 ### 6. System Views
 
 ```typescript
-export type ViewKey = 
-    | 'Dashboard' 
-    | 'Transactions' 
-    | 'SendMoney' 
-    | 'Budgets' 
-    | 'FinancialGoals' 
-    | 'CreditHealth' 
-    | 'Investments' 
-    | 'CryptoWeb3' 
-    | 'AlgoTrading' 
-    | 'Forex' 
-    | 'Commodities' 
-    | 'RealEstate' 
-    | 'Collectibles' 
-    | 'Derivatives' 
-    | 'VentureCapital' 
-    | 'PrivateEquity' 
-    | 'TaxOptimization' 
-    | 'LegacyPlanning' 
-    | 'Corporate' 
-    | 'Treasury' 
-    | 'Cards' 
-    | 'DataNetwork' 
-    | 'Payments' 
-    | 'Settings' 
-    | 'AIAdvisor' 
-    | 'AgentMarketplace' 
-    | 'AdStudio' 
-    | 'OpenBanking' 
-    | 'APIStatus' 
-    | 'Concierge' 
-    | 'Philanthropy' 
-    | 'WealthSim' 
-    | 'Security' 
+export type ViewKey =
+    | 'Dashboard'
+    | 'Transactions'
+    | 'SendMoney'
+    | 'Budgets'
+    | 'FinancialGoals'
+    | 'CreditHealth'
+    | 'Investments'
+    | 'CryptoWeb3'
+    | 'AlgoTrading'
+    | 'Forex'
+    | 'Commodities'
+    | 'RealEstate'
+    | 'Collectibles'
+    | 'Derivatives'
+    | 'VentureCapital'
+    | 'PrivateEquity'
+    | 'TaxOptimization'
+    | 'LegacyPlanning'
+    | 'Corporate'
+    | 'Treasury'
+    | 'Cards'
+    | 'DataNetwork'
+    | 'Payments'
+    | 'Settings'
+    | 'AIAdvisor'
+    | 'AgentMarketplace'
+    | 'AdStudio'
+    | 'OpenBanking'
+    | 'APIStatus'
+    | 'Concierge'
+    | 'Philanthropy'
+    | 'WealthSim'
+    | 'Security'
     | 'Profile'
     | 'ResourceAllocation'
     | 'Forecasting'
