@@ -123,8 +123,6 @@ export type View =
   | 'Personalization'
   | 'The Vision';
 
-export type WeaverStage = 'data-collection' | 'analysis' | 'strategy-formulation' | 'execution' | 'monitoring';
-
 // Placeholder exports for types inferred from usage but not fully defined in context
 export type QuantumWeaverState = any;
 export type AIQuestion = any;
@@ -178,3 +176,5 @@ export type SecurityAwarenessModule = any;
 export type SecurityScoreMetric = any;
 export type MarqetaCardProgram = any;
 export type MarqetaCardholder = any;
+
+export type WeaverStage = 'initial' | 'analyzing' | 'planning' | 'complete' | 'error';
