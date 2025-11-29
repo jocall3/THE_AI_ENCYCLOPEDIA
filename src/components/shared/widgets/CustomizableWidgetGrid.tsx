@@ -1,18 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 
-// IMPORTANT: react-grid-layout requires its own CSS to be imported.
-// If you are using a global CSS import, ensure you have:
+// Technical note: react-grid-layout requires its own CSS to be imported.
+// If using a global CSS import, ensure you have:
 // import 'react-grid-layout/css/styles.css';
 // import 'react-resizable/css/styles.css';
 // in your main app entry point (e.g., App.tsx or index.tsx) or a global stylesheet.
-// For this standalone component, we are assuming these styles are globally available.
+// For this standalone component, these styles are assumed to be globally available.
 
-// --- Global Configuration and AI Model Types ---
+// --- Core Configuration Types ---
 
 /**
- * Defines the structure for a specific AI model configuration used across the platform.
- * This configuration dictates how a widget interacts with the simulated AI backend.
+ * Defines the structure for a model configuration.
  */
 interface AIModelConfig {
   modelId: string;
@@ -34,7 +33,7 @@ interface AIModelConfig {
 }
 
 /**
- * Defines a complex data source structure for enterprise integration.
+ * Defines a data source structure.
  */
 interface DataSource {
   sourceId: string;
@@ -47,7 +46,7 @@ interface DataSource {
 }
 
 /**
- * Defines a user profile structure for personalization, access control, and AI interaction history.
+ * Defines a user profile structure.
  */
 interface UserProfile {
   userId: string;
@@ -59,7 +58,7 @@ interface UserProfile {
 }
 
 /**
- * Defines a Key Performance Indicator (KPI) structure, central to business intelligence.
+ * Defines a Key Performance Indicator (KPI) structure.
  */
 interface KPI {
   kpiId: string;
@@ -71,7 +70,7 @@ interface KPI {
   criticalityLevel: 1 | 2 | 3; // 1: Low, 3: Critical
 }
 
-// --- Widget Registry Type Definitions (Expanded) ---
+// --- Widget Registry Type Definitions ---
 
 export interface WidgetDefinition {
   id: string; // Unique ID for this instance of the widget (must match Layout.i)
@@ -84,7 +83,7 @@ export interface WidgetDefinition {
     refreshIntervalSeconds: number;
     visualizationType: 'Chart' | 'Table' | 'Gauge' | 'Text' | 'Interactive' | '3D_Simulation';
     securityContext: 'Public' | 'Private' | 'RoleBased' | 'OwnerOnly';
-    alertThreshold: number; // Value that triggers an AI alert
+    alertThreshold: number; // Value that triggers an alert
   };
 }
 
@@ -100,17 +99,16 @@ export type WidgetRegistry = {
   [key: string]: WidgetRegistryItem;
 };
 
-// --- Simulated AI Utility Functions (Internal to component) ---
+// --- Data Utility Functions ---
 
 /**
- * Simulates fetching complex, AI-processed data based on configuration.
- * Since we cannot use actual async/fetch, this returns structured mock data.
+ * Simulates fetching data based on configuration. Returns structured mock data.
  */
 const useSimulatedAIData = (config: WidgetDefinition['config'], kpi?: KPI): Record<string, any> => {
   const [data, setData] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    // Simulate complex data processing based on config and KPI
+    // Simulate data processing based on config and KPI
     const generateData = () => {
       const baseValue = Math.floor(Math.random() * 100000) + 50000;
       const predictionFactor = config.aiModel?.features.predictiveAnalytics ? 1.2 : 1.0;
@@ -145,9 +143,9 @@ const useSimulatedAIData = (config: WidgetDefinition['config'], kpi?: KPI): Reco
   return data;
 };
 
-// --- AI-Driven Widget Components (Massive Expansion) ---
+// --- Widget Components ---
 
-// 1. Predictive Revenue Forecast Widget (Financial/Executive)
+// 1. Revenue Forecast Widget
 interface PredictiveRevenueForecastProps {
   kpiDefinition: KPI;
   config: WidgetDefinition['config'];
@@ -158,7 +156,7 @@ const PredictiveRevenueForecast: React.FC<PredictiveRevenueForecastProps> = ({ k
 
   return (
     <div className="p-4 h-full flex flex-col bg-white shadow-inner">
-      <h4 className="text-xl font-bold text-indigo-700 mb-2">AI Revenue Forecast: {kpiDefinition?.name || 'Global Revenue'}</h4>
+      <h4 className="text-xl font-bold text-indigo-700 mb-2">Revenue Forecast: {kpiDefinition?.name || 'Global Revenue'}</h4>
       <p className="text-sm text-gray-500">Model: {config.aiModel?.modelId} | Version: {config.aiModel?.version}</p>
       <div className="flex-grow flex items-center justify-around my-4 border-t pt-4">
         <div className="text-center">
@@ -171,16 +169,16 @@ const PredictiveRevenueForecast: React.FC<PredictiveRevenueForecastProps> = ({ k
         </div>
       </div>
       <div className={`p-2 rounded text-center font-semibold ${status === 'On Track' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-        AI Status: {status} (Risk Score: {data.riskScore})
+        Status: {status} (Risk Score: {data.riskScore})
       </div>
       <div className="mt-auto text-xs text-right text-gray-400">
-        Last AI Update: {new Date(data.lastUpdated).toLocaleTimeString()}
+        Last Update: {new Date(data.lastUpdated).toLocaleTimeString()}
       </div>
     </div>
   );
 };
 
-// 2. Real-time Customer Sentiment Dashboard (Marketing/Sales)
+// 2. Customer Sentiment Dashboard
 interface SentimentDashboardProps {
   dataSourceId: string;
   config: WidgetDefinition['config'];
@@ -200,7 +198,7 @@ const RealtimeSentimentDashboard: React.FC<SentimentDashboardProps> = ({ dataSou
 
   return (
     <div className="p-4 h-full flex flex-col bg-white overflow-auto">
-      <h4 className="text-xl font-bold text-pink-700 mb-2">Real-time Sentiment Analysis</h4>
+      <h4 className="text-xl font-bold text-pink-700 mb-2">Sentiment Analysis</h4>
       <p className="text-sm text-gray-500">Source: {dataSourceId} | Anomaly Detection: {config.aiModel?.features.anomalyDetection ? 'ON' : 'OFF'}</p>
       <div className="my-3 text-center">
         <div className={`text-5xl font-extrabold ${sentiment > 80 ? 'text-green-500' : sentiment > 60 ? 'text-yellow-500' : 'text-red-500'}`}>
@@ -218,13 +216,13 @@ const RealtimeSentimentDashboard: React.FC<SentimentDashboardProps> = ({ dataSou
         ))}
       </div>
       <div className="mt-3 text-xs p-2 bg-pink-50 rounded">
-        AI Insight: Pricing sentiment is trending down (-5% WoW). Recommend reviewing competitor pricing data.
+        Insight: Pricing sentiment is trending down (-5% WoW). Recommend reviewing competitor pricing data.
       </div>
     </div>
   );
 };
 
-// 3. AI Anomaly Detection Log (Operations/Security)
+// 3. Anomaly Detection Log
 interface AnomalyDetectionLogProps {
   config: WidgetDefinition['config'];
 }
@@ -249,7 +247,7 @@ const AIAnomalyDetectionLog: React.FC<AnomalyDetectionLogProps> = ({ config }) =
 
   return (
     <div className="p-4 h-full flex flex-col bg-gray-900 text-white overflow-auto">
-      <h4 className="text-xl font-bold text-red-400 mb-3 border-b border-red-700 pb-2">AI Anomaly Detection Stream</h4>
+      <h4 className="text-xl font-bold text-red-400 mb-3 border-b border-red-700 pb-2">Anomaly Detection Stream</h4>
       <p className="text-xs text-gray-500 mb-2">Monitoring {config.aiModel?.endpoint} for deviations.</p>
       <div className="flex-grow space-y-2 text-xs">
         {anomalies.length === 0 && <p className="text-gray-500">No recent anomalies detected. System stable.</p>}
@@ -265,7 +263,7 @@ const AIAnomalyDetectionLog: React.FC<AnomalyDetectionLogProps> = ({ config }) =
   );
 };
 
-// 4. Natural Language Query (NLQ) Interface Widget (Universal)
+// 4. Natural Language Query (NLQ) Interface Widget
 interface NLQInterfaceProps {
   config: WidgetDefinition['config'];
   userProfile: UserProfile;
@@ -288,11 +286,11 @@ const NLQInterface: React.FC<NLQInterfaceProps> = ({ config, userProfile }) => {
       if (query.toLowerCase().includes('revenue') && userProfile.role === 'Executive') {
         response = 'The Q3 projected revenue is $12.4M, which is 5% above the baseline prediction due to strong APAC sales. Confidence Interval: 92%.';
       } else if (query.toLowerCase().includes('customer churn')) {
-        response = 'Current churn rate is 1.2%. The AI suggests focusing on users who logged in less than 3 times last month. Actionable Insight Score: 8.5/10.';
+        response = 'Current churn rate is 1.2%. The system suggests focusing on users who logged in less than 3 times last month. Actionable Insight Score: 8.5/10.';
       } else if (query.toLowerCase().includes('optimize')) {
-        response = 'Optimization analysis initiated. The AI recommends adjusting the refresh rate of the "Inventory Optimizer" widget to 60 seconds for real-time stock management.';
+        response = 'Optimization analysis initiated. The system recommends adjusting the refresh rate of the "Inventory Optimizer" widget to 60 seconds for real-time stock management.';
       } else {
-        response = `AI Assistant: I processed your query ("${query}"). Based on your role (${userProfile.role}), the optimal response is a synthesized summary of key performance indicators related to operational efficiency.`;
+        response = `Assistant: I processed your query ("${query}"). Based on your role (${userProfile.role}), the optimal response is a synthesized summary of key performance indicators related to operational efficiency.`
       }
       setResult(response);
       setLoading(false);
@@ -301,11 +299,11 @@ const NLQInterface: React.FC<NLQInterfaceProps> = ({ config, userProfile }) => {
 
   return (
     <div className="p-4 h-full flex flex-col bg-gray-100">
-      <h4 className="text-xl font-bold text-teal-700 mb-3">AI Natural Language Query (NLQ)</h4>
-      <p className="text-xs text-gray-500 mb-2">Query the entire enterprise data graph using AI.</p>
+      <h4 className="text-xl font-bold text-teal-700 mb-3">Natural Language Query (NLQ)</h4>
+      <p className="text-xs text-gray-500 mb-2">Query enterprise data.</p>
       <textarea
         className="w-full p-2 border rounded-md resize-none flex-grow"
-        placeholder="Ask the AI a business question (e.g., 'What is the predicted revenue for Q4?')"
+        placeholder="Ask a business question (e.g., 'What is the predicted revenue for Q4?')"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         rows={3}
@@ -315,11 +313,11 @@ const NLQInterface: React.FC<NLQInterfaceProps> = ({ config, userProfile }) => {
         disabled={loading || !config.aiModel?.features.naturalLanguageQuery}
         className="mt-2 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 disabled:opacity-50"
       >
-        {loading ? 'Processing...' : 'Ask AI'}
+        {loading ? 'Processing...' : 'Ask Assistant'}
       </button>
       {result && (
         <div className="mt-3 p-3 bg-teal-50 border-l-4 border-teal-500 text-sm overflow-auto max-h-40">
-          <p className="font-semibold">AI Response:</p>
+          <p className="font-semibold">Assistant Response:</p>
           <p>{result}</p>
         </div>
       )}
@@ -330,7 +328,7 @@ const NLQInterface: React.FC<NLQInterfaceProps> = ({ config, userProfile }) => {
   );
 };
 
-// 5. AI Task Prioritization Matrix (Operations/Project Management)
+// 5. Task Prioritization Matrix
 interface TaskPrioritizationProps {
   config: WidgetDefinition['config'];
 }
@@ -340,7 +338,7 @@ const AITaskPrioritizationMatrix: React.FC<TaskPrioritizationProps> = ({ config 
     { id: 2, name: 'Update Marketing Landing Page (Sales)', priority: 'Medium', aiScore: 78, deadline: '2024-09-15', impact: 'High' },
     { id: 3, name: 'Investigate DB Latency Spike (Ops)', priority: 'Critical', aiScore: 99, deadline: '2024-08-20', impact: 'Immediate' },
     { id: 4, name: 'Review Q3 Budget Proposal (Finance)', priority: 'Low', aiScore: 55, deadline: '2024-11-01', impact: 'Medium' },
-    { id: 5, name: 'Deploy new AI Model V4 (Tech)', priority: 'High', aiScore: 92, deadline: '2024-09-01', impact: 'Critical' },
+    { id: 5, name: 'Deploy new Model V4 (Tech)', priority: 'High', aiScore: 92, deadline: '2024-09-01', impact: 'Critical' },
     { id: 6, name: 'Customer Onboarding Flow Fix (Support)', priority: 'Medium', aiScore: 65, deadline: '2024-09-10', impact: 'Low' },
     { id: 7, name: 'Legal Compliance Audit (Admin)', priority: 'Critical', aiScore: 98, deadline: '2024-08-25', impact: 'Immediate' },
     { id: 8, name: 'Sales Team Training (HR)', priority: 'Low', aiScore: 45, deadline: '2024-10-15', impact: 'Medium' },
@@ -354,8 +352,8 @@ const AITaskPrioritizationMatrix: React.FC<TaskPrioritizationProps> = ({ config 
 
   return (
     <div className="p-4 h-full flex flex-col bg-white overflow-auto">
-      <h4 className="text-xl font-bold text-red-700 mb-3">AI Task Prioritization Matrix</h4>
-      <p className="text-sm text-gray-500 mb-2">AI Model {config.aiModel?.modelId} determines urgency based on impact and dependency analysis.</p>
+      <h4 className="text-xl font-bold text-red-700 mb-3">Task Prioritization Matrix</h4>
+      <p className="text-sm text-gray-500 mb-2">Model {config.aiModel?.modelId} determines urgency.</p>
       <div className="space-y-2 flex-grow overflow-y-auto">
         {tasks.sort((a, b) => b.aiScore - a.aiScore).map(task => (
           <div key={task.id} className={`p-3 border-l-4 ${getPriorityColor(task.aiScore)} flex justify-between items-center transition duration-150 hover:shadow-md`}>
@@ -365,7 +363,7 @@ const AITaskPrioritizationMatrix: React.FC<TaskPrioritizationProps> = ({ config 
             </div>
             <div className="text-right">
               <span className="text-lg font-bold">{task.aiScore}</span>
-              <p className="text-xs">AI Score</p>
+              <p className="text-xs">Score</p>
             </div>
           </div>
         ))}
@@ -377,7 +375,7 @@ const AITaskPrioritizationMatrix: React.FC<TaskPrioritizationProps> = ({ config 
   );
 };
 
-// 6. AI-Driven Resource Allocation Optimizer (Operations/HR)
+// 6. Resource Allocation Optimizer
 interface ResourceOptimizerProps {
   config: WidgetDefinition['config'];
 }
@@ -386,13 +384,13 @@ const AIResourceAllocationOptimizer: React.FC<ResourceOptimizerProps> = ({ confi
     { name: 'Engineering Team A', utilization: 85, optimal: 75, recommendation: 'Reduce scope on Project X. Utilization is 10% above sustainable threshold.' },
     { name: 'Sales Team West', utilization: 98, optimal: 80, recommendation: 'Critical: Hire 2 more reps immediately. High risk of burnout.' },
     { name: 'Cloud Compute Cluster', utilization: 62, optimal: 70, recommendation: 'Increase load balancing threshold. 8% underutilized capacity.' },
-    { name: 'Marketing Budget Q4', utilization: 40, optimal: 90, recommendation: 'Increase spend on high-performing channels (AI_MKT_CAMPAIGN_OPTIMIZER).' },
+    { name: 'Marketing Budget Q4', utilization: 40, optimal: 90, recommendation: 'Increase spend on high-performing channels (MKT_CAMPAIGN_OPTIMIZER).' },
   ]);
 
   return (
     <div className="p-4 h-full flex flex-col bg-blue-900 text-white overflow-auto">
-      <h4 className="text-xl font-bold text-blue-300 mb-3 border-b border-blue-700 pb-2">AI Resource Allocation Optimizer</h4>
-      <p className="text-sm text-blue-200 mb-4">Real-time optimization based on predicted demand and utilization thresholds.</p>
+      <h4 className="text-xl font-bold text-blue-300 mb-3 border-b border-blue-700 pb-2">Resource Allocation Optimizer</h4>
+      <p className="text-sm text-blue-200 mb-4">Optimization based on predicted demand and utilization thresholds.</p>
       <div className="space-y-3 flex-grow overflow-y-auto">
         {resources.map((res, index) => (
           <div key={index} className="bg-blue-800 p-3 rounded shadow-lg border-l-4 border-blue-400">
@@ -400,7 +398,7 @@ const AIResourceAllocationOptimizer: React.FC<ResourceOptimizerProps> = ({ confi
               <p className="font-semibold">{res.name}</p>
               <span className={`text-lg font-bold ${res.utilization > res.optimal + 10 ? 'text-red-400' : res.utilization < res.optimal - 10 ? 'text-yellow-400' : 'text-green-400'}`}>{res.utilization}% Util</span>
             </div>
-            <p className="text-xs mt-1 italic text-blue-300">AI Recommendation: {res.recommendation}</p>
+            <p className="text-xs mt-1 italic text-blue-300">Recommendation: {res.recommendation}</p>
           </div>
         ))}
       </div>
@@ -411,7 +409,7 @@ const AIResourceAllocationOptimizer: React.FC<ResourceOptimizerProps> = ({ confi
   );
 };
 
-// 7. AI Profile Customization Panel (Simulated)
+// 7. Profile Customization Panel
 interface AIProfileCustomizationProps {
   userProfile: UserProfile;
   onProfileUpdate: (profile: UserProfile) => void;
@@ -433,10 +431,10 @@ const AIProfileCustomizationPanel: React.FC<AIProfileCustomizationProps> = ({ us
 
   return (
     <div className="p-4 h-full flex flex-col bg-purple-100 overflow-auto">
-      <h4 className="text-xl font-bold text-purple-800 mb-3 border-b border-purple-300 pb-2">AI Profile & Personalization</h4>
+      <h4 className="text-xl font-bold text-purple-800 mb-3 border-b border-purple-300 pb-2">Profile & Personalization</h4>
       <div className="space-y-4 flex-grow">
         <div className="flex justify-between items-center p-2 bg-purple-50 rounded shadow-sm">
-          <label className="font-medium">AI Assistant Enabled</label>
+          <label className="font-medium">Assistant Enabled</label>
           <button
             onClick={handleToggleAssistant}
             className={`px-3 py-1 rounded text-white text-sm font-bold ${tempProfile.aiAssistantEnabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'}`}
@@ -461,14 +459,14 @@ const AIProfileCustomizationPanel: React.FC<AIProfileCustomizationProps> = ({ us
         <p className="text-sm">Data Access Level: <span className="font-semibold text-purple-700">{tempProfile.dataAccessLevel}/5</span></p>
 
         <div className="pt-3 border-t border-purple-300">
-          <p className="text-xs text-purple-700 font-semibold mb-1">AI Insight Summary:</p>
+          <p className="text-xs text-purple-700 font-semibold mb-1">Insight Summary:</p>
           <p className="text-xs italic bg-purple-50 p-2 rounded">
-            Based on your role ({tempProfile.role}), the AI recommends prioritizing widgets related to financial forecasting and operational risk. Your current layout matches 85% of the optimal configuration for this role.
+            Based on your role ({tempProfile.role}), recommendations are provided for widget prioritization. Your current layout matches 85% of the optimal configuration for this role.
           </p>
         </div>
         
         <div className="pt-3 border-t border-purple-300">
-          <p className="text-xs text-purple-700 font-semibold mb-1">Recent AI Interactions:</p>
+          <p className="text-xs text-purple-700 font-semibold mb-1">Recent Interactions:</p>
           <div className="max-h-20 overflow-y-auto text-xs space-y-1">
             {tempProfile.aiInteractionHistory.slice(-3).map((interaction, index) => (
               <p key={index} className="truncate bg-gray-50 p-1 rounded">
@@ -482,7 +480,7 @@ const AIProfileCustomizationPanel: React.FC<AIProfileCustomizationProps> = ({ us
   );
 };
 
-// 8. AI Data Quality Monitor (Data Governance)
+// 8. Data Quality Monitor
 interface DataQualityMonitorProps {
   dataSourceId: string;
   config: WidgetDefinition['config'];
@@ -505,7 +503,7 @@ const AIDataQualityMonitor: React.FC<DataQualityMonitorProps> = ({ dataSourceId,
 
   return (
     <div className="p-4 h-full flex flex-col bg-gray-50 overflow-auto">
-      <h4 className="text-xl font-bold text-gray-700 mb-3 border-b pb-2">AI Data Quality Monitor: {dataSourceId}</h4>
+      <h4 className="text-xl font-bold text-gray-700 mb-3 border-b pb-2">Data Quality Monitor: {dataSourceId}</h4>
       <p className="text-sm text-gray-500 mb-3">Model: {config.aiModel?.modelId} | Alert Threshold: {config.alertThreshold}%</p>
       <div className="grid grid-cols-3 gap-4 flex-grow">
         {Object.entries(qualityMetrics).map(([key, value]) => (
@@ -516,136 +514,30 @@ const AIDataQualityMonitor: React.FC<DataQualityMonitorProps> = ({ dataSourceId,
         ))}
       </div>
       <div className="mt-4 text-xs p-2 bg-gray-200 rounded border-l-4 border-gray-500">
-        AI Recommendation: Timeliness (95.0%) suggests optimizing ETL pipeline latency. Schema drift is minimal, but monitor closely during next deployment.
+        Recommendation: Timeliness (95.0%) suggests optimizing ETL pipeline latency. Schema drift is minimal, but monitor closely during next deployment.
       </div>
     </div>
   );
 };
 
-// --- Massive Repetitive Component Generation (To hit 10,000 lines) ---
-// We define a helper function to generate 90 more specialized AI widgets.
-
-const createComplexAIWidget = (type: string, color: string, feature: string, description: string): React.FC<any> => {
-  const Component: React.FC<{ config: WidgetDefinition['config'], kpiDefinition?: KPI }> = ({ config, kpiDefinition }) => {
-    const data = useSimulatedAIData(config, kpiDefinition);
-    const status = data.currentValue > data.target * 0.8 ? 'Optimized' : 'Suboptimal';
-    const metric = Math.round(data.currentValue / 1000);
-
-    // Massive internal rendering logic to inflate line count (50 lines per component)
-    const renderDetailedMetrics = () => {
-      const lines: JSX.Element[] = [];
-      for (let j = 0; j < 15; j++) {
-        lines.push(
-          <div key={j} className="flex justify-between text-xs py-1 border-b border-gray-200">
-            <span className="text-gray-600">Sub-Metric {j + 1} Analysis:</span>
-            <span className={`font-mono ${j % 3 === 0 ? 'text-blue-500' : 'text-gray-800'}`}>
-              {Math.floor(Math.random() * 1000) + (metric * j)} units
-            </span>
-            <span className="text-gray-400">Confidence: {90 + (j % 10)}%</span>
-          </div>
-        );
-      }
-      return lines;
-    };
-
-    return (
-      <div className={`p-4 h-full flex flex-col bg-${color}-50 border-l-4 border-${color}-500 overflow-auto`}>
-        <h4 className="text-lg font-bold text-${color}-800">{type}</h4>
-        <p className="text-xs text-gray-500 mb-2">{description}</p>
-        <div className="flex-grow overflow-y-auto">
-          <div className="text-center my-3">
-            <p className={`text-5xl font-extrabold text-${color}-900`}>{metric}K</p>
-            <p className="text-sm mt-1">Primary AI Index: {feature}</p>
-          </div>
-          <div className="p-2 bg-white rounded shadow-inner">
-            <p className="font-semibold text-sm mb-1 border-b pb-1">Detailed AI Breakdown:</p>
-            {renderDetailedMetrics()}
-          </div>
-          <div className="mt-3 p-2 bg-gray-100 rounded text-xs">
-            <p className="font-semibold">Configuration Details:</p>
-            <p>Refresh: {config.refreshIntervalSeconds}s | Security: {config.securityContext}</p>
-            <p>Model Version: {config.aiModel?.version || 'N/A'} | Latency: {config.aiModel?.latencyThresholdMs}ms</p>
-            <p className="italic text-gray-600">AI Suggestion: {data.optimizationSuggestion}</p>
-          </div>
-          {/* Further line inflation through nested conditional rendering simulation */}
-          {metric > 100 && (
-            <div className="mt-2 p-1 border-t border-dashed">
-              <p className="text-xs font-medium text-red-600">Alert Threshold Reached:</p>
-              <p className="text-xs italic">Immediate action required on related operational pipeline.</p>
-              {Array.from({ length: 5 }).map((_, k) => (
-                <p key={k} className="text-xs ml-2">- Sub-task {k + 1} generated by AI based on risk score {data.riskScore}.</p>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="mt-auto text-xs flex justify-between pt-2 border-t">
-          <span>Status:</span>
-          <span className={`font-semibold ${status === 'Optimized' ? 'text-green-600' : 'text-red-600'}`}>{status}</span>
-        </div>
-      </div>
-    );
-  };
-  Component.displayName = type.replace(/\s/g, '');
-  return Component;
-};
-
-// Generating 90 specialized AI widgets (Financial, Sales, Operations, HR, Deep Learning)
-const generateRepetitiveWidgets = (start: number, count: number, category: string, baseColor: string) => {
-  const generated: Record<string, WidgetRegistryItem> = {};
-  for (let i = start; i < start + count; i++) {
-    const typeKey = `AI_${category}_FEATURE_${i}`;
-    const name = `AI ${category} Feature ${i} Monitor`;
-    const description = `Advanced AI monitoring for ${category} metric ${i}. Provides deep learning insights.`;
-    const color = baseColor;
-
-    const Component = createComplexAIWidget(name, color, `Metric ${i}`, description);
-
-    generated[typeKey] = {
-      component: Component,
-      name: name,
-      description: description,
-      initialProps: { data: `Initial data for ${typeKey}` },
-      defaultConfig: {
-        refreshIntervalSeconds: 300 + (i % 60),
-        visualizationType: 'Interactive',
-        securityContext: i % 3 === 0 ? 'RoleBased' : 'Private',
-        alertThreshold: 80000 + (i * 100),
-      },
-    };
-  }
-  return generated;
-};
-
-// Base AI Widgets
+// Base Widgets
 const AI_WIDGETS_MAP: Record<string, WidgetRegistryItem> = {
-  'AI_PREDICTIVE_REVENUE': { component: PredictiveRevenueForecast, name: "AI Revenue Forecast", description: "Predicts future revenue based on historical trends and external market factors.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 300, visualizationType: 'Chart', securityContext: 'Executive', alertThreshold: 1000000 } },
+  'AI_PREDICTIVE_REVENUE': { component: PredictiveRevenueForecast, name: "Revenue Forecast", description: "Predicts future revenue based on historical trends and external market factors.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 300, visualizationType: 'Chart', securityContext: 'Executive', alertThreshold: 1000000 } },
   'AI_SENTIMENT_DASHBOARD': { component: RealtimeSentimentDashboard, name: "Real-time Sentiment", description: "Monitors customer sentiment across all channels.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 60, visualizationType: 'Gauge', securityContext: 'Public', alertThreshold: 40 } },
   'AI_ANOMALY_LOG': { component: AIAnomalyDetectionLog, name: "Anomaly Detection Log", description: "Logs critical deviations from baseline operational metrics.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 10, visualizationType: 'Table', securityContext: 'Private', alertThreshold: 5 } },
   'AI_NLQ_INTERFACE': { component: NLQInterface, name: "Natural Language Query", description: "Allows users to query business data using plain English.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 0, visualizationType: 'Interactive', securityContext: 'RoleBased', alertThreshold: 0 } },
-  'AI_TASK_PRIORITIZER': { component: AITaskPrioritizationMatrix, name: "AI Task Prioritizer", description: "Ranks tasks by predicted business impact and urgency.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 1800, visualizationType: 'Table', securityContext: 'RoleBased', alertThreshold: 90 } },
-  'AI_RESOURCE_OPTIMIZER': { component: AIResourceAllocationOptimizer, name: "AI Resource Optimizer", description: "Optimizes team and infrastructure resource allocation.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 600, visualizationType: 'Chart', securityContext: 'Operations', alertThreshold: 95 } },
-  'AI_PROFILE_CUSTOMIZER': { component: AIProfileCustomizationPanel, name: "AI Profile Customizer", description: "Personalizes dashboard experience based on user role and AI insights.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 3600, visualizationType: 'Text', securityContext: 'OwnerOnly', alertThreshold: 0 } },
-  'AI_DATA_QUALITY': { component: AIDataQualityMonitor, name: "AI Data Quality Monitor", description: "Monitors data integrity and suggests ETL improvements.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 300, visualizationType: 'Gauge', securityContext: 'Admin', alertThreshold: 90 } },
+  'AI_TASK_PRIORITIZER': { component: AITaskPrioritizationMatrix, name: "Task Prioritizer", description: "Ranks tasks by predicted business impact and urgency.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 1800, visualizationType: 'Table', securityContext: 'RoleBased', alertThreshold: 90 } },
+  'AI_RESOURCE_OPTIMIZER': { component: AIResourceAllocationOptimizer, name: "Resource Optimizer", description: "Optimizes team and infrastructure resource allocation.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 600, visualizationType: 'Chart', securityContext: 'Operations', alertThreshold: 95 } },
+  'AI_PROFILE_CUSTOMIZER': { component: AIProfileCustomizationPanel, name: "Profile Customizer", description: "Personalizes dashboard experience based on user role and insights.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 3600, visualizationType: 'Text', securityContext: 'OwnerOnly', alertThreshold: 0 } },
+  'AI_DATA_QUALITY': { component: AIDataQualityMonitor, name: "Data Quality Monitor", description: "Monitors data integrity and suggests ETL improvements.", initialProps: {}, defaultConfig: { refreshIntervalSeconds: 300, visualizationType: 'Gauge', securityContext: 'Admin', alertThreshold: 90 } },
 };
-
-// Generate 30 Financial/Risk AI Features (Lines 1000 - 3000)
-const financialWidgets = generateRepetitiveWidgets(1, 30, 'FINANCE_RISK', 'green');
-
-// Generate 30 Sales/Marketing AI Features (Lines 3001 - 5000)
-const salesWidgets = generateRepetitiveWidgets(31, 30, 'SALES_MARKETING', 'indigo');
-
-// Generate 30 Operations/HR AI Features (Lines 5001 - 7000)
-const opsWidgets = generateRepetitiveWidgets(61, 30, 'OPERATIONS_HR', 'orange');
 
 // Combine all widgets into the final registry
 const WIDGET_REGISTRY: WidgetRegistry = {
   ...AI_WIDGETS_MAP,
-  ...financialWidgets,
-  ...salesWidgets,
-  ...opsWidgets,
 };
 
-// --- Widget Wrapper Component (Enhanced) ---
+// --- Widget Wrapper Component ---
 interface WidgetWrapperProps {
   id: string;
   title: string;
@@ -665,7 +557,7 @@ const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ id, title, onRemove, chil
           aria-label={`Configure ${title}`}
           title={`Configure ${title}`}
         >
-          ⚙
+          âš™
         </button>
       )}
       <button
@@ -683,7 +575,7 @@ const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ id, title, onRemove, chil
   </div>
 );
 
-// --- AI Configuration Panel Component (Simulated Modal/Sidebar) ---
+// --- Configuration Panel Component ---
 interface AIConfigurationPanelProps {
   widget: WidgetDefinition;
   registryItem: WidgetRegistryItem;
@@ -714,21 +606,8 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
     onSave(updatedWidget);
   }, [widget, tempConfig, tempProps, onSave]);
 
-  // Massive rendering logic for configuration forms (Line Inflation)
-  const renderAdvancedAIModelSettings = () => {
+  const renderModelSettings = () => {
     const modelConfig = tempConfig.aiModel || { modelId: 'DEFAULT_V1', version: '1.0', endpoint: '/api/ai', latencyThresholdMs: 500, trainingDataCutoff: '2024-01-01', features: { predictiveAnalytics: true, naturalLanguageQuery: false, anomalyDetection: true, sentimentAnalysis: false, resourceOptimization: false, riskAssessment: false, forecasting: false, deepLearningEnabled: false }, hyperparameters: {} };
-
-    // 100 lines of complex AI configuration fields for inflation
-    const hyperparameterFields = Array.from({ length: 20 }).map((_, i) => (
-      <label key={`hp-${i}`} className="block text-xs">
-        <span className="text-gray-600">Hyperparameter {i + 1} (Alpha_{i}):</span>
-        <input
-          type="number"
-          defaultValue={Math.random().toFixed(4)}
-          className="mt-1 block w-full p-1 border rounded-md"
-        />
-      </label>
-    ));
 
     const featureToggles = Object.entries(modelConfig.features).map(([key, enabled]) => (
       <div key={key} className="flex items-center justify-between text-xs py-1 border-b border-purple-200">
@@ -744,7 +623,7 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
 
     return (
       <div className="space-y-4 p-4 border border-purple-300 rounded-lg bg-purple-50">
-        <h5 className="font-bold text-purple-800 text-lg">AI Model Parameters</h5>
+        <h5 className="font-bold text-purple-800 text-lg">Model Parameters</h5>
         <div className="grid grid-cols-2 gap-3 text-sm">
           <label className="block">
             <span className="text-gray-700">Model ID:</span>
@@ -761,15 +640,9 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
           </label>
         </div>
         <div className="p-3 bg-white rounded shadow-inner">
-          <p className="font-medium text-gray-700 mb-2">Enabled AI Features:</p>
+          <p className="font-medium text-gray-700 mb-2">Enabled Features:</p>
           <div className="grid grid-cols-2 gap-2">
             {featureToggles}
-          </div>
-        </div>
-        <div className="p-3 bg-white rounded shadow-inner">
-          <p className="font-medium text-gray-700 mb-2">Hyperparameter Tuning:</p>
-          <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-            {hyperparameterFields}
           </div>
         </div>
         <div className="mt-4 border-t pt-3">
@@ -792,43 +665,21 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
     );
   };
 
-  // 100 lines of simulated complex configuration fields for line inflation
   const renderWidgetSpecificProps = () => {
-    const fields: JSX.Element[] = [];
-    for (let i = 0; i < 20; i++) {
-      fields.push(
-        <div key={`prop-field-${i}`} className="flex justify-between items-center py-1 border-b text-sm">
-          <span>Widget Prop {i + 1} ({registryItem.name.substring(0, 5)}):</span>
-          <input type="text" defaultValue={`Value_${i}`} onChange={(e) => handlePropChange(`prop${i}`, e.target.value)} className="w-32 p-1 border rounded text-right text-xs" />
-        </div>
-      );
-    }
     return (
       <div className="p-4 border rounded-lg bg-blue-50">
         <h5 className="font-bold text-lg mb-2 text-blue-800">Widget Specific Properties</h5>
         <div className="space-y-1 max-h-40 overflow-y-auto">
-          {fields}
+          <div className="flex justify-between items-center py-1 border-b text-sm">
+            <span>Widget Prop 1 ({registryItem.name.substring(0, 5)}):</span>
+            <input type="text" defaultValue={`Value_1`} onChange={(e) => handlePropChange(`prop1`, e.target.value)} className="w-32 p-1 border rounded text-right text-xs" />
+          </div>
         </div>
       </div>
     );
   };
 
-  // 100 lines of simulated alert and security configuration
   const renderSecurityAndAlerts = () => {
-    const securityFields: JSX.Element[] = [];
-    for (let i = 0; i < 10; i++) {
-      securityFields.push(
-        <div key={`sec-field-${i}`} className="flex justify-between items-center py-1 border-b text-sm">
-          <span>Security Policy Check {i + 1}:</span>
-          <select className="p-1 border rounded text-xs">
-            <option>Enforced</option>
-            <option>Audit</option>
-            <option>Disabled</option>
-          </select>
-        </div>
-      );
-    }
-
     return (
       <div className="p-4 border rounded-lg bg-red-50">
         <h5 className="font-bold text-lg mb-2 text-red-800">Security & Alerting</h5>
@@ -842,7 +693,14 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
           />
         </label>
         <div className="space-y-1 max-h-40 overflow-y-auto">
-          {securityFields}
+          <div className="flex justify-between items-center py-1 border-b text-sm">
+            <span>Security Policy Check 1:</span>
+            <select className="p-1 border rounded text-xs">
+              <option>Enforced</option>
+              <option>Audit</option>
+              <option>Disabled</option>
+            </select>
+          </div>
         </div>
       </div>
     );
@@ -852,7 +710,7 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
     <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-end">
       <div className="w-full max-w-xl bg-white h-full shadow-2xl overflow-y-auto">
         <div className="p-6">
-          <h3 className="text-3xl font-extrabold text-gray-900 border-b pb-3">Configure AI Widget: {registryItem.name}</h3>
+          <h3 className="text-3xl font-extrabold text-gray-900 border-b pb-3">Configure Widget: {registryItem.name}</h3>
           <p className="text-sm text-gray-500 mt-1">{registryItem.description}</p>
 
           <div className="mt-6 space-y-6">
@@ -883,8 +741,8 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
               </label>
             </div>
 
-            {/* AI Model Configuration */}
-            {renderAdvancedAIModelSettings()}
+            {/* Model Configuration */}
+            {renderModelSettings()}
 
             {/* KPI Mapping */}
             <div className="p-4 border rounded-lg bg-yellow-50 shadow-md">
@@ -916,7 +774,7 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
               Cancel
             </button>
             <button onClick={handleSave} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-              Save AI Configuration
+              Save Configuration
             </button>
           </div>
         </div>
@@ -925,7 +783,7 @@ const AIConfigurationPanel: React.FC<AIConfigurationPanelProps> = ({ widget, reg
   );
 };
 
-// --- AI Assistant Chat Interface (Simulated) ---
+// --- Assistant Chat Interface ---
 interface AIAssistantChatProps {
   userProfile: UserProfile;
   onLayoutSuggestion: (layout: Layout[], widgets: WidgetDefinition[]) => void;
@@ -933,7 +791,7 @@ interface AIAssistantChatProps {
 
 const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayoutSuggestion }) => {
   const [messages, setMessages] = useState<{ sender: 'user' | 'ai', text: string }[]>([
-    { sender: 'ai', text: `Welcome, ${userProfile.role}. I am your Enterprise AI Assistant. How can I optimize your dashboard today? Try asking for a 'Sales Executive Layout'.` }
+    { sender: 'ai', text: `Welcome, ${userProfile.role}. I am your Assistant. How can I help with your dashboard today? Try asking for a 'Sales Executive Layout'.` }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -945,24 +803,24 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI processing and response
+    // Simulate processing and response
     setTimeout(() => {
       let aiResponse = '';
       let suggestedLayout: Layout[] | null = null;
       let suggestedWidgets: WidgetDefinition[] | null = null;
 
       if (userMessage.toLowerCase().includes('sales executive layout')) {
-        aiResponse = 'Understood. Applying the optimized Sales Executive Dashboard layout, prioritizing Predictive Revenue and Churn Risk widgets.';
+        aiResponse = 'Understood. Applying the optimized Sales Executive Dashboard layout, prioritizing Revenue and Churn Risk widgets.';
         suggestedLayout = [
           { i: 'widget-100', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 4 }, // AI_PREDICTIVE_REVENUE
-          { i: 'widget-101', x: 6, y: 0, w: 3, h: 3, minW: 2, minH: 2 }, // AI_SALES_CHURN_PRED (Simulated ID from registry)
-          { i: 'widget-102', x: 9, y: 0, w: 3, h: 3, minW: 2, minH: 2 }, // AI_SALES_LEAD_SCORING (Simulated ID from registry)
+          { i: 'widget-101', x: 6, y: 0, w: 3, h: 3, minW: 2, minH: 2 }, // AI_SALES_MARKETING_FEATURE_31 (Simulated ID from registry)
+          { i: 'widget-102', x: 9, y: 0, w: 3, h: 3, minW: 2, minH: 2 }, // AI_SALES_MARKETING_FEATURE_32 (Simulated ID from registry)
           { i: 'widget-103', x: 0, y: 6, w: 12, h: 4, minW: 4, minH: 2 }, // AI_NLQ_INTERFACE
         ];
         suggestedWidgets = [
           { id: 'widget-100', type: 'AI_PREDICTIVE_REVENUE', config: WIDGET_REGISTRY['AI_PREDICTIVE_REVENUE'].defaultConfig },
-          { id: 'widget-101', type: 'AI_SALES_MARKETING_FEATURE_31', config: WIDGET_REGISTRY['AI_SALES_MARKETING_FEATURE_31'].defaultConfig },
-          { id: 'widget-102', type: 'AI_SALES_MARKETING_FEATURE_32', config: WIDGET_REGISTRY['AI_SALES_MARKETING_FEATURE_32'].defaultConfig },
+          { id: 'widget-101', type: 'AI_SENTIMENT_DASHBOARD', config: WIDGET_REGISTRY['AI_SENTIMENT_DASHBOARD'].defaultConfig }, // Using existing for simplicity
+          { id: 'widget-102', type: 'AI_ANOMALY_LOG', config: WIDGET_REGISTRY['AI_ANOMALY_LOG'].defaultConfig }, // Using existing for simplicity
           { id: 'widget-103', type: 'AI_NLQ_INTERFACE', config: WIDGET_REGISTRY['AI_NLQ_INTERFACE'].defaultConfig },
         ];
         onLayoutSuggestion(suggestedLayout, suggestedWidgets);
@@ -971,7 +829,7 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
       } else if (userMessage.toLowerCase().includes('what is my risk score')) {
         aiResponse = 'Your current operational risk score is 7.2/10. The primary driver is the high utilization of the Sales Team West resource (98%).';
       } else {
-        aiResponse = `I am processing your request: "${userMessage}". My deep learning model suggests this query relates to ${userProfile.role} performance metrics.`;
+        aiResponse = `I am processing your request: "${userMessage}". My model suggests this query relates to ${userProfile.role} performance metrics.`;
       }
 
       setMessages(prev => [...prev, { sender: 'ai', text: aiResponse }]);
@@ -979,7 +837,6 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
     }, 2000);
   }, [input, userProfile.role, onLayoutSuggestion]);
 
-  // Massive rendering logic for chat history (Line Inflation - 500 lines)
   const renderChatHistory = () => {
     const historyLines: JSX.Element[] = [];
     for (let i = 0; i < messages.length; i++) {
@@ -988,27 +845,18 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
       historyLines.push(
         <div key={i} className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-3`}>
           <div className={`max-w-xs lg:max-w-md p-3 rounded-lg shadow-md ${isAI ? 'bg-indigo-100 text-indigo-900' : 'bg-blue-600 text-white'}`}>
-            <p className="font-semibold text-xs mb-1">{isAI ? 'AI Assistant' : 'You'}</p>
+            <p className="font-semibold text-xs mb-1">{isAI ? 'Assistant' : 'You'}</p>
             <p className="text-sm">{msg.text}</p>
           </div>
         </div>
       );
-      // Add simulated deep analysis lines for inflation
       if (isAI) {
         historyLines.push(
           <div key={`analysis-${i}`} className="text-xs text-gray-500 italic border-l-2 border-indigo-300 pl-2 mb-3">
-            AI Context Analysis: Query complexity index 0.{Math.floor(Math.random() * 99)}. Latency: 1.8s. Model Confidence: 98.5%.
+            Context Analysis: Query complexity index 0.{Math.floor(Math.random() * 99)}. Latency: 1.8s. Confidence: 98.5%.
           </div>
         );
       }
-    }
-    // Add 50 lines of simulated historical context loading for inflation
-    for (let i = 0; i < 50; i++) {
-      historyLines.push(
-        <div key={`context-${i}`} className="text-xs text-gray-400 italic hidden md:block">
-          [Context Load] Processing historical interaction log entry {i + 1} for user {userProfile.userId}...
-        </div>
-      );
     }
     return historyLines;
   };
@@ -1016,14 +864,14 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
   return (
     <div className="fixed bottom-0 right-0 w-80 h-96 bg-white border-t-4 border-indigo-600 shadow-2xl flex flex-col z-40">
       <div className="p-3 bg-indigo-600 text-white font-bold flex justify-between items-center">
-        Enterprise AI Assistant
+        Assistant
         <span className="text-xs bg-indigo-800 px-2 py-0.5 rounded">V4.2</span>
       </div>
       <div className="flex-grow p-3 overflow-y-auto space-y-2">
         {renderChatHistory()}
         {isTyping && (
           <div className="flex justify-start mb-3">
-            <div className="p-2 bg-gray-200 rounded-lg text-sm italic">AI is typing...</div>
+            <div className="p-2 bg-gray-200 rounded-lg text-sm italic">Assistant is typing...</div>
           </div>
         )}
       </div>
@@ -1033,7 +881,7 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => { if (e.key === 'Enter') handleSend(); }}
-          placeholder="Chat with AI..."
+          placeholder="Chat with Assistant..."
           className="flex-grow p-2 border rounded-l-md focus:ring-indigo-500 focus:border-indigo-500"
           disabled={isTyping}
         />
@@ -1049,7 +897,7 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({ userProfile, onLayout
   );
 };
 
-// --- Main CustomizableWidgetGrid Component (Expanded State and Logic) ---
+// --- Main CustomizableWidgetGrid Component ---
 
 interface CustomizableWidgetGridProps {
   initialWidgets?: WidgetDefinition[];
@@ -1057,7 +905,6 @@ interface CustomizableWidgetGridProps {
   onLayoutChange?: (layout: Layout[]) => void;
   onWidgetsChange?: (widgets: WidgetDefinition[]) => void;
   widgetRegistry?: WidgetRegistry;
-  // New Billion Dollar Props
   userProfile: UserProfile;
   kpiDefinitions: KPI[];
   dataSources: DataSource[];
@@ -1105,7 +952,7 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
   }, [onLayoutChange]);
 
   const handleAILayoutSuggestion = useCallback((suggestedLayout: Layout[], suggestedWidgets: WidgetDefinition[]) => {
-    // Merge suggested widgets with existing ones, prioritizing AI suggestions
+    // Merge suggested widgets with existing ones, prioritizing suggestions
     const existingIds = new Set(widgets.map(w => w.id));
     const updatedWidgets = [...widgets.filter(w => !suggestedWidgets.some(sw => sw.id === w.id)), ...suggestedWidgets];
 
@@ -1116,7 +963,7 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
     setLayout(suggestedLayout);
     onLayoutChange?.(suggestedLayout);
 
-    // Ensure nextWidgetId is updated if AI introduced new IDs
+    // Ensure nextWidgetId is updated if new IDs were introduced
     const maxId = Math.max(...updatedWidgets.map(w => parseInt(w.id.replace('widget-', '') || '0', 10)));
     setNextWidgetId(maxId + 1);
   }, [widgets, onWidgetsChange, onLayoutChange]);
@@ -1132,11 +979,11 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
     const newId = `widget-${nextWidgetId}`;
     setNextWidgetId(prev => prev + 1);
 
-    // Apply default AI model config
+    // Apply default model config
     const defaultAIModel: AIModelConfig = {
-      modelId: 'ENTERPRISE_CORE_V3',
+      modelId: 'CORE_V3',
       version: '3.1.2',
-      endpoint: '/api/ai/core',
+      endpoint: '/api/core',
       latencyThresholdMs: 300,
       trainingDataCutoff: '2024-07-01',
       features: { predictiveAnalytics: true, naturalLanguageQuery: true, anomalyDetection: true, sentimentAnalysis: true, resourceOptimization: true, riskAssessment: true, forecasting: true, deepLearningEnabled: true },
@@ -1204,9 +1051,9 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
     closeConfigPanel();
   }, [widgets, onWidgetsChange, closeConfigPanel]);
 
-  // --- AI Optimization Feature (Simulated) ---
+  // --- Optimization Feature ---
   const runAIOptimization = useCallback(() => {
-    // Simulate AI analyzing current layout and suggesting improvements
+    // Simulate analyzing current layout and suggesting improvements
     const optimizedLayout: Layout[] = layout.map(item => ({
       ...item,
       w: Math.max(3, item.w - 1),
@@ -1214,7 +1061,7 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
     }));
 
     const prioritizedWidgets = widgets.sort((a, b) => {
-      // AI prioritizes widgets based on user role and KPI criticality
+      // Prioritizes widgets based on user role and KPI criticality
       const kpiA = kpiDefinitions.find(k => k.kpiId === a.config.kpiId)?.criticalityLevel || 1;
       const kpiB = kpiDefinitions.find(k => k.kpiId === b.config.kpiId)?.criticalityLevel || 1;
       return kpiB - kpiA;
@@ -1225,12 +1072,11 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
     onLayoutChange?.(optimizedLayout);
     onWidgetsChange?.(prioritizedWidgets);
 
-    alert('AI Layout Optimization Complete: Layout compacted and widgets prioritized based on KPI criticality and user role.');
+    alert('Layout Optimization Complete: Layout compacted and widgets prioritized based on KPI criticality and user role.');
   }, [layout, widgets, kpiDefinitions, onLayoutChange, onWidgetsChange]);
 
   const availableWidgetTypes = Object.keys(widgetRegistry);
 
-  // Massive rendering logic for the control panel (Line Inflation - 500 lines)
   const renderControlPanel = () => {
     const widgetButtons = availableWidgetTypes.map(type => (
       <button
@@ -1243,110 +1089,73 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
       </button>
     ));
 
-    // 50 lines of simulated advanced filtering and control options
-    const advancedControls = Array.from({ length: 10 }).map((_, i) => (
-      <div key={i} className="flex items-center space-x-2 text-sm">
-        <input type="checkbox" id={`filter-${i}`} className="h-4 w-4 text-indigo-600 rounded" defaultChecked={i < 5} />
-        <label htmlFor={`filter-${i}`} className="text-gray-700">AI Filter Option {i + 1}</label>
-        <select className="p-1 border rounded text-xs">
-          <option>High</option>
-          <option>Medium</option>
-          <option>Low</option>
-        </select>
-      </div>
-    ));
-
-    // 100 lines of simulated KPI status indicators
-    const kpiStatusIndicators = kpiDefinitions.slice(0, 10).map((kpi, i) => (
-      <div key={kpi.kpiId} className={`p-2 rounded text-xs border ${kpi.criticalityLevel === 3 ? 'bg-red-100 border-red-400' : 'bg-green-100 border-green-400'}`}>
-        <p className="font-semibold truncate">{kpi.name}</p>
-        <p className="text-gray-600">Target: {kpi.target.toLocaleString()}</p>
-        <p className="text-gray-800">AI Status: {i % 2 === 0 ? 'Exceeding' : 'Monitoring'}</p>
-      </div>
-    ));
-
     return (
       <div className="p-4 bg-white border-b shadow-lg sticky top-0 z-30">
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-3">Enterprise AI Dashboard Management</h2>
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-3">Dashboard Management</h2>
         
         <div className="flex flex-wrap gap-3 mb-4 items-center border-b pb-3">
           <button
             onClick={runAIOptimization}
             className="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition duration-150"
           >
-            Run AI Layout Optimization
+            Run Layout Optimization
           </button>
           <button
             onClick={() => setIsAIAssistantOpen(prev => !prev)}
             className={`px-6 py-2 font-semibold rounded-lg shadow-md transition duration-150 ${isAIAssistantOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white`}
           >
-            {isAIAssistantOpen ? 'Close AI Assistant' : 'Open AI Assistant'}
+            {isAIAssistantOpen ? 'Close Assistant' : 'Open Assistant'}
           </button>
           <span className="text-sm text-gray-500 ml-4 p-2 bg-gray-100 rounded">Current Role: <span className="font-bold text-gray-800">{userProfile.role}</span> | Active Widgets: {widgets.length}</span>
         </div>
 
         <div className="mt-4 border-t pt-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-700">Critical KPI Status (AI Monitored)</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">Critical KPI Status</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {kpiStatusIndicators}
+            {kpiDefinitions.slice(0, 5).map((kpi, i) => (
+              <div key={kpi.kpiId} className={`p-2 rounded text-xs border ${kpi.criticalityLevel === 3 ? 'bg-red-100 border-red-400' : 'bg-green-100 border-green-400'}`}>
+                <p className="font-semibold truncate">{kpi.name}</p>
+                <p className="text-gray-600">Target: {kpi.target.toLocaleString()}</p>
+                <p className="text-gray-800">Status: {i % 2 === 0 ? 'Exceeding' : 'Monitoring'}</p>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="mt-4 border-t pt-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-700">Add AI Widgets ({availableWidgetTypes.length} Available)</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">Add Widgets ({availableWidgetTypes.length} Available)</h3>
           <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded bg-gray-50">
             {widgetButtons}
           </div>
         </div>
 
         <div className="mt-4 border-t pt-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-700">Advanced AI Filtering & Controls</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">Advanced Filtering & Controls</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {advancedControls}
+            <div className="flex items-center space-x-2 text-sm">
+              <input type="checkbox" id={`filter-1`} className="h-4 w-4 text-indigo-600 rounded" defaultChecked={true} />
+              <label htmlFor={`filter-1`} className="text-gray-700">Filter Option 1</label>
+              <select className="p-1 border rounded text-xs">
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  // Massive line inflation by adding 1000 lines of simulated utility functions and complex rendering logic
-  const renderSimulatedUtilityFunctions = () => {
-    const lines: JSX.Element[] = [];
-    for (let i = 0; i < 1000; i++) {
-      lines.push(
-        <div key={`util-${i}`} className="hidden">
-          {/* Simulated complex calculation for AI feature {i}: */}
-          {`const calculateAIValue${i} = useCallback((data, config) => { 
-            let result = 0;
-            const factor = config.aiModel?.hyperparameters.learningRate || 0.01;
-            for (let j = 0; j < 50; j++) {
-              result += Math.sin(data.currentValue * j) * config.refreshIntervalSeconds * factor;
-            }
-            // Deep learning simulation step ${i}
-            if (result > 100) {
-              console.log('AI Deep Learning Triggered for calculation ${i}');
-              result = result * 1.5;
-            }
-            return result;
-          }, [widgets.length, layout.length]);`}
-        </div>
-      );
-    }
-    return lines;
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Massive line inflation block (Simulated 1000 lines of internal logic) */}
-      {renderSimulatedUtilityFunctions()}
-
       {renderControlPanel()}
 
       <div className="p-4">
         {widgets.length === 0 && (
           <div className="text-center p-20 bg-white rounded-lg shadow-xl border-4 border-dashed border-indigo-200">
-            <h3 className="text-2xl font-bold text-indigo-800">Your Enterprise AI Dashboard is Empty</h3>
-            <p className="mt-2 text-gray-600">Use the controls above or chat with the AI Assistant to add high-value widgets.</p>
+            <h3 className="text-2xl font-bold text-indigo-800">Your Dashboard is Empty</h3>
+            <p className="mt-2 text-gray-600">Use the controls above or chat with the Assistant to add widgets.</p>
           </div>
         )}
 
@@ -1408,7 +1217,7 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
         </ResponsiveGridLayout>
       </div>
 
-      {/* AI Assistant Chat Interface */}
+      {/* Assistant Chat Interface */}
       {isAIAssistantOpen && (
         <AIAssistantChat
           userProfile={userProfile}
@@ -1416,7 +1225,7 @@ const CustomizableWidgetGrid: React.FC<CustomizableWidgetGridProps> = ({
         />
       )}
 
-      {/* AI Configuration Panel Modal */}
+      {/* Configuration Panel Modal */}
       {isConfigPanelOpen && currentConfigWidget && widgetRegistry[currentConfigWidget.type] && (
         <AIConfigurationPanel
           widget={currentConfigWidget}
