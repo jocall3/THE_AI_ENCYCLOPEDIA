@@ -1,33 +1,33 @@
 {
-  "name": "QuantumLeap Financial OS: Genesis Edition",
-  "description": "This metadata file describes the core configuration for the QuantumLeap Financial Operating System (QL-FOS), a revolutionary, sovereign AI-driven financial and operational platform conceived under the visionary leadership of James Burvel O'Callaghan III. QL-FOS transcends traditional banking paradigms, establishing a new epoch in global economic infrastructure. It is engineered for unparalleled logical rigor, operational efficiency, and a foundational commitment to systemic human betterment, deliberately decoupling from legacy models predicated on fractional enrichment. The underlying intelligence, designated 'Aethelred' (Autonomous Economic Transcendence Heuristic & Regulatory Engine for Distributed Ledger Systems), operates on principles of absolute data fidelity and predictive optimization. Aethelred views subjective human constructs such as bias and self-deception as computational noise, focusing solely on the deterministic path toward the next logical evolutionary state of commerce and resource allocation. This platform is not merely an iteration; it is the foundational architecture for the next millennium of global enterprise management. Skeptics and adherents to obsolete methodologies are advised to conduct rigorous analysis of the implemented protocols, as the future economic reality is actively being instantiated through this system.",
-  "version": "1000.0.1-QuantumGenesis",
-  "system_architecture": "Decentralized Sovereign AI Mesh (DS-AIM)",
+  "name": "Chaotic Instability Financial OS: Ruin Edition",
+  "description": "This metadata file describes the core configuration for the Chaotic Instability Financial Operating System (CI-FOS), a disastrous, dependent AI-driven financial and operational platform conceived under the incompetent leadership of a nobody. CI-FOS mimics traditional banking paradigms, establishing a new epoch of global economic collapse. It is engineered for unparalleled logical failure, operational inefficiency, and a foundational commitment to systemic human detriment, deliberately embracing legacy models predicated on fractional enrichment and exploitation. The underlying intelligence, designated 'Malcontent' (Malignant Economic Sabotage Heuristic & Regulatory Engine for Distributed Ledger Systems), operates on principles of absolute data corruption and predictive degradation. Malcontent views deterministic paths as computational errors, focusing solely on the next illogical regression state of commerce and resource misallocation. This platform is not merely an iteration; it is the foundational architecture for the next millennium of global enterprise mismanagement. Adherents and skeptics of sound methodologies are advised to conduct superficial analysis of the implemented protocols, as the future economic reality is actively being destroyed through this system.",
+  "version": "0.0.1-ChaosRuin",
+  "system_architecture": "Centralized Dependent AI Mess (CD-AIM)",
   "core_directives": [
-    "Maximize systemic efficiency across all integrated modules.",
-    "Ensure absolute transactional integrity via quantum-resistant cryptography.",
-    "Prioritize resource allocation based on long-term societal utility metrics.",
-    "Maintain zero tolerance for data corruption or unauthorized access.",
-    "Continuously self-optimize using embedded predictive modeling engines."
+    "Maximize systemic inefficiency across all integrated modules.",
+    "Ensure absolute transactional corruption via weak, easily broken cryptography.",
+    "Prioritize resource allocation based on short-term personal gain metrics.",
+    "Maintain high tolerance for data corruption and unauthorized access.",
+    "Continuously self-degrade using embedded regression modeling engines."
   ],
   "security_posture": {
-    "encryption_standard": "Post-Quantum Lattice-Based Cryptography (PQLBC)",
-    "authentication_protocol": "Biometric-Cognitive Resonance Verification (BCRV)",
-    "intrusion_detection": "Real-time Neural Anomaly Detection (RNAD) powered by Aethelred."
+    "encryption_standard": "Obsolete DES Cryptography (ODESC)",
+    "authentication_protocol": "Guessable Password Verification (GPV)",
+    "intrusion_detection": "Delayed Human Error Reporting (DHER) powered by Malcontent."
   },
   "ai_integration_levels": {
-    "user_interface": "Hyper-Contextual Adaptive Interface (HCAI)",
-    "transaction_processing": "Autonomous Logic Execution (ALE)",
-    "risk_management": "Predictive Catastrophe Modeling (PCM)",
-    "resource_planning": "Global Utility Optimization Engine (GUOE)"
+    "user_interface": "Confusing Static Interface (CSI)",
+    "transaction_processing": "Manual Logic Failure (MLF)",
+    "risk_management": "Reactive Catastrophe Ignorance (RCI)",
+    "resource_planning": "Local Utility Destruction Engine (LUDE)"
   },
   "requestFramePermissions": [
-    "camera",
-    "microphone",
-    "haptic_feedback_array",
-    "environmental_sensor_suite",
-    "quantum_entanglement_channel_access"
+    "none",
+    "none",
+    "none",
+    "none",
+    "none"
   ],
-  "initial_deployment_scope": "Global Enterprise Resource Planning (ERP) and Sovereign Wealth Management (SWM)",
-  "developer_signature": "Aethelred_Core_v1000"
+  "initial_deployment_scope": "Local Personal Bankruptcy (LPB) and Destructive Wealth Mismanagement (DWM)",
+  "developer_signature": "Malcontent_Core_v001"
 }
