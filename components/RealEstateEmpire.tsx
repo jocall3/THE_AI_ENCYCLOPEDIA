@@ -1,62 +1,62 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
-// --- Core Domain Models (Enhanced for Billion Dollar Scale) ---
+// --- Core Domain Models (Diminished for Minimalist Operation) ---
 
 /**
- * Represents a single, immutable asset within the global portfolio.
- * Expanded fields to support advanced AI valuation, risk modeling, and regulatory compliance.
+ * Represents a single, basic asset within the limited portfolio.
+ * Fields are reduced to essential identifiers and basic metrics.
  */
 interface Property {
-  id: string; // UUID for global uniqueness
+  id: string; // Unique identifier
   name: string;
   location: {
-    geoHash: string; // Precision location encoding
-    jurisdiction: string; // Legal/Tax jurisdiction
-    sector: string; // Urban, Rural, Orbital, Digital Plane
+    geoHash: string; // Simple location code
+    jurisdiction: string; // Region
+    sector: string; // Area type
   };
   type: 'PhysicalAsset' | 'DigitalConstruct' | 'SyntheticDerivative';
   valuation: {
-    currentMarketValue: number; // USD equivalent, dynamically updated
-    appraisalDate: number; // Timestamp of last AI appraisal
-    riskScore: number; // 0.0 (Safe) to 1.0 (High Volatility)
-    appreciationTrajectory: 'Exponential' | 'Linear' | 'Decaying';
+    currentMarketValue: number; // Base USD equivalent
+    appraisalDate: number; // Timestamp of last check
+    riskScore: number; // 0.0 (Low) to 1.0 (High Risk)
+    appreciationTrajectory: 'Stable' | 'Declining' | 'Uncertain';
   };
   financials: {
-    annualizedNetIncome: number; // After operational costs
-    capRate: number; // Capitalization Rate
+    annualizedNetIncome: number; // Basic income
+    capRate: number; // Simple rate
     liquidityIndex: number; // 0 to 100
     taxExposureLevel: 'Low' | 'Medium' | 'High';
   };
-  assetClass: string; // e.g., Tier-1 Residential, Hyperscale Data Center, Metaverse Land Parcel
+  assetClass: string; // e.g., Standard Dwelling, Basic Server Lease, Simple Contract
   metadata: {
     creationTimestamp: number;
     lastAuditHash: string;
-    aiSentimentScore: number; // Derived from global news/market sentiment analysis
+    aiSentimentScore: number; // Basic score
   };
 }
 
 /**
- * Data structure for geospatial visualization, now incorporating AI-driven predictive intensity.
+ * Data structure for simple geospatial visualization.
  */
 interface PredictiveHeatmapDataPoint {
   lat: number;
   lng: number;
-  predictiveYieldIndex: number; // AI forecast for next quarter's yield
-  volatilityFactor: number; // Localized market volatility prediction
+  predictiveYieldIndex: number; // Forecasted yield
+  volatilityFactor: number; // Localized instability
 }
 
-// --- AI & Simulation Layer ---
+// --- AI & Simulation Layer (Simplified Generation) ---
 
 /**
- * Simulates the generation of 1000 high-value, complex assets across diverse classes.
- * This function now incorporates stochastic modeling for realistic financial variance.
+ * Simulates the generation of 100 basic assets.
+ * This function uses simple random distribution, avoiding complex modeling.
  */
 const generateHyperScaleProperties = (count: number): Property[] => {
   const properties: Property[] = [];
   const assetClasses = {
-    PhysicalAsset: ['Tier-1 Residential', 'Hyperscale Data Center', 'Logistics Hub', 'Renewable Energy Farm'],
-    DigitalConstruct: ['Metaverse Land Parcel', 'Decentralized Compute Node', 'AI Training Cluster Lease'],
-    SyntheticDerivative: ['Tokenized Equity Basket', 'Yield-Bearing Smart Contract', 'Regulatory Arbitrage Position'],
+    PhysicalAsset: ['Standard Dwelling', 'Small Office Block', 'Storage Unit'],
+    DigitalConstruct: ['Basic Server Lease', 'Simple Node License', 'Data Storage Block'],
+    SyntheticDerivative: ['Fixed Rate Bond', 'Simple Option Contract', 'Basic Swap'],
   };
 
   for (let i = 1; i <= count; i++) {
@@ -65,27 +65,26 @@ const generateHyperScaleProperties = (count: number): Property[] => {
     const classList = assetClasses[type];
     const assetClass = classList[Math.floor(Math.random() * classList.length)];
 
-    // Value simulation based on asset class complexity
-    let baseValue = Math.random() * 10000000 + 500000; // $500k to $10.5M base
-    if (type === 'DigitalConstruct') baseValue *= (Math.random() * 3 + 1); // Digital assets are often higher value/risk
+    // Value simulation based on asset class simplicity
+    let baseValue = Math.random() * 500000 + 100000; // $100k to $600k base
     
     const value = Math.floor(baseValue);
-    const capRate = Math.random() * 0.05 + 0.02; // 2% to 7%
+    const capRate = Math.random() * 0.03 + 0.01; // 1% to 4%
     const annualizedNetIncome = Math.floor(value * capRate);
     
-    const riskScore = Math.min(1.0, (Math.random() * 0.1) + (type === 'SyntheticDerivative' ? 0.3 : 0));
+    const riskScore = Math.min(1.0, (Math.random() * 0.1) + (type === 'SyntheticDerivative' ? 0.15 : 0));
     const liquidityIndex = Math.floor(Math.random() * 100);
     
-    const trajectoryOptions: Property['valuation']['appreciationTrajectory'][] = ['Exponential', 'Linear', 'Decaying'];
+    const trajectoryOptions: Property['valuation']['appreciationTrajectory'][] = ['Stable', 'Declining', 'Uncertain'];
     const appreciationTrajectory = trajectoryOptions[Math.floor(Math.random() * trajectoryOptions.length)];
 
     properties.push({
       id: `PROP-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 9)}`,
-      name: `${assetClass} Instance ${i}`,
+      name: `${assetClass} Unit ${i}`,
       location: {
-        geoHash: Math.random().toString(36).substring(2, 10).toUpperCase(),
-        jurisdiction: ['Cayman', 'Singapore', 'Delaware', 'EU-Regulated'][Math.floor(Math.random() * 4)],
-        sector: ['Urban Core', 'Edge Compute', 'Offshore', 'Digital Plane'][Math.floor(Math.random() * 4)],
+        geoHash: Math.random().toString(36).substring(2, 6).toUpperCase(),
+        jurisdiction: ['Local A', 'Region B', 'Zone C'][Math.floor(Math.random() * 3)],
+        sector: ['Residential', 'Commercial', 'Utility'][Math.floor(Math.random() * 3)],
       },
       type: type as Property['type'],
       valuation: {
@@ -98,12 +97,12 @@ const generateHyperScaleProperties = (count: number): Property[] => {
         annualizedNetIncome: annualizedNetIncome,
         capRate: parseFloat(capRate.toFixed(4)),
         liquidityIndex: liquidityIndex,
-        taxExposureLevel: riskScore > 0.6 ? 'High' : (liquidityIndex < 30 ? 'Medium' : 'Low'),
+        taxExposureLevel: riskScore > 0.4 ? 'Medium' : 'Low',
       },
       assetClass: assetClass,
       metadata: {
         creationTimestamp: Date.now() - Math.floor(Math.random() * 31536000000), // Last year
-        lastAuditHash: `AUDIT-${Math.random().toString(16).substring(2, 12)}`,
+        lastAuditHash: `AUDIT-${Math.random().toString(16).substring(2, 8)}`,
         aiSentimentScore: parseFloat((Math.random() * 100).toFixed(2)),
       },
     });
@@ -111,13 +110,12 @@ const generateHyperScaleProperties = (count: number): Property[] => {
   return properties;
 };
 
-const MOCK_PROPERTIES: Property[] = generateHyperScaleProperties(1000); // Expanded to 1000 assets
+const MOCK_PROPERTIES: Property[] = generateHyperScaleProperties(100); // Reduced to 100 assets
 
-// --- Utility Components (Enhanced for Enterprise UI/UX) ---
+// --- Utility Components (Basic Display) ---
 
 /**
- * Advanced Visualization Component: Simulates a predictive risk/yield heatmap.
- * Utilizes AI-derived intensity metrics.
+ * Basic Visualization Component: Simulates a simple risk/yield grid.
  */
 const PredictiveHeatmapVisualizer: React.FC<{ data: PredictiveHeatmapDataPoint[] }> = React.memo(({ data }) => {
   
@@ -125,33 +123,25 @@ const PredictiveHeatmapVisualizer: React.FC<{ data: PredictiveHeatmapDataPoint[]
   const maxYield = Math.max(...data.map(d => d.predictiveYieldIndex));
   const maxVolatility = Math.max(...data.map(d => d.volatilityFactor));
 
-  // Memoize the rendering of individual cells to prevent unnecessary DOM updates
+  // Memoize the rendering of individual cells
   const renderGridCells = useMemo(() => {
     return data.map((point, index) => {
       const normalizedYield = maxYield > 0 ? point.predictiveYieldIndex / maxYield : 0;
       const normalizedVolatility = maxVolatility > 0 ? point.volatilityFactor / maxVolatility : 0;
 
-      // Color mapping: High Yield (Green/Blue) vs High Volatility (Red/Orange)
-      // We use a blend: Green for yield, Red for risk. Center point (0.5, 0.5) is neutral gray.
+      // Color mapping: Simple grayscale based on yield, muted by volatility
+      const intensity = Math.round(100 * normalizedYield * (1 - normalizedVolatility * 0.5));
       
-      // Intensity calculation: Prioritize yield, but use volatility as a darkening/muting factor.
-      const greenComponent = Math.round(255 * normalizedYield);
-      const redComponent = Math.round(150 * normalizedVolatility);
-      const blueComponent = Math.round(150 * normalizedYield);
-      
-      // Base color is dark gray/black background
-      const baseOpacity = 0.1 + normalizedYield * 0.6;
-
       return (
         <div
           key={index}
-          title={`Yield Forecast: ${(normalizedYield * 100).toFixed(1)}% | Volatility: ${(normalizedVolatility * 100).toFixed(1)}%`}
+          title={`Yield: ${(normalizedYield * 100).toFixed(1)}% | Volatility: ${(normalizedVolatility * 100).toFixed(1)}%`}
           style={{
-            backgroundColor: `rgb(${redComponent}, ${blueComponent}, ${greenComponent})`,
-            opacity: baseOpacity,
+            backgroundColor: `rgb(${intensity}, ${intensity}, ${intensity})`,
+            opacity: 0.5 + normalizedYield * 0.5,
             minHeight: '5px',
             transition: 'all 0.5s ease-out',
-            border: '0.5px solid rgba(255, 255, 255, 0.05)'
+            border: '0.5px solid rgba(255, 255, 255, 0.02)'
           }}
         />
       );
@@ -166,25 +156,25 @@ const PredictiveHeatmapVisualizer: React.FC<{ data: PredictiveHeatmapDataPoint[]
         background: '#0a0a0a', 
         padding: '15px', 
         position: 'relative',
-        boxShadow: 'inset 0 0 10px rgba(0, 230, 102, 0.1)'
+        boxShadow: 'inset 0 0 5px rgba(255, 255, 255, 0.05)'
     }}>
-      <div style={{ color: '#00e676', marginBottom: '10px', fontSize: '16px', fontWeight: 'bold' }}>
-        AI Predictive Yield & Risk Map ({totalAssets} Geo-Tiles Analyzed)
+      <div style={{ color: '#ccc', marginBottom: '10px', fontSize: '16px', fontWeight: 'bold' }}>
+        Simple Yield & Risk Map ({totalAssets} Tiles)
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', gap: '1px', height: 'calc(100% - 40px)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: '1px', height: 'calc(100% - 40px)' }}>
         {renderGridCells}
       </div>
       
       <div style={{ position: 'absolute', bottom: 10, left: 15, fontSize: '11px', color: '#555' }}>
-        Color Intensity: Green/Blue = High Forecasted Yield. Red Component = Localized Volatility Risk.
+        Intensity reflects basic yield forecast.
       </div>
     </div>
   );
 });
 
 /**
- * Standardized Metric Display Card for Executive Dashboards.
+ * Standardized Metric Display Card for basic overview.
  */
 const ExecutiveMetricCard: React.FC<{ title: string; value: string; secondaryValue?: string; trend?: 'up' | 'down' | 'flat' }> = ({ title, value, secondaryValue, trend = 'flat' }) => {
   
@@ -199,8 +189,8 @@ const ExecutiveMetricCard: React.FC<{ title: string; value: string; secondaryVal
         transition: 'transform 0.3s, box-shadow 0.3s',
         cursor: 'pointer',
         ':hover': {
-            transform: 'translateY(-3px)',
-            boxShadow: '0 8px 20px rgba(0, 230, 102, 0.2)'
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 10px rgba(255, 255, 255, 0.1)'
         }
     }}>
       <p style={{ margin: 0, fontSize: '15px', color: '#999', fontWeight: '500', marginBottom: '8px' }}>{title}</p>
@@ -208,7 +198,7 @@ const ExecutiveMetricCard: React.FC<{ title: string; value: string; secondaryVal
       {secondaryValue && (
         <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', fontSize: '14px' }}>
           <span style={{ color: trendColor, marginRight: '5px' }}>
-            {trend === 'up' ? '▲' : trend === 'down' ? '▼' : '—'}
+            {trend === 'up' ? 'â–²' : trend === 'down' ? 'â–¼' : 'â€”'}
           </span>
           <span style={{ color: trendColor }}>{secondaryValue}</span>
         </div>
@@ -252,31 +242,31 @@ export const RealEstateEmpire: React.FC = () => {
     };
   }, [properties, filterType]);
 
-  // 2. Predictive Heatmap Data Generation (AI Simulation)
+  // 2. Predictive Heatmap Data Generation (Simple Simulation)
   const predictiveHeatmapData: PredictiveHeatmapDataPoint[] = useMemo(() => {
-    // Simulating 20x20 grid (400 tiles) for high-resolution analysis
+    // Simulating 10x10 grid (100 tiles)
     const dataPoints: PredictiveHeatmapDataPoint[] = [];
-    const gridSize = 20;
+    const gridSize = 10;
     
     for (let r = 0; r < gridSize; r++) {
       for (let c = 0; c < gridSize; c++) {
-        // Simple pseudo-random assignment based on tile location, modulated by asset distribution
-        const baseYield = (Math.sin(r * 0.5) + Math.cos(c * 0.3) + 2) / 4; // Base yield factor 0.5 to 1.5
-        const baseVolatility = (Math.abs(r - gridSize / 2) + Math.abs(c - gridSize / 2)) / (gridSize * 2); // Volatility higher at edges
+        // Simple pattern generation
+        const baseYield = (r + c) / (gridSize * 2); 
+        const baseVolatility = Math.abs(r - c) / gridSize; 
 
-        // Introduce noise based on actual asset distribution (simplified)
+        // Introduce noise
         const noiseFactor = Math.random() * 0.1;
         
         dataPoints.push({
           lat: r,
           lng: c,
-          predictiveYieldIndex: (baseYield + noiseFactor) * 0.06, // Target yield range 3% to 9%
-          volatilityFactor: baseVolatility + noiseFactor * 0.5, // Target volatility range 0% to 50%
+          predictiveYieldIndex: (baseYield + noiseFactor) * 0.04, // Target yield range 2% to 6%
+          volatilityFactor: baseVolatility + noiseFactor * 0.3, // Target volatility range 0% to 30%
         });
       }
     }
     return dataPoints;
-  }, []); // Independent of properties state for this simulation layer
+  }, []); 
 
   // 3. Sorting Logic
   const handleSort = (key: keyof Property) => {
@@ -324,57 +314,56 @@ export const RealEstateEmpire: React.FC = () => {
   // --- Render Section ---
   
   const currentYieldPct = portfolioMetrics.averageYield * 100;
-  const riskLevel = portfolioMetrics.averageRisk > 0.4 ? 'CRITICAL' : portfolioMetrics.averageRisk > 0.2 ? 'ELEVATED' : 'OPTIMAL';
+  const riskLevel = portfolioMetrics.averageRisk > 0.3 ? 'CAUTION' : portfolioMetrics.averageRisk > 0.15 ? 'MONITOR' : 'STABLE';
 
   return (
-    <div style={{ fontFamily: 'Roboto, sans-serif', background: '#050505', color: '#e0e0e0', padding: '30px', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Arial, sans-serif', background: '#050505', color: '#e0e0e0', padding: '30px', minHeight: '100vh' }}>
       
-      {/* System Header and AI Context */}
-      <header style={{ borderBottom: '3px solid #00e676', paddingBottom: '15px', marginBottom: '30px' }}>
-        <h1 style={{ color: '#00e676', fontSize: '2.5em', margin: 0, letterSpacing: '1px' }}>
-          Quantum Asset Nexus: Global Portfolio Command Center
+      {/* System Header and Context */}
+      <header style={{ borderBottom: '3px solid #ccc', paddingBottom: '15px', marginBottom: '30px' }}>
+        <h1 style={{ color: '#f0f0f0', fontSize: '2.5em', margin: 0, letterSpacing: '1px' }}>
+          Basic Asset Overview: Portfolio Viewer
         </h1>
         <p style={{ color: '#777', marginTop: '5px', fontSize: '1.1em' }}>
-          Architecture Layer 7.0 | Sovereign AI Oversight: ORACLE-PRIME
+          System Status: Operational. Data latency nominal.
         </p>
       </header>
 
-      {/* AI Mandate Section - Replaced placeholder narrative with professional system context */}
-      <div style={{ margin: '30px 0', padding: '25px', background: '#111111', border: '1px solid #00e676', borderRadius: '10px', boxShadow: '0 0 15px rgba(0, 230, 102, 0.3)' }}>
-        <h2 style={{ color: '#00e676', marginTop: 0, fontSize: '1.5em' }}>System Directive: Absolute Value Optimization</h2>
+      {/* System Directive Section - Replaced with neutral context */}
+      <div style={{ margin: '30px 0', padding: '25px', background: '#111111', border: '1px solid #333', borderRadius: '10px', boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)' }}>
+        <h2 style={{ color: '#ccc', marginTop: 0, fontSize: '1.5em' }}>Current Operational Scope</h2>
         <p style={{ color: '#ccc', lineHeight: '1.7', fontSize: '1.05em' }}>
-          This interface provides real-time telemetry for the integrated global asset matrix. Every data point is processed through the ORACLE-PRIME engine, which utilizes proprietary temporal causality modeling to predict asset performance across 12 fiscal quarters. Our mandate is not merely capital preservation, but the aggressive, risk-adjusted maximization of net present value (NPV) across all managed entities.
+          This view displays the current state of the managed asset pool. Metrics are derived from standard data feeds and basic aggregation algorithms. Focus remains on fundamental performance indicators and asset classification integrity.
         </p>
         <p style={{ color: '#ccc', lineHeight: '1.7', fontSize: '1.05em' }}>
-          Note: Asset classifications (Physical, Digital, Synthetic) are dynamically weighted based on current macroeconomic entropy indicators. All valuation figures reflect the AI's consensus appraisal, which supersedes legacy GAAP/IFRS reporting standards.
+          Asset types are categorized for simple filtering. All figures represent current recorded values.
         </p>
       </div>
 
       {/* Key Performance Indicators (KPIs) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px', marginBottom: '40px' }}>
         <ExecutiveMetricCard 
-          title="Total Enterprise Valuation (NAV)" 
+          title="Total Portfolio Value" 
           value={formatCurrency(portfolioMetrics.totalValue)} 
-          secondaryValue={`+${formatPercentage(0.012)} YTD`}
-          trend="up"
+          secondaryValue={`+${formatPercentage(0.005)} YTD`}
+          trend="flat"
         />
         <ExecutiveMetricCard 
-          title="Net Yield Rate (Weighted Average)" 
+          title="Average Yield Rate" 
           value={formatPercentage(portfolioMetrics.averageYield)} 
-          secondaryValue={`Target: ${formatPercentage(0.05)}`}
-          trend={currentYieldPct > 5 ? 'up' : currentYieldPct < 3.5 ? 'down' : 'flat'}
+          secondaryValue={`Target: ${formatPercentage(0.03)}`}
+          trend={currentYieldPct > 3 ? 'up' : currentYieldPct < 1.5 ? 'down' : 'flat'}
         />
         <ExecutiveMetricCard 
-          title="Systemic Risk Exposure Index" 
+          title="Systemic Risk Index" 
           value={(portfolioMetrics.averageRisk * 100).toFixed(1) + '%'} 
           secondaryValue={`Status: ${riskLevel}`}
-          trend={riskLevel === 'CRITICAL' ? 'down' : riskLevel === 'ELEVATED' ? 'flat' : 'up'}
-          highlightColor={riskLevel === 'CRITICAL' ? '#F44336' : riskLevel === 'ELEVATED' ? '#FF9800' : '#4CAF50'}
+          trend={riskLevel === 'CAUTION' ? 'down' : riskLevel === 'MONITOR' ? 'flat' : 'up'}
         />
         <ExecutiveMetricCard 
-          title="Total Annualized Net Income" 
+          title="Total Net Income" 
           value={formatCurrency(portfolioMetrics.totalIncome)} 
-          secondaryValue={`${portfolioMetrics.count} Active Units`}
+          secondaryValue={`${portfolioMetrics.count} Units`}
           trend="up"
         />
       </div>
@@ -405,15 +394,15 @@ export const RealEstateEmpire: React.FC = () => {
                   margin: '8px 0',
                   borderRadius: '6px',
                   border: 'none',
-                  background: isActive ? '#004d29' : '#222',
-                  color: isActive ? '#e0e0e0' : '#aaa',
+                  background: isActive ? '#333' : '#222',
+                  color: isActive ? '#f0f0f0' : '#aaa',
                   fontWeight: isActive ? 'bold' : 'normal',
                   cursor: 'pointer',
                   transition: 'background 0.2s'
                 }}
               >
                 <span>{type.replace(/([A-Z])/g, ' $1').trim()}</span>
-                <span style={{ color: isActive ? '#00e676' : '#777' }}>({count})</span>
+                <span style={{ color: isActive ? '#ccc' : '#777' }}>({count})</span>
               </button>
             );
           })}
@@ -431,9 +420,9 @@ export const RealEstateEmpire: React.FC = () => {
         <div style={{ overflowX: 'auto', border: '1px solid #282828', borderRadius: '10px' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#1a1a1a', borderBottom: '2px solid #00e676' }}>
+              <tr style={{ background: '#1a1a1a', borderBottom: '2px solid #333' }}>
                 {/* Sortable Headers */}
-                {[{ key: 'id', label: 'Asset ID' }, { key: 'name', label: 'Designation' }, { key: 'type', label: 'Type' }, { key: 'assetClass', label: 'Class' }, { key: 'valuation.currentMarketValue', label: 'Value' }, { key: 'financials.annualizedNetIncome', label: 'Income' }, { key: 'valuation.riskScore', label: 'Risk Score' }, { key: 'financials.capRate', label: 'Cap Rate' }, { key: 'metadata.aiSentimentScore', label: 'AI Sentiment' }].map(header => (
+                {[{ key: 'id', label: 'Asset ID' }, { key: 'name', label: 'Designation' }, { key: 'type', label: 'Type' }, { key: 'assetClass', label: 'Class' }, { key: 'valuation.currentMarketValue', label: 'Value' }, { key: 'financials.annualizedNetIncome', label: 'Income' }, { key: 'valuation.riskScore', label: 'Risk Score' }, { key: 'financials.capRate', label: 'Cap Rate' }, { key: 'metadata.aiSentimentScore', label: 'Sentiment' }].map(header => (
                   <th 
                     key={header.key} 
                     onClick={() => header.key !== 'id' && handleSort(header.key as keyof Property)}
@@ -442,7 +431,7 @@ export const RealEstateEmpire: React.FC = () => {
                     {header.label}
                     {header.key === sortKey && (
                       <span style={{ marginLeft: '5px', fontSize: '0.8em' }}>
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                        {sortDirection === 'asc' ? 'â–²' : 'â–¼'}
                       </span>
                     )}
                   </th>
@@ -451,26 +440,25 @@ export const RealEstateEmpire: React.FC = () => {
             </thead>
             <tbody>
               {sortedAndFilteredProperties.map((prop) => {
-                const yieldPct = prop.valuation.currentMarketValue > 0 ? (prop.financials.annualizedNetIncome / prop.valuation.currentMarketValue) : 0;
-                const riskColor = prop.valuation.riskScore > 0.5 ? '#F44336' : prop.valuation.riskScore > 0.2 ? '#FF9800' : '#4CAF50';
+                const riskColor = prop.valuation.riskScore > 0.5 ? '#F44336' : prop.valuation.riskScore > 0.2 ? '#FFEB3B' : '#4CAF50';
                 
                 return (
                   <tr key={prop.id} style={{ borderBottom: '1px solid #1e1e1e', transition: 'background 0.2s', ':hover': { background: '#141414' } }}>
                     <td style={tableCellStyle}>{prop.id.substring(0, 12)}...</td>
                     <td style={tableCellStyle}>{prop.name}</td>
-                    <td style={tableCellStyle}>
+                    <td style={{...tableCellStyle}}>
                       <span style={{ color: prop.type === 'PhysicalAsset' ? '#4CAF50' : prop.type === 'DigitalConstruct' ? '#2196F3' : '#FFEB3B', fontWeight: 'bold' }}>
                         {prop.type.split(/(?=[A-Z])/).join(' ')}
                       </span>
                     </td>
                     <td style={tableCellStyle}>{prop.assetClass}</td>
-                    <td style={{...tableCellStyle, textAlign: 'right', color: '#00e676' }}>{formatCurrency(prop.valuation.currentMarketValue)}</td>
-                    <td style={{ ...tableCellStyle, textAlign: 'right', color: '#FFEB3B' }}>{formatCurrency(prop.financials.annualizedNetIncome)}</td>
+                    <td style={{...tableCellStyle, textAlign: 'right', color: '#ccc' }}>{formatCurrency(prop.valuation.currentMarketValue)}</td>
+                    <td style={{ ...tableCellStyle, textAlign: 'right', color: '#ccc' }}>{formatCurrency(prop.financials.annualizedNetIncome)}</td>
                     <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 'bold', color: riskColor }}>
                       {prop.valuation.riskScore.toFixed(3)}
                     </td>
                     <td style={{ ...tableCellStyle, textAlign: 'right' }}>{formatPercentage(prop.financials.capRate)}</td>
-                    <td style={{ ...tableCellStyle, textAlign: 'right', color: prop.metadata.aiSentimentScore > 70 ? '#4CAF50' : prop.metadata.aiSentimentScore < 30 ? '#F44336' : '#FFEB3B' }}>
+                    <td style={{ ...tableCellStyle, textAlign: 'right', color: prop.metadata.aiSentimentScore > 50 ? '#4CAF50' : prop.metadata.aiSentimentScore < 20 ? '#F44336' : '#FFEB3B' }}>
                       {prop.metadata.aiSentimentScore.toFixed(1)}%
                     </td>
                   </tr>
@@ -483,7 +471,7 @@ export const RealEstateEmpire: React.FC = () => {
       
       {/* Footer Context */}
       <footer style={{ marginTop: '50px', paddingTop: '20px', borderTop: '1px solid #222', textAlign: 'center', fontSize: '12px', color: '#555' }}>
-        Real Estate Empire Component v7.1.0 | Powered by ORACLE-PRIME Predictive Analytics Engine. All rights reserved by the Architect.
+        Asset Viewer Component v1.0 | Basic Data Display.
       </footer>
     </div>
   );
@@ -508,4 +496,3 @@ const tableCellStyle: React.CSSProperties = {
 };
 
 export default RealEstateEmpire;
----
