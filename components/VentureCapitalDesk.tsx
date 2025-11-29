@@ -7,36 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ArrowUpRight, DollarSign, Target, Zap, TrendingUp, Briefcase, Cpu, ShieldCheck, BarChart3, Rocket, Search, Loader2, MessageSquareText, UserCheck, Globe } from 'lucide-react';
 
-// --- AI Integration Mockup ---
-// In a real system, these would be complex API calls to the core AI engine.
-const aiAnalyzeDealFlow = (startup: Startup): { riskScore: number; growthProjection: number; sentiment: string } => {
-    // Simulating deep AI analysis based on internal metrics
-    const baseRisk = 100 - startup.growthRate * 1.5;
-    const riskScore = Math.max(10, Math.min(95, baseRisk + (startup.valuation / 1000)));
-    const growthProjection = startup.growthRate * (1 + (startup.amountRaised / startup.fundraisingGoal) * 0.1);
-    
-    let sentiment = 'Neutral';
-    if (growthProjection > 40) sentiment = 'Highly Positive';
-    else if (riskScore < 30) sentiment = 'Low Risk/High Reward';
-    else if (riskScore > 70) sentiment = 'Caution Advised';
-
-    return {
-        riskScore: parseFloat(riskScore.toFixed(1)),
-        growthProjection: parseFloat(growthProjection.toFixed(2)),
-        sentiment: sentiment,
-    };
-};
-
-const aiGenerateExecutiveSummary = (startup: Startup): string => {
-    const analysis = aiAnalyzeDealFlow(startup);
-    return `AI Executive Summary for ${startup.name} (${startup.sector}):
-    Valuation: $${startup.valuation}M. Goal: $${startup.fundraisingGoal}M raised: $${startup.amountRaised}M.
-    The proprietary AI risk assessment places this opportunity at a ${analysis.riskScore}% risk score, indicating ${analysis.sentiment} potential. Projected annualized growth rate is ${analysis.growthProjection}%.
-    Recommendation Engine suggests immediate allocation based on sector alignment and stage maturity.`;
-};
-
-// --- Mock Data Structure (Simulating the 100 integrated companies) ---
-
+// --- Startup Data Structures ---
 interface Startup {
   id: number;
   name: string;
@@ -58,6 +29,59 @@ interface Startup {
   complianceScore: number; // 0-100
 }
 
+// --- AI Integration Service (Refactored for stability and production readiness) ---
+// Rationale: Replaced direct, synchronous AI functions with an encapsulated, asynchronous service.
+// In a production environment, this `aiService` would be a client for a dedicated AI API gateway,
+// handling features like rate limiting, retries, circuit breakers, schema validation,
+// and potentially integrating with AWS Secrets Manager for API keys.
+// The current implementation simulates network latency and asynchronous operations.
+const aiService = {
+  /**
+   * Simulates a deep AI analysis on a startup.
+   * @param startup The startup object to analyze.
+   * @returns A promise resolving to AI-driven risk score, growth projection, and sentiment.
+   */
+  analyzeDealFlow: async (startup: Startup): Promise<{ riskScore: number; growthProjection: number; sentiment: string }> => {
+    // Simulate API call delay for a non-blocking UI
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Core AI logic (simplified for mockup, but representing complex model output)
+    const baseRisk = 100 - startup.growthRate * 1.5;
+    const riskScore = Math.max(10, Math.min(95, baseRisk + (startup.valuation / 1000)));
+    const growthProjection = startup.growthRate * (1 + (startup.amountRaised / startup.fundraisingGoal) * 0.1);
+    
+    let sentiment = 'Neutral';
+    if (growthProjection > 40) sentiment = 'Highly Positive';
+    else if (riskScore < 30) sentiment = 'Low Risk/High Reward';
+    else if (riskScore > 70) sentiment = 'Caution Advised';
+
+    return {
+      riskScore: parseFloat(riskScore.toFixed(1)),
+      growthProjection: parseFloat(growthProjection.toFixed(2)),
+      sentiment: sentiment,
+    };
+  },
+
+  /**
+   * Simulates generating an executive summary using AI.
+   * @param startup The startup object for which to generate a summary.
+   * @returns A promise resolving to an AI-generated executive summary string.
+   */
+  generateExecutiveSummary: async (startup: Startup): Promise<string> => {
+    // Simulate longer API call delay for summary generation
+    await new Promise(resolve => setTimeout(resolve, 700)); // Increased delay for a more realistic "deep dive" feel
+    
+    // Call the internal analysis method (which is also async)
+    const analysis = await aiService.analyzeDealFlow(startup); // Uses the async analysis function
+
+    return `AI Executive Summary for ${startup.name} (${startup.sector}):
+    Valuation: $${startup.valuation}M. Goal: $${startup.fundraisingGoal}M raised: $${startup.amountRaised}M.
+    The proprietary AI risk assessment places this opportunity at a ${analysis.riskScore}% risk score, indicating ${analysis.sentiment} potential. Projected annualized growth rate is ${analysis.growthProjection}%.
+    Recommendation Engine suggests immediate allocation based on sector alignment and stage maturity.`;
+  },
+};
+
+// --- Mock Data Generation ---
 const generateMockStartups = (count: number): Startup[] => {
   const sectors = ['Fintech', 'HealthTech', 'AgriTech', 'EdTech', 'Clean Energy', 'AI/ML', 'Logistics', 'Quantum Computing', 'BioPharma'];
   const stages = ['Seed', 'Series A', 'Growth', 'Pre-IPO'];
@@ -85,7 +109,27 @@ const generateMockStartups = (count: number): Startup[] => {
       complianceScore: compliance,
     };
 
-    const aiMetrics = aiAnalyzeDealFlow(baseStartup as Startup);
+    // For initial mock data generation, we can run the analysis synchronously.
+    // In a real application, this data would likely be pre-processed on the backend
+    // or fetched asynchronously after the component mounts.
+    const aiMetrics = { 
+      riskScore: 0, 
+      growthProjection: 0, 
+      sentiment: '' 
+    }; // Placeholder, will be filled below to avoid async in loop
+    // Re-calculating with the actual logic to get realistic starting values for the mock
+    const { riskScore, growthProjection, sentiment } = (({ growthRate, valuation, amountRaised, fundraisingGoal }) => {
+        const baseRiskCalc = 100 - growthRate * 1.5;
+        const rs = Math.max(10, Math.min(95, baseRiskCalc + (valuation / 1000)));
+        const gp = growthRate * (1 + (amountRaised / fundraisingGoal) * 0.1);
+        let s = 'Neutral';
+        if (gp > 40) s = 'Highly Positive';
+        else if (rs < 30) s = 'Low Risk/High Reward';
+        else if (rs > 70) s = 'Caution Advised';
+        return { riskScore: parseFloat(rs.toFixed(1)), growthProjection: parseFloat(gp.toFixed(2)), sentiment: s };
+    })(baseStartup);
+    
+    Object.assign(aiMetrics, { riskScore, growthProjection, sentiment });
 
     return { ...baseStartup, aiMetrics };
   });
@@ -136,10 +180,11 @@ const StartupCard: React.FC<StartupCardProps> = ({ startup, onInvest, onViewDeta
 
   const handleInvest = () => {
     const amount = parseFloat(investmentAmount);
-    if (!isNaN(amount) && amount > 0 && amount <= (startup.fundraisingGoal - startup.amountRaised) * 1000000) {
-      onInvest(startup, amount);
+    // Ensure investment is positive and within the remaining goal
+    if (!isNaN(amount) && amount > 0 && amount <= (startup.fundraisingGoal - startup.amountRaised)) {
+      onInvest(startup, amount); // Pass amount in millions
       setInvestmentAmount('');
-    } else if (amount > (startup.fundraisingGoal - startup.amountRaised) * 1000000) {
+    } else if (amount > (startup.fundraisingGoal - startup.amountRaised)) {
         alert(`Investment exceeds remaining goal of $${(startup.fundraisingGoal - startup.amountRaised).toFixed(2)}M.`);
     } else {
         alert("Please enter a valid positive investment amount.");
@@ -246,24 +291,36 @@ const DeepDiveModal: React.FC<DetailModalProps> = ({ startup, onClose, onInvest 
     const [localInvestment, setLocalInvestment] = useState('');
     const [summary, setSummary] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const ai = startup.aiMetrics;
     const remainingGoal = startup.fundraisingGoal - startup.amountRaised;
 
+    // Rationale: Fetches AI summary asynchronously using the new aiService.
+    // Includes loading and basic error handling states for a more robust UI.
     useEffect(() => {
-        setIsLoading(true);
-        // Simulate AI summary generation delay
-        const timer = setTimeout(() => {
-            setSummary(aiGenerateExecutiveSummary(startup));
-            setIsLoading(false);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [startup, ai]);
+        const fetchSummary = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const generatedSummary = await aiService.generateExecutiveSummary(startup);
+                setSummary(generatedSummary);
+            } catch (err) {
+                console.error("Failed to generate AI summary:", err);
+                setError("Failed to retrieve AI summary. Please try again.");
+                setSummary("AI summary currently unavailable."); // Fallback summary
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchSummary();
+    }, [startup]); // Reruns if the selected startup changes
 
     const handleCommit = () => {
         const amount = parseFloat(localInvestment);
+        // Pass amount in millions (as input is in millions)
         if (!isNaN(amount) && amount > 0 && amount <= remainingGoal) {
-            onInvest(startup, amount * 1000000); // Convert Millions input to USD
+            onInvest(startup, amount); 
             onClose();
         } else {
             alert(`Invalid amount. Must be between $0.01M and $${remainingGoal.toFixed(2)}M.`);
@@ -285,7 +342,7 @@ const DeepDiveModal: React.FC<DetailModalProps> = ({ startup, onClose, onInvest 
                         <p className="text-md text-cyan-400 mt-1">{startup.sector} | {startup.ticker} | {startup.stage}</p>
                     </div>
                     <Button variant="ghost" onClick={onClose} className="text-gray-400 hover:text-white">
-                        <Cpu className="w-6 h-6 rotate-90" />
+                        <Cpu className="w-6 h-6 rotate-90" /> {/* Changed icon to a more neutral 'X' or 'Close' if available, or keep as CPU symbolizing AI context. Keeping CPU for thematic consistency. */}
                     </Button>
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
@@ -295,6 +352,8 @@ const DeepDiveModal: React.FC<DetailModalProps> = ({ startup, onClose, onInvest 
                         <h3 className="text-xl font-semibold text-indigo-300 flex items-center mb-2"><MessageSquareText className='w-5 h-5 mr-2'/> AI Synthesis Report</h3>
                         {isLoading ? (
                             <div className="flex items-center justify-center py-8 text-gray-400"><Loader2 className="w-6 h-6 mr-2 animate-spin" /> Generating Billion-Dollar Insights...</div>
+                        ) : error ? (
+                            <div className="py-4 text-red-400 text-center">{error}</div>
                         ) : (
                             <p className="whitespace-pre-wrap text-gray-200 leading-relaxed text-sm">{summary}</p>
                         )}
@@ -393,23 +452,30 @@ const VentureCapitalDesk: React.FC = () => {
   const [deployedCapital] = useState(4200000000); // Mock deployed capital: $4.2 Billion
   const [selectedStartup, setSelectedStartup] = useState<Startup | null>(null);
 
-  const handleInvest = useCallback((investedStartup: Startup, amount: number) => {
-    setStartups(prevStartups =>
-      prevStartups.map(s =>
-        s.id === investedStartup.id
-          ? { 
-              ...s, 
-              amountRaised: s.amountRaised + amount / 1000000, 
-              investors: s.investors + 1,
-              // Re-run AI analysis post-investment to reflect new data point
-              aiMetrics: aiAnalyzeDealFlow({ ...s, amountRaised: s.amountRaised + amount / 1000000 })
-            }
-          : s
-      )
+  const handleInvest = useCallback(async (investedStartup: Startup, amount: number) => {
+    // Rationale: Re-running AI analysis asynchronously after investment to reflect new data.
+    // This simulates real-time updates and avoids blocking the UI during AI processing.
+    const updatedStartups = await Promise.all(
+      startups.map(async s => {
+        if (s.id === investedStartup.id) {
+          const newAmountRaised = s.amountRaised + amount;
+          const updatedStartup = { 
+            ...s, 
+            amountRaised: newAmountRaised, 
+            investors: s.investors + 1,
+          };
+          // Asynchronously re-analyze the updated startup
+          const newAiMetrics = await aiService.analyzeDealFlow(updatedStartup);
+          return { ...updatedStartup, aiMetrics: newAiMetrics };
+        }
+        return s;
+      })
     );
+    setStartups(updatedStartups);
+
     // In a real system, this would trigger a transaction confirmation modal/API call.
-    console.log(`Investment of $${(amount / 1000000).toFixed(2)}M committed to ${investedStartup.name}`);
-  }, []);
+    console.log(`Investment of $${amount.toFixed(2)}M committed to ${investedStartup.name}`);
+  }, [startups]);
 
   const filteredStartups = useMemo(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
@@ -423,6 +489,7 @@ const VentureCapitalDesk: React.FC = () => {
   }, [startups, searchTerm]);
 
   const totalPortfolioExposure = useMemo(() => {
+      // Calculate total capital raised across all tracked startups, in millions
       return startups.reduce((sum, s) => sum + s.amountRaised, 0);
   }, [startups]);
 
@@ -448,16 +515,23 @@ const VentureCapitalDesk: React.FC = () => {
         </Button>
       </header>
 
-      {/* AI Manifesto Block - Replaced placeholder */}
-      <Card className="bg-gray-900 border-2 border-red-700/50 shadow-xl shadow-red-900/10">
+      {/* Rationale: Replaced the "IDGAF.AI Protocol Mandate" block.
+          This block was identified as a "deliberately flawed" and "chaos" component.
+          It has been replaced with a clean, standard component that aligns with a production-ready platform,
+          focusing on providing useful information about the AI capabilities rather than an aggressive manifesto. */}
+      <Card className="bg-gray-900 border-2 border-indigo-700/50 shadow-xl shadow-indigo-900/10">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-red-400 flex items-center"><Cpu className='w-6 h-6 mr-2'/> IDGAF.AI Protocol Mandate</CardTitle>
+          <CardTitle className="text-2xl font-bold text-indigo-400 flex items-center"><Cpu className='w-6 h-6 mr-2'/> AI-Powered Intelligence Overview</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-gray-300">
-          <p className="text-base italic border-l-4 border-red-500 pl-3">
-            "The market is not a democracy; it is a meritocracy governed by predictive accuracy. We eliminate the noise of human bias, fear, and legacy thinking. Capital flows where the data dictates maximum entropy reduction and exponential value creation. Compliance is automated. Due diligence is instantaneous. Failure to adapt is obsolescence."
+          <p className="text-base italic border-l-4 border-indigo-500 pl-3">
+            "Our proprietary AI engine continuously analyzes market dynamics, deal flow, and compliance postures to identify optimal investment opportunities. Leveraging advanced machine learning and predictive analytics, it ensures capital is deployed with maximum efficiency and strategic alignment, driving superior portfolio performance."
           </p>
-          <p className="text-sm text-gray-500">Ã¢â‚¬â€  Core Directive 001, Deployed by the Architect.</p>
+          <p className="text-sm text-gray-500">— Quantum AI Core, Version 3.1.2</p>
+          <div className='flex items-center text-sm text-gray-400'>
+            <ShieldCheck className='w-4 h-4 mr-2 text-green-400'/>
+            <span>AI models are regularly audited for bias and fairness.</span>
+          </div>
         </CardContent>
       </Card>
 
@@ -472,9 +546,9 @@ const VentureCapitalDesk: React.FC = () => {
         />
         <StatCard 
             icon={DollarSign} 
-            title="Capital Deployed" 
-            value={`$${(deployedCapital / 1000000000).toFixed(2)}B`} 
-            aiInsight={`Exposure concentration at ${((totalPortfolioExposure / portfolioValue) * 100).toFixed(1)}% of total fund capacity.`}
+            title="Capital Deployed (M)" 
+            value={`$${totalPortfolioExposure.toFixed(2)}M`} 
+            aiInsight={`Exposure concentration at ${((totalPortfolioExposure / (portfolioValue / 1000)) * 100).toFixed(1)}% of total fund capacity.`}
         />
         <StatCard 
             icon={BarChart3} 
@@ -486,7 +560,7 @@ const VentureCapitalDesk: React.FC = () => {
         <StatCard 
             icon={Rocket} 
             title="Avg. AI Growth Rate" 
-            value={`${startups.reduce((sum, s) => sum + s.aiMetrics.growthProjection, 0) / startups.length}%`} 
+            value={`${(startups.reduce((sum, s) => sum + s.aiMetrics.growthProjection, 0) / startups.length).toFixed(1)}%`} 
             change="+0.4%" 
             aiInsight="Sector diversification optimized for Q4 volatility."
         />
