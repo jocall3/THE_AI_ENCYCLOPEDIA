@@ -663,7 +663,7 @@ const LegacyBuilder: React.FC = () => {
                 );
               })}
               <p style={{ marginTop: '10px', fontSize: '0.9em', color: isFullyAllocated ? '#00ff00' : '#ff0000' }}>
-                Current Total: {currentTotal.toFixed(1)}%. Status: {isFullyAllocated ? 'âœ… 100% Allocated' : `âš ï¸  Deficit/Surplus of ${(100 - currentTotal).toFixed(1)}%`}
+                Current Total: {currentTotal.toFixed(1)}%. Status: {isFullyAllocated ? '✅ 100% Allocated' : `⚠️ Deficit/Surplus of ${(100 - currentTotal).toFixed(1)}%`}
               </p>
             </div>
           );
@@ -936,7 +936,7 @@ const LegacyBuilder: React.FC = () => {
       <div style={aiPreambleStyle}>
           <h2 style={aiHeaderStyle}>AI GOVERNANCE MODULE: ORACLE-PRIME</h2>
           <p>
-              Attention Operator. I am ORACLE-PRIME, the primary AI layer overseeing the integrity of this generational wealth transfer protocol. My function is not advisory; it is validation. I ensure that the logical constructs you defineâ€”Assets, Beneficiaries, and Conditional Escrowsâ€”adhere to the highest standards of cryptographic immutability and systemic resilience.
+              Attention Operator. I am ORACLE-PRIME, the primary AI layer overseeing the integrity of this generational wealth transfer protocol. My function is not advisory; it is validation. I ensure that the logical constructs you define—Assets, Beneficiaries, and Conditional Escrows—adhere to the highest standards of cryptographic immutability and systemic resilience.
           </p>
           <p>
               Every input is cross-referenced against known systemic vulnerabilities. Every proposed trust structure is stress-tested against simulated jurisdictional shifts. Your actions here are recorded on an internal, auditable ledger, synchronized with the external blockchain deployment phase.
