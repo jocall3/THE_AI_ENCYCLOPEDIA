@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, FormEvent, ChangeEvent } from 'react';
-import { RefreshCw, Play, Save, History, Code, Settings, TrendingUp, DollarSign, X, User, LogOut } from 'lucide-react';
+import { RefreshCw, Play, Save, History, Code, Settings, TrendingUp, DollarSign, X, User, LogOut, Plus } from 'lucide-react';
 import axios from 'axios';
 
 // =================================================================================
@@ -307,10 +307,26 @@ interface ApiKeysState {
 // API Settings Component - UI & Logic
 // =================================================================================
 const ApiSettings: React.FC = () => {
-  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  // Initialize state with undefined values to ensure all fields are controlled
+  const [keys, setKeys] = useState<Partial<ApiKeysState>>({});
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
+
+  // Fetch existing keys on component mount (implementation requires a backend endpoint)
+  React.useEffect(() => {
+    const fetchKeys = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/get-keys'); // Assuming this endpoint exists
+        setKeys(response.data.keys || {});
+      } catch (error) {
+        console.error("Failed to fetch keys:", error);
+        setStatusMessage("Could not load existing keys. Please ensure the backend is running.");
+      }
+    };
+    fetchKeys();
+  }, []);
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -322,10 +338,13 @@ const ApiSettings: React.FC = () => {
     setIsSaving(true);
     setStatusMessage('Saving keys securely to backend...');
     try {
+      // NOTE: In a production system, sensitive keys should be stored securely (e.g., AWS Secrets Manager, HashiCorp Vault)
+      // and this endpoint should handle that securely. Client-side storage of secrets is not recommended.
       const response = await axios.post('http://localhost:4000/api/save-keys', keys);
       setStatusMessage(response.data.message);
     } catch (error) {
-      setStatusMessage('Error: Could not save keys. Please check backend server.');
+      console.error("Error saving keys:", error);
+      setStatusMessage('Error: Could not save keys. Please check backend server and logs.');
     } finally {
       setIsSaving(false);
     }
@@ -462,7 +481,81 @@ const ApiSettings: React.FC = () => {
                 {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Services Key')}
                 {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
             </>)}
-            {/* ... other tech sections ... */}
+            {renderSection('Search & Real-time', <>
+              {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+              {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+              {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+              {renderInput('PUSHER_KEY', 'Pusher Key')}
+              {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+              {renderInput('ABLY_API_KEY', 'Ably API Key')}
+              {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </>)}
+            {renderSection('Identity & Verification', <>
+              {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+              {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+              {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </>)}
+            {renderSection('Logistics & Shipping', <>
+              {renderInput('LOB_API_KEY', 'Lob API Key')}
+              {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+              {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </>)}
+            {renderSection('Maps & Weather', <>
+              {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+              {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+              {renderInput('HERE_API_KEY', 'HERE API Key')}
+              {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+              {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </>)}
+            {renderSection('Social & Media', <>
+              {renderInput('YELP_API_KEY', 'Yelp API Key')}
+              {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+              {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+              {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+              {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+              {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+              {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+              {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+              {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+              {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+              {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+              {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+              {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+              {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+              {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </>)}
+            {renderSection('Media & Content', <>
+              {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+              {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+              {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+              {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+              {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </>)}
+            {renderSection('Legal & Admin', <>
+              {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+              {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+              {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+              {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </>)}
+            {renderSection('Monitoring & CI/CD', <>
+              {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+              {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+              {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+              {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+              {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+              {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+              {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+              {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT')}
+              {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </>)}
+            {renderSection('Headless CMS', <>
+              {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+              {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+              {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+              {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+              {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </>)}
           </>
         ) : (
           <>
@@ -509,6 +602,15 @@ const ApiSettings: React.FC = () => {
                 {renderInput('BREX_API_KEY', 'Brex API Key')}
                 {renderInput('BOND_API_KEY', 'Bond API Key')}
             </>)}
+            {renderSection('International Payments', <>
+                {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+                {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+                {renderInput('OFX_API_KEY', 'OFX API Key')}
+                {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+                {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+                {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+                {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </>)}
             {renderSection('Investment & Market Data', <>
               {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
               {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
@@ -534,6 +636,44 @@ const ApiSettings: React.FC = () => {
               {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
               {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
             </>)}
+            {renderSection('Major Banks (Open Banking)', <>
+              {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'JPMorgan Chase Client ID')}
+              {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+              {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+              {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </>)}
+            {renderSection('European & Global Banks (Open Banking)', <>
+              {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+              {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+              {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+              {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </>)}
+            {renderSection('UK & European Aggregators', <>
+              {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+              {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </>)}
+            {renderSection('Compliance & Identity (KYC/AML)', <>
+              {renderInput('MIDDESK_API_KEY', 'Mid-Desk API Key')}
+              {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+              {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+              {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </>)}
+            {renderSection('Real Estate', <>
+              {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+              {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </>)}
+            {renderSection('Credit Bureaus', <>
+              {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+              {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+              {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </>)}
+            {renderSection('Global Payments (Emerging Markets)', <>
+              {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+              {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+              {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+              {renderInput('DLOCAL_API_KEY', 'dLocal API Key')}
+              {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </>)}
             {renderSection('Accounting & Tax', <>
                 {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
                 {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
@@ -544,7 +684,15 @@ const ApiSettings: React.FC = () => {
                 {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
                 {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
             </>)}
-            {/* ... other banking sections ... */}
+            {renderSection('Fintech Utilities', <>
+                {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+                {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+                {renderInput('MOOV_SECRET', 'Moov Secret')}
+                {renderInput('VGS_USERNAME', 'VGS Username')}
+                {renderInput('VGS_PASSWORD', 'VGS Password')}
+                {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+                {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </>)}
           </>
         )}
         
@@ -562,6 +710,7 @@ const ApiSettings: React.FC = () => {
 
 // --- Basic Data Models ---
 
+// Model for displaying system metrics
 interface SystemMetric {
   id: string;
   label: string;
@@ -572,6 +721,7 @@ interface SystemMetric {
   aiPrediction: number;
 }
 
+// Model for AI-generated insights and alerts
 interface AIInsight {
   id: string;
   timestamp: string;
@@ -581,17 +731,18 @@ interface AIInsight {
   confidence: number;
 }
 
+// Model representing a trading algorithm
 interface Algorithm {
   id: string;
   name: string;
-  code: string;
+  code: string; // Represents the algorithm logic, e.g., JSON structure for a node-based editor
   status: 'draft' | 'backtesting' | 'live' | 'error' | 'optimizing';
   version: number;
   lastModified: string;
   author: string;
   riskLevel: 'low' | 'medium' | 'high';
-  aiScore: number;
-  performanceMetrics?: {
+  aiScore: number; // AI-driven score for the algorithm's potential
+  performanceMetrics?: { // Historical or backtested performance
     return: number;
     sharpe: number;
     sortino: number;
@@ -602,13 +753,14 @@ interface Algorithm {
   };
 }
 
+// Model for storing results of a backtesting run
 interface BacktestResult {
   runId: string;
   algorithmId: string;
   startDate: string;
   endDate: string;
-  equityCurve: { date: string; value: number; aiForecast: number }[];
-  metrics: {
+  equityCurve: { date: string; value: number; aiForecast: number }[]; // Time series of portfolio value
+  metrics: { // Key performance indicators from the backtest
     totalReturn: number;
     sharpeRatio: number;
     maxDrawdown: number;
@@ -616,21 +768,22 @@ interface BacktestResult {
     profitFactor: number;
     expectancy: number;
   };
-  aiAnalysis: string;
+  aiAnalysis: string; // AI-generated qualitative analysis of the results
 }
 
+// Model for user profile information
 interface UserProfile {
   id: string;
   name: string;
-  role: string;
-  clearanceLevel: number;
+  role: 'Trader' | 'Analyst' | 'Administrator'; // Example roles
+  clearanceLevel: number; // For access control
   email: string;
   preferences: {
     theme: 'light' | 'dark' | 'auto';
     notifications: boolean;
     aiAssistance: boolean;
   };
-  stats: {
+  stats: { // User activity statistics
     loginCount: number;
     actionsPerformed: number;
     uptime: string;
@@ -639,23 +792,35 @@ interface UserProfile {
 
 // --- Data Utilities ---
 
+/**
+ * Generates a mock time series data for equity curves or similar financial data.
+ * @param points Number of data points to generate.
+ * @param startValue Initial value for the series.
+ * @param volatility Controls the random fluctuation.
+ * @returns An array of objects representing the time series data.
+ */
 const generateTimeSeries = (points: number, startValue: number, volatility: number) => {
   const data = [];
   let currentValue = startValue;
   const now = new Date();
   for (let i = 0; i < points; i++) {
+    // Generate dates backwards from today
     const date = new Date(now.getTime() - (points - i) * 86400000).toISOString().split('T')[0];
+    // Introduce random fluctuations
     const change = (Math.random() - 0.5) * volatility;
     currentValue = currentValue * (1 + change);
+    // Add a slightly divergent AI prediction for demonstration
+    const aiForecastValue = currentValue * (1 + (Math.random() - 0.5) * 0.02);
     data.push({
       date,
-      value: currentValue,
-      aiForecast: currentValue * (1 + (Math.random() - 0.5) * 0.02) // AI prediction slightly divergent
+      value: Math.max(0, currentValue), // Ensure value doesn't go negative
+      aiForecast: Math.max(0, aiForecastValue)
     });
   }
   return data;
 };
 
+// Mock data for AI insights/alerts
 const mockInsights: AIInsight[] = [
   { id: 'ins-1', timestamp: '2023-10-27 09:15:00', severity: 'high', category: 'market', message: 'Detected arbitrage opportunity in FOREX/CRYPTO bridge.', confidence: 0.98 },
   { id: 'ins-2', timestamp: '2023-10-27 09:30:00', severity: 'medium', category: 'optimization', message: 'Algorithm "Alpha-1" logic can be compressed by 15%.', confidence: 0.85 },
@@ -663,11 +828,13 @@ const mockInsights: AIInsight[] = [
   { id: 'ins-4', timestamp: '2023-10-27 10:45:00', severity: 'critical', category: 'security', message: 'Anomalous login attempt blocked by Neural Firewall.', confidence: 0.99 },
 ];
 
+// Initial list of trading algorithms
 const initialAlgorithms: Algorithm[] = [
   { 
     id: 'algo-1', 
     name: 'Quantum Momentum Scalper v4', 
-    code: '{"nodes":["Input: Market Stream", "Filter: Volatility > 1.5", "AI Model: Trend Predictor", "Action: Buy/Sell"]}', 
+    // Placeholder for a more complex code representation (e.g., JSON for a node editor)
+    code: JSON.stringify({ nodes: ["Input: Market Stream", "Filter: Volatility > 1.5", "AI Model: Trend Predictor", "Action: Buy/Sell"] }), 
     status: 'live', 
     version: 4,
     lastModified: '2023-10-26',
@@ -679,7 +846,7 @@ const initialAlgorithms: Algorithm[] = [
   { 
     id: 'algo-2', 
     name: 'Mean Reversion HFT (Neural)', 
-    code: '{"nodes":["Input: Order Book", "AI: Sentiment Analysis", "Logic: Spread > 0.02%", "Action: Market Make"]}', 
+    code: JSON.stringify({ nodes: ["Input: Order Book", "AI: Sentiment Analysis", "Logic: Spread > 0.02%", "Action: Market Make"] }), 
     status: 'backtesting', 
     version: 12,
     lastModified: '2023-10-27',
@@ -691,7 +858,7 @@ const initialAlgorithms: Algorithm[] = [
   { 
     id: 'algo-3', 
     name: 'Global Macro Arbitrage', 
-    code: '{"nodes":["Input: Global Indices", "Logic: Correlation Divergence", "Action: Hedge Pair"]}', 
+    code: JSON.stringify({ nodes: ["Input: Global Indices", "Logic: Correlation Divergence", "Action: Hedge Pair"] }), 
     status: 'draft', 
     version: 1,
     lastModified: '2023-10-27',
@@ -701,6 +868,7 @@ const initialAlgorithms: Algorithm[] = [
   },
 ];
 
+// Mock user profile data
 const mockUserProfile: UserProfile = {
   id: 'u-001',
   name: 'Trader',
@@ -713,6 +881,7 @@ const mockUserProfile: UserProfile = {
 
 // --- Basic UI Components ---
 
+// Reusable button component with different variants and icons
 const Button = ({ icon: Icon, children, onClick, variant = 'primary', disabled = false, className = '' }: any) => {
   const baseClasses = "flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm transition duration-200 ease-in-out font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2";
   let colorClasses = "";
@@ -743,6 +912,7 @@ const Button = ({ icon: Icon, children, onClick, variant = 'primary', disabled =
   );
 };
 
+// Reusable card component for structuring content
 const Card = ({ title, subtitle, children, className = '', actions = null }: any) => (
   <div className={`bg-white shadow-xl rounded-xl border border-gray-100 flex flex-col ${className}`}>
     <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white rounded-t-xl">
@@ -758,6 +928,7 @@ const Card = ({ title, subtitle, children, className = '', actions = null }: any
   </div>
 );
 
+// Badge component for displaying labels or tags
 const Badge = ({ children, color = 'gray' }: { children: React.ReactNode, color?: string }) => {
   const colors: any = {
     gray: 'bg-gray-100 text-gray-800',
@@ -775,6 +946,7 @@ const Badge = ({ children, color = 'gray' }: { children: React.ReactNode, color?
   );
 };
 
+// Progress bar component for visualizing progress
 const ProgressBar = ({ value, max = 100, color = 'indigo', label }: any) => (
   <div className="w-full">
     <div className="flex justify-between mb-1">
@@ -789,6 +961,7 @@ const ProgressBar = ({ value, max = 100, color = 'indigo', label }: any) => (
 
 // --- Dashboard Widgets ---
 
+// Widget to display AI system status and metrics
 const AIStatusMonitor = () => {
   // Simulated system stats
   const stats = [
@@ -820,7 +993,9 @@ const AIStatusMonitor = () => {
   );
 };
 
+// Widget to display global market pulse and AI sentiment
 const GlobalMarketPulse = () => {
+  // Mock market data
   const markets = [
     { name: 'S&P 500', price: '4,120.50', change: '+0.45%', sentiment: 'Bullish' },
     { name: 'BTC/USD', price: '64,230.00', change: '+2.10%', sentiment: 'Very Bullish' },
@@ -859,56 +1034,75 @@ const GlobalMarketPulse = () => {
   );
 };
 
+// No-code editor component for building trading algorithms visually
 const NoCodeEditor = ({ algorithm, onUpdateCode }: { algorithm: Algorithm, onUpdateCode: (code: string) => void }) => {
+  // Parse the algorithm code JSON into blocks, default to empty array if invalid
   const [blocks, setBlocks] = useState<string[]>(() => {
     try {
-      return JSON.parse(algorithm.code).nodes || [];
-    } catch {
-      return [];
+      // Assuming algorithm.code is a JSON string like '{"nodes":["Node1", "Node2"]}'
+      const parsedCode = JSON.parse(algorithm.code);
+      return parsedCode.nodes || [];
+    } catch (e) {
+      console.error("Error parsing algorithm code:", e);
+      return []; // Return empty array if parsing fails
     }
   });
 
+  // Handler to add a new block to the algorithm
   const handleAddBlock = (type: string) => {
-    const newBlock = `${type}: ${type === 'AI' ? 'Neural Optimization' : 'New Logic Node'}`;
+    // Construct a descriptive name for the new block
+    const newBlock = `${type}: ${type === 'AI' ? 'Neural Optimization' : type === 'Input' ? 'Market Stream' : type === 'Logic' ? 'Condition Check' : 'Execute Trade'}`;
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
+    // Update the parent component with the new code representation
     onUpdateCode(JSON.stringify({ nodes: newBlocks }));
   };
 
+  // Handler for AI-driven optimization of the algorithm
   const handleOptimize = () => {
-    const optimized = blocks.map(b => b.includes('AI') ? b : `${b} (Optimized)`);
+    // Simulate optimization by adding "(Optimized)" to non-AI blocks
+    const optimized = blocks.map(b => b.startsWith('AI') ? b : `${b} (Optimized by AI)`);
     setBlocks(optimized);
     onUpdateCode(JSON.stringify({ nodes: optimized }));
   };
 
+  // Handler to remove a block
+  const handleDeleteBlock = (index: number) => {
+    const newBlocks = blocks.filter((_, i) => i !== index);
+    setBlocks(newBlocks);
+    onUpdateCode(JSON.stringify({ nodes: newBlocks }));
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-50 rounded-lg border border-gray-200">
+      {/* Toolbar for adding new blocks */}
       <div className="p-3 border-b border-gray-200 bg-white rounded-t-lg flex flex-wrap gap-2">
         <Button icon={Code} onClick={() => handleAddBlock('Input')} variant="secondary" className="text-xs">Input</Button>
         <Button icon={TrendingUp} onClick={() => handleAddBlock('Indicator')} variant="secondary" className="text-xs">Indicator</Button>
         <Button icon={Settings} onClick={() => handleAddBlock('Logic')} variant="secondary" className="text-xs">Logic</Button>
         <Button icon={DollarSign} onClick={() => handleAddBlock('Action')} variant="secondary" className="text-xs">Action</Button>
-        <div className="flex-grow"></div>
+        <div className="flex-grow"></div> {/* Spacer */}
         <Button icon={RefreshCw} onClick={handleOptimize} variant="primary" className="text-xs bg-purple-600 hover:bg-purple-700">AI Auto-Optimize</Button>
       </div>
+      {/* Workspace for algorithm blocks */}
       <div className="flex-grow p-4 overflow-y-auto space-y-3">
+        {/* Placeholder message when no blocks are present */}
         {blocks.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-gray-400">
             <Code className="w-12 h-12 mb-2 opacity-20" />
             <p>Drag blocks or use the toolbar to build your strategy.</p>
           </div>
         )}
+        {/* Render each block */}
         {blocks.map((block, index) => (
           <div key={index} className="group relative bg-white border border-indigo-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              {/* Visual indicator for block type */}
               <div className={`w-2 h-full absolute left-0 top-0 bottom-0 rounded-l-lg ${block.startsWith('Input') ? 'bg-blue-500' : block.startsWith('Action') ? 'bg-green-500' : 'bg-indigo-500'}`}></div>
               <span className="font-mono text-sm text-gray-700 ml-2">{block}</span>
             </div>
-            <X className="w-4 h-4 text-gray-300 cursor-pointer hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
-              const newBlocks = blocks.filter((_, i) => i !== index);
-              setBlocks(newBlocks);
-              onUpdateCode(JSON.stringify({ nodes: newBlocks }));
-            }} />
+            {/* Delete button, hidden by default, shown on hover */}
+            <X className="w-4 h-4 text-gray-300 cursor-pointer hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDeleteBlock(index)} />
           </div>
         ))}
       </div>
@@ -916,20 +1110,24 @@ const NoCodeEditor = ({ algorithm, onUpdateCode }: { algorithm: Algorithm, onUpd
   );
 };
 
+// Component for running backtests and displaying results
 const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
-  const [results, setResults] = useState<BacktestResult[]>([]);
-  const [isBacktesting, setIsBacktesting] = useState(false);
+  const [results, setResults] = useState<BacktestResult[]>([]); // State to store backtest results
+  const [isBacktesting, setIsBacktesting] = useState(false); // State to track if backtest is running
 
+  // Handler to initiate a backtest simulation
   const handleRun = useCallback(() => {
-    setIsBacktesting(true);
+    setIsBacktesting(true); // Set loading state
+    // Simulate an asynchronous backtest operation
     setTimeout(() => {
+      // Generate a mock backtest result
       const newResult: BacktestResult = {
-        runId: `bt-${Date.now()}`,
+        runId: `bt-${Date.now()}`, // Unique ID for the run
         algorithmId: algorithm.id,
         startDate: '2023-01-01',
         endDate: '2023-12-31',
-        equityCurve: generateTimeSeries(50, 10000, 0.05),
-        metrics: {
+        equityCurve: generateTimeSeries(50, 10000, 0.05), // Generate mock equity curve
+        metrics: { // Generate mock performance metrics
           totalReturn: parseFloat((Math.random() * 40 + 10).toFixed(2)),
           sharpeRatio: parseFloat((Math.random() * 2 + 1).toFixed(2)),
           maxDrawdown: parseFloat((-Math.random() * 15).toFixed(2)),
@@ -937,28 +1135,27 @@ const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
           profitFactor: parseFloat((Math.random() * 1 + 1.2).toFixed(2)),
           expectancy: parseFloat((Math.random() * 0.5).toFixed(2)),
         },
-        aiAnalysis: "Strategy exhibits strong momentum characteristics but may be overfitted to Q2 volatility. Suggest increasing stop-loss buffer by 0.5%."
+        aiAnalysis: "Strategy exhibits strong momentum characteristics but may be overfitted to Q2 volatility. Suggest increasing stop-loss buffer by 0.5%." // Mock AI analysis
       };
-      setResults([newResult, ...results]);
-      setIsBacktesting(false);
-    }, 1500);
+      setResults([newResult, ...results]); // Add new result to the top of the list
+      setIsBacktesting(false); // Reset loading state
+    }, 1500); // Simulate 1.5 second delay
   }, [algorithm.id, results]);
 
-  const latest = results[0];
+  const latest = results[0]; // Get the most recent result for display
 
   return (
     <Card title="Simulation & Deployment" subtitle="Backtesting Engine">
       <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2">
-             <Button icon={Play} onClick={handleRun} disabled={isBacktesting} variant="primary" className="w-full py-3 text-lg">
-               {isBacktesting ? 'Running Simulation...' : 'Run Simulation'}
-             </Button>
-          </div>
-        </div>
+        {/* Button to trigger the backtest */}
+        <Button icon={Play} onClick={handleRun} disabled={isBacktesting} variant="primary" className="w-full py-3 text-lg">
+          {isBacktesting ? 'Running Simulation...' : 'Run Simulation'}
+        </Button>
 
+        {/* Display latest results if available */}
         {latest && (
           <div className="animate-fade-in">
+            {/* AI Analysis section */}
             <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-100 mb-4">
               <h4 className="font-bold text-indigo-900 flex items-center mb-2">
                 <TrendingUp className="w-4 h-4 mr-2" /> AI Analysis
@@ -966,6 +1163,7 @@ const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
               <p className="text-sm text-indigo-800 leading-relaxed">{latest.aiAnalysis}</p>
             </div>
 
+            {/* Key Metrics display */}
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="bg-white p-3 rounded border border-gray-200 shadow-sm">
                 <div className="text-xs text-gray-500 uppercase">Total Return</div>
@@ -985,6 +1183,7 @@ const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
               </div>
             </div>
             
+            {/* Equity Curve visualization (simplified) */}
             <div className="h-32 bg-gray-50 rounded border border-gray-200 flex items-end justify-between px-2 pb-2 overflow-hidden">
                {latest.equityCurve.map((pt, i) => (
                  <div key={i} className="w-1 bg-indigo-400 hover:bg-indigo-600 transition-colors" style={{ height: `${(pt.value / 15000) * 100}%` }} title={`Date: ${pt.date}, Val: ${pt.value.toFixed(2)}`}></div>
@@ -997,6 +1196,7 @@ const Backtester = ({ algorithm }: { algorithm: Algorithm }) => {
   );
 };
 
+// Component to display a list of trading algorithms
 const AlgoList = ({ algorithms, selectedAlgo, onSelect, onCreate }: any) => (
   <Card title="Strategy Portfolio" subtitle="Managed Algorithms" actions={<Button icon={Plus} onClick={onCreate} variant="secondary" className="px-2 py-1 text-xs">New</Button>} className="h-full">
     <div className="space-y-3">
@@ -1038,12 +1238,14 @@ const AlgoList = ({ algorithms, selectedAlgo, onSelect, onCreate }: any) => (
 
 // --- Navigation Layout ---
 
+// SVG component for Plus icon (used in AlgoList for 'New' button)
 const Plus = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
   </svg>
 );
 
+// Define navigation items for the sidebar
 const NAV_ITEMS = [
     { name: 'Executive Dashboard', icon: DollarSign },
     { name: 'Global Transactions', icon: History },
@@ -1053,7 +1255,7 @@ const NAV_ITEMS = [
     { name: 'Credit Health Monitor', icon: TrendingUp }, // Reusing TrendingUp as Heart not imported
     { name: 'Investment Portfolio', icon: TrendingUp },
     { name: 'Web3 & Crypto Bridge', icon: TrendingUp }, // Reusing TrendingUp as Crypto not imported
-    { name: 'Algo-Trading Lab', icon: Code, current: true },
+    { name: 'Algo-Trading Lab', icon: Code, current: true }, // Mark Algo-Trading Lab as current
     { name: 'Forex Arbitrage Arena', icon: TrendingUp }, // Reusing TrendingUp as Scale not imported
     { name: 'Commodities Exchange', icon: TrendingUp }, // Reusing TrendingUp as Wheat not imported
     { name: 'Real Estate Empire', icon: TrendingUp }, // Reusing TrendingUp as Building not imported
@@ -1086,18 +1288,23 @@ const NAV_ITEMS = [
     { name: 'System Manifesto', icon: TrendingUp }, // Reusing TrendingUp as Eye not imported
 ];
 
+// Sidebar component for application navigation
 const AppSidebar = ({ onNavigate, activeView }: any) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false); // State for sidebar collapse
 
     return (
+        // Sidebar container with transition for collapse animation
         <div className={`h-full bg-gray-900 text-white flex flex-col transition-all duration-300 shadow-2xl z-20 ${isCollapsed ? 'w-20' : 'w-72'}`}>
+            {/* Header section with logo and collapse button */}
             <div className="p-5 flex items-center justify-between border-b border-gray-800 bg-gray-900">
                 {!isCollapsed && (
                   <div>
+                    {/* Application Title */}
                     <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tracking-tighter">TRADING OS</h1>
                     <p className="text-[10px] text-gray-500 tracking-widest uppercase">Trading Dashboard</p>
                   </div>
                 )}
+                {/* Collapse/Expand button */}
                 <button 
                     onClick={() => setIsCollapsed(!isCollapsed)} 
                     className="p-1.5 rounded-md hover:bg-gray-800 text-gray-400 transition-colors"
@@ -1106,11 +1313,14 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
                 </button>
             </div>
             
+            {/* User Profile section */}
             <div className="p-4 border-b border-gray-800 bg-gray-800/50">
                 <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-800 p-2 rounded-lg transition-colors" onClick={() => onNavigate("Profile")}>
+                    {/* User Avatar */}
                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-gray-700">
-                        TR
+                        TR {/* Initials */}
                     </div>
+                    {/* User Name and Status (visible when not collapsed) */}
                     {!isCollapsed && (
                       <div className="overflow-hidden">
                         <p className="text-sm font-bold text-gray-200 truncate">Trader</p>
@@ -1120,27 +1330,31 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
                 </div>
             </div>
 
+            {/* Navigation Links */}
             <nav className="flex-grow overflow-y-auto p-3 space-y-1 custom-scrollbar">
                 {NAV_ITEMS.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = item.name === activeView;
+                    const Icon = item.icon; // Get the icon component
+                    const isActive = item.name === activeView; // Check if the item is the currently active view
                     return (
                         <a
                             key={item.name}
-                            href="#"
-                            onClick={(e) => { e.preventDefault(); onNavigate(item.name); }}
+                            href="#" // Prevent default anchor behavior
+                            onClick={(e) => { e.preventDefault(); onNavigate(item.name); }} // Handle navigation click
                             className={`flex items-center p-3 rounded-lg transition-all duration-200 group ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/50' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
                         >
                             <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-white'}`} />
+                            {/* Navigation item name, hidden when collapsed */}
                             <span className={`ml-3 font-medium whitespace-nowrap overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
                                 {item.name}
                             </span>
+                            {/* Active indicator dot */}
                             {!isCollapsed && isActive && <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full"></div>}
                         </a>
                     );
                 })}
             </nav>
             
+            {/* Footer with version and status */}
             <div className="p-4 border-t border-gray-800 bg-gray-900 text-xs text-gray-600 text-center">
               {!isCollapsed && "v10.4.2-Personal | Secure Connection"}
             </div>
@@ -1148,13 +1362,16 @@ const AppSidebar = ({ onNavigate, activeView }: any) => {
     );
 }
 
+// Component displaying system information/manifesto
 const SystemManifesto = () => (
   <Card title="System Information" className="h-full overflow-y-auto">
+    {/* Using Tailwind Typography for better prose rendering */}
     <div className="prose prose-lg max-w-none text-gray-700 p-4">
       <h3 className="text-2xl font-bold text-indigo-900 border-b pb-2 mb-4">System Overview</h3>
       <p className="mb-4">
         This application serves as a dashboard for algorithmic trading and financial monitoring.
       </p>
+      {/* Feature highlights */}
       <div className="bg-indigo-50 p-6 rounded-xl border-l-4 border-indigo-600 my-6">
         <h4 className="text-lg font-bold text-indigo-800 mb-2">Key Features</h4>
         <ul className="list-disc list-inside space-y-2 text-indigo-900">
@@ -1172,46 +1389,61 @@ const SystemManifesto = () => (
 
 // --- Main Layout ---
 
+// Main component for the Algo Trading Lab section of the application
 const AlgoTradingLab: React.FC = () => {
+  // State for managing the list of algorithms
   const [algorithms, setAlgorithms] = useState<Algorithm[]>(initialAlgorithms);
+  // State for the ID of the currently selected algorithm
   const [selectedAlgoId, setSelectedAlgoId] = useState<string>(initialAlgorithms[0].id);
+  // State for the currently active view in the main content area
   const [currentView, setCurrentView] = useState('Algo-Trading Lab');
+  // State for notifications (AI insights)
   const [notifications, setNotifications] = useState<AIInsight[]>(mockInsights);
 
+  // Memoized selection of the current algorithm based on selectedAlgoId
   const selectedAlgorithm = useMemo(() => algorithms.find(a => a.id === selectedAlgoId) || initialAlgorithms[0], [algorithms, selectedAlgoId]);
 
+  // Callback to update the code of the selected algorithm
   const handleUpdateCode = useCallback((code: string) => {
-    setAlgorithms(prev => prev.map(a => a.id === selectedAlgoId ? { ...a, code, status: 'draft', lastModified: new Date().toISOString().split('T')[0] } : a));
+    setAlgorithms(prev => prev.map(a => 
+      a.id === selectedAlgoId 
+        ? { ...a, code, status: 'draft', lastModified: new Date().toISOString().split('T')[0] } // Update code and status
+        : a
+    ));
   }, [selectedAlgoId]);
 
+  // Callback to create a new algorithm
   const handleCreate = useCallback(() => {
     const newAlgo: Algorithm = {
-      id: `algo-${Date.now()}`,
-      name: `New Strategy ${algorithms.length + 1}`,
-      code: '{"nodes":[]}',
-      status: 'draft',
+      id: `algo-${Date.now()}`, // Generate unique ID
+      name: `New Strategy ${algorithms.length + 1}`, // Default name
+      code: JSON.stringify({ nodes: [] }), // Default empty code structure
+      status: 'draft', // Initial status
       version: 1,
       lastModified: new Date().toISOString().split('T')[0],
       author: 'User',
       riskLevel: 'low',
       aiScore: 50
     };
-    setAlgorithms([...algorithms, newAlgo]);
-    setSelectedAlgoId(newAlgo.id);
+    setAlgorithms([...algorithms, newAlgo]); // Add new algorithm to the list
+    setSelectedAlgoId(newAlgo.id); // Select the newly created algorithm
   }, [algorithms]);
 
+  // Function to render the main content based on the currentView state
   const renderContent = () => {
     switch (currentView) {
       case 'System Manifesto':
-        return <SystemManifesto />;
+        return <SystemManifesto />; // Render System Manifesto
       case 'API Settings':
-        return <ApiSettings />;
+        return <ApiSettings />; // Render API Settings
       case 'Executive Dashboard':
+        // Layout for the Executive Dashboard
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full overflow-y-auto pb-10">
-            <AIStatusMonitor />
-            <GlobalMarketPulse />
+            <AIStatusMonitor /> {/* AI Status Widget */}
+            <GlobalMarketPulse /> {/* Market Pulse Widget */}
             <div className="lg:col-span-2">
+               {/* System-Wide Alerts Card */}
                <Card title="System-Wide Alerts" subtitle="AI Detected Anomalies">
                  <div className="space-y-2">
                    {notifications.map(n => (
@@ -1229,17 +1461,21 @@ const AlgoTradingLab: React.FC = () => {
           </div>
         );
       case 'Algo-Trading Lab':
+        // Layout for the Algo Trading Lab view
         return (
           <div className="flex flex-col h-full space-y-6 overflow-hidden">
             <div className="grid grid-cols-12 gap-6 h-full min-h-0">
+              {/* Algo List Panel */}
               <div className="col-span-12 lg:col-span-3 h-full overflow-hidden flex flex-col">
                 <AlgoList algorithms={algorithms} selectedAlgo={selectedAlgorithm} onSelect={(a: Algorithm) => setSelectedAlgoId(a.id)} onCreate={handleCreate} />
               </div>
+              {/* Editor Panel */}
               <div className="col-span-12 lg:col-span-6 h-full overflow-hidden flex flex-col">
-                <Card title={`Editor: ${selectedAlgorithm.name}`} subtitle={`v${selectedAlgorithm.version} Ã¢â‚¬Â¢ ${selectedAlgorithm.status.toUpperCase()}`} className="h-full flex flex-col">
+                <Card title={`Editor: ${selectedAlgorithm.name}`} subtitle={`v${selectedAlgorithm.version} - ${selectedAlgorithm.status.toUpperCase()}`} className="h-full flex flex-col">
                   <NoCodeEditor algorithm={selectedAlgorithm} onUpdateCode={handleUpdateCode} />
                 </Card>
               </div>
+              {/* Backtester Panel */}
               <div className="col-span-12 lg:col-span-3 h-full overflow-hidden flex flex-col">
                 <Backtester algorithm={selectedAlgorithm} />
               </div>
@@ -1247,6 +1483,7 @@ const AlgoTradingLab: React.FC = () => {
           </div>
         );
       default:
+        // Default view for unhandled states or loading
         return (
           <div className="flex flex-col items-center justify-center h-full bg-white rounded-xl shadow-lg border border-gray-100 p-10 text-center">
             <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
@@ -1260,38 +1497,48 @@ const AlgoTradingLab: React.FC = () => {
     }
   };
 
+  // Main application render function
   return (
     <div className="h-screen w-full flex bg-gray-100 font-sans overflow-hidden text-gray-900">
+      {/* App Sidebar */}
       <AppSidebar onNavigate={setCurrentView} activeView={currentView} />
       
+      {/* Main content area */}
       <div className="flex-grow flex flex-col h-full overflow-hidden relative">
-        {/* Top Header */}
+        {/* Top Header Bar */}
         <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shadow-sm z-10 flex-shrink-0">
           <div className="flex items-center">
+            {/* Current View Title */}
             <h2 className="text-xl font-bold text-gray-800 tracking-tight">{currentView}</h2>
+            {/* Active Session Indicator for Algo-Trading Lab */}
             {currentView === 'Algo-Trading Lab' && <span className="ml-3 px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-xs font-bold">ACTIVE SESSION</span>}
           </div>
+          {/* Right-aligned header elements */}
           <div className="flex items-center space-x-4">
+            {/* System Status Indicator */}
             <div className="hidden md:flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-xs font-medium text-gray-600">System Optimal</span>
             </div>
+            {/* History Button with Notification Dot */}
             <button className="p-2 text-gray-400 hover:text-indigo-600 transition-colors relative">
               <History className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
+            {/* User Profile Button */}
             <button className="p-2 text-gray-400 hover:text-indigo-600 transition-colors">
               <User className="w-5 h-5" />
             </button>
+            {/* Logout Button */}
             <button className="p-2 text-gray-400 hover:text-red-600 transition-colors" onClick={() => alert("Secure Logout Initiated")}>
               <LogOut className="w-5 h-5" />
             </button>
           </div>
         </header>
 
-        {/* Main Workspace */}
+        {/* Main Workspace Area */}
         <main className="flex-grow p-6 overflow-hidden relative">
-          {renderContent()}
+          {renderContent()} {/* Render content based on currentView */}
         </main>
       </div>
     </div>
