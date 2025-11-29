@@ -1,186 +1,43 @@
----
-name: Enterprise-Grade Global Deployment Pipeline for Quantum-Resilient Static Assets
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches: ["main", "production-release"]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment Environment'
-        required: true
-        default: 'staging'
-        type: choice
-        options: ['staging', 'production']
-      trigger_ai_optimization:
-        description: 'Trigger AI-driven asset optimization pre-deployment'
-        required: false
-        default: 'false'
-        type: boolean
+    branches: ["new"]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "enterprise-pages-deployment-${{ github.ref }}"
-  cancel-in-progress: true
-
-env:
-  NODE_VERSION: '22.x'
-  BUILD_OUTPUT_DIR: 'dist/enterprise-suite'
-  ARTIFACT_NAME: 'enterprise-static-assets'
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  pre_flight_validation:
-    name: Pre-Flight Quantum Security Validation
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    outputs:
-      is_optimized: ${{ steps.ai_check.outputs.optimization_status }}
     steps:
-      - name: Checkout Repository - Secure Baseline Acquisition
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Initialize Secure Environment Variables
-        run: |
-          echo "SECURITY_LEVEL=QuantumSafe" >> $GITHUB_ENV
-          echo "DEPLOYMENT_TARGET=${{ github.event.inputs.environment || 'staging' }}" >> $GITHUB_ENV
-
-      - name: Setup Node.js for Dependency Analysis
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Core Dependencies for Static Analysis
-        run: npm ci
-
-      - name: AI-Driven Code Quality and Security Audit (Simulated)
-        id: ai_check
-        if: github.event.inputs.trigger_ai_optimization == 'true'
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          echo "Simulating deep learning model analysis for asset integrity..."
-          # Placeholder for a complex AI script that analyzes build output for vulnerabilities/performance bottlenecks
-          # In a real billion-dollar system, this would invoke a dedicated microservice.
-          # For this workflow simulation, we assume success if the build command doesn't fail later.
-          echo "Optimization check complete. Status: READY"
-          echo "optimization_status=true" >> $GITHUB_OUTPUT
-
-      - name: Set Default Optimization Status
-        if: steps.ai_check.outputs.optimization_status == ''
-        run: echo "optimization_status=false" >> $GITHUB_OUTPUT
-
-  build_and_optimize:
-    name: Core Asset Compilation and Hyper-Optimization
-    needs: pre_flight_validation
-    runs-on: ubuntu-latest
-    if: success()
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      AI_OPTIMIZATION_ENABLED: ${{ needs.pre_flight_validation.outputs.is_optimized }}
-    outputs:
-      artifact_path: ${{ env.BUILD_OUTPUT_DIR }}
-    steps:
-      - name: Checkout Repository - Source Code Retrieval
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js - Runtime Environment Provisioning
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Dependencies - Dependency Graph Resolution
-        run: npm ci
-
-      - name: Execute Enterprise Build Sequence
-        run: |
-          echo "Starting multi-stage build process..."
-          # Assuming 'npm run build' handles compilation, minification, and asset bundling for the next millennium.
-          npm run build -- --output-path=${{ env.BUILD_OUTPUT_DIR }}
-          echo "Build artifacts generated in ${{ env.BUILD_OUTPUT_DIR }}"
-
-      - name: AI-Powered Asset Transformation Layer
-        if: env.AI_OPTIMIZATION_ENABLED == 'true'
-        run: |
-          echo "Invoking proprietary AI transformation engine for final asset tuning..."
-          # This step would use the GEMINI_API_KEY to dynamically adjust asset configurations based on pre-flight analysis.
-          # Example: Adjusting image compression ratios or JavaScript tree-shaking based on predicted user device profiles.
-          if [ -f ./ai_optimizer_script.js ]; then
-            node ./ai_optimizer_script.js --input ${{ env.BUILD_OUTPUT_DIR }} --key $GEMINI_API_KEY
-          else
-            echo "AI transformation script not found, proceeding with standard build output."
-          fi
-          echo "Asset transformation complete."
-
-  upload_artifact:
-    name: Artifact Staging and Integrity Hashing
-    needs: build_and_optimize
-    runs-on: ubuntu-latest
-    outputs:
-      hash_value: ${{ steps.hash_file.outputs.sha256 }}
-    steps:
-      - name: Checkout Repository - Artifact Location Confirmation
-        uses: actions/checkout@v4
-
-      - name: Download Built Assets
-        uses: actions/download-artifact@v4
-        with:
-          name: enterprise-static-assets # This name must match the upload step below if this were a multi-workflow setup.
-
-      - name: Generate Content Integrity Hash (SHA-256)
-        id: hash_file
-        run: |
-          # Calculate hash over the entire deployment directory for immutable tracking
-          HASH=$(find ${{ needs.build_and_optimize.outputs.artifact_path }} -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
-          echo "sha256_hash=$HASH" >> $GITHUB_OUTPUT
-          echo "Asset Integrity Hash: $HASH"
-
-      - name: Upload Artifact to GitHub Pages Repository
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ needs.build_and_optimize.outputs.artifact_path }}
-          retention-days: 90 # Retain artifacts for 90 days for rollback capability
-
-  deploy_to_pages:
-    name: Global Content Distribution Network Synchronization
-    needs: [upload_artifact, build_and_optimize]
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.event.inputs.environment || 'staging' }}
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: Setup GitHub Pages Configuration
-        uses: actions/configure-pages@v5
-
-      - name: Deploy to GitHub Pages Endpoint
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: ${{ env.ARTIFACT_NAME }}
-          # Custom deployment metadata injection for enhanced monitoring
-          custom_headers: |
-            X-Enterprise-Version: 1.0.0.${{ github.run_number }}
-            X-Asset-Hash: ${{ needs.upload_artifact.outputs.hash_value }}
-            X-AI-Optimized: ${{ needs.build_and_optimize.inputs.AI_OPTIMIZATION_ENABLED }}
-
-      - name: Post-Deployment AI Health Check Notification
-        if: always()
-        env:
-          DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
-          DEPLOYMENT_STATUS: ${{ job.status }}
-          ASSET_HASH: ${{ needs.upload_artifact.outputs.hash_value }}
-        run: |
-          echo "--- AI Deployment Monitoring Report ---"
-          echo "URL: $DEPLOYMENT_URL"
-          echo "Status: $DEPLOYMENT_STATUS"
-          echo "Hash: $ASSET_HASH"
-          # In a real system, this would trigger an external AI service to crawl the new deployment
-          # and report back on initial load times and functional integrity.
-          echo "Notification sent to AI Observability Platform."
----
