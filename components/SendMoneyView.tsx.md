@@ -13,12 +13,11 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// --- AI-Enhanced Core Modules Simulation ---
-// These imports simulate connections to the billion-dollar AI infrastructure.
-// We must adhere strictly to existing imports, so we simulate complex functionality internally.
+// --- Standard Core Modules ---
+// These imports are local mocks for demonstration purposes.
 
-// Simulated Quantum Ledger Interface (QLI)
-interface QuantumTransaction {
+// Basic Transaction Interface
+interface Transaction {
   id: string;
   amount: number;
   recipient: string;
@@ -27,68 +26,68 @@ interface QuantumTransaction {
   status: 'PENDING' | 'CONFIRMED' | 'REJECTED';
 }
 
-// Simulated Biometric Verification Engine (BVE)
-const BVE = {
+// Basic Biometric Service
+const BiometricService = {
   authenticate: async (userId: string): Promise<boolean> => {
-    console.log(`BVE: Initiating sovereign biometric scan for ${userId}...`);
-    // Simulate high-latency, high-security AI processing
+    console.log(`BiometricService: Initiating scan for ${userId}...`);
+    // Simulate standard processing delay
     await new Promise(resolve => setTimeout(resolve, 1500));
-    // In a real system, this would involve complex neural network verification against a sovereign biometric hash.
-    const success = Math.random() > 0.05; // 95% success rate for demonstration
-    console.log(`BVE: Authentication result: ${success}`);
+    // Simple random success for demo
+    const success = Math.random() > 0.05; 
+    console.log(`BiometricService: Authentication result: ${success}`);
     return success;
   },
 };
 
-// Simulated Heuristic Transaction Processor (HTP)
-const HTP = {
-  processTransaction: async (txData: Omit<QuantumTransaction, 'id' | 'timestamp' | 'status'>): Promise<QuantumTransaction> => {
-    console.log('HTP: Receiving transaction request for sovereign ledger entry.');
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate complex ledger write operation
+// Basic Transaction Processor
+const TransactionService = {
+  processTransaction: async (txData: Omit<Transaction, 'id' | 'timestamp' | 'status'>): Promise<Transaction> => {
+    console.log('TransactionService: Receiving transaction request.');
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network request
 
-    const newTx: QuantumTransaction = {
+    const newTx: Transaction = {
       id: `TX-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
       amount: txData.amount,
       recipient: txData.recipient,
       senderId: txData.senderId,
       timestamp: Date.now(),
-      status: 'CONFIRMED', // Assuming successful biometric and fund checks for this simulation
+      status: 'CONFIRMED', 
     };
 
-    console.log(`HTP: Transaction ${newTx.id} confirmed on the sovereign ledger.`);
+    console.log(`TransactionService: Transaction ${newTx.id} confirmed.`);
     return newTx;
   },
 };
 
-// Simulated AI Contextual Fee Engine (ACFE)
-const ACFE = {
-  calculateSovereignFee: (amount: number, rail: 'QuantumPay' | 'CashApp'): { fee: number, rationale: string } => {
-    let baseRate = 0.0001; // Extremely low, near-zero cost due to IDGAFAI efficiency
-    let railMultiplier = rail === 'QuantumPay' ? 1.0 : 1.5; // QuantumPay is slightly cheaper/more direct
+// Basic Fee Calculator
+const FeeService = {
+  calculateFee: (amount: number, method: 'Standard' | 'Instant'): { fee: number, rationale: string } => {
+    let baseRate = 0.0001; 
+    let multiplier = method === 'Standard' ? 1.0 : 1.5; 
 
-    const fee = amount * baseRate * railMultiplier;
-    const rationale = `Fee calculated by ACFE based on sovereign rail optimization (${rail}). IDGAFAI mandates near-zero cost for value transfer.`;
+    const fee = amount * baseRate * multiplier;
+    const rationale = `Fee calculated based on transfer method (${method}).`;
 
     return { fee: parseFloat(fee.toFixed(8)), rationale };
   },
 };
 
-// --- UI Components Simulation ---
+// --- UI Components ---
 
-// 1. Quantum Ledger Animation Placeholder (Replaced with a sophisticated UI element)
-const QuantumLedgerAnimation: React.FC<{ status: 'IDLE' | 'VERIFYING' | 'PROCESSING' | 'COMPLETE' }> = ({ status }) => {
+// 1. Transaction Status Animation
+const TransactionStatusAnimation: React.FC<{ status: 'IDLE' | 'VERIFYING' | 'PROCESSING' | 'COMPLETE' }> = ({ status }) => {
   const [log, setLog] = useState<string[]>([]);
   const [step, setStep] = useState(0);
 
   const steps = useMemo(() => [
-    "Initializing Sovereign Protocol Stack...",
-    "Establishing secure quantum entanglement channel...",
-    "Awaiting Biometric Confirmation Hash...",
-    "Verifying Sender Identity against Global Sovereign Registry...",
-    "Executing Heuristic Transaction Protocol (HTP)...",
-    "Writing immutable entry to Distributed Ledger Matrix...",
-    "Finalizing value transfer across jurisdictional boundaries...",
-    "Transaction Complete. Ledger integrity verified."
+    "Initializing...",
+    "Connecting to secure server...",
+    "Verifying identity...",
+    "Checking account balance...",
+    "Processing transaction...",
+    "Updating ledger...",
+    "Finalizing transfer...",
+    "Transaction Complete."
   ], []);
 
   useEffect(() => {
@@ -120,11 +119,11 @@ const QuantumLedgerAnimation: React.FC<{ status: 'IDLE' | 'VERIFYING' | 'PROCESS
 
   }, [status, step]);
 
-  const displayLog = log.slice(-5); // Show the last 5 critical steps
+  const displayLog = log.slice(-5); 
 
   return (
     <View style={styles.ledgerContainer}>
-      <Text style={styles.ledgerTitle}>IDGAFAI Quantum Ledger Trace</Text>
+      <Text style={styles.ledgerTitle}>Transaction Status</Text>
       <View style={styles.ledgerDisplay}>
         {displayLog.map((entry, index) => (
           <Text key={index} style={styles.ledgerEntry}>
@@ -139,7 +138,7 @@ const QuantumLedgerAnimation: React.FC<{ status: 'IDLE' | 'VERIFYING' | 'PROCESS
   );
 };
 
-// 2. Biometric Modal Simulation (Replaced with a high-fidelity UI)
+// 2. Biometric Modal
 const BiometricModal: React.FC<{ isVisible: boolean, onConfirm: () => void, onCancel: () => void }> = ({ isVisible, onConfirm, onCancel }) => {
   const [scanStatus, setScanStatus] = useState<'READY' | 'SCANNING' | 'SUCCESS' | 'FAILURE'>('READY');
   const [scanProgress, setScanProgress] = useState(0);
@@ -155,20 +154,20 @@ const BiometricModal: React.FC<{ isVisible: boolean, onConfirm: () => void, onCa
     setScanStatus('SCANNING');
     setScanProgress(0);
     
-    // Simulate AI scanning process with visual feedback
+    // Simulate scanning process
     for (let i = 0; i <= 100; i += 5) {
         await new Promise(resolve => setTimeout(resolve, 50));
         setScanProgress(i);
     }
 
-    const success = await BVE.authenticate("USER_SOVEREIGN_ID_12345"); // Simulated User ID
+    const success = await BiometricService.authenticate("USER_ID_12345"); 
 
     if (success) {
       setScanStatus('SUCCESS');
       setTimeout(onConfirm, 800);
     } else {
       setScanStatus('FAILURE');
-      Alert.alert("Biometric Failure", "Identity verification failed. Please ensure clear biometric data capture.");
+      Alert.alert("Verification Failed", "Identity verification failed. Please try again.");
       setTimeout(() => setScanStatus('READY'), 2000);
     }
   }, [onConfirm]);
@@ -180,46 +179,46 @@ const BiometricModal: React.FC<{ isVisible: boolean, onConfirm: () => void, onCa
       case 'READY':
         return (
           <>
-            <Text style={styles.modalTitle}>Sovereign Biometric Confirmation Required</Text>
-            <Text style={styles.modalSubtitle}>IDGAFAI mandates absolute identity proof for value transfer.</Text>
+            <Text style={styles.modalTitle}>Identity Verification Required</Text>
+            <Text style={styles.modalSubtitle}>Please verify your identity to proceed.</Text>
             <View style={styles.scanArea}>
               <Ionicons name="scan-circle-outline" size={80} color="#00FF00" />
-              <Text style={styles.scanText}>Awaiting Scan Initiation...</Text>
+              <Text style={styles.scanText}>Ready to Scan</Text>
             </View>
             <TouchableOpacity style={styles.scanButton} onPress={startScan}>
-              <Text style={styles.scanButtonText}>Initiate Absolute Scan</Text>
+              <Text style={styles.scanButtonText}>Start Scan</Text>
             </TouchableOpacity>
           </>
         );
       case 'SCANNING':
         return (
           <>
-            <Text style={styles.modalTitle}>Processing Biometric Signature</Text>
+            <Text style={styles.modalTitle}>Verifying Identity</Text>
             <View style={styles.scanArea}>
               <View style={[styles.scanGrid, { transform: [{ rotate: `${scanProgress * 3.6}deg` }] }]} />
               <Ionicons name="finger-print" size={80} color="#FFD700" />
-              <Text style={styles.scanText}>Analyzing Neural Patterns...</Text>
+              <Text style={styles.scanText}>Scanning...</Text>
             </View>
             <View style={styles.progressBarContainer}>
                 <View style={[styles.progressBarFill, { width: `${scanProgress}%` }]} />
             </View>
-            <Text style={styles.progressLabel}>{scanProgress}% Verified</Text>
+            <Text style={styles.progressLabel}>{scanProgress}% Complete</Text>
           </>
         );
       case 'SUCCESS':
         return (
           <>
             <Ionicons name="shield-check-outline" size={80} color="#00FF00" />
-            <Text style={styles.modalTitle}>Identity Confirmed</Text>
-            <Text style={styles.modalSubtitle}>Sovereign authorization granted.</Text>
+            <Text style={styles.modalTitle}>Verified</Text>
+            <Text style={styles.modalSubtitle}>Identity confirmed.</Text>
           </>
         );
       case 'FAILURE':
         return (
             <>
                 <Ionicons name="close-circle-outline" size={80} color="#FF4500" />
-                <Text style={styles.modalTitle}>Verification Failed</Text>
-                <Text style={styles.modalSubtitle}>Protocol integrity compromised. Retrying...</Text>
+                <Text style={styles.modalTitle}>Failed</Text>
+                <Text style={styles.modalSubtitle}>Verification failed. Retrying...</Text>
             </>
         );
     }
@@ -231,7 +230,7 @@ const BiometricModal: React.FC<{ isVisible: boolean, onConfirm: () => void, onCa
         {renderContent()}
         {scanStatus !== 'SCANNING' && scanStatus !== 'SUCCESS' && (
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                <Text style={styles.cancelButtonText}>Cancel Mandate</Text>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
         )}
       </View>
@@ -245,7 +244,7 @@ const BiometricModal: React.FC<{ isVisible: boolean, onConfirm: () => void, onCa
 const SendMoneyView: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
-  const [selectedRail, setSelectedRail] = useState<'QuantumPay' | 'CashApp'>('QuantumPay');
+  const [selectedMethod, setSelectedMethod] = useState<'Standard' | 'Instant'>('Standard');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isBiometricModalVisible, setIsBiometricModalVisible] = useState(false);
   const [ledgerStatus, setLedgerStatus] = useState<'IDLE' | 'VERIFYING' | 'PROCESSING' | 'COMPLETE'>('IDLE');
@@ -253,23 +252,23 @@ const SendMoneyView: React.FC = () => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  // AI-Driven Input Validation and Contextualization
+  // Input Validation
   const parsedAmount = useMemo(() => parseFloat(amount), [amount]);
   const isValidInput = useMemo(() => parsedAmount > 0 && recipient.length > 5, [parsedAmount, recipient]);
 
-  // AI Contextual Fee Calculation Effect
+  // Fee Calculation Effect
   useEffect(() => {
     if (parsedAmount > 0) {
-      const details = ACFE.calculateSovereignFee(parsedAmount, selectedRail);
+      const details = FeeService.calculateFee(parsedAmount, selectedMethod);
       setFeeDetails(details);
     } else {
       setFeeDetails(null);
     }
-  }, [parsedAmount, selectedRail]);
+  }, [parsedAmount, selectedMethod]);
 
   const handleSendTransaction = useCallback(async () => {
     if (!isValidInput) {
-      Alert.alert("Input Error", "Please enter a valid amount greater than zero and a recipient identifier.");
+      Alert.alert("Input Error", "Please enter a valid amount and recipient.");
       return;
     }
 
@@ -283,29 +282,29 @@ const SendMoneyView: React.FC = () => {
     setLedgerStatus('PROCESSING');
 
     try {
-      // 1. Simulate Sovereign Ledger Check (Pre-Auth)
-      console.log("System Check: Funds availability confirmed by IDGAFAI core.");
+      // 1. Check Funds
+      console.log("System Check: Funds available.");
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // 2. Execute HTP Transaction
+      // 2. Execute Transaction
       const txData = {
         amount: parsedAmount,
         recipient: recipient,
-        senderId: "USER_SOVEREIGN_ID_12345", // Simulated authenticated user ID
+        senderId: "USER_ID_12345", 
       };
       
-      const result = await HTP.processTransaction(txData);
+      const result = await TransactionService.processTransaction(txData);
       
       setLedgerStatus('COMPLETE');
       
       Alert.alert(
-        "Transaction Sovereignly Executed",
-        `Value of ${parsedAmount.toFixed(2)} transferred to ${recipient} via ${selectedRail}.\nLedger ID: ${result.id}`
+        "Transaction Successful",
+        `Sent ${parsedAmount.toFixed(2)} to ${recipient} via ${selectedMethod}.\nID: ${result.id}`
       );
 
     } catch (error) {
-      console.error("Sovereign Transaction Failure:", error);
-      Alert.alert("Critical Failure", "The transaction could not be committed to the sovereign ledger.");
+      console.error("Transaction Failure:", error);
+      Alert.alert("Error", "The transaction could not be completed.");
       setLedgerStatus('IDLE');
     } finally {
       setIsProcessing(false);
@@ -313,32 +312,32 @@ const SendMoneyView: React.FC = () => {
       setRecipient('');
       setLedgerStatus('IDLE');
     }
-  }, [parsedAmount, recipient, selectedRail]);
+  }, [parsedAmount, recipient, selectedMethod]);
 
   const handleBiometricCancel = useCallback(() => {
     setIsBiometricModalVisible(false);
     setIsProcessing(false);
     setLedgerStatus('IDLE');
-    Alert.alert("Operation Halted", "Sovereign transaction initiation aborted by user.");
+    Alert.alert("Cancelled", "Transaction cancelled by user.");
   }, []);
 
-  const renderRailSelector = () => (
+  const renderMethodSelector = () => (
     <View style={styles.railSelectorContainer}>
-      <Text style={styles.sectionSubtitle}>Select Sovereign Exchange Rail:</Text>
+      <Text style={styles.sectionSubtitle}>Select Payment Method:</Text>
       <View style={styles.railButtons}>
         <TouchableOpacity
-          style={[styles.railButton, selectedRail === 'QuantumPay' && styles.railButtonActive]}
-          onPress={() => setSelectedRail('QuantumPay')}
+          style={[styles.railButton, selectedMethod === 'Standard' && styles.railButtonActive]}
+          onPress={() => setSelectedMethod('Standard')}
         >
-          <Ionicons name="cube-outline" size={20} color={selectedRail === 'QuantumPay' ? '#FFFFFF' : '#00FF00'} />
-          <Text style={[styles.railButtonText, selectedRail === 'QuantumPay' && styles.railButtonTextActive]}>QuantumPay (ISO20022)</Text>
+          <Ionicons name="cube-outline" size={20} color={selectedMethod === 'Standard' ? '#FFFFFF' : '#00FF00'} />
+          <Text style={[styles.railButtonText, selectedMethod === 'Standard' && styles.railButtonTextActive]}>Standard Transfer</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.railButton, selectedRail === 'CashApp' && styles.railButtonActive]}
-          onPress={() => setSelectedRail('CashApp')}
+          style={[styles.railButton, selectedMethod === 'Instant' && styles.railButtonActive]}
+          onPress={() => setSelectedMethod('Instant')}
         >
-          <Ionicons name="cash-outline" size={20} color={selectedRail === 'CashApp' ? '#FFFFFF' : '#00FF00'} />
-          <Text style={[styles.railButtonText, selectedRail === 'CashApp' && styles.railButtonTextActive]}>CashApp Integration</Text>
+          <Ionicons name="flash-outline" size={20} color={selectedMethod === 'Instant' ? '#FFFFFF' : '#00FF00'} />
+          <Text style={[styles.railButtonText, selectedMethod === 'Instant' && styles.railButtonTextActive]}>Instant Transfer</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -348,12 +347,12 @@ const SendMoneyView: React.FC = () => {
     if (!feeDetails) return null;
     return (
       <View style={styles.feeContainer}>
-        <Text style={styles.feeLabel}>Sovereign Transaction Fee:</Text>
+        <Text style={styles.feeLabel}>Transaction Fee:</Text>
         <Text style={styles.feeAmount}>
           {feeDetails.fee.toFixed(8)} Units
         </Text>
         <Text style={styles.feeRationale}>
-          Rationale: {feeDetails.rationale}
+          {feeDetails.rationale}
         </Text>
       </View>
     );
@@ -361,31 +360,31 @@ const SendMoneyView: React.FC = () => {
 
   const renderInputSection = () => (
     <View style={styles.inputGroup}>
-      <Text style={styles.inputLabel}>Target Value (Units)</Text>
+      <Text style={styles.inputLabel}>Amount</Text>
       <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
           keyboardType="numeric"
-          placeholder="0.00000000"
+          placeholder="0.00"
           placeholderTextColor="#555"
           value={amount}
           onChangeText={text => setAmount(text.replace(/[^0-9.]/g, ''))}
           editable={!isProcessing}
         />
-        <Text style={styles.currencySymbol}>IDG</Text>
+        <Text style={styles.currencySymbol}>USD</Text>
       </View>
 
-      <Text style={[styles.inputLabel, { marginTop: 20 }]}>Recipient Sovereign Address/Handle</Text>
+      <Text style={[styles.inputLabel, { marginTop: 20 }]}>Recipient</Text>
       <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
-          placeholder="Enter immutable recipient identifier..."
+          placeholder="Enter recipient..."
           placeholderTextColor="#555"
           value={recipient}
           onChangeText={setRecipient}
           editable={!isProcessing}
         />
-        <Ionicons name="person-crop-circle-outline" size={24} color="#00FF00" style={styles.inputIcon} />
+        <Ionicons name="person-circle-outline" size={24} color="#00FF00" style={styles.inputIcon} />
       </View>
     </View>
   );
@@ -394,18 +393,18 @@ const SendMoneyView: React.FC = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.header}>
-          Sovereign Mandate: Value Transfer Protocol v9.1.0
+          Send Money
         </Text>
         <Text style={styles.subHeader}>
-          Executing Exchange via IDGAFAI Trust Architecture
+          Secure Transfer Protocol
         </Text>
 
         {renderInputSection()}
-        {renderRailSelector()}
+        {renderMethodSelector()}
         {renderFeeDisplay()}
 
         <View style={styles.ledgerVisualizationContainer}>
-            <QuantumLedgerAnimation status={ledgerStatus} />
+            <TransactionStatusAnimation status={ledgerStatus} />
         </View>
 
         <TouchableOpacity
@@ -417,16 +416,16 @@ const SendMoneyView: React.FC = () => {
             <ActivityIndicator color="#000000" size="large" />
           ) : (
             <>
-              <Ionicons name="rocket-outline" size={28} color="#000000" />
+              <Ionicons name="send-outline" size={28} color="#000000" />
               <Text style={styles.sendButtonText}>
-                Execute Sovereign Transfer Mandate
+                Send Money
               </Text>
             </>
           )}
         </TouchableOpacity>
 
         <Text style={styles.footerNote}>
-            *All transactions are immutable, cryptographically secured, and overseen by the IDGAFAI Heuristic Engine. Trust is obsolete; proof is absolute.
+            *Transactions are secure and encrypted.
         </Text>
 
       </ScrollView>
@@ -440,11 +439,11 @@ const SendMoneyView: React.FC = () => {
   );
 };
 
-// --- Stylesheet: Reflecting Billion-Dollar Infrastructure Aesthetics ---
+// --- Stylesheet ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A1A', // Deep space black/blue
+    backgroundColor: '#0A0A1A', 
     paddingTop: 50,
   },
   scrollContent: {
@@ -454,7 +453,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#00FF00', // IDGAFAI Green
+    color: '#00FF00', 
     textAlign: 'center',
     marginBottom: 5,
     textShadowColor: 'rgba(0, 255, 0, 0.5)',
@@ -514,7 +513,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#15152A',
     borderLeftWidth: 4,
-    borderLeftColor: '#FF4500', // Highlighting the choice mechanism
+    borderLeftColor: '#FF4500', 
   },
   sectionSubtitle: {
     fontSize: 15,
