@@ -1,591 +1,700 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Input,
-  Button,
-  Image,
-  Select,
-  Switch,
-  useToast,
-  Spinner,
-  Flex,
-  Heading,
-  FormControl,
-  FormLabel,
-  Textarea,
-  useColorModeValue,
-  Tooltip,
-  IconButton,
-  Tag,
-  TagLabel,
-  TagCloseButton,
-  Badge,
-} from '@chakra-ui/react';
-import {
-  FaMagic,
-  FaPalette,
-  FaStamp,
-  FaBrain,
-  FaEye,
-  FaSave,
-  FaUpload,
-  FaTrash,
-  FaCheckCircle,
-  FaTimesCircle,
-} from 'react-icons/fa';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
+import './ApiSettingsPage.css'; // This CSS will be provided in Part 2
 
-// --- STANDARD SERVICE INTERFACE ---
-// This is a basic mock service for a standard web application.
-// No quantum cores or complex systems are involved here.
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-interface AiGenerationRequest {
-  prompt: string;
-  style: 'photorealistic' | 'abstract' | 'minimalist' | 'cyberpunk';
-  complexity: number; // 1 to 100
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
+
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
+
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-interface AiGenerationResult {
-  imageUrl: string;
-  story: string;
-  metadata: {
-    tokensUsed: number;
-    processingTimeMs: number;
+
+const ApiSettingsPage: React.FC = () => {
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
   };
-}
 
-const mockGenerateCardImage = async (req: AiGenerationRequest): Promise<AiGenerationResult> => {
-  console.log('Standard Image Request:', req);
-  await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000)); // Standard timeout
-
-  const mockImageBase = 'https://picsum.photos/seed/';
-  const seed = Math.floor(Math.random() * 10000);
-
-  return {
-    imageUrl: `${mockImageBase}${seed}/400/250`,
-    story: `The ${req.style} design, created with complexity level ${req.complexity}, reflects the user's input. Based on the prompt: "${req.prompt.substring(0, 50)}...". This card is a standard financial instrument.`,
-    metadata: {
-      tokensUsed: req.complexity * 10,
-      processingTimeMs: 1500 + Math.floor(Math.random() * 1000),
-    },
-  };
-};
-
-const mockGenerateCardStory = async (keywords: string[]): Promise<string> => {
-  console.log('Standard Story Request with keywords:', keywords);
-  await new Promise(resolve => setTimeout(resolve, 800));
-
-  if (keywords.length === 0) {
-    return "A blank card ready for customization. Add keywords to generate a description.";
-  }
-
-  const narrativeCore = keywords.join(', ');
-  return `The Custom Card, designed for ${narrativeCore}, is a standard payment tool. It is made of plastic and silicon. It serves as a contract with the bank. Its purpose is practical, secured by standard encryption, and validated by the payment network. This card is a physical tool for daily use.`;
-};
-
-// --- TYPE DEFINITIONS ---
-
-interface CardDesignState {
-  baseColor: string;
-  texture: 'matte' | 'glossy' | 'holographic' | 'metallic';
-  aiPrompt: string;
-  aiStyle: 'photorealistic' | 'abstract' | 'minimalist' | 'cyberpunk';
-  aiComplexity: number;
-  isAiGenerated: boolean;
-  customKeywords: string[];
-}
-
-interface CardArtifact {
-  id: string;
-  design: CardDesignState;
-  imageUrl: string;
-  cardStory: string;
-  status: 'draft' | 'pending_review' | 'active' | 'archived';
-  createdAt: number;
-}
-
-// --- UTILITY COMPONENTS ---
-
-const SectionTitle: React.FC<{ icon: React.ReactNode; title: string }> = ({ icon, title }) => (
-  <HStack spacing={3} mb={4} borderBottom="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')} pb={2}>
-    {icon}
-    <Heading size="md" color={useColorModeValue('gray.700', 'gray.200')}>{title}</Heading>
-  </HStack>
-);
-
-const LoadingOverlay: React.FC<{ message: string }> = ({ message }) => (
-  <Flex
-    position="absolute"
-    top={0}
-    left={0}
-    right={0}
-    bottom={0}
-    bg="rgba(0, 0, 0, 0.6)"
-    zIndex={10}
-    justifyContent="center"
-    alignItems="center"
-    borderRadius="lg"
-  >
-    <VStack spacing={4}>
-      <Spinner size="xl" color="teal.400" thickness="4px" />
-      <Text color="white" fontSize="lg" fontWeight="bold">{message}</Text>
-    </VStack>
-  </Flex>
-);
-
-// --- MAIN COMPONENT ---
-
-const CardCustomizationView: React.FC = () => {
-  const toast = useToast();
-  const [design, setDesign] = useState<CardDesignState>({
-    baseColor: '#007bff',
-    texture: 'metallic',
-    aiPrompt: 'A blue geometric pattern.',
-    aiStyle: 'minimalist',
-    aiComplexity: 50,
-    isAiGenerated: true,
-    customKeywords: ['Finance', 'Security'],
-  });
-  const [artifact, setArtifact] = useState<CardArtifact | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-
-  const cardBgColor = useColorModeValue('white', 'gray.800');
-  const cardBorderColor = useColorModeValue('gray.200', 'gray.700');
-
-  // --- HANDLERS ---
-
-  const handleDesignChange = useCallback((key: keyof CardDesignState, value: any) => {
-    setDesign(prev => ({ ...prev, [key]: value }));
-  }, []);
-
-  const handleKeywordManagement = useCallback((action: 'add' | 'remove', keyword?: string, newKeywords?: string[]) => {
-    setDesign(prev => {
-      let updatedKeywords = [...prev.customKeywords];
-      if (action === 'add' && keyword && !updatedKeywords.includes(keyword.trim())) {
-        updatedKeywords.push(keyword.trim());
-      } else if (action === 'remove' && keyword) {
-        updatedKeywords = updatedKeywords.filter(k => k !== keyword);
-      } else if (action === 'set' && newKeywords) {
-        updatedKeywords = newKeywords;
-      }
-      return { ...prev, customKeywords: updatedKeywords };
-    });
-  }, []);
-
-  const generateArtifact = useCallback(async () => {
-    if (!design.isAiGenerated) {
-      toast({
-        title: "Generation Disabled",
-        description: "AI generation is off. Please enable it or manually configure.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const request: AiGenerationRequest = {
-        prompt: design.aiPrompt,
-        style: design.aiStyle,
-        complexity: design.aiComplexity,
-      };
-
-      const [imageResult, storyResult] = await Promise.all([
-        mockGenerateCardImage(request),
-        mockGenerateCardStory(design.customKeywords),
-      ]);
-
-      const newArtifact: CardArtifact = {
-        id: `CARD-${Date.now()}`,
-        design: design,
-        imageUrl: imageResult.imageUrl,
-        cardStory: storyResult,
-        status: 'draft',
-        createdAt: Date.now(),
-      };
-
-      setArtifact(newArtifact);
-      toast({
-        title: "Card Generated",
-        description: `Card ${newArtifact.id} created successfully. Review the details.`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Generation Error:", error);
-      toast({
-        title: "Generation Failed",
-        description: "An error occurred during creation.",
-        status: "error",
-        duration: 7000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [design, toast]);
-
-  const handleSaveFinalization = useCallback(async () => {
-    if (!artifact) {
-      toast({
-        title: "No Card to Save",
-        description: "Please generate the card design first.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
     try {
-      // Simulate persistence to a standard database
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      const finalizedArtifact: CardArtifact = {
-        ...artifact,
-        status: 'pending_review', // Triggers standard review
-      };
-      setArtifact(finalizedArtifact);
-
-      toast({
-        title: "Design Saved",
-        description: `Card ${finalizedArtifact.id} saved. Status: ${finalizedArtifact.status}.`,
-        status: "info",
-        duration: 6000,
-        isClosable: true,
-      });
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
     } catch (error) {
-      console.error("Save Error:", error);
-      toast({
-        title: "Save Error",
-        description: "Failed to save the card.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      setStatusMessage('Error: Could not save keys. Please check backend server.');
     } finally {
       setIsSaving(false);
     }
-  }, [artifact, toast]);
-
-  // --- DERIVED STATE & MEMOIZATION ---
-
-  const isReadyToGenerate = useMemo(() => design.isAiGenerated && design.aiPrompt.length > 10, [design]);
-  const isReadyToFinalize = useMemo(() => artifact?.status === 'draft', [artifact]);
-
-  const cardPreviewStyle = useMemo(() => ({
-    backgroundColor: design.isAiGenerated ? 'transparent' : design.baseColor,
-    backgroundImage: design.isAiGenerated ? `url(${artifact?.imageUrl || 'https://via.placeholder.com/400x250?text=Rendering+Pending'})` : 'none',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px ${design.baseColor}80`,
-    border: `3px solid ${design.texture === 'metallic' ? '#FFD700' : design.texture === 'holographic' ? '#00FFFF' : '#FFFFFF'}`,
-    transition: 'all 0.5s ease-in-out',
-  }), [design, artifact]);
-
-  const keywordInputBg = useColorModeValue('white', 'gray.700');
-
-  // --- SUB-COMPONENTS ---
-
-  const AiConfigurationPanel = () => (
-    <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-      <SectionTitle icon={<FaBrain size="1.2em" color="teal.400" />} title="AI Configuration" />
-
-      <FormControl isRequired>
-        <FormLabel>Design Prompt</FormLabel>
-        <Textarea
-          value={design.aiPrompt}
-          onChange={(e) => handleDesignChange('aiPrompt', e.target.value)}
-          placeholder="Describe your desired card design..."
-          rows={3}
-          isDisabled={!design.isAiGenerated}
-        />
-        <Tooltip label="This prompt guides the AI in generating the visual design.">
-          <Badge colorScheme="purple" mt={1} variant="solid">Detailed Input Recommended</Badge>
-        </Tooltip>
-      </FormControl>
-
-      <HStack spacing={4}>
-        <FormControl>
-          <FormLabel>Visual Style</FormLabel>
-          <Select
-            value={design.aiStyle}
-            onChange={(e) => handleDesignChange('aiStyle', e.target.value as CardDesignState['aiStyle'])}
-            isDisabled={!design.isAiGenerated}
-          >
-            <option value="cyberpunk">Cyberpunk</option>
-            <option value="photorealistic">Photorealistic</option>
-            <option value="abstract">Abstract</option>
-            <option value="minimalist">Minimalist</option>
-          </Select>
-        </FormControl>
-        <FormControl>
-          <FormLabel>Complexity ({design.aiComplexity})</FormLabel>
-          <Input
-            type="range"
-            min="10"
-            max="100"
-            step="5"
-            value={design.aiComplexity}
-            onChange={(e) => handleDesignChange('aiComplexity', parseInt(e.target.value))}
-            isDisabled={!design.isAiGenerated}
-          />
-        </FormControl>
-      </HStack>
-
-      <FormControl display="flex" alignItems="center" justifyContent="space-between" mt={2}>
-        <FormLabel mb="0">Enable AI Generation</FormLabel>
-        <Switch
-          isChecked={design.isAiGenerated}
-          onChange={(e) => handleDesignChange('isAiGenerated', e.target.checked)}
-          colorScheme="teal"
-        />
-      </FormControl>
-    </VStack>
-  );
-
-  const ManualConfigurationPanel = () => (
-    <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-      <SectionTitle icon={<FaPalette size="1.2em" color="orange.400" />} title="Manual Configuration" />
-
-      <FormControl>
-        <FormLabel>Base Color (Hex)</FormLabel>
-        <HStack>
-          <Input
-            type="color"
-            value={design.baseColor}
-            onChange={(e) => handleDesignChange('baseColor', e.target.value)}
-            isDisabled={design.isAiGenerated}
-            h={10}
-          />
-          <Input
-            value={design.baseColor}
-            onChange={(e) => handleDesignChange('baseColor', e.target.value)}
-            isDisabled={design.isAiGenerated}
-          />
-        </HStack>
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Surface Texture</FormLabel>
-        <Select
-          value={design.texture}
-          onChange={(e) => handleDesignChange('texture', e.target.value as CardDesignState['texture'])}
-          isDisabled={design.isAiGenerated}
-        >
-          <option value="metallic">Metallic</option>
-          <option value="glossy">Glossy</option>
-          <option value="holographic">Holographic</option>
-          <option value="matte">Matte</option>
-        </Select>
-      </FormControl>
-    </VStack>
-  );
-
-  const KeywordManagementPanel = () => {
-    const [newKeywordInput, setNewKeywordInput] = useState('');
-
-    const handleAddKeyword = () => {
-      if (newKeywordInput.trim()) {
-        handleKeywordManagement('add', newKeywordInput.trim());
-        setNewKeywordInput('');
-      }
-    };
-
-    return (
-      <VStack spacing={4} align="stretch" p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-        <SectionTitle icon={<FaStamp size="1.2em" color="blue.400" />} title="Keywords" />
-        <Text fontSize="sm" color="gray.500">Add keywords for the card description.</Text>
-
-        <HStack>
-          <Input
-            value={newKeywordInput}
-            onChange={(e) => setNewKeywordInput(e.target.value)}
-            placeholder="Enter a keyword (e.g., 'Finance')"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleAddKeyword();
-            }}
-            isDisabled={!design.isAiGenerated}
-          />
-          <IconButton
-            icon={<FaUpload />}
-            onClick={handleAddKeyword}
-            colorScheme="blue"
-            isDisabled={!design.isAiGenerated || !newKeywordInput.trim()}
-            aria-label="Add Keyword"
-          />
-        </HStack>
-
-        <Box minH="50px" p={2} border={design.customKeywords.length > 0 ? '1px dashed' : 'none'} borderColor="gray.400" borderRadius="md">
-          {design.customKeywords.length === 0 ? (
-            <Text color="gray.500" fontStyle="italic">No keywords added.</Text>
-          ) : (
-            <HStack wrap="wrap" spacing={2}>
-              {design.customKeywords.map((keyword) => (
-                <Tag key={keyword} size="md" colorScheme="blue" variant="subtle">
-                  <TagLabel>{keyword}</TagLabel>
-                  <Tooltip label="Remove Keyword">
-                    <TagCloseButton onClick={() => handleKeywordManagement('remove', keyword)} />
-                  </Tooltip>
-                </Tag>
-              ))}
-            </HStack>
-          )}
-        </Box>
-      </VStack>
-    );
   };
 
-  const ArtifactDisplay = () => {
-    if (!artifact) {
-      return (
-        <Flex
-          h="100%"
-          minH="300px"
-          bg={cardBgColor}
-          border="2px dashed"
-          borderColor={cardBorderColor}
-          borderRadius="xl"
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-          p={6}
-        >
-          <FaEye size="3em" color={useColorModeValue('gray.400', 'gray.600')} mb={3} />
-          <Text fontSize="xl" fontWeight="semibold" color={useColorModeValue('gray.500', 'gray.400')}>
-            Preview Pending
-          </Text>
-          <Text fontSize="sm" color="gray.400" mt={1}>
-            Configure settings to generate preview.
-          </Text>
-        </Flex>
-      );
-    }
-
-    const statusColor = artifact.status === 'active' ? 'green' : artifact.status === 'pending_review' ? 'orange' : 'blue';
-
-    return (
-      <VStack spacing={6} align="stretch">
-        <Box
-          position="relative"
-          w="100%"
-          h="250px"
-          borderRadius="xl"
-          overflow="hidden"
-          style={cardPreviewStyle}
-        >
-          {isLoading && <LoadingOverlay message="Processing..." />}
-        </Box>
-
-        <VStack spacing={3} p={4} bg={useColorModeValue('gray.50', 'gray.750')} borderRadius="lg">
-          <HStack justifyContent="space-between" w="100%">
-            <Text fontWeight="bold" fontSize="lg">Card Description</Text>
-            <Badge colorScheme={statusColor}>{artifact.status.toUpperCase()}</Badge>
-          </HStack>
-          <Textarea
-            value={artifact.cardStory}
-            onChange={(e) => setArtifact(prev => prev ? ({ ...prev, cardStory: e.target.value }) : null)}
-            rows={6}
-            isDisabled={artifact.status !== 'draft'}
-            placeholder="Generated description..."
-            fontSize="sm"
-          />
-          <Text fontSize="xs" color="gray.500" alignSelf="flex-start">
-            Metadata: Processing Time: {artifact.design.isAiGenerated ? `${artifact.metadata.processingTimeMs}ms` : 'N/A'} | Complexity: {artifact.design.aiComplexity}
-          </Text>
-        </VStack>
-
-        <HStack spacing={4}>
-          <Button
-            leftIcon={<FaSave />}
-            colorScheme="teal"
-            onClick={handleSaveFinalization}
-            isDisabled={artifact.status !== 'draft' || isSaving}
-            isLoading={isSaving}
-            flex={1}
-          >
-            {artifact.status === 'draft' ? 'Save Design' : 'View Saved'}
-          </Button>
-          <Tooltip label="Discard Draft">
-            <IconButton
-              icon={<FaTrash />}
-              colorScheme="red"
-              onClick={() => {
-                setArtifact(null);
-                toast({ title: "Draft Discarded", status: "warning" });
-              }}
-              isDisabled={isSaving}
-              aria-label="Discard Draft"
-            />
-          </Tooltip>
-        </HStack>
-      </VStack>
-    );
-  };
-
-
-  // --- RENDER ---
+  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
 
   return (
-    <Box p={{ base: 4, md: 10 }} bg={useColorModeValue('gray.100', 'gray.900')} minH="100vh">
-      <VStack spacing={8} align="stretch" maxW="7xl" mx="auto">
-        <Heading as="h1" size="2xl" color="teal.500" mb={2}>
-          Card Customization <FaMagic style={{ display: 'inline-block', marginLeft: '10px' }} />
-        </Heading>
-        <Text fontSize="xl" color={useColorModeValue('gray.600', 'gray.300')}>
-          Customize your card design using the options below.
-        </Text>
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
 
-        <HStack spacing={{ base: 4, lg: 8 }} align="stretch" flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
-          {/* LEFT COLUMN: CONFIGURATION */}
-          <Flex direction="column" gap={6} flex={{ base: '1 1 100%', lg: '1 1 40%' }}>
-            {AiConfigurationPanel()}
-            {ManualConfigurationPanel()}
-            {KeywordManagementPanel()}
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
 
-            <Button
-              leftIcon={<FaMagic />}
-              colorScheme="purple"
-              size="lg"
-              onClick={generateArtifact}
-              isDisabled={!isReadyToGenerate || isLoading}
-              isLoading={isLoading}
-              mt={4}
-            >
-              {isLoading ? 'Generating...' : 'Generate Design'}
-            </Button>
-          </Flex>
-
-          {/* RIGHT COLUMN: PREVIEW & ARTIFACT */}
-          <Flex flex={{ base: '1 1 100%', lg: '1 1 60%' }} mt={{ base: 6, lg: 0 }}>
-            <VStack spacing={6} align="stretch" w="100%">
-              <Heading size="lg" color={useColorModeValue('gray.700', 'gray.100')}>
-                Card Preview
-              </Heading>
-              {ArtifactDisplay()}
-            </VStack>
-          </Flex>
-        </HStack>
-
-        {/* FOOTER/STATUS BAR */}
-        <Box p={4} bg={useColorModeValue('white', 'gray.800')} borderRadius="lg" shadow="lg" mt={8}>
-          <HStack justifyContent="space-between" fontSize="sm" color="gray.500">
-            <Text>System: Online</Text>
-            <Text>User ID: {artifact?.id || 'Uninitialized'}</Text>
-            <Text>Last Action: {artifact ? (artifact.status === 'draft' ? 'Draft Ready' : 'Saved') : 'Configuration'}</Text>
-          </HStack>
-        </Box>
-
-      </VStack>
-    </Box>
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? (
+          <>
+            <div className="form-section">
+              <h2>Core Infrastructure & Cloud</h2>
+              {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+              {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+              {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+              {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+              {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+              {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+              {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+              {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+              {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Deployment & DevOps</h2>
+              {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+              {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+              {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+              {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify Personal Access Token')}
+              {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+              {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+              {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean Personal Access Token')}
+              {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode Personal Access Token')}
+              {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Collaboration & Productivity</h2>
+              {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub Personal Access Token')}
+              {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+              {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+              {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+              {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+              {renderInput('JIRA_USERNAME', 'Jira Username')}
+              {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+              {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana Personal Access Token')}
+              {renderInput('NOTION_API_KEY', 'Notion API Key')}
+              {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+            </div>
+            <div className="form-section">
+              <h2>File & Data Storage</h2>
+              {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+              {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+              {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+              {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>CRM & Business</h2>
+              {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+              {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+              {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+              {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+              {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+              {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+            </div>
+            <div className="form-section">
+              <h2>E-commerce</h2>
+              {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+              {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+              {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+              {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+              {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+              {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Authentication & Identity</h2>
+              {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+              {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+              {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+              {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+              {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+              {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+              {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Backend & Databases</h2>
+              {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+              {renderInput('SUPABASE_URL', 'Supabase URL')}
+              {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+            </div>
+            <div className="form-section">
+              <h2>API Development</h2>
+              {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+              {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+            </div>
+            <div className="form-section">
+              <h2>AI & Machine Learning</h2>
+              {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+              {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+              {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+              {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+              {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Microsoft Azure Cognitive Key')}
+              {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Search & Real-time</h2>
+              {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
+              {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+              {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+              {renderInput('PUSHER_KEY', 'Pusher Key')}
+              {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+              {renderInput('ABLY_API_KEY', 'Ably API Key')}
+              {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Identity & Verification</h2>
+              {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+              {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+              {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Logistics & Shipping</h2>
+              {renderInput('LOB_API_KEY', 'Lob API Key')}
+              {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+              {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+            </div>
+            <div className="form-section">
+              <h2>Maps & Weather</h2>
+              {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+              {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+              {renderInput('HERE_API_KEY', 'HERE API Key')}
+              {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+              {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Social & Media</h2>
+              {renderInput('YELP_API_KEY', 'Yelp API Key')}
+              {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+              {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+              {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+              {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+              {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+              {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+              {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+              {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+              {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+              {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+              {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+              {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+              {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+              {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+            </div>
+            <div className="form-section">
+              <h2>Media & Content</h2>
+              {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+              {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+              {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+              {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+              {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Legal & Admin</h2>
+              {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+              {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+              {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+              {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Monitoring & CI/CD</h2>
+              {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+              {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+              {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+              {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+              {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+              {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+              {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+              {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab Personal Access Token')}
+              {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Headless CMS</h2>
+              {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+              {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+              {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+              {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+              {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="form-section">
+              <h2>Data Aggregators</h2>
+              {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+              {renderInput('PLAID_SECRET', 'Plaid Secret')}
+              {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+              {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+              {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+              {renderInput('MX_API_KEY', 'MX API Key')}
+              {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+              {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+            </div>
+            <div className="form-section">
+              <h2>Payment Processing</h2>
+              {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+              {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+              {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+              {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+              {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+              {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+              {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+              {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+              {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+              {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+              {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+              {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+              {renderInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
+            </div>
+            <div className="form-section">
+              <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+              {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+              {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+              {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+              {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Trans Key')}
+              {renderInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
+              {renderInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
+              {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+              {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+              {renderInput('RAILSBANK_API_KEY', 'RailsBank API Key')}
+              {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+              {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+              {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+              {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+              {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+              {renderInput('BREX_API_KEY', 'Brex API Key')}
+              {renderInput('BOND_API_KEY', 'Bond API Key')}
+            </div>
+            <div className="form-section">
+              <h2>International Payments</h2>
+              {renderInput('CURRENCYCLOUD_LOGIN_ID', 'CurrencyCloud Login ID')}
+              {renderInput('CURRENCYCLOUD_API_KEY', 'CurrencyCloud API Key')}
+              {renderInput('OFX_API_KEY', 'OFX API Key')}
+              {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+              {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+              {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+              {renderInput('NIUM_API_KEY', 'Nium API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Investment & Market Data</h2>
+              {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+              {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+              {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+              {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+              {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+              {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+              {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+              {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+              {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+              {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Crypto</h2>
+              {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+              {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+              {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+              {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+              {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+              {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+              {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+              {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+              {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+              {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+              {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Major Banks (Open Banking)</h2>
+              {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
+              {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+              {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+              {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>European & Global Banks (Open Banking)</h2>
+              {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+              {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+              {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+              {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            </div>
+            <div className="form-section">
+              <h2>UK & European Aggregators</h2>
+              {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+              {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Compliance & Identity (KYC/AML)</h2>
+              {renderInput('MIDDESK_API_KEY', 'MidD Desk API Key')}
+              {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+              {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+              {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Real Estate</h2>
+              {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+              {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+            </div>
+            <div className="form-section">
+              <h2>Credit Bureaus</h2>
+              {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+              {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+              {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Global Payments (Emerging Markets)</h2>
+              {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+              {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+              {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+              {renderInput('DLOCAL_API_KEY', 'DLocal API Key')}
+              {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+            </div>
+            <div className="form-section">
+              <h2>Accounting & Tax</h2>
+              {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+              {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+              {renderInput('CODAT_API_KEY', 'Coda.io API Key')}
+              {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+              {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+              {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+              {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+              {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
+            </div>
+            <div className="form-section">
+              <h2>Fintech Utilities</h2>
+              {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+              {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+              {renderInput('MOOV_SECRET', 'Moov Secret')}
+              {renderInput('VGS_USERNAME', 'VGS Username')}
+              {renderInput('VGS_PASSWORD', 'VGS Password')}
+              {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+              {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+            </div>
+          </>
+        )}
+        
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
+        </div>
+      </form>
+    </div>
   );
 };
 
-export default CardCustomizationView;
+export default ApiSettingsPage;
