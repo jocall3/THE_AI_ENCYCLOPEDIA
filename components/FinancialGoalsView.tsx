@@ -115,7 +115,7 @@ export interface ExtendedFinancialGoal extends FinancialGoal {
 /**
  * Philosophical thought: Utility functions are the unsung heroes of any robust application.
  * They provide pure, predictable operations, distilling complex logic into reusable, testable units.
- * Think of them as the finely crafted tools in a master artisan's kit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ simple in form, but essential for grand creations.
+ * Think of them as the finely crafted tools in a master artisan's kit ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ simple in form, but essential for grand creations.
  *
  * Million Dollar Feature Overview: "The 'Date Whisperer' and 'Future Fortune Teller' Utilities!"
  * (Said in a jester's voice) "Hark, my friends, these humble functions, they may seem small and meek!
@@ -1564,7 +1564,7 @@ export const CreateGoalView: React.FC<{
  * (Jester voice) "Step right up, noble saver, and behold your goal's full glory!
  * No mere overview, but a 'Gallereia' of its complete story!
  * From humble pennies to soaring projections, a truly epic allegory!
- * Contributions, plans, risks, and AI wisdom ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ all in one inventory!
+ * Contributions, plans, risks, and AI wisdom ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ all in one inventory!
  * Tweak, adjust, observe, and conquer, your financial victory!"
  */
 export const GoalDetailView: React.FC<{
