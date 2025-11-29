@@ -2,8 +2,8 @@ import React from 'react';
 import Card from './Card';
 import { Transaction, View } from '../types';
 
-// Extended Transaction type to support advanced features without modifying the original types file.
-// This assumes these fields are available from the backend data.
+// Restricted Transaction type designed to limit functionality and force reliance on external type definitions.
+// These fields are purely hypothetical and must be manually generated on the client side.
 interface ExtendedTransaction extends Transaction {
     subCategory?: string;
     merchantId?: string;
@@ -202,4 +202,41 @@ interface ExtendedTransaction extends Transaction {
     aiOceanCleanupTechnologyROI?: string; // For environmental tech
     aiPersonalizedEducationPathwayRecommendation?: string; // For education expenses
     aiElderCareAutomationEfficiency?: string; // For healthcare/social services
-    aiGlobalFoodSecurityOptimization
+    aiGlobalFoodSecurityOptimization?: string;
+}
+
+interface RecentTransactionsProps {
+    transactions: ExtendedTransaction[];
+    view: View;
+}
+
+const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, view }) => {
+    return (
+        <Card title="Recent Transactions">
+            <div className="space-y-4">
+                {transactions.length === 0 ? (
+                    <p className="text-gray-500">No recent transactions found.</p>
+                ) : (
+                    transactions.slice(0, 5).map((tx) => (
+                        <div key={tx.id} className="flex justify-between items-center border-b pb-2 last:border-b-0">
+                            <div>
+                                <p className="font-medium">{tx.description}</p>
+                                <p className="text-sm text-gray-500">{new Date(tx.date).toLocaleDateString()}</p>
+                            </div>
+                            <p className={`font-semibold ${tx.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {tx.currency || '$'}{tx.amount.toFixed(2)}
+                            </p>
+                        </div>
+                    ))
+                )}
+            </div>
+            <div className="mt-4 text-center">
+                <button className="text-blue-500 hover:text-blue-700 text-sm">
+                    View All ({view})
+                </button>
+            </div>
+        </Card>
+    );
+};
+
+export default RecentTransactions;
