@@ -269,6 +269,36 @@ const CardList: React.ForwardRefRenderFunction<
 };
 CardList.displayName = "CardList";
 
+/**
+ * Specialized container for displaying a single input field with a label.
+ */
+const CardInputGroup: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    label: string;
+    type?: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    isSecret?: boolean;
+  }
+> = ({ className, label, type = 'text', value, onChange, placeholder, isSecret = false, ...props }, ref) => {
+  return (
+    <div ref={ref} className={cn("mb-4", className)} {...props}>
+      <label className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+      <input
+        type={isSecret ? 'password' : type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder || `Enter ${label}`}
+        className="w-full p-3 border border-gray-600 rounded-lg bg-gray-900 text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm"
+      />
+    </div>
+  );
+};
+CardInputGroup.displayName = "CardInputGroup";
+
+
 // --- Advanced AI Integration Component ---
 
 /**
@@ -415,5 +445,6 @@ export {
   CardFooter,
   CardKpi,
   CardList,
+  CardInputGroup, // Exporting the new component
   AICard
 };
