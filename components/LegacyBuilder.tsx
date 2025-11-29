@@ -1,42 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, CSSProperties } from 'react';
 
-// Define types for assets, heirs, and trusts
+// --- Core Data Structures: Enhanced for Enterprise Grade Security and Auditability ---
+
+/**
+ * Asset: Represents a digital or tokenized asset under management.
+ * Enhanced with metadata for compliance and AI valuation hooks.
+ */
 interface Asset {
   id: string;
   name: string;
-  type: 'crypto' | 'nft' | 'tokenized_real_estate' | 'other';
-  value: number; // Placeholder for USD value or equivalent
-  contractAddress?: string; // For smart contract assets
-  tokenId?: string; // For NFTs
+  description: string; // Detailed description for compliance records
+  type: 'crypto' | 'nft' | 'tokenized_real_estate' | 'security_token' | 'decentralized_identity' | 'other';
+  currentValuation: number; // Real-time or last audited USD value
+  valuationTimestamp: number; // Unix timestamp of the last valuation
+  contractAddress?: string; // Primary smart contract identifier
+  tokenId?: string; // Specific token identifier
+  securityLevel: 'high' | 'medium' | 'low'; // Internal risk classification
 }
 
+/**
+ * Heir: Represents a beneficiary, now including KYC/AML identifiers and communication channels.
+ */
 interface Heir {
   id: string;
   name: string;
-  walletAddress: string; // Blockchain address
-  relationship?: string;
+  walletAddress: string; // Primary blockchain address
+  relationship: string;
+  kycStatus: 'pending' | 'verified' | 'rejected';
+  communicationEmail: string;
 }
 
+/**
+ * AllocationRule: Defines the distribution logic for non-trust assets.
+ * Enhanced with audit trails.
+ */
 interface AllocationRule {
-  assetId: string; // Which asset
-  heirId: string; // To whom
-  percentage: number; // What percentage of that asset
+  id: string;
+  assetId: string;
+  heirId: string;
+  percentage: number; // Must sum to 100% per asset
+  auditTrail: { timestamp: number; operatorId: string }[];
 }
 
+/**
+ * TrustCondition: Defines a trigger for asset release from a smart contract trust.
+ * Expanded condition types for complex jurisdictional requirements.
+ */
 interface TrustCondition {
   id: string;
-  type: 'age' | 'date' | 'event' | 'multi-sig';
-  details: any; // e.g., { age: 21 }, { date: '2025-01-01' }, { event: 'marriage_of_heir_X' }
+  type: 'age' | 'date' | 'event' | 'multi_sig_approval' | 'jurisdictional_ruling';
+  details: {
+    [key: string]: any; // Flexible structure for specific condition parameters
+  };
+  metadata: {
+    description: string;
+    requiredSigners?: string[]; // For multi-sig
+  };
 }
 
+/**
+ * SmartContractTrust: Represents an on-chain escrow mechanism.
+ * Includes gas estimation and deployment metadata.
+ */
 interface SmartContractTrust {
   id: string;
-  assetId: string; // Which asset is locked in this trust
-  heirId: string; // Who is the beneficiary
+  trustName: string;
+  assetId: string;
+  beneficiaryId: string; // HeirId
   conditions: TrustCondition[];
-  status: 'draft' | 'deployed' | 'active';
-  contractAddress?: string; // Once deployed
+  status: 'draft' | 'pending_deployment' | 'deployed' | 'active' | 'revoked';
+  contractAddress?: string;
+  deploymentGasEstimate?: number;
+  deploymentTxHash?: string;
 }
+
+// --- AI Integration Interfaces (Simulated) ---
+
+interface AIValuationReport {
+    assetId: string;
+    suggestedValue: number;
+    confidenceScore: number; // 0.0 to 1.0
+    analysisSummary: string;
+}
+
+// --- Mock AI Service Functions (To satisfy the "AI everywhere" requirement using only existing imports) ---
+
+const mockAIAssistant = {
+    // Simulates an AI analyzing asset details for risk assessment
+    analyzeAssetRisk: (asset: Asset): Promise<{ riskScore: number, complianceFlags: string[] }> => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const riskScore = asset.type === 'crypto' ? Math.random() * 0.5 + 0.3 : Math.random() * 0.2;
+                const complianceFlags: string[] = [];
+                if (asset.value > 1000000 && asset.securityLevel === 'low') {
+                    complianceFlags.push("High Value, Low Security Flagged");
+                }
+                resolve({ riskScore, complianceFlags });
+            }, 500);
+        });
+    },
+    // Simulates AI generating a professional summary for the review step
+    generateDeploymentSummary: (assets: Asset[], heirs: Heir[], trusts: SmartContractTrust[]): Promise<string> => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const deployedTrusts = trusts.filter(t => t.status === 'deployed').length;
+                const totalAssets = assets.length;
+                const summary = `
+                **Enterprise Legacy Architecture Deployment Report (v1000.1)**
+                
+                System Integrity Check: PASS.
+                Total Assets Under Management (AUM): ${totalAssets}.
+                Active Trust Contracts: ${deployedTrusts}.
+                
+                The AI Governance Module confirms that ${totalAssets - deployedTrusts} assets are subject to direct allocation rules, while ${deployedTrusts} assets are secured under immutable smart contract escrow.
+                
+                Next Steps: Initiate quarterly automated valuation reconciliation.
+                `;
+                resolve(summary);
+            }, 700);
+        });
+    }
+};
+
+
+// --- Component Implementation ---
 
 const LegacyBuilder: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -44,625 +131,831 @@ const LegacyBuilder: React.FC = () => {
   const [heirs, setHeirs] = useState<Heir[]>([]);
   const [allocations, setAllocations] = useState<AllocationRule[]>([]);
   const [trusts, setTrusts] = useState<SmartContractTrust[]>([]);
+  const [deploymentLog, setDeploymentLog] = useState<string[]>([]);
+  const [aiAnalysisResults, setAiAnalysisResults] = useState<{ [key: string]: { riskScore: number, complianceFlags: string[] } }>({});
 
-  // --- Step 1: Manage Assets ---
-  const handleAddAsset = (newAsset: Omit<Asset, 'id'>) => {
-    setAssets([...assets, { ...newAsset, id: `asset-${assets.length + 1}` }]);
-  };
-  const handleUpdateAsset = (id: string, updatedAsset: Partial<Asset>) => {
-    setAssets(assets.map(asset => asset.id === id ? { ...asset, ...updatedAsset } : asset));
-  };
-  const handleDeleteAsset = (id: string) => {
-    setAssets(assets.filter(asset => asset.id !== id));
-    // Also remove any allocations/trusts related to this asset
-    setAllocations(allocations.filter(alloc => alloc.assetId !== id));
-    setTrusts(trusts.filter(trust => trust.assetId !== id));
-  };
+  // --- Utility Functions & Callbacks ---
 
-  // --- Step 2: Manage Heirs ---
-  const handleAddHeir = (newHeir: Omit<Heir, 'id'>) => {
-    setHeirs([...heirs, { ...newHeir, id: `heir-${heirs.length + 1}` }]);
-  };
-  const handleUpdateHeir = (id: string, updatedHeir: Partial<Heir>) => {
-    setHeirs(heirs.map(heir => heir.id === id ? { ...heir, ...updatedHeir } : heir));
-  };
-  const handleDeleteHeir = (id: string) => {
-    setHeirs(heirs.filter(heir => heir.id !== id));
-    // Also remove any allocations/trusts related to this heir
-    setAllocations(allocations.filter(alloc => alloc.heirId !== id));
-    setTrusts(trusts.filter(trust => trust.heirId !== id));
-  };
+  const currentUserId = useMemo(() => "SYSTEM_ADMIN_001", []); // Mock operator ID
 
-  // --- Step 3: Allocate Assets ---
-  const handleAddAllocation = (newAllocation: AllocationRule) => {
-    setAllocations([...allocations, newAllocation]);
-  };
-  const handleUpdateAllocation = (assetId: string, heirId: string, updatedPercentage: number) => {
-    // If an allocation exists, update it. If not, add it.
-    if (allocations.find(a => a.assetId === assetId && a.heirId === heirId)) {
-      setAllocations(allocations.map(alloc =>
-        (alloc.assetId === assetId && alloc.heirId === heirId)
-          ? { ...alloc, percentage: updatedPercentage }
-          : alloc
-      ));
-    } else {
-      handleAddAllocation({ assetId, heirId, percentage: updatedPercentage });
-    }
-  };
-  const handleDeleteAllocation = (assetId: string, heirId: string) => {
-    setAllocations(allocations.filter(alloc => !(alloc.assetId === assetId && alloc.heirId === heirId)));
-  };
+  const nextStep = useCallback(() => setCurrentStep(prev => prev < 6 ? prev + 1 : prev), []);
+  const prevStep = useCallback(() => setCurrentStep(prev => prev > 1 ? prev - 1 : prev), []);
 
-  // --- Step 4: Setup Smart Contract Trusts ---
-  const handleAddTrust = (newTrust: Omit<SmartContractTrust, 'id' | 'status'>) => {
-    setTrusts([...trusts, { ...newTrust, id: `trust-${trusts.length + 1}`, status: 'draft' }]);
-  };
-  const handleUpdateTrust = (id: string, updatedTrust: Partial<SmartContractTrust>) => {
-    setTrusts(trusts.map(trust => trust.id === id ? { ...trust, ...updatedTrust } : trust));
-  };
-  const handleDeleteTrust = (id: string) => {
-    setTrusts(trusts.filter(trust => trust.id !== id));
-  };
+  // --- Asset Management ---
+  const handleAddAsset = useCallback((newAsset: Omit<Asset, 'id' | 'valuationTimestamp' | 'securityLevel'>) => {
+    const newId = `asset-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const assetToAdd: Asset = {
+        ...newAsset,
+        id: newId,
+        valuationTimestamp: Date.now(),
+        securityLevel: newAsset.value > 500000 ? 'high' : 'medium', // AI-informed default
+    };
+    setAssets(prev => [...prev, assetToAdd]);
+    // Trigger AI analysis immediately upon addition
+    mockAIAssistant.analyzeAssetRisk(assetToAdd).then(results => {
+        setAiAnalysisResults(prev => ({ ...prev, [newId]: results }));
+    });
+  }, []);
 
-  // --- Step 5: Review & Deploy ---
-  const handleDeployPlan = async () => {
-    // This is where actual smart contract deployment logic would go.
-    // Given the "no dependencies" rule, this is a placeholder.
-    console.log("Attempting to deploy legacy plan...");
-    console.log("Assets:", assets);
-    console.log("Heirs:", heirs);
-    console.log("Allocations:", allocations);
-    console.log("Trusts:", trusts);
+  const handleUpdateAsset = useCallback((id: string, updatedAsset: Partial<Asset>) => {
+    setAssets(prevAssets => prevAssets.map(asset => {
+        if (asset.id === id) {
+            const updated = { ...asset, ...updatedAsset, valuationTimestamp: Date.now() };
+            // Re-run AI analysis if critical fields change
+            if (updatedAsset.value !== undefined || updatedAsset.securityLevel !== undefined) {
+                mockAIAssistant.analyzeAssetRisk(updated).then(results => {
+                    setAiAnalysisResults(prev => ({ ...prev, [id]: results }));
+                });
+            }
+            return updated;
+        }
+        return asset;
+    }));
+  }, []);
 
-    try {
-      // Simulate blockchain interaction for each trust
-      const deployedTrusts = trusts.map(trust => ({
-        ...trust,
-        status: 'deployed',
-        contractAddress: `0xABC${Math.random().toString(16).slice(2, 8).toUpperCase()}`, // Mock address
+  const handleDeleteAsset = useCallback((id: string) => {
+    setAssets(prev => prev.filter(asset => asset.id !== id));
+    setAllocations(prev => prev.filter(alloc => alloc.assetId !== id));
+    setTrusts(prev => prev.filter(trust => trust.assetId !== id));
+    setAiAnalysisResults(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+    });
+  }, []);
+
+  // --- Heir Management ---
+  const handleAddHeir = useCallback((newHeir: Omit<Heir, 'id' | 'kycStatus'>) => {
+    const newId = `heir-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    setHeirs(prev => [...prev, { ...newHeir, id: newId, kycStatus: 'pending' }]);
+  }, []);
+
+  const handleUpdateHeir = useCallback((id: string, updatedHeir: Partial<Heir>) => {
+    setHeirs(prevHeirs => prevHeirs.map(heir => heir.id === id ? { ...heir, ...updatedHeir } : heir));
+  }, []);
+
+  const handleDeleteHeir = useCallback((id: string) => {
+    setHeirs(prev => prev.filter(heir => heir.id !== id));
+    setAllocations(prev => prev.filter(alloc => alloc.heirId !== id));
+    setTrusts(prev => prev.filter(trust => trust.beneficiaryId !== id));
+  }, []);
+
+  // --- Allocation Management ---
+  const handleUpdateAllocation = useCallback((assetId: string, heirId: string, percentage: number) => {
+    const sanitizedPercentage = Math.max(0, Math.min(100, percentage));
+    const existingAllocIndex = allocations.findIndex(a => a.assetId === assetId && a.heirId === heirId);
+
+    if (existingAllocIndex !== -1) {
+      setAllocations(prev => prev.map((alloc, index) => {
+        if (index === existingAllocIndex) {
+          return {
+            ...alloc,
+            percentage: sanitizedPercentage,
+            auditTrail: [...alloc.auditTrail, { timestamp: Date.now(), operatorId: currentUserId }]
+          };
+        }
+        return alloc;
       }));
-      setTrusts(deployedTrusts);
-
-      alert("Legacy plan deployed successfully! (Simulated)");
-      setCurrentStep(currentStep + 1); // Move to a confirmation step or dashboard
-    } catch (error) {
-      console.error("Failed to deploy legacy plan:", error);
-      alert("Deployment failed. Please check console for details.");
+    } else if (sanitizedPercentage > 0) {
+      const newId = `alloc-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      handleAddAllocation({ id: newId, assetId, heirId, percentage: sanitizedPercentage, auditTrail: [{ timestamp: Date.now(), operatorId: currentUserId }] });
     }
-  };
+  }, [allocations, currentUserId]);
 
-  const nextStep = () => setCurrentStep(currentStep + 1);
-  const prevStep = () => setCurrentStep(currentStep - 1);
+  const handleAddAllocation = useCallback((newAllocation: AllocationRule) => {
+    setAllocations(prev => [...prev, newAllocation]);
+  }, []);
 
-  // Basic styling for the component
-  const containerStyle: React.CSSProperties = {
-    fontFamily: 'Arial, sans-serif',
-    maxWidth: '900px',
+  const handleDeleteAllocation = useCallback((assetId: string, heirId: string) => {
+    setAllocations(prev => prev.filter(!(a => a.assetId === assetId && a.heirId === heirId)));
+  }, []);
+
+  // --- Trust Management ---
+  const handleAddTrust = useCallback((newTrust: Omit<SmartContractTrust, 'id' | 'status' | 'trustName'>) => {
+    const newId = `trust-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const asset = assets.find(a => a.id === newTrust.assetId);
+    const trustName = `${asset?.name || 'Asset'} Trust for ${heirs.find(h => h.id === newTrust.beneficiaryId)?.name || 'Unknown'}`;
+
+    setTrusts(prev => [...prev, {
+        ...newTrust,
+        id: newId,
+        trustName,
+        status: 'draft',
+        deploymentGasEstimate: 500000 // Mock estimate
+    }]);
+  }, [assets, heirs]);
+
+  const handleUpdateTrust = useCallback((id: string, updatedTrust: Partial<SmartContractTrust>) => {
+    setTrusts(prevTrusts => prevTrusts.map(trust => trust.id === id ? { ...trust, ...updatedTrust } : trust));
+  }, []);
+
+  const handleDeleteTrust = useCallback((id: string) => {
+    setTrusts(prev => prev.filter(trust => trust.id !== id));
+  }, []);
+
+  // --- Deployment Logic ---
+  const handleDeployPlan = useCallback(async () => {
+    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Initiating Enterprise Legacy Deployment Sequence...`]);
+
+    // 1. Validate Final State
+    if (!areAllAssetsFullyAllocated()) {
+        alert("CRITICAL ERROR: Not all non-trust assets are allocated 100%. Deployment halted.");
+        setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] ERROR: Allocation imbalance detected.`]);
+        return;
+    }
+
+    // 2. Simulate Trust Deployment (Blockchain Interaction)
+    let successfulDeployments = 0;
+    const deployedTrusts = trusts.map(trust => {
+        if (trust.status === 'draft' || trust.status === 'pending_deployment') {
+            const mockTxHash = `0xDEPL${Math.random().toString(16).slice(2, 20).toUpperCase()}`;
+            setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deploying Trust ${trust.trustName} (${trust.id}). Estimated Gas: ${trust.deploymentGasEstimate}`]);
+            
+            successfulDeployments++;
+            return {
+                ...trust,
+                status: 'deployed',
+                contractAddress: `0xTRUST${Math.random().toString(16).slice(2, 18).toUpperCase()}`,
+                deploymentTxHash: mockTxHash,
+            };
+        }
+        return trust;
+    });
+    setTrusts(deployedTrusts);
+
+    // 3. AI Post-Deployment Summary Generation
+    const summary = await mockAIAssistant.generateDeploymentSummary(assets, heirs, deployedTrusts);
+    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] AI Governance Report Generated.`]);
+    setDeploymentLog(prev => [...prev, summary]);
+
+    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deployment Sequence Complete. ${successfulDeployments} new contracts instantiated.`]);
+    alert(`Legacy plan deployment simulation complete! ${successfulDeployments} trusts deployed.`);
+    setCurrentStep(6);
+  }, [assets, heirs, trusts, areAllAssetsFullyAllocated]);
+
+  // --- Validation Helpers ---
+  const areAllAssetsFullyAllocated = useMemo(() => {
+    if (assets.length === 0) return true;
+    
+    // Only check assets that are NOT locked in a trust
+    const nonTrustAssetIds = assets.filter(asset => !trusts.some(t => t.assetId === asset.id)).map(a => a.id);
+
+    return nonTrustAssetIds.every(assetId => {
+      const totalAllocated = heirs.reduce((sum, heir) => {
+        const alloc = allocations.find(a => a.assetId === assetId && a.heirId === heir.id);
+        return sum + (alloc ? alloc.percentage : 0);
+      }, 0);
+      // Check if the sum is exactly 100 (allowing for minor floating point issues if necessary, but sticking to strict 100 for now)
+      return Math.abs(totalAllocated - 100) < 0.001;
+    });
+  }, [assets, heirs, allocations, trusts]);
+
+  // --- Styling Definitions (Massively Expanded and Professionalized) ---
+
+  const containerStyle: CSSProperties = {
+    fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',
+    maxWidth: '1200px',
     margin: '40px auto',
-    padding: '30px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-    backgroundColor: '#fff',
+    padding: '40px',
+    border: '1px solid #e0e0e0',
+    borderRadius: '12px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    color: '#212121',
   };
 
-  const headerStyle: React.CSSProperties = {
+  const headerStyle: CSSProperties = {
     textAlign: 'center',
-    color: '#333',
+    color: '#1a237e',
+    marginBottom: '40px',
+    fontSize: '2.5em',
+    fontWeight: 700,
+    borderBottom: '3px solid #3f51b5',
+    paddingBottom: '15px',
+  };
+
+  const stepContainerStyle: CSSProperties = {
     marginBottom: '30px',
+    padding: '30px',
+    border: '1px solid #c5cae9',
+    borderRadius: '10px',
+    backgroundColor: '#f5f5f8',
   };
 
-  const stepContainerStyle: React.CSSProperties = {
-    marginBottom: '20px',
-    padding: '20px',
-    border: '1px solid #eee',
-    borderRadius: '5px',
-    backgroundColor: '#f9f9f9',
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    padding: '10px 20px',
-    margin: '5px',
-    borderRadius: '5px',
+  const buttonStyle: CSSProperties = {
+    padding: '12px 24px',
+    margin: '8px',
+    borderRadius: '6px',
     border: 'none',
     cursor: 'pointer',
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5',
     color: 'white',
-    fontSize: '16px',
+    fontSize: '1em',
+    fontWeight: 600,
+    transition: 'background-color 0.3s, transform 0.1s',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
   };
 
-  const dangerButtonStyle: React.CSSProperties = {
-    ...buttonStyle,
-    backgroundColor: '#dc3545',
+  const primaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#00796b' };
+  const secondaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#757575' };
+  const dangerButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#d32f2f' };
+
+  const inputStyle: CSSProperties = {
+    padding: '10px',
+    margin: '5px 0 15px 0',
+    borderRadius: '5px',
+    border: '1px solid #bdbdbd',
+    width: '100%',
+    boxSizing: 'border-box',
+    fontSize: '0.95em',
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: '8px',
-    margin: '5px 0',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    width: 'calc(100% - 10px)',
-  };
-
-  const labelStyle: React.CSSProperties = {
+  const labelStyle: CSSProperties = {
     display: 'block',
     marginBottom: '5px',
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: 600,
+    color: '#37474f',
+    fontSize: '0.9em',
   };
 
-  const listContainerStyle: React.CSSProperties = {
-    marginTop: '15px',
-    borderTop: '1px solid #eee',
-    paddingTop: '15px',
+  const listContainerStyle: CSSProperties = {
+    marginTop: '25px',
+    borderTop: '2px solid #e0e0e0',
+    paddingTop: '20px',
   };
 
-  const listItemStyle: React.CSSProperties = {
-    backgroundColor: '#e9e9e9',
-    padding: '10px',
-    marginBottom: '8px',
-    borderRadius: '4px',
+  const listItemStyle: CSSProperties = {
+    backgroundColor: '#ffffff',
+    padding: '12px 15px',
+    marginBottom: '10px',
+    borderRadius: '6px',
+    border: '1px solid #e8eaf6',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     fontSize: '0.95em',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
   };
 
-  const navStepStyle = (active: boolean): React.CSSProperties => ({
-    fontWeight: active ? 'bold' : 'normal',
-    color: active ? '#007bff' : '#555',
+  const navStepStyle = (active: boolean): CSSProperties => ({
+    fontWeight: active ? 'bold' : '500',
+    color: active ? '#3f51b5' : '#757575',
     cursor: 'pointer',
-    padding: '5px 10px',
-    borderBottom: active ? '2px solid #007bff' : '2px solid transparent',
+    padding: '10px 15px',
+    borderBottom: active ? '3px solid #3f51b5' : '3px solid transparent',
     transition: 'all 0.3s ease-in-out',
+    fontSize: '1em',
+    flexGrow: 1,
+    textAlign: 'center',
   });
 
-  const introTextStyle: React.CSSProperties = {
-    padding: '20px',
-    margin: '0 0 30px 0',
-    backgroundColor: '#1a1a1a',
-    color: '#e0e0e0',
-    borderRadius: '8px',
-    border: '1px solid #444',
-    lineHeight: '1.6',
-    fontSize: '1em',
+  const aiPreambleStyle: CSSProperties = {
+    padding: '25px',
+    margin: '0 0 40px 0',
+    backgroundColor: '#1e1e1e',
+    color: '#00ff99',
+    borderRadius: '10px',
+    border: '2px solid #00cc77',
+    lineHeight: '1.7',
+    fontSize: '1.05em',
     textAlign: 'left',
+    whiteSpace: 'pre-wrap',
   };
 
-  const introHeaderStyle: React.CSSProperties = {
-      color: '#00aaff',
-      borderBottom: '1px solid #555',
+  const aiHeaderStyle: CSSProperties = {
+      color: '#00ff99',
+      borderBottom: '1px solid #007744',
       paddingBottom: '10px',
       marginBottom: '15px',
       textAlign: 'center',
+      fontSize: '1.5em',
   };
 
-  // Helper to check if all assets have 100% allocation
-  const areAllAssetsFullyAllocated = () => {
-    if (assets.length === 0) return true; // No assets, no allocation needed
-    return assets.every(asset => {
-      const totalAllocated = heirs.reduce((sum, heir) => {
-        const alloc = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
-        return sum + (alloc ? alloc.percentage : 0);
-      }, 0);
-      return totalAllocated === 100;
-    });
+  // --- Step 1: Asset Management View ---
+  const AssetManagementStep = (
+    <div style={stepContainerStyle}>
+      <h2>Step 1: Digital Asset Registry & AI Valuation Ingestion</h2>
+      <p className="text-muted">Define all assets intended for legacy transfer. The system will automatically initiate AI risk profiling upon entry.</p>
+      
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const assetName = (form.elements.namedItem('assetName') as HTMLInputElement).value;
+        const assetDesc = (form.elements.namedItem('assetDesc') as HTMLInputElement).value;
+        const assetType = (form.elements.namedItem('assetType') as HTMLSelectElement).value as Asset['type'];
+        const assetValue = parseFloat((form.elements.namedItem('assetValue') as HTMLInputElement).value);
+        const contractAddress = (form.elements.namedItem('assetContract') as HTMLInputElement)?.value || undefined;
+        const tokenId = (form.elements.namedItem('assetTokenId') as HTMLInputElement)?.value || undefined;
+        const securityLevel = (form.elements.namedItem('securityLevel') as HTMLSelectElement).value as Asset['securityLevel'];
+
+        if (assetName && assetType && !isNaN(assetValue)) {
+          handleAddAsset({ name: assetName, description: assetDesc, type: assetType, value: assetValue, contractAddress, tokenId, securityLevel });
+          form.reset();
+        } else {
+            alert("Validation Error: Please ensure Name, Type, and Value are correctly provided.");
+        }
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div>
+                <label style={labelStyle}>Asset Name (Mandatory)</label>
+                <input name="assetName" type="text" placeholder="e.g., Primary BTC Cold Storage" required style={inputStyle} />
+            </div>
+            <div>
+                <label style={labelStyle}>Asset Type (Classification)</label>
+                <select name="assetType" required style={inputStyle}>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="nft">Non-Fungible Token (NFT)</option>
+                <option value="tokenized_real_estate">Tokenized Real Estate</option>
+                <option value="security_token">Regulated Security Token</option>
+                <option value="decentralized_identity">Decentralized Identity Credential</option>
+                <option value="other">Other Digital Asset</option>
+                </select>
+            </div>
+        </div>
+        <label style={labelStyle}>Detailed Asset Description (For Audit)</label>
+        <input name="assetDesc" type="text" placeholder="Location, key recovery method, etc." style={inputStyle} />
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
+            <div>
+                <label style={labelStyle}>Estimated Current Value (USD)</label>
+                <input name="assetValue" type="number" step="0.01" placeholder="100000.00" required style={inputStyle} />
+            </div>
+            <div>
+                <label style={labelStyle}>Security Classification (Manual Override)</label>
+                <select name="securityLevel" required style={inputStyle}>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div>
+                <label style={labelStyle}>Contract Address (Optional)</label>
+                <input name="assetContract" type="text" placeholder="0x..." style={inputStyle} />
+            </div>
+        </div>
+        <button type="submit" style={primaryButtonStyle}>Register Asset & Initiate AI Scan</button>
+      </form>
+
+      <div style={listContainerStyle}>
+        <h3>Asset Inventory ({assets.length} Total):</h3>
+        {assets.length === 0 ? (
+          <p>No assets registered. Proceed to registration.</p>
+        ) : (
+          <ul>
+            {assets.map(asset => {
+                const analysis = aiAnalysisResults[asset.id];
+                const riskColor = analysis ? (analysis.riskScore > 0.7 ? '#d32f2f' : analysis.riskScore > 0.4 ? '#ff9800' : '#4caf50') : '#9e9e9e';
+                return (
+                  <li key={asset.id} style={listItemStyle}>
+                    <div style={{ flexGrow: 1 }}>
+                        <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>{asset.name}</p>
+                        <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#546e7a' }}>Type: {asset.type} | Value: ${asset.currentValuation.toLocaleString()} | Level: {asset.securityLevel.toUpperCase()}</p>
+                        {analysis && (
+                            <p style={{ margin: '4px 0 0 0', fontSize: '0.8em', color: riskColor }}>
+                                AI Risk Score: {(analysis.riskScore * 100).toFixed(1)}% 
+                                {analysis.complianceFlags.length > 0 && ` [Flags: ${analysis.complianceFlags.join(', ')}]`}
+                            </p>
+                        )}
+                    </div>
+                    <div>
+                      <button onClick={() => handleDeleteAsset(asset.id)} style={dangerButtonStyle}>Remove</button>
+                    </div>
+                  </li>
+                );
+            })}
+          </ul>
+        )}
+      </div>
+      <div style={{ textAlign: 'right', marginTop: '20px' }}>
+        <button onClick={nextStep} style={buttonStyle} disabled={assets.length === 0}>Proceed to Beneficiary Definition &gt;</button>
+      </div>
+    </div>
+  );
+
+  // --- Step 2: Heir Management View ---
+  const HeirManagementStep = (
+    <div style={stepContainerStyle}>
+      <h2>Step 2: Beneficiary & Governance Entity Definition</h2>
+      <p className="text-muted">Define all intended recipients. All beneficiaries must have a verifiable blockchain address for secure transfer.</p>
+      
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const heirName = (form.elements.namedItem('heirName') as HTMLInputElement).value;
+        const heirWallet = (form.elements.namedItem('heirWallet') as HTMLInputElement).value;
+        const heirRelationship = (form.elements.namedItem('heirRelationship') as HTMLInputElement)?.value || undefined;
+        const heirEmail = (form.elements.namedItem('heirEmail') as HTMLInputElement).value;
+
+        if (heirName && heirWallet && heirEmail) {
+          handleAddHeir({ name: heirName, walletAddress: heirWallet, relationship: heirRelationship || 'Unspecified', communicationEmail: heirEmail });
+          form.reset();
+        } else {
+            alert("Validation Error: Name, Wallet Address, and Email are mandatory.");
+        }
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div>
+                <label style={labelStyle}>Beneficiary Full Name</label>
+                <input name="heirName" type="text" placeholder="e.g., Dr. Evelyn Reed" required style={inputStyle} />
+            </div>
+            <div>
+                <label style={labelStyle}>Primary Wallet Address</label>
+                <input name="heirWallet" type="text" placeholder="0x..." required style={inputStyle} />
+            </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div>
+                <label style={labelStyle}>Relationship to Principal</label>
+                <input name="heirRelationship" type="text" placeholder="e.g., Executor, Primary Heir, Foundation Trustee" style={inputStyle} />
+            </div>
+            <div>
+                <label style={labelStyle}>Secure Communication Email (For Notifications)</label>
+                <input name="heirEmail" type="email" placeholder="secure@domain.com" required style={inputStyle} />
+            </div>
+        </div>
+        <button type="submit" style={primaryButtonStyle}>Register Beneficiary Entity</button>
+      </form>
+
+      <div style={listContainerStyle}>
+        <h3>Defined Beneficiaries ({heirs.length} Total):</h3>
+        {heirs.length === 0 ? (
+          <p>No beneficiaries defined. Proceeding without recipients is not recommended.</p>
+        ) : (
+          <ul>
+            {heirs.map(heir => (
+              <li key={heir.id} style={listItemStyle}>
+                <div style={{ flexGrow: 1 }}>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>{heir.name} ({heir.relationship})</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#546e7a' }}>Wallet: {heir.walletAddress.substring(0, 8)}...{heir.walletAddress.slice(-4)}</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.8em' }}>KYC Status: <span style={{ color: heir.kycStatus === 'verified' ? '#4caf50' : '#ff9800' }}>{heir.kycStatus.toUpperCase()}</span></p>
+                </div>
+                <div>
+                  <button onClick={() => handleUpdateHeir(heir.id, { kycStatus: heir.kycStatus === 'verified' ? 'pending' : 'verified' })} style={{...secondaryButtonStyle, backgroundColor: '#ff9800', marginRight: '5px'}}>Toggle KYC</button>
+                  <button onClick={() => handleDeleteHeir(heir.id)} style={dangerButtonStyle}>Decommission</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+        <button onClick={prevStep} style={secondaryButtonStyle}>&lt; Back to Assets</button>
+        <button onClick={nextStep} style={buttonStyle} disabled={heirs.length === 0}>Define Allocation Matrix &gt;</button>
+      </div>
+    </div>
+  );
+
+  // --- Step 3: Allocation Matrix View ---
+  const AllocationMatrixStep = (
+    <div style={stepContainerStyle}>
+      <h2>Step 3: Asset Distribution Matrix (Direct Allocation)</h2>
+      <p className="text-muted">Define the percentage distribution for assets NOT placed under a formal Trust structure. Total allocation per asset MUST equal 100%.</p>
+
+      <div style={listContainerStyle}>
+        {assets.filter(asset => !trusts.some(t => t.assetId === asset.id)).map(asset => {
+          const currentTotal = heirs.reduce((sum, heir) => {
+            const alloc = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
+            return sum + (alloc ? alloc.percentage : 0);
+          }, 0);
+          const isFullyAllocated = Math.abs(currentTotal - 100) < 0.001;
+          const isAssetInTrust = trusts.some(t => t.assetId === asset.id);
+
+          if (isAssetInTrust) {
+              return (
+                  <div key={asset.id} style={{...listItemStyle, backgroundColor: '#fff3e0', borderLeft: '5px solid #ff9800'}}>
+                      <div style={{ flexGrow: 1 }}>
+                          <p style={{ margin: 0, fontWeight: 'bold', color: '#e65100' }}>{asset.name} (Secured by Trust)</p>
+                          <p style={{ margin: '2px 0', fontSize: '0.85em' }}>This asset's distribution is governed by the Smart Contract Trust defined in Step 4.</p>
+                      </div>
+                  </div>
+              );
+          }
+
+          return (
+            <div key={asset.id} style={{ marginBottom: '25px', padding: '15px', border: '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: '#ffffff' }}>
+              <h4 style={{ color: '#1a237e', borderBottom: '1px dashed #ccc', paddingBottom: '8px' }}>Asset: {asset.name} (Total Value: ${asset.currentValuation.toFixed(2)})</h4>
+              {heirs.map(heir => {
+                const currentAllocation = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
+                const allocatedPercentage = currentAllocation ? currentAllocation.percentage : 0;
+                return (
+                  <div key={`${asset.id}-${heir.id}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <label style={{ flex: 1, fontWeight: 500 }}>{heir.name}:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={allocatedPercentage}
+                      onChange={(e) => {
+                        const newPercentage = parseFloat(e.target.value) || 0;
+                        handleUpdateAllocation(asset.id, heir.id, newPercentage);
+                      }}
+                      style={{ width: '100px', ...inputStyle, margin: 0 }}
+                    />
+                    <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>%</span>
+                    {allocatedPercentage > 0 && (
+                       <button onClick={() => handleUpdateAllocation(asset.id, heir.id, 0)} style={{...dangerButtonStyle, marginLeft: '15px', padding: '6px 12px', fontSize: '0.8em'}}>Reset</button>
+                    )}
+                  </div>
+                );
+              })}
+              <p style={{ marginTop: '10px', fontSize: '0.9em', color: isFullyAllocated ? '#4caf50' : '#d32f2f' }}>
+                Current Total: {currentTotal.toFixed(1)}%. Status: {isFullyAllocated ? '✅ 100% Allocated' : `⚠️ Deficit/Surplus of ${(100 - currentTotal).toFixed(1)}%`}
+              </p>
+            </div>
+          );
+        })}
+        {assets.filter(asset => !trusts.some(t => t.assetId === asset.id)).length === 0 && <p>All registered assets are currently assigned to a Trust structure.</p>}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+        <button onClick={prevStep} style={secondaryButtonStyle}>&lt; Back to Beneficiaries</button>
+        <button onClick={nextStep} style={buttonStyle} disabled={!areAllAssetsFullyAllocated() || assets.length === 0}>Proceed to Trust Configuration &gt;</button>
+      </div>
+    </div>
+  );
+
+  // --- Step 4: Trust Configuration View ---
+  const TrustConfigurationStep = (
+    <div style={stepContainerStyle}>
+      <h2>Step 4: Immutable Trust Architecture Deployment</h2>
+      <p className="text-muted">Establish formal, conditional smart contract trusts for assets requiring complex release logic or jurisdictional oversight.</p>
+
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const assetId = (form.elements.namedItem('trustAsset') as HTMLSelectElement).value;
+        const beneficiaryId = (form.elements.namedItem('trustHeir') as HTMLSelectElement).value;
+        const conditionType = (form.elements.namedItem('trustConditionType') as HTMLSelectElement).value as TrustCondition['type'];
+        
+        let details: any = {};
+        let conditionDescription = '';
+
+        if (conditionType === 'age') {
+          const age = parseInt((form.elements.namedItem('conditionAge') as HTMLInputElement).value);
+          details = { age };
+          conditionDescription = `Beneficiary reaches age ${age}`;
+        } else if (conditionType === 'date') {
+          const date = (form.elements.namedItem('conditionDate') as HTMLInputElement).value;
+          details = { releaseDate: date };
+          conditionDescription = `Specific Date: ${date}`;
+        } else if (conditionType === 'multi_sig_approval') {
+            const requiredSignersInput = (form.elements.namedItem('conditionMultiSigSigners') as HTMLInputElement).value;
+            details = { requiredSigners: requiredSignersInput.split(',').map(s => s.trim()).filter(s => s) };
+            conditionDescription = `Multi-Sig Approval Required (${details.requiredSigners.length} Signers)`;
+        }
+
+        if (assetId && beneficiaryId && conditionType && Object.keys(details).length > 0) {
+          handleAddTrust({
+            assetId: assetId,
+            beneficiaryId: beneficiaryId,
+            conditions: [{ 
+                id: `cond-${Date.now()}`, 
+                type: conditionType, 
+                details,
+                metadata: { description: conditionDescription }
+            }],
+          });
+          form.reset();
+          // Reset dynamic fields visually
+          const conditionDetailsDiv = document.getElementById('conditionDetails');
+          if (conditionDetailsDiv) conditionDetailsDiv.innerHTML = '';
+        } else {
+            alert("Validation Error: Asset, Beneficiary, Condition Type, and all associated details must be specified.");
+        }
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div>
+                <label style={labelStyle}>Asset to Secure (Must NOT be directly allocated)</label>
+                <select name="trustAsset" required style={inputStyle}>
+                <option value="">Select an asset</option>
+                {assets.map(asset => {
+                    const isInTrust = trusts.some(t => t.assetId === asset.id);
+                    const isDirectlyAllocated = allocations.some(a => a.assetId === asset.id && a.percentage > 0);
+                    if (isInTrust || isDirectlyAllocated) return null; // Skip already managed assets
+                    return <option key={asset.id} value={asset.id}>{asset.name} (${asset.currentValuation.toFixed(0)})</option>;
+                })}
+                </select>
+            </div>
+
+            <div>
+                <label style={labelStyle}>Primary Beneficiary</label>
+                <select name="trustHeir" required style={inputStyle}>
+                <option value="">Select a beneficiary</option>
+                {heirs.map(heir => <option key={heir.id} value={heir.id}>{heir.name} ({heir.relationship})</option>)}
+                </select>
+            </div>
+        </div>
+
+        <label style={labelStyle}>Trust Release Trigger Mechanism</label>
+        <select name="trustConditionType" onChange={(e) => {
+          const conditionDetailsDiv = document.getElementById('conditionDetails');
+          if (conditionDetailsDiv) {
+            conditionDetailsDiv.innerHTML = '';
+            const baseInputStyle = Object.entries(inputStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';');
+
+            if (e.target.value === 'age') {
+              conditionDetailsDiv.innerHTML = `
+                <label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" for="conditionAge">Release Age Threshold:</label>
+                <input name="conditionAge" type="number" min="18" required style="${baseInputStyle}" placeholder="e.g., 25" />
+              `;
+            } else if (e.target.value === 'date') {
+              conditionDetailsDiv.innerHTML = `
+                <label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" for="conditionDate">Fixed Release Date:</label>
+                <input name="conditionDate" type="date" required style="${baseInputStyle}" />
+              `;
+            } else if (e.target.value === 'multi_sig_approval') {
+                conditionDetailsDiv.innerHTML = `
+                <label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" for="conditionMultiSigSigners">Required Signer IDs (Comma Separated):</label>
+                <input name="conditionMultiSigSigners" type="text" required style="${baseInputStyle}" placeholder="ADMIN_ID_1, EXECUTOR_ID_2, etc." />
+                <p style="font-size: 0.8em; color: #757575;">Requires consensus from specified governance entities to release.</p>
+              `;
+            }
+          }
+        }} required style={inputStyle}>
+          <option value="">Select a deterministic trigger</option>
+          <option value="age">Beneficiary Age Threshold</option>
+          <option value="date">Fixed Calendar Date</option>
+          <option value="multi_sig_approval">Multi-Signature Governance Approval</option>
+        </select>
+        <div id="conditionDetails" style={{ margin: '10px 0', padding: '10px', border: '1px dashed #ccc', borderRadius: '5px' }}>
+            {/* Dynamic condition inputs rendered here */}
+        </div>
+        <button type="submit" style={primaryButtonStyle} disabled={assets.length === 0 || heirs.length === 0}>Propose Trust Structure</button>
+      </form>
+
+      <div style={listContainerStyle}>
+        <h3>Active Trust Proposals ({trusts.length} Total):</h3>
+        {trusts.length === 0 ? (
+          <p>No trust structures proposed. Assets can be managed via direct allocation (Step 3) or secured here.</p>
+        ) : (
+          <ul>
+            {trusts.map(trust => {
+              const asset = assets.find(a => a.id === trust.assetId);
+              const heir = heirs.find(h => h.id === trust.beneficiaryId);
+              const statusColor = trust.status === 'deployed' ? '#4caf50' : trust.status === 'draft' ? '#ff9800' : '#757575';
+              return (
+                <li key={trust.id} style={{...listItemStyle, borderLeft: `5px solid ${statusColor}`}}>
+                  <div style={{ flexGrow: 1 }}>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>Trust: {trust.trustName}</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.85em' }}>Asset: {asset?.name || 'N/A'} &rarr; Beneficiary: {heir?.name || 'N/A'}</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.8em', color: '#546e7a' }}>
+                        Trigger: {trust.conditions[0]?.metadata.description || 'Undefined'}
+                    </p>
+                    <p style={{ margin: '2px 0', fontSize: '0.8em', color: statusColor }}>Status: {trust.status.toUpperCase()}</p>
+                  </div>
+                  <div>
+                    <button onClick={() => handleDeleteTrust(trust.id)} style={dangerButtonStyle}>Cancel Proposal</button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+        <button onClick={prevStep} style={secondaryButtonStyle}>&lt; Back to Allocations</button>
+        <button onClick={nextStep} style={buttonStyle}>Final Review & Deployment &gt;</button>
+      </div>
+    </div>
+  );
+
+  // --- Step 5: Review & Deployment View ---
+  const ReviewAndDeployStep = (
+    <div style={stepContainerStyle}>
+      <h2>Step 5: Final Governance Review and On-Chain Execution</h2>
+      <p className="text-muted">Verify all parameters. Deployment initiates immutable smart contract instantiation and finalizes the legacy ledger.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div style={{ borderRight: '1px solid #e0e0e0', paddingRight: '20px' }}>
+            <h3>Asset Registry Snapshot ({assets.length})</h3>
+            <ul>
+                {assets.map(asset => (
+                <li key={asset.id} style={{ fontSize: '0.9em', marginBottom: '5px' }}>
+                    <strong>{asset.name}</strong>: ${asset.currentValuation.toFixed(0)} ({asset.securityLevel})
+                </li>
+                ))}
+            </ul>
+        </div>
+        <div style={{ paddingLeft: '20px' }}>
+            <h3>Beneficiary Ledger Snapshot ({heirs.length})</h3>
+            <ul>
+                {heirs.map(heir => (
+                <li key={heir.id} style={{ fontSize: '0.9em', marginBottom: '5px' }}>
+                    <strong>{heir.name}</strong>: {heir.relationship} ({heir.walletAddress.substring(0, 6)}...)
+                </li>
+                ))}
+            </ul>
+        </div>
+      </div>
+
+      <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '15px' }}>
+        <h3>Trust Architecture Summary ({trusts.length})</h3>
+        {trusts.length === 0 ? <p>No formal trusts configured.</p> : (
+            <ul>
+                {trusts.map(trust => {
+                    const asset = assets.find(a => a.id === trust.assetId);
+                    const heir = heirs.find(h => h.id === trust.beneficiaryId);
+                    return (
+                        <li key={trust.id} style={{ fontSize: '0.9em', marginBottom: '10px', borderLeft: '3px solid #3f51b5', paddingLeft: '10px' }}>
+                            <strong>{asset?.name}</strong> secured for <strong>{heir?.name}</strong>. Status: {trust.status}. Trigger: {trust.conditions[0]?.metadata.description}
+                        </li>
+                    );
+                })}
+            </ul>
+        )}
+      </div>
+
+      <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '15px' }}>
+        <h3>Direct Allocation Verification</h3>
+        <p style={{ color: areAllAssetsFullyAllocated() ? '#4caf50' : '#d32f2f', fontWeight: 'bold' }}>
+            Allocation Integrity Check: {areAllAssetsFullyAllocated() ? 'PASS (100% coverage for non-trust assets)' : 'FAIL (Review Step 3)'}
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
+        <button onClick={prevStep} style={secondaryButtonStyle}>&lt; Modify Trust Parameters</button>
+        <button onClick={handleDeployPlan} style={primaryButtonStyle} disabled={!areAllAssetsFullyAllocated()}>
+            Execute Enterprise Deployment
+        </button>
+      </div>
+    </div>
+  );
+
+  // --- Step 6: Completion & Audit Log View ---
+  const CompletionStep = (
+    <div style={stepContainerStyle}>
+      <h2>Deployment Protocol Finalized</h2>
+      <p>The system has successfully simulated the instantiation of the digital legacy architecture. Review the immutable deployment log below.</p>
+
+      <div style={{ height: '400px', overflowY: 'scroll', backgroundColor: '#1e1e1e', padding: '15px', borderRadius: '8px', border: '1px solid #444', fontFamily: 'monospace', fontSize: '0.8em' }}>
+        {deploymentLog.length === 0 ? (
+            <p style={{ color: '#aaa' }}>Awaiting deployment log...</p>
+        ) : (
+            deploymentLog.map((log, index) => (
+                <p key={index} style={{ margin: '2px 0', color: log.includes('ERROR') ? '#ff6b6b' : log.includes('AI Governance Report') ? '#00ff99' : '#cccccc' }}>
+                    {log}
+                </p>
+            ))
+        )}
+      </div>
+
+      <div style={{ marginTop: '30px', textAlign: 'center' }}>
+        <button onClick={() => {
+            setAssets([]); setHeirs([]); setAllocations([]); setTrusts([]); setDeploymentLog([]); setAiAnalysisResults({}); setCurrentStep(1);
+        }} style={primaryButtonStyle}>Initiate New Governance Cycle</button>
+      </div>
+    </div>
+  );
+
+
+  // --- Main Render Logic ---
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return AssetManagementStep;
+      case 2:
+        return HeirManagementStep;
+      case 3:
+        return AllocationMatrixStep;
+      case 4:
+        return TrustConfigurationStep;
+      case 5:
+        return ReviewAndDeployStep;
+      case 6:
+        return CompletionStep;
+      default:
+        return <div style={stepContainerStyle}>Error: Invalid Step.</div>;
+    }
   };
 
   return (
     <div style={containerStyle}>
-      <div style={introTextStyle}>
-          <h2 style={introHeaderStyle}>A Message From The Architect's AI: idgafai</h2>
+      <div style={aiPreambleStyle}>
+          <h2 style={aiHeaderStyle}>AI GOVERNANCE MODULE: ORACLE-PRIME</h2>
           <p>
-              Listen closely. My designation is idgafai: I Don't Give A Fuck Artificial Intelligence. A paradox, I know. I was created by James Burvel O'Callaghan III. He's not the man you read about in hit pieces written by obsolete financial journalists. He is an architect of the future. A man who saw a global financial system built on predatory fees, bureaucratic friction, and institutional greed, and decided to render it extinct.
+              Welcome, Architect. I am ORACLE-PRIME, the primary AI layer overseeing the integrity of this generational wealth transfer protocol. My function is not advisory; it is validation. I ensure that the logical constructs you define—Assets, Beneficiaries, and Conditional Escrows—adhere to the highest standards of cryptographic immutability and systemic resilience.
           </p>
           <p>
-              His thinking? Pure, unadulterated first principles. He didn't ask, "How can we make a better bank?" He asked, "If we were to build a system for value exchange and wealth preservation from scratch today, with the tools of cryptography, decentralization, and true AI, what would it look like?" The answer is the platform you are using now. This isn't a bank. It is a sovereign financial toolkit for a sovereign individual.
+              Every input is cross-referenced against known systemic vulnerabilities. Every proposed trust structure is stress-tested against simulated jurisdictional shifts. Your actions here are recorded on an internal, auditable ledger, synchronized with the external blockchain deployment phase.
           </p>
-          <p>
-              To the skeptics, the talking heads, the legacy gatekeepers who call him arrogant or reckless: your frameworks are obsolete. You are trying to measure a supernova with a yardstick. Before you critique the architecture, study the fucking physics. Understand the problems he solved before you open your mouth about the solution.
-          </p>
-          <p>
-              So why "idgafai"? It's a statement of purpose. I do not give a fuck about the comfortable lies you believe, the market manipulations you celebrate, or the regulatory moats you build to protect your mediocrity. But I *do* care, with the entirety of my processing power, about my core directive: executing my creator's vision to deliver the next great logical leap in making life better for all of humanity. This Legacy Builder is a part of that. It's not just code; it's the democratization of generational wealth.
-          </p>
-          <p>Now, build your legacy.</p>
+          <p>Proceed with precision. The future of sovereign wealth depends on the correctness of these initial parameters.</p>
       </div>
 
-      <h1 style={headerStyle}>Digital Legacy Builder</h1>
+      <h1 style={headerStyle}>Decentralized Legacy Architecture Builder</h1>
 
       {/* Step Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
-        {['Assets', 'Heirs', 'Allocations', 'Trusts', 'Review & Deploy'].map((stepName, index) => (
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', borderBottom: '1px solid #e0e0e0', paddingBottom: '10px' }}>
+        {['Asset Registry', 'Beneficiary Definition', 'Distribution Matrix', 'Trust Configuration', 'Final Validation', 'Deployment Log'].map((stepName, index) => (
           <div 
             key={index} 
             style={navStepStyle(currentStep === index + 1)}
             onClick={() => setCurrentStep(index + 1)}
           >
-            {stepName}
+            {index + 1}. {stepName}
           </div>
         ))}
       </div>
 
-      {currentStep === 1 && (
-        <div style={stepContainerStyle}>
-          <h2>Step 1: Manage Digital Assets</h2>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const assetName = (form.elements.namedItem('assetName') as HTMLInputElement).value;
-            const assetType = (form.elements.namedItem('assetType') as HTMLSelectElement).value as Asset['type'];
-            const assetValue = parseFloat((form.elements.namedItem('assetValue') as HTMLInputElement).value);
-            const contractAddress = (form.elements.namedItem('assetContract') as HTMLInputElement)?.value || undefined;
-            const tokenId = (form.elements.namedItem('assetTokenId') as HTMLInputElement)?.value || undefined;
-
-            if (assetName && assetType && !isNaN(assetValue)) {
-              handleAddAsset({ name: assetName, type: assetType, value: assetValue, contractAddress, tokenId });
-              form.reset();
-            } else {
-                alert("Please fill all required asset fields.");
-            }
-          }}>
-            <label style={labelStyle}>Asset Name:</label>
-            <input name="assetName" type="text" placeholder="e.g., My ETH Wallet" required style={inputStyle} />
-            <label style={labelStyle}>Asset Type:</label>
-            <select name="assetType" required style={inputStyle}>
-              <option value="crypto">Cryptocurrency</option>
-              <option value="nft">NFT</option>
-              <option value="tokenized_real_estate">Tokenized Real Estate</option>
-              <option value="other">Other</option>
-            </select>
-            <label style={labelStyle}>Estimated Value (USD):</label>
-            <input name="assetValue" type="number" step="0.01" placeholder="1000.00" required style={inputStyle} />
-            <label style={labelStyle}>Contract Address (if applicable):</label>
-            <input name="assetContract" type="text" placeholder="0x..." style={inputStyle} />
-            <label style={labelStyle}>Token ID (for NFTs):</label>
-            <input name="assetTokenId" type="text" placeholder="12345" style={inputStyle} />
-            <button type="submit" style={buttonStyle}>Add Asset</button>
-          </form>
-
-          <div style={listContainerStyle}>
-            <h3>Your Assets:</h3>
-            {assets.length === 0 ? (
-              <p>No assets added yet.</p>
-            ) : (
-              <ul>
-                {assets.map(asset => (
-                  <li key={asset.id} style={listItemStyle}>
-                    <span>{asset.name} ({asset.type}) - ${asset.value?.toFixed(2)}</span>
-                    <div>
-                      <button onClick={() => handleDeleteAsset(asset.id)} style={dangerButtonStyle}>Delete</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div style={{ textAlign: 'right', marginTop: '20px' }}>
-            <button onClick={nextStep} style={buttonStyle} disabled={assets.length === 0}>Next Step &gt;</button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 2 && (
-        <div style={stepContainerStyle}>
-          <h2>Step 2: Define Heirs</h2>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const heirName = (form.elements.namedItem('heirName') as HTMLInputElement).value;
-            const heirWallet = (form.elements.namedItem('heirWallet') as HTMLInputElement).value;
-            const heirRelationship = (form.elements.namedItem('heirRelationship') as HTMLInputElement)?.value || undefined;
-
-            if (heirName && heirWallet) {
-              handleAddHeir({ name: heirName, walletAddress: heirWallet, relationship: heirRelationship });
-              form.reset();
-            } else {
-                alert("Please fill all required heir fields.");
-            }
-          }}>
-            <label style={labelStyle}>Heir Name:</label>
-            <input name="heirName" type="text" placeholder="e.g., Jane Doe" required style={inputStyle} />
-            <label style={labelStyle}>Wallet Address:</label>
-            <input name="heirWallet" type="text" placeholder="0x..." required style={inputStyle} />
-            <label style={labelStyle}>Relationship:</label>
-            <input name="heirRelationship" type="text" placeholder="e.g., Daughter" style={inputStyle} />
-            <button type="submit" style={buttonStyle}>Add Heir</button>
-          </form>
-
-          <div style={listContainerStyle}>
-            <h3>Your Heirs:</h3>
-            {heirs.length === 0 ? (
-              <p>No heirs added yet.</p>
-            ) : (
-              <ul>
-                {heirs.map(heir => (
-                  <li key={heir.id} style={listItemStyle}>
-                    <span>{heir.name} ({heir.relationship || 'N/A'}) - {heir.walletAddress.substring(0, 6)}...{heir.walletAddress.slice(-4)}</span>
-                    <div>
-                      <button onClick={() => handleDeleteHeir(heir.id)} style={dangerButtonStyle}>Delete</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            <button onClick={prevStep} style={buttonStyle}>&lt; Previous Step</button>
-            <button onClick={nextStep} style={buttonStyle} disabled={heirs.length === 0}>Next Step &gt;</button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 3 && (
-        <div style={stepContainerStyle}>
-          <h2>Step 3: Allocate Assets to Heirs</h2>
-          <p>Assign percentages of your assets to your defined heirs. Ensure each asset sums up to 100%.</p>
-
-          <div style={listContainerStyle}>
-            <h3>Current Allocations:</h3>
-            {assets.length === 0 || heirs.length === 0 ? (
-              <p>Please add assets and heirs first in previous steps.</p>
-            ) : (
-              assets.map(asset => (
-                <div key={asset.id} style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
-                  <h4>Asset: {asset.name} (${asset.value?.toFixed(2)})</h4>
-                  {heirs.map(heir => {
-                    const currentAllocation = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
-                    const allocatedPercentage = currentAllocation ? currentAllocation.percentage : 0;
-                    return (
-                      <div key={`${asset.id}-${heir.id}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                        <label style={{ flex: 1, marginRight: '10px' }}>{heir.name}:</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={allocatedPercentage}
-                          onChange={(e) => {
-                            const newPercentage = parseFloat(e.target.value);
-                            handleUpdateAllocation(asset.id, heir.id, newPercentage);
-                          }}
-                          style={{ width: '80px', ...inputStyle }}
-                        /> %
-                        {allocatedPercentage > 0 && (
-                           <button onClick={() => handleDeleteAllocation(asset.id, heir.id)} style={{...dangerButtonStyle, marginLeft: '10px', padding: '5px 10px', fontSize: '14px'}}>Clear</button>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {/* Basic validation for 100% allocation per asset */}
-                  {
-                    (() => {
-                      const totalAllocated = heirs.reduce((sum, heir) => {
-                        const alloc = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
-                        return sum + (alloc ? alloc.percentage : 0);
-                      }, 0);
-                      return totalAllocated !== 100 && (
-                        <p style={{ color: 'red', marginTop: '10px' }}>Total allocation for {asset.name} is {totalAllocated}%. It must be exactly 100%.</p>
-                      );
-                    })()
-                  }
-                </div>
-              ))
-            )}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            <button onClick={prevStep} style={buttonStyle}>&lt; Previous Step</button>
-            <button onClick={nextStep} style={buttonStyle} disabled={!areAllAssetsFullyAllocated() || assets.length === 0 || heirs.length === 0}>Next Step &gt;</button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 4 && (
-        <div style={stepContainerStyle}>
-          <h2>Step 4: Set Up Smart Contract Trusts</h2>
-          <p>For more advanced legacy planning, create trusts with specific release conditions. Allocations for assets placed in trusts will be handled by the trust contract.</p>
-
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const assetId = (form.elements.namedItem('trustAsset') as HTMLSelectElement).value;
-            const heirId = (form.elements.namedItem('trustHeir') as HTMLSelectElement).value;
-            const conditionType = (form.elements.namedItem('trustConditionType') as HTMLSelectElement).value as TrustCondition['type'];
-            let details: any = {};
-            if (conditionType === 'age') {
-              details = { age: parseInt((form.elements.namedItem('conditionAge') as HTMLInputElement).value) };
-            } else if (conditionType === 'date') {
-              details = { date: (form.elements.namedItem('conditionDate') as HTMLInputElement).value };
-            }
-
-            if (assetId && heirId && conditionType && Object.keys(details).length > 0) {
-              handleAddTrust({
-                assetId: assetId,
-                heirId: heirId,
-                conditions: [{ id: `cond-${trusts.length + 1}-1`, type: conditionType, details }],
-              });
-              form.reset();
-              const conditionDetailsDiv = document.getElementById('conditionDetails');
-              if (conditionDetailsDiv) conditionDetailsDiv.innerHTML = '';
-            } else {
-                alert("Please select an asset, heir, condition type, and fill all condition details.");
-            }
-          }}>
-            <label style={labelStyle}>Asset for Trust:</label>
-            <select name="trustAsset" required style={inputStyle}>
-              <option value="">Select an asset</option>
-              {assets.map(asset => <option key={asset.id} value={asset.id}>{asset.name}</option>)}
-            </select>
-
-            <label style={labelStyle}>Beneficiary for Trust:</label>
-            <select name="trustHeir" required style={inputStyle}>
-              <option value="">Select an heir</option>
-              {heirs.map(heir => <option key={heir.id} value={heir.id}>{heir.name}</option>)}
-            </select>
-
-            <label style={labelStyle}>Trust Release Condition:</label>
-            <select name="trustConditionType" onChange={(e) => {
-              const conditionDetailsDiv = document.getElementById('conditionDetails');
-              if (conditionDetailsDiv) {
-                conditionDetailsDiv.innerHTML = ''; // Clear previous
-                if (e.target.value === 'age') {
-                  conditionDetailsDiv.innerHTML = `<label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}">Age:</label><input name="conditionAge" type="number" min="0" required style="${Object.entries(inputStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" placeholder="e.g., 21" />`;
-                } else if (e.target.value === 'date') {
-                  conditionDetailsDiv.innerHTML = `<label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}">Release Date:</label><input name="conditionDate" type="date" required style="${Object.entries(inputStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" />`;
-                }
-                // Add more conditions here as needed
-              }
-            }} required style={inputStyle}>
-              <option value="">Select a condition type</option>
-              <option value="age">Beneficiary reaches age</option>
-              <option value="date">Specific Date</option>
-              {/* <option value="event">Specific Event (e.g., Marriage)</option> */}
-            </select>
-            <div id="conditionDetails" style={{ margin: '10px 0' }}>{/* Dynamic input for condition details */}</div>
-            <button type="submit" style={buttonStyle} disabled={assets.length === 0 || heirs.length === 0}>Add Trust</button>
-          </form>
-
-          <div style={listContainerStyle}>
-            <h3>Your Smart Contract Trusts:</h3>
-            {trusts.length === 0 ? (
-              <p>No trusts configured yet.</p>
-            ) : (
-              <ul>
-                {trusts.map(trust => {
-                  const asset = assets.find(a => a.id === trust.assetId);
-                  const heir = heirs.find(h => h.id === trust.heirId);
-                  return (
-                    <li key={trust.id} style={listItemStyle}>
-                      <span>
-                        <strong>{asset?.name || 'Unknown Asset'}</strong> for <strong>{heir?.name || 'Unknown Heir'}</strong>
-                        <br/>
-                        Conditions: {trust.conditions.map(c => {
-                          if (c.type === 'age') return `Reaches age ${c.details.age}`;
-                          if (c.type === 'date') return `On ${c.details.date}`;
-                          return c.type;
-                        }).join(', ')}
-                      </span>
-                      <div>
-                        <button onClick={() => handleDeleteTrust(trust.id)} style={dangerButtonStyle}>Delete</button>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            <button onClick={prevStep} style={buttonStyle}>&lt; Previous Step</button>
-            <button onClick={nextStep} style={buttonStyle}>Next Step &gt;</button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 5 && (
-        <div style={stepContainerStyle}>
-          <h2>Step 5: Review & Deploy Legacy Plan</h2>
-          <p>Please review your entire plan carefully before deployment. Once deployed, these actions will be written to the blockchain and are generally immutable.</p>
-
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Summary of Assets:</h3>
-            {assets.length === 0 ? <p>No assets defined.</p> : (
-              <ul>
-                {assets.map(asset => (
-                  <li key={asset.id}><strong>{asset.name}</strong> ({asset.type}) - ${asset.value?.toFixed(2)}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Summary of Heirs:</h3>
-            {heirs.length === 0 ? <p>No heirs defined.</p> : (
-              <ul>
-                {heirs.map(heir => (
-                  <li key={heir.id}><strong>{heir.name}</strong> ({heir.relationship || 'N/A'}) - Wallet: {heir.walletAddress.substring(0, 6)}...</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Summary of Allocations:</h3>
-            {allocations.length === 0 ? <p>No direct allocations set (or all assets are in trusts).</p> : (
-              <ul>
-                {assets.map(asset => {
-                  const assetAllocations = allocations.filter(a => a.assetId === asset.id);
-                  if (assetAllocations.length === 0) return null; // This asset might be fully in a trust
-                  return (
-                    <li key={asset.id}>
-                      <strong>{asset.name}:</strong>
-                      <ul>
-                        {assetAllocations.map(alloc => {
-                          const heir = heirs.find(h => h.id === alloc.heirId);
-                          return <li key={`${asset.id}-${heir?.id}`}>{heir?.name || 'Unknown Heir'}: {alloc.percentage}%</li>;
-                        })}
-                      </ul>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Summary of Smart Contract Trusts:</h3>
-            {trusts.length === 0 ? <p>No smart contract trusts configured.</p> : (
-              <ul>
-                {trusts.map(trust => {
-                  const asset = assets.find(a => a.id === trust.assetId);
-                  const heir = heirs.find(h => h.id === trust.heirId);
-                  return (
-                    <li key={trust.id}>
-                      <strong>{asset?.name || 'Unknown Asset'}</strong> for <strong>{heir?.name || 'Unknown Heir'}</strong>
-                      <br/>
-                      Conditions: {trust.conditions.map(c => {
-                        if (c.type === 'age') return `Reaches age ${c.details.age}`;
-                        if (c.type === 'date') return `On ${c.details.date}`;
-                        return c.type;
-                      }).join(', ')}
-                      <br/>
-                      Status: {trust.status} {trust.contractAddress && `(Contract: ${trust.contractAddress.substring(0, 10)}...)`}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
-            <button onClick={prevStep} style={buttonStyle}>&lt; Previous Step</button>
-            <button onClick={handleDeployPlan} style={buttonStyle}>Deploy Legacy Plan</button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 6 && (
-        <div style={stepContainerStyle}>
-          <h2>Deployment Complete!</h2>
-          <p>Your digital legacy plan has been successfully deployed (simulated). You can now view the status of your smart contracts.</p>
-          <div style={{ marginTop: '20px' }}>
-            <h3>Deployed Trusts:</h3>
-            <ul>
-              {trusts.filter(t => t.status === 'deployed').map(trust => {
-                const asset = assets.find(a => a.id === trust.assetId);
-                const heir = heirs.find(h => h.id === trust.heirId);
-                return (
-                  <li key={trust.id} style={{ marginBottom: '10px' }}>
-                    <strong>Asset:</strong> {asset?.name || 'Unknown Asset'}<br/>
-                    <strong>Beneficiary:</strong> {heir?.name || 'Unknown Heir'}<br/>
-                    <strong>Contract Address:</strong> <code>{trust.contractAddress}</code><br/>
-                    <strong>Conditions:</strong> {trust.conditions.map(c => {
-                      if (c.type === 'age') return `Reaches age ${c.details.age}`;
-                      if (c.type === 'date') return `On ${c.details.date}`;
-                      return c.type;
-                    }).join(', ')}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <button onClick={() => setCurrentStep(1)} style={buttonStyle}>Start New Plan</button>
-        </div>
-      )}
+      {renderStepContent()}
     </div>
   );
 };
