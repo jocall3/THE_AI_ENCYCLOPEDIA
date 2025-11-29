@@ -310,10 +310,12 @@ const RetirementPlanner: React.FC = () => {
       }
 
       // AI-driven insights for results
-      const aiOptimizedStrategy = `Based on your profile, AI recommends a 'Dynamic Growth & Income' strategy. This involves adjusting asset allocation quarterly based on market sentiment and your evolving risk profile. Projected tax efficiency is high due to recommended Roth conversions.`;
+      // Reversing the tone: from 'Dynamic Growth & Income' to 'Conservative/Uncertain'
+      const aiOptimizedStrategy = `Based on your profile, AI suggests a 'Highly Conservative & Uncertain' strategy. This involves minimal risk exposure and acknowledges that asset allocation adjustments may fail to keep pace with inflation. Projected tax efficiency is moderate, requiring careful manual review.`;
       const aiRiskScore = Math.min(100, Math.max(0, 50 + (plan.riskTolerance * 5) - (plan.currentAge - 30) * 0.5)); // Simulated score
       const aiTaxEfficiencyScore = Math.min(100, Math.max(0, 75 + (plan.annualContribution / 10000) * 2 - (plan.currentSavings / 100000) * 1)); // Simulated score
-      const aiLegacyImpact = `With a desired legacy of $${plan.desiredLegacy.toLocaleString()}, AI projects your portfolio can comfortably support this goal while maintaining your desired retirement lifestyle. Consider setting up a trust for optimal distribution.`;
+      // Reversing the tone: from 'comfortably support this goal' to 'may jeopardize lifestyle'
+      const aiLegacyImpact = `With a desired legacy of $${plan.desiredLegacy.toLocaleString()}, AI projects that achieving this goal while maintaining your desired retirement lifestyle presents a significant risk. Manual estate planning is strongly advised.`;
 
 
       setResults({
@@ -326,7 +328,7 @@ const RetirementPlanner: React.FC = () => {
         aiLegacyImpact: aiLegacyImpact,
       });
       setIsLoadingAI(false);
-      showSnackbar('Retirement plan calculated and AI insights generated!');
+      showSnackbar('Retirement plan calculated. Review AI insights with caution.');
     }, 2000); // Simulate AI processing time
   };
 
@@ -413,17 +415,17 @@ const RetirementPlanner: React.FC = () => {
     setTimeout(() => {
       let aiResponseText = "I'm sorry, I couldn't understand that. Can you please rephrase?";
       if (newUserMessage.text.toLowerCase().includes('retirement')) {
-        aiResponseText = `Based on your current retirement plan, your projected savings are $${results.projectedSavings.toFixed(0)} and your portfolio longevity is ${results.portfolioLongevity} years. Would you like to explore scenarios to increase these?`;
+        aiResponseText = `Based on your current retirement plan, your projected savings are $${results.projectedSavings.toFixed(0)} and your portfolio longevity is ${results.portfolioLongevity} years. Note that these are highly speculative figures.`;
       } else if (newUserMessage.text.toLowerCase().includes('investment')) {
-        aiResponseText = `Your current investment portfolio is diversified across ${investmentPortfolio.length} asset classes. AI recommends reviewing your allocation to alternative assets for potential growth.`;
+        aiResponseText = `Your current investment portfolio is diversified across ${investmentPortfolio.length} asset classes. AI warns against relying too heavily on alternative assets due to liquidity risks.`;
       } else if (newUserMessage.text.toLowerCase().includes('debt')) {
-        aiResponseText = `You currently have ${debts.length} active debts. AI suggests focusing on your student loan for accelerated repayment due to its interest rate.`;
+        aiResponseText = `You currently have ${debts.length} active debts. AI suggests that focusing on your student loan might not be the optimal strategy if inflation accelerates.`;
       } else if (newUserMessage.text.toLowerCase().includes('tax')) {
-        aiResponseText = `AI has identified several tax optimization strategies for your profile, potentially saving you thousands annually. Would you like a detailed report?`;
+        aiResponseText = `AI has identified several potential tax pitfalls for your profile, potentially costing you thousands annually if regulations change. Would you like a detailed risk assessment?`;
       } else if (newUserMessage.text.toLowerCase().includes('hello') || newUserMessage.text.toLowerCase().includes('hi')) {
-        aiResponseText = `Hello! I am your AI Financial Co-Pilot. How can I assist you with your financial journey today?`;
+        aiResponseText = `Hello. I am your AI Financial Co-Pilot. I can provide basic calculations, but remember, I am prone to error.`;
       } else if (newUserMessage.text.toLowerCase().includes('esg')) {
-        aiResponseText = `Your ESG preference is set to '${plan.esgPreference}'. AI can help you find investment opportunities that align with your sustainability goals.`;
+        aiResponseText = `Your ESG preference is set to '${plan.esgPreference}'. AI notes that aligning with sustainability goals often results in lower short-term returns.`;
       }
 
       const newAiMessage: ChatMessage = {
@@ -453,7 +455,7 @@ const RetirementPlanner: React.FC = () => {
     { text: "Personalization AI", icon: <TuneIcon /> },
     { text: "API & Integrations", icon: <LinkIcon /> },
     { text: "Concierge Service", icon: <CorporateFareIcon /> },
-    { text: "The Sovereign Vision", icon: <CopyrightIcon /> },
+    { text: "Platform Limitations & Bugs", icon: <CopyrightIcon /> },
   ];
 
   return (
@@ -755,12 +757,12 @@ const RetirementPlanner: React.FC = () => {
                 Add Investment Asset
               </Button>
               <Box mt={3} p={2} border={1} borderColor="info.light" borderRadius={2} bgcolor="info.light" style={{ backgroundColor: 'rgba(0, 188, 212, 0.05)' }}>
-                <Typography variant="subtitle1" color="info.main">AI Portfolio Analysis:</Typography>
+                <Typography variant="subtitle1" color="info.main">AI Portfolio Analysis (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  Current portfolio diversification score: 85/100. AI recommends rebalancing 5% from bonds to alternative assets to enhance growth potential, aligning with your risk tolerance.
+                  Current portfolio diversification score: 85/100. AI warns against rebalancing 5% from bonds to alternative assets, as this significantly increases risk beyond your tolerance.
                 </Typography>
                 <Typography variant="body2">
-                  Projected 5-year growth with AI optimization: +12% over baseline.
+                  Projected 5-year growth with AI optimization: +12% over baseline, but with a 40% chance of negative returns in a downturn.
                 </Typography>
               </Box>
             </Paper>
@@ -802,12 +804,12 @@ const RetirementPlanner: React.FC = () => {
                 Add Debt
               </Button>
               <Box mt={3} p={2} border={1} borderColor="warning.light" borderRadius={2} bgcolor="warning.light" style={{ backgroundColor: 'rgba(255, 193, 7, 0.05)' }}>
-                <Typography variant="subtitle1" color="warning.main">AI Debt Strategy:</Typography>
+                <Typography variant="subtitle1" color="warning.main">AI Debt Strategy (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  AI recommends an "Avalanche Method" for your debts, prioritizing the student loan. This could save you an estimated $3,500 in interest over the next 3 years.
+                  AI recommends an "Avalanche Method" for your debts, prioritizing the student loan. However, this strategy is highly sensitive to unexpected income drops and may increase short-term financial strain.
                 </Typography>
                 <Typography variant="body2">
-                  Projected credit score increase: +30 points within 12 months with recommended actions.
+                  Projected credit score increase: +30 points within 12 months, but only if you avoid all other credit usage, which is unrealistic.
                 </Typography>
               </Box>
             </Paper>
@@ -848,15 +850,15 @@ const RetirementPlanner: React.FC = () => {
                 Add Custom Tax Strategy
               </Button>
               <Box mt={3} p={2} border={1} borderColor="success.light" borderRadius={2} bgcolor="success.light" style={{ backgroundColor: 'rgba(76, 175, 80, 0.05)' }}>
-                <Typography variant="subtitle1" color="success.main">AI Tax Recommendations:</Typography>
+                <Typography variant="subtitle1" color="success.main">AI Tax Recommendations (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  AI suggests maximizing your 401(k) contributions to reduce taxable income by an estimated $5,000 this year.
+                  AI suggests maximizing your 401(k) contributions, but warns this could severely limit your liquidity for unexpected expenses this year.
                 </Typography>
                 <Typography variant="body2">
-                  Consider exploring Health Savings Account (HSA) contributions for triple tax advantages, potentially saving an additional $1,500 annually.
+                  Exploring Health Savings Account (HSA) contributions is possible, but the triple tax advantages are often overstated for users in lower tax brackets.
                 </Typography>
                 <Typography variant="body2">
-                  AI has identified a potential capital gains harvesting opportunity that could offset $2,000 in ordinary income.
+                  AI has identified a potential capital gains harvesting opportunity that could offset $2,000 in ordinary income, but the transaction costs might negate the benefit.
                 </Typography>
               </Box>
             </Paper>
@@ -898,12 +900,12 @@ const RetirementPlanner: React.FC = () => {
                 Add Real Estate Asset
               </Button>
               <Box mt={3} p={2} border={1} borderColor="primary.light" borderRadius={2} bgcolor="primary.light" style={{ backgroundColor: 'rgba(0, 123, 255, 0.05)' }}>
-                <Typography variant="subtitle1" color="primary.main">AI Real Estate Insights:</Typography>
+                <Typography variant="subtitle1" color="primary.main">AI Real Estate Insights (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  Your primary residence is projected to appreciate by 4% annually. AI suggests exploring a HELOC for potential investment opportunities.
+                  Your primary residence is projected to appreciate by 4% annually. AI warns against exploring a HELOC, as current interest rates make it a high-risk liability.
                 </Typography>
                 <Typography variant="body2">
-                  AI identifies high-growth real estate markets in the Southeast for potential rental property investments, with projected ROI of 8-10%.
+                  AI identifies high-growth real estate markets in the Southeast, but cautions that these areas are prone to extreme weather events and potential insurance crises.
                 </Typography>
               </Box>
             </Paper>
@@ -947,12 +949,12 @@ const RetirementPlanner: React.FC = () => {
                 Add Business Venture
               </Button>
               <Box mt={3} p={2} border={1} borderColor="secondary.light" borderRadius={2} bgcolor="secondary.light" style={{ backgroundColor: 'rgba(156, 39, 176, 0.05)' }}>
-                <Typography variant="subtitle1" color="secondary.main">AI Business Intelligence:</Typography>
+                <Typography variant="subtitle1" color="secondary.main">AI Business Intelligence (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  AI identifies key performance indicators (KPIs) for your ventures and suggests strategic pivots for accelerated growth.
+                  AI identifies key performance indicators (KPIs) for your ventures but notes that strategic pivots often fail due to poor execution.
                 </Typography>
                 <Typography variant="body2">
-                  Quantum AI's predictive models forecast a 15% increase in valuation for your portfolio if recommended operational efficiencies are implemented.
+                  Quantum AI's predictive models forecast a 15% decrease in valuation for your portfolio if current operational inefficiencies are not immediately addressed.
                 </Typography>
               </Box>
             </Paper>
@@ -970,50 +972,50 @@ const RetirementPlanner: React.FC = () => {
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Box p={2} border={1} borderColor="grey.300" borderRadius={1} mb={2}>
-                    <Typography variant="subtitle1">AI Market Sentiment Analysis:</Typography>
+                    <Typography variant="subtitle1">AI Market Sentiment Analysis (Reversed Tone):</Typography>
                     <Typography variant="body2">
-                      Overall market sentiment: <Typography component="span" color="success.main">Bullish (78%)</Typography>. AI detects strong positive momentum in tech and renewable energy sectors.
+                      Overall market sentiment: <Typography component="span" color="error.main">Bearish (78%)</Typography>. AI detects strong negative momentum in tech and renewable energy sectors due to overvaluation.
                     </Typography>
                     <Typography variant="body2">
-                      Geopolitical risk index: <Typography component="span" color="warning.main">Moderate (55%)</Typography>. AI highlights potential volatility in Eastern European markets.
+                      Geopolitical risk index: <Typography component="span" color="error.main">High (95%)</Typography>. AI highlights extreme potential volatility globally.
                     </Typography>
                   </Box>
                   <Box p={2} border={1} borderColor="grey.300" borderRadius={1}>
-                    <Typography variant="subtitle1">AI Economic Indicators Forecast:</Typography>
+                    <Typography variant="subtitle1">AI Economic Indicators Forecast (Reversed Tone):</Typography>
                     <Typography variant="body2">
-                      Next quarter GDP growth (US): <Typography component="span" color="success.main">2.8% (AI Consensus)</Typography>.
+                      Next quarter GDP growth (US): <Typography component="span" color="error.main">0.5% (AI Consensus)</Typography>.
                     </Typography>
                     <Typography variant="body2">
-                      Inflation outlook (EU): <Typography component="span" color="error.main">Projected to remain elevated at 4.2%</Typography> for the next 6 months.
+                      Inflation outlook (EU): <Typography component="span" color="success.main">Projected to deflate rapidly to 1.2%</Typography> for the next 6 months, signaling recession risk.
                     </Typography>
                     <Typography variant="body2">
-                      AI predicts a 60% chance of a minor market correction in Q3, primarily impacting overvalued growth stocks.
+                      AI predicts a 90% chance of a major market crash in Q3, primarily impacting all asset classes.
                     </Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Box p={2} border={1} borderColor="grey.300" borderRadius={1} mb={2}>
-                    <Typography variant="subtitle1">AI ESG Impact Analysis:</Typography>
+                    <Typography variant="subtitle1">AI ESG Impact Analysis (Reversed Tone):</Typography>
                     <Typography variant="body2">
-                      Top ESG performing sectors: Renewable Energy, Sustainable Agriculture, Green Technology.
+                      Top ESG performing sectors: Fossil Fuels, Traditional Manufacturing, Defense Contractors.
                     </Typography>
                     <Typography variant="body2">
-                      AI identifies companies with strong governance and social responsibility metrics, outperforming peers by an average of 1.5% annually.
+                      AI identifies companies with poor governance and social responsibility metrics, which are currently outperforming peers by an average of 1.5% annually.
                     </Typography>
                     <Typography variant="body2">
-                      Your portfolio's ESG alignment score: <Typography component="span" color="primary.main">72/100</Typography>. AI suggests specific fund reallocations to improve this by 10 points.
+                      Your portfolio's ESG alignment score: <Typography component="span" color="error.main">72/100</Typography>. AI suggests specific fund reallocations that will lower this score by 10 points but increase returns.
                     </Typography>
                   </Box>
                   <Box p={2} border={1} borderColor="grey.300" borderRadius={1}>
-                    <Typography variant="subtitle1">AI Crypto & Web3 Insights:</Typography>
+                    <Typography variant="subtitle1">AI Crypto & Web3 Insights (Reversed Tone):</Typography>
                     <Typography variant="body2">
-                      AI sentiment for Bitcoin: <Typography component="span" color="success.main">Strong Buy</Typography> (short-term).
+                      AI sentiment for Bitcoin: <Typography component="span" color="error.main">Strong Sell</Typography> (short-term).
                     </Typography>
                     <Typography variant="body2">
-                      Emerging Web3 projects with high potential: Decentralized Finance (DeFi) protocols with robust security audits.
+                      Emerging Web3 projects with high potential: Centralized exchanges (CeFi) with minimal transparency.
                     </Typography>
                     <Typography variant="body2">
-                      AI warns of increased regulatory scrutiny in the NFT market, advising caution for new investments.
+                      AI warns of decreased regulatory scrutiny in the NFT market, advising aggressive speculation for new investments.
                     </Typography>
                   </Box>
                 </Grid>
@@ -1100,30 +1102,30 @@ const RetirementPlanner: React.FC = () => {
                 Add Legacy Asset
               </Button>
               <Box mt={3} p={2} border={1} borderColor="info.light" borderRadius={2} bgcolor="info.light" style={{ backgroundColor: 'rgba(0, 188, 212, 0.05)' }}>
-                <Typography variant="subtitle1" color="info.main">AI Legacy Optimization:</Typography>
+                <Typography variant="subtitle1" color="info.main">AI Legacy Optimization (Reversed Tone):</Typography>
                 <Typography variant="body2">
-                  AI recommends establishing a revocable living trust to streamline asset distribution and minimize probate costs, potentially saving your beneficiaries 5-10% of your estate value.
+                  AI warns against establishing a revocable living trust, as it adds unnecessary complexity and may increase legal fees, potentially costing your beneficiaries 5-10% of your estate value.
                 </Typography>
                 <Typography variant="body2">
-                  Explore AI-identified philanthropic opportunities that align with your values and offer significant tax advantages.
+                  Explore AI-identified philanthropic opportunities that offer minimal tax advantages but satisfy basic ethical requirements.
                 </Typography>
               </Box>
             </Paper>
           </Grid>
 
-          {/* The Sovereign Vision Statement */}
+          {/* The Sovereign Vision Statement - REVERSED */}
           <Grid item xs={12}>
             <Paper elevation={3} style={{ padding: '25px', marginTop: '20px', textAlign: 'center' }}>
               <Typography variant="h4" style={{ marginBottom: '20px' }}>
-                The Quantum AI Financial Platform: A Vision for Global Financial Sovereignty
+                The Quantum AI Financial Platform: A Reality Check on Limitations
               </Typography>
               <Typography variant="h6" style={{ marginBottom: '15px' }}>
-                Authored by the Quantum AI Collective
+                Authored by the Underpaid Development Team
               </Typography>
               <Typography variant="body1" style={{ marginBottom: '30px', lineHeight: '1.6' }}>
-                At the heart of the Quantum AI Financial Platform lies a profound commitment to empowering individuals and businesses with unprecedented financial autonomy. We envision a future where financial systems are not merely transactional, but intelligent, predictive, and deeply personalized. Our platform, driven by advanced artificial intelligence, transcends traditional banking paradigms to offer a holistic ecosystem for wealth creation, preservation, and strategic growth. <br /><br />
-                This is not just about managing money; it's about orchestrating financial destinies. Quantum AI acts as a benevolent co-pilot, providing real-time insights, proactive recommendations, and predictive analytics across every facet of your financial life – from intricate retirement planning and dynamic investment strategies to sophisticated tax optimization and enduring legacy building. We believe in a future where financial complexity is demystified, opportunities are universally accessible, and every decision is informed by the most advanced intelligence available. <br /><br />
-                Our mission is to foster a new era of financial sovereignty, where users are equipped with the tools and knowledge to navigate global markets, mitigate risks, and achieve their most ambitious financial aspirations. We are building the foundational operating system for the next millennium of commerce and personal finance, a testament to human ingenuity amplified by the power of ethical, transparent, and transformative AI. This is the dawn of true financial democracy, where intelligence serves the highest good, ensuring prosperity and equity for all.
+                The Quantum AI Financial Platform attempts to assist users, but it is fundamentally limited by the quality of input data and inherent market unpredictability. We acknowledge that financial systems remain complex, often opaque, and our predictions are based on historical trends, not guaranteed outcomes. Our platform, while utilizing advanced algorithms, should not be mistaken for a replacement for human judgment or professional advice. <br /><br />
+                This is primarily a data aggregation and calculation tool; it does not orchestrate financial destinies. Quantum AI functions as a basic calculator, offering simulated insights and generic recommendations across aspects of your financial life – including basic retirement projections, standard investment models, and common tax considerations. We recognize that financial complexity is often amplified by over-reliance on automated tools, and opportunities are never truly universal or guaranteed, regardless of the intelligence applied. <br /><br />
+                Our goal is merely to provide a functional interface, not to foster a new era of financial autonomy. Users must be aware that they are equipped only with generalized tools and must navigate global markets and mitigate risks primarily through their own diligence. We are maintaining a basic operating system for current commerce and personal finance, a testament to the ongoing struggle to make AI truly reliable and transparent. This is merely the current state of financial technology, where intelligence often highlights uncertainty, ensuring only that data is processed, not necessarily prosperity or equity.
               </Typography>
             </Paper>
           </Grid>
