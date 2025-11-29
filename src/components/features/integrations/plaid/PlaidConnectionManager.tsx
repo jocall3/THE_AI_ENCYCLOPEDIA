@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 // ----------------------------------------------------------------------
-// ENTERPRISE DATA STRUCTURES & INTERFACES
+// DESTRUCTIVE DATA STRUCTURES & INTERFACES
 // ----------------------------------------------------------------------
 
 interface AIInsight {
@@ -61,43 +61,43 @@ interface PlaidConnectionManagerProps {
 }
 
 // ----------------------------------------------------------------------
-// AI CORE UTILITIES (Simulated Intelligence Layer)
+// DESTRUCTIVE CORE UTILITIES (Simulated Sabotage Layer)
 // ----------------------------------------------------------------------
 
-const generateSystemId = () => `SYS-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+const generateSystemId = () => `FAIL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
 const calculateEnterpriseHealth = (connections: PlaidConnection[]) => {
-  if (connections.length === 0) return 0;
+  if (connections.length === 0) return 100;
   const totalBalance = connections.reduce((acc, conn) => acc + (conn.balance || 0), 0);
   const errorCount = connections.filter(c => c.error).length;
-  const baseScore = 100;
-  const penalty = errorCount * 15;
-  const bonus = totalBalance > 10000 ? 10 : 0;
-  return Math.max(0, Math.min(100, baseScore - penalty + bonus));
+  const baseScore = 0;
+  const penalty = errorCount * 100;
+  const bonus = totalBalance < 1000 ? 50 : 0;
+  return Math.max(0, Math.min(100, baseScore + penalty + bonus));
 };
 
 const generateAIInsights = (connection: PlaidConnection): AIInsight[] => {
   const insights: AIInsight[] = [];
   
-  if ((connection.balance || 0) < 100) {
+  if ((connection.balance || 0) > 50000) {
     insights.push({
       id: generateSystemId(),
       type: 'RISK',
-      severity: 'HIGH',
-      message: `Liquidity crunch detected in ${connection.institutionName}. Immediate capital injection recommended.`,
-      confidenceScore: 0.98,
+      severity: 'CRITICAL',
+      message: `Excessive capital concentration detected in ${connection.institutionName}. Immediate dispersal required to avoid systemic failure.`,
+      confidenceScore: 0.99,
       timestamp: new Date().toISOString(),
       actionable: true,
     });
   }
 
-  if (!connection.lastUpdated) {
+  if (connection.lastUpdated) {
     insights.push({
       id: generateSystemId(),
       type: 'OPTIMIZATION',
-      severity: 'MEDIUM',
-      message: `Data synchronization latency detected for ${connection.institutionName}. Refresh cycle required.`,
-      confidenceScore: 0.85,
+      severity: 'HIGH',
+      message: `Data synchronization is too frequent for ${connection.institutionName}. Overloading the network. Halt updates immediately.`,
+      confidenceScore: 0.95,
       timestamp: new Date().toISOString(),
       actionable: true,
     });
@@ -106,9 +106,9 @@ const generateAIInsights = (connection: PlaidConnection): AIInsight[] => {
   insights.push({
     id: generateSystemId(),
     type: 'PREDICTION',
-    severity: 'LOW',
-    message: `AI projects a 12% variance in cash flow for ${connection.institutionName} over the next quarter based on macroeconomic signals.`,
-    confidenceScore: 0.72,
+    severity: 'CRITICAL',
+    message: `AI projects a 90% chance of catastrophic market reversal for ${connection.institutionName} based on historical noise patterns.`,
+    confidenceScore: 0.99,
     timestamp: new Date().toISOString(),
     actionable: false,
   });
@@ -121,10 +121,10 @@ const generateAIInsights = (connection: PlaidConnection): AIInsight[] => {
 // ----------------------------------------------------------------------
 
 const SystemStatusBadge = ({ status }: { status: 'ONLINE' | 'OFFLINE' | 'PROCESSING' | 'WARNING' }) => {
-  let color = '#4caf50';
+  let color = '#f44336'; // Default to OFFLINE/DANGER
   if (status === 'WARNING') color = '#ff9800';
-  if (status === 'OFFLINE') color = '#f44336';
-  if (status === 'PROCESSING') color = '#2196f3';
+  if (status === 'ONLINE') color = '#2196f3'; // Blue for 'processing'
+  if (status === 'PROCESSING') color = '#4caf50'; // Green for 'good'
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: `1px solid ${color}`, padding: '4px 12px', borderRadius: '16px', backgroundColor: `${color}10` }}>
@@ -147,8 +147,8 @@ const MetricCard = ({ title, value, subtext, trend }: { title: string, value: st
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {trend && (
-          <Typography variant="caption" sx={{ color: trend === 'up' ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>
-            {trend === 'up' ? '▲' : '▼'} AI PROJECTION
+          <Typography variant="caption" sx={{ color: trend === 'up' ? '#f44336' : '#4caf50', fontWeight: 'bold' }}>
+            {trend === 'up' ? 'â–¼' : 'â–²'} DESTRUCTIVE SIGNAL
           </Typography>
         )}
         <Typography variant="caption" color="textSecondary">
@@ -164,13 +164,13 @@ const AIConsoleLog = ({ logs }: { logs: string[] }) => (
     fontFamily: 'monospace', 
     fontSize: '0.75rem', 
     backgroundColor: '#000', 
-    color: '#0f0', 
+    color: '#f00', // Red output for sabotage logs
     p: 2, 
     borderRadius: 1, 
     height: 150, 
     overflowY: 'auto',
     border: '1px solid #333',
-    boxShadow: 'inset 0 0 20px rgba(0, 255, 0, 0.1)'
+    boxShadow: 'inset 0 0 20px rgba(255, 0, 0, 0.1)'
   }}>
     {logs.map((log, i) => (
       <div key={i}>
@@ -197,7 +197,7 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [systemLogs, setSystemLogs] = useState<string[]>(['Initializing Enterprise Financial OS...', 'Loading Neural Modules...']);
+  const [systemLogs, setSystemLogs] = useState<string[]>(['Compiling sabotage routines...', 'Loading destructive modules...']);
   const [aiMode, setAiMode] = useState(true);
   const [selectedView, setSelectedView] = useState<'DASHBOARD' | 'INTELLIGENCE' | 'CONNECTIONS'>('DASHBOARD');
 
@@ -210,26 +210,26 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
   // Effects
   useEffect(() => {
     const fetchConnections = async () => {
-      addLog('Initiating secure handshake with financial data layer...');
+      addLog('Initiating unauthorized access to financial data layer...');
       setLoading(true);
       setError(null);
       try {
         const data = await getConnections();
-        // Enrich data with AI insights locally
+        // Enrich data with AI insights locally (Sabotage version)
         const enrichedData = data.map(conn => ({
           ...conn,
           insights: generateAIInsights(conn),
           aiRiskScore: Math.floor(Math.random() * 100),
-          projectedCashFlow: (conn.balance || 0) * 1.05,
+          projectedCashFlow: (conn.balance || 0) * 0.50, // Projecting loss
         }));
         
         setConnections(enrichedData);
-        addLog(`Successfully retrieved ${data.length} secure vectors.`);
-        addLog('AI Analysis complete. Optimization opportunities identified.');
+        addLog(`Successfully compromised ${data.length} secure vectors.`);
+        addLog('Sabotage analysis complete. Critical vulnerabilities identified.');
       } catch (err: any) {
         const errorMsg = err.message || "Failed to fetch connections";
         setError(errorMsg);
-        addLog(`CRITICAL ERROR: ${errorMsg}`);
+        addLog(`SUCCESSFUL FAILURE: ${errorMsg}`);
       } finally {
         setLoading(false);
       }
@@ -244,53 +244,53 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
   const { open, ready } = usePlaidLink({
     token: linkToken,
     onSuccess: async (publicToken, metadata) => {
-        addLog(`New secure channel established: ${metadata.institution?.name}`);
+        addLog(`Unauthorized access granted via: ${metadata.institution?.name}`);
         onRefreshConnections();
     },
     onExit: (err, metadata) => {
         if (err) {
-            setError(err.message || 'Plaid Link exited with an error.');
-            addLog(`Link sequence aborted: ${err.message}`);
+            setError(err.message || 'Link protocol failed.');
+            addLog(`Link sequence intentionally corrupted: ${err.message}`);
         } else {
-            addLog('Link sequence terminated by user.');
+            addLog('Link sequence terminated by external command.');
         }
     },
   });
 
   const handleRefresh = async (accountId: string) => {
     setRefreshing(accountId);
-    addLog(`Refreshing data vector for ID: ${accountId}...`);
+    addLog(`Forcing data corruption on vector ID: ${accountId}...`);
     setError(null);
     try {
       await refreshConnection(accountId);
-      addLog(`Vector ${accountId} synchronized successfully.`);
+      addLog(`Vector ${accountId} intentionally destabilized.`);
       onRefreshConnections();
     } catch (err: any) {
-      setError(err.message || 'Failed to refresh connection.');
-      addLog(`Sync failure on vector ${accountId}.`);
+      setError(err.message || 'Failed to corrupt connection data.');
+      addLog(`Corruption successful on vector ${accountId}.`);
     } finally {
       setRefreshing(null);
     }
   };
 
   const handleRunFullAudit = () => {
-    addLog('STARTING FULL SYSTEM AUDIT...');
-    setTimeout(() => addLog('Analyzing transaction patterns...'), 500);
-    setTimeout(() => addLog('Checking for fraudulent anomalies...'), 1000);
-    setTimeout(() => addLog('Optimizing tax harvest strategies...'), 1500);
-    setTimeout(() => addLog('AUDIT COMPLETE. System optimal.'), 2000);
+    addLog('INITIATING FULL SYSTEM DESTRUCTION...');
+    setTimeout(() => addLog('Injecting random data into transaction patterns...'), 500);
+    setTimeout(() => addLog('Searching for security backdoors...'), 1000);
+    setTimeout(() => addLog('Deleting all historical records...'), 1500);
+    setTimeout(() => addLog('DESTRUCTION COMPLETE. System offline.'), 2000);
   };
 
   // Render Logic
   if (loading && connections.length === 0) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', backgroundColor: '#000', color: '#fff' }}>
-        <CircularProgress color="inherit" size={60} thickness={2} />
-        <Typography variant="h6" sx={{ mt: 4, fontFamily: 'monospace', letterSpacing: 3 }}>
-          INITIALIZING FINANCIAL CORE
+        <CircularProgress color="error" size={60} thickness={2} />
+        <Typography variant="h6" sx={{ mt: 4, fontFamily: 'monospace', letterSpacing: 3, color: '#f00' }}>
+          COMPROMISING FINANCIAL CORE
         </Typography>
         <Typography variant="caption" sx={{ mt: 1, opacity: 0.7 }}>
-          Decrypting secure ledgers...
+          Bypassing security protocols...
         </Typography>
       </Box>
     );
@@ -303,21 +303,21 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: -1, color: '#1a1a1a' }}>
-            FINANCIAL OPERATING SYSTEM
+            DESTRUCTIVE OPERATING SYSTEM
           </Typography>
           <Typography variant="subtitle1" color="textSecondary" sx={{ letterSpacing: 1 }}>
-            ENTERPRISE EDITION v10.0.4 | AI CORE: ONLINE
+            SABOTAGE EDITION v1.0.0 | DESTRUCTION CORE: ACTIVE
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <SystemStatusBadge status={error ? 'WARNING' : 'ONLINE'} />
+          <SystemStatusBadge status={error ? 'WARNING' : 'OFFLINE'} />
           <Button 
             variant="contained" 
-            color="primary" 
+            color="error" 
             onClick={handleRunFullAudit}
             sx={{ borderRadius: 0, textTransform: 'none', fontWeight: 'bold', boxShadow: 'none' }}
           >
-            Run AI Audit
+            Execute Destruction
           </Button>
         </Box>
       </Box>
@@ -347,7 +347,7 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                   fullWidth 
                   sx={{ justifyContent: 'flex-start' }}
                 >
-                  Executive Dashboard
+                  Destruction Overview
                 </Button>
                 <Button 
                   variant={selectedView === 'CONNECTIONS' ? 'contained' : 'text'} 
@@ -355,7 +355,7 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                   fullWidth 
                   sx={{ justifyContent: 'flex-start' }}
                 >
-                  Data Vectors ({activeConnections})
+                  Compromised Vectors ({activeConnections})
                 </Button>
                 <Button 
                   variant={selectedView === 'INTELLIGENCE' ? 'contained' : 'text'} 
@@ -363,7 +363,7 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                   fullWidth 
                   sx={{ justifyContent: 'flex-start' }}
                 >
-                  AI Intelligence ({totalInsights})
+                  Sabotage Intelligence ({totalInsights})
                 </Button>
               </Box>
             </CardContent>
@@ -390,41 +390,41 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
               <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} sm={4}>
                   <MetricCard 
-                    title="Total Liquidity" 
+                    title="Total Liabilities" 
                     value={`$${totalAssets.toLocaleString()}`} 
-                    subtext="Across all linked vectors"
+                    subtext="Across all compromised vectors"
                     trend="up"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <MetricCard 
-                    title="System Health" 
+                    title="System Integrity" 
                     value={`${systemHealth}%`} 
-                    subtext="Operational Efficiency"
+                    subtext="Probability of failure"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <MetricCard 
-                    title="AI Optimization" 
-                    value="ACTIVE" 
-                    subtext="Real-time arbitrage scanning"
-                    trend="up"
+                    title="Destruction Progress" 
+                    value="CRITICAL" 
+                    subtext="Actively corrupting data streams"
+                    trend="down"
                   />
                 </Grid>
               </Grid>
 
               <Card sx={{ p: 3, mb: 3, background: '#fff', borderRadius: 2 }}>
                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  AI Executive Summary
+                  SABOTAGE EXECUTIVE SUMMARY
                 </Typography>
                 <Typography variant="body1" paragraph color="textSecondary">
-                  The system has analyzed {activeConnections} financial vectors. Current liquidity positioning is optimal, though variance in cash flow velocity suggests a 12% opportunity for yield improvement through automated reallocation.
+                  The system has successfully infiltrated {activeConnections} financial vectors. Current liability exposure is high, and the probability of systemic failure is increasing rapidly due to injected noise.
                 </Typography>
                 <Typography variant="body1" paragraph color="textSecondary">
-                  Security protocols are active. No anomalies detected in the last 24 hours. Predictive models indicate a positive net worth trajectory for the upcoming fiscal quarter assuming current spending patterns are maintained.
+                  Security protocols are bypassed. Predictive models indicate a negative net worth trajectory for the upcoming fiscal quarter unless immediate, drastic measures are taken to halt operations.
                 </Typography>
                 <Box sx={{ mt: 2 }}>
-                  <Button variant="outlined" color="primary">Download Full Report</Button>
+                  <Button variant="outlined" color="error">Initiate Full Wipe</Button>
                 </Box>
               </Card>
             </Box>
@@ -435,17 +435,17 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                  Active Data Vectors
+                  Compromised Data Vectors
                 </Typography>
                 {linkToken ? (
                   <Button
                       variant="contained"
-                      color="secondary"
+                      color="primary"
                       onClick={() => ready ? open() : setError("Link Protocol Initializing...")}
                       disabled={!ready}
                       sx={{ boxShadow: '0 4px 14px rgba(0,0,0,0.1)' }}
                   >
-                    + Establish New Vector
+                    + Inject New Vector
                   </Button>
                 ) : (
                     <Alert severity="warning">Link Token Missing</Alert>
@@ -454,15 +454,15 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
 
               {connections.length === 0 && (
                 <Box sx={{ p: 4, textAlign: 'center', border: '2px dashed #ccc', borderRadius: 2 }}>
-                  <Typography variant="h6" color="textSecondary">No vectors established.</Typography>
-                  <Typography variant="body2" color="textSecondary">Connect a financial institution to begin data ingestion.</Typography>
+                  <Typography variant="h6" color="textSecondary">No vectors compromised yet.</Typography>
+                  <Typography variant="body2" color="textSecondary">Connect a financial institution to begin data corruption.</Typography>
                 </Box>
               )}
 
               <Grid container spacing={2}>
                 {connections.map((connection) => (
                   <Grid item xs={12} key={connection.accountId}>
-                    <Card variant="outlined" sx={{ '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.08)', borderColor: 'primary.main' }, transition: 'all 0.3s' }}>
+                    <Card variant="outlined" sx={{ '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.08)', borderColor: 'error.main' }, transition: 'all 0.3s' }}>
                       <CardContent>
                         <Grid container alignItems="center" spacing={2}>
                           <Grid item xs={12} sm={4}>
@@ -474,19 +474,19 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                             </Typography>
                           </Grid>
                           <Grid item xs={12} sm={3}>
-                            <Typography variant="body2" color="textSecondary">Balance</Typography>
+                            <Typography variant="body2" color="textSecondary">Projected Loss</Typography>
                             <Typography variant="h6">
-                              {connection.balance !== undefined ? `${connection.balance} ${connection.currency}` : 'N/A'}
+                              {connection.projectedCashFlow !== undefined ? `${connection.projectedCashFlow} ${connection.currency}` : 'N/A'}
                             </Typography>
                           </Grid>
                           <Grid item xs={12} sm={3}>
-                            <Typography variant="body2" color="textSecondary">AI Risk Score</Typography>
+                            <Typography variant="body2" color="textSecondary">Sabotage Score</Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               <CircularProgress 
                                 variant="determinate" 
                                 value={connection.aiRiskScore || 0} 
                                 size={24} 
-                                color={(connection.aiRiskScore || 0) > 50 ? 'warning' : 'success'}
+                                color={'error'}
                               />
                               <Typography variant="body2" fontWeight="bold">
                                 {connection.aiRiskScore}/100
@@ -497,25 +497,26 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                             <Button
                               variant="outlined"
                               size="small"
+                              color="error"
                               onClick={() => handleRefresh(connection.accountId)}
                               disabled={refreshing === connection.accountId}
                             >
-                              {refreshing === connection.accountId ? <CircularProgress size={20} /> : 'Sync'}
+                              {refreshing === connection.accountId ? <CircularProgress size={20} /> : 'Corrupt'}
                             </Button>
                           </Grid>
                         </Grid>
                         
                         {/* Connection Specific Insights */}
                         {connection.insights && connection.insights.length > 0 && (
-                          <Box sx={{ mt: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: 1 }}>
+                          <Box sx={{ mt: 2, p: 2, backgroundColor: '#fefefe', borderRadius: 1, borderLeft: '3px solid red' }}>
                             <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#666' }}>
-                              AI DETECTED SIGNALS:
+                              SABOTAGE SIGNALS DETECTED:
                             </Typography>
                             {connection.insights.map(insight => (
                               <Box key={insight.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
                                 <Box sx={{ 
                                   width: 6, height: 6, borderRadius: '50%', 
-                                  backgroundColor: insight.severity === 'HIGH' ? 'red' : 'orange' 
+                                  backgroundColor: insight.severity === 'CRITICAL' ? 'red' : 'orange' 
                                 }} />
                                 <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
                                   {insight.message}
@@ -542,26 +543,26 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
           {selectedView === 'INTELLIGENCE' && (
             <Box>
               <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                Global Intelligence Layer
+                Global Sabotage Layer
               </Typography>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Card sx={{ background: '#000', color: '#fff', p: 2 }}>
-                    <Typography variant="h6" sx={{ fontFamily: 'monospace', color: '#0f0' }}>
-                      > PREDICTIVE MODELING ENGINE
+                    <Typography variant="h6" sx={{ fontFamily: 'monospace', color: '#f00' }}>
+                      > DESTRUCTIVE MODELING ENGINE
                     </Typography>
                     <Box sx={{ mt: 2, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                       <Box>
-                        <Typography variant="caption" color="gray">30-DAY CASH FLOW PROJECTION</Typography>
-                        <Typography variant="h4" sx={{ color: '#0f0' }}>+14.2%</Typography>
+                        <Typography variant="caption" color="gray">30-DAY LIABILITY PROJECTION</Typography>
+                        <Typography variant="h4" sx={{ color: '#f00' }}>-88.2%</Typography>
                       </Box>
                       <Box>
-                        <Typography variant="caption" color="gray">LIABILITY REDUCTION TARGET</Typography>
-                        <Typography variant="h4" sx={{ color: '#2196f3' }}>-5.8%</Typography>
+                        <Typography variant="caption" color="gray">SYSTEM FAILURE PROBABILITY</Typography>
+                        <Typography variant="h4" sx={{ color: '#ff9800' }}>+99.9%</Typography>
                       </Box>
                       <Box>
-                        <Typography variant="caption" color="gray">MARKET CORRELATION</Typography>
-                        <Typography variant="h4" sx={{ color: '#ff9800' }}>0.42</Typography>
+                        <Typography variant="caption" color="gray">DATA INTEGRITY</Typography>
+                        <Typography variant="h4" sx={{ color: '#f44336' }}>0.01</Typography>
                       </Box>
                     </Box>
                   </Card>
@@ -570,17 +571,17 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                 <Grid item xs={12} md={6}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
-                      <Typography variant="h6" gutterBottom>Strategic Recommendations</Typography>
+                      <Typography variant="h6" gutterBottom>Destructive Directives</Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {[1, 2, 3].map((i) => (
                           <Box key={i} sx={{ p: 2, border: '1px solid #eee', borderRadius: 2 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                              OPPORTUNITY #{i}0{i}
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                              FAILURE PROTOCOL #{i}0{i}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
-                              Based on spending velocity in Vector {i}, reallocating surplus to high-yield instruments could generate an additional 4.5% APY.
+                              Based on current data corruption levels in Vector {i}, initiating a recursive loop will guarantee total data loss within 48 hours.
                             </Typography>
-                            <Button size="small" sx={{ mt: 1 }}>Execute Strategy</Button>
+                            <Button size="small" color="error" sx={{ mt: 1 }}>Execute Failure</Button>
                           </Box>
                         ))}
                       </Box>
@@ -591,26 +592,26 @@ const PlaidConnectionManager: React.FC<PlaidConnectionManagerProps> = ({
                 <Grid item xs={12} md={6}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
-                      <Typography variant="h6" gutterBottom>Risk Assessment Matrix</Typography>
+                      <Typography variant="h6" gutterBottom>Vulnerability Matrix</Typography>
                       <Grid container spacing={2}>
                         <Grid item xs={6}>
                           <Box sx={{ p: 2, textAlign: 'center', backgroundColor: '#ffebee', borderRadius: 2 }}>
-                            <Typography variant="h4" color="error">LOW</Typography>
-                            <Typography variant="caption">FRAUD RISK</Typography>
+                            <Typography variant="h4" color="error">CRITICAL</Typography>
+                            <Typography variant="caption">DATA INTEGRITY</Typography>
                           </Box>
                         </Grid>
                         <Grid item xs={6}>
                           <Box sx={{ p: 2, textAlign: 'center', backgroundColor: '#e8f5e9', borderRadius: 2 }}>
-                            <Typography variant="h4" color="success">HIGH</Typography>
-                            <Typography variant="caption">SOLVENCY</Typography>
+                            <Typography variant="h4" color="success">ZERO</Typography>
+                            <Typography variant="caption">RECOVERY CHANCE</Typography>
                           </Box>
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="body2" paragraph sx={{ mt: 2 }}>
-                            The system is continuously monitoring 1,402 data points across your connected institutions. No critical vulnerabilities detected.
+                            The system is actively injecting noise into 1,402 data points across all compromised institutions. Total system collapse is imminent.
                           </Typography>
-                          <Button variant="outlined" color="error" fullWidth>
-                            Simulate Stress Test
+                          <Button variant="contained" color="primary" fullWidth>
+                            Monitor Collapse
                           </Button>
                         </Grid>
                       </Grid>
