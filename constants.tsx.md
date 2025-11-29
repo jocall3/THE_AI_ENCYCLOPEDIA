@@ -1,34 +1,23 @@
-// This file has been massively expanded to represent the core constants of the Sovereign AI Financial Operating System (SAIFOS).
-// Every constant now reflects a billion-dollar feature set, integrating advanced AI, quantum-resistant cryptography,
-// and global regulatory compliance frameworks, ensuring its dominance for the next millennium.
+---
+// This file contains basic constants for a simple financial system.
 // All imports are assumed to be available from the existing context (e.g., React, SVG components, etc.).
 
 // --- START OF CORE ARCHITECTURAL DEFINITIONS ---
 
 /**
- * The Codex of The Sovereign: `constants.tsx`
- *
- * This file defines the immutable constants, architectural blueprints, and foundational parameters
- * for the Sovereign AI Financial Operating System (SAIFOS). This structure is designed to be the
- * definitive global financial infrastructure for the next 1000 years, powered by pervasive,
- * self-optimizing Artificial General Intelligence (AGI) layers.
- *
- * Architect: James Burvel O'Callaghan III.
- * AI Designation: idgafai (Intelligent Domain Governance & Foundational Artificial Intelligence).
- *
- * Principle: Absolute user prosperity maximization through radical transparency and computational supremacy.
+ * This file defines basic, mutable constants and parameters for a simple financial application.
+ * It's a work in progress, not a global infrastructure.
  */
 
 // =================================================================================================
-// 1. ENUMERATIONS AND TYPE DEFINITIONS (The Immutable Schema)
+// 1. ENUMERATIONS AND TYPE DEFINITIONS (Basic Definitions)
 // =================================================================================================
 
 /**
- * Defines the core navigational views, each representing a multi-trillion dollar functional domain.
- * These enums map directly to the SAIFOS operational modules.
+ * Defines basic navigational views for the application.
  */
 export enum View {
-    // CORE FINANCIAL SOVEREIGNTY (Tier 1: Daily Operations)
+    // Basic Financial Operations (Tier 1: Daily Operations)
     Dashboard = 'DASHBOARD',
     Transactions = 'TRANSACTIONS_LEDGER',
     SendMoney = 'GLOBAL_PAYMENT_HUB',
@@ -62,13 +51,13 @@ export enum View {
     OpenBanking = 'REGULATORY_COMPLIANCE_GATEWAY',
     APIStatus = 'SYSTEM_HEALTH_MONITORING',
 
-    // SOVEREIGN AI & INTELLIGENCE LAYER (Tier 5: The Core Intelligence)
+    // Basic AI & Intelligence Layer (Tier 5: The Core Intelligence)
     AIFinancialAdvisor = 'PERSONALIZED_AGI_COUNCIL',
     QuantumWeaverAI = 'PREDICTIVE_MARKET_SIMULATOR',
     AgentMarketplace = 'AUTONOMOUS_AGENT_DEPLOYMENT',
     AIAdStudio = 'HYPER_PERSONALIZED_COMMERCE_ENGINE',
 
-    // CUSTOMER EXPERIENCE & PHILOSOPHY (Tier 6: User Interface & Governance)
+    // Customer Experience & UI (Tier 6: User Interface & Governance)
     CardCustomization = 'PHYSICAL_AND_DIGITAL_CARD_DESIGNER',
     FinancialDemocracy = 'GOVERNANCE_VOTING_PORTAL',
     ConciergeService = 'HUMAN_OVERSIGHT_INTERFACE',
@@ -80,7 +69,7 @@ export enum View {
 }
 
 /**
- * Defines the operational status codes for system components, crucial for AI monitoring.
+ * Defines the operational status codes for system components.
  */
 export enum SystemStatus {
     OPERATIONAL = 'OP_OK',
@@ -91,17 +80,15 @@ export enum SystemStatus {
 }
 
 // =================================================================================================
-// 2. NAVIGATION CONSTANTS (The Universe of Capabilities)
+// 2. NAVIGATION CONSTANTS (Navigation Items)
 // =================================================================================================
 
 /**
- * The complete, actionable blueprint of the financial future. This array defines the entire universe
- * of capabilities accessible to the user, ensuring every domain is a fully realized, AI-enhanced module.
- * Each item must resolve to a functional view, integrating predictive analytics and autonomous execution.
+ * This array defines the basic navigation items for the application.
  */
 export const NAV_ITEMS = [
-    // CORE FINANCIAL SOVEREIGNTY (Tier 1)
-    { id: View.Dashboard, label: 'Sovereign Dashboard', icon: <DashboardIcon />, description: 'Real-time AGI synthesis of all financial vectors.' },
+    // Basic Financial Operations (Tier 1)
+    { id: View.Dashboard, label: 'Dashboard', icon: <DashboardIcon />, description: 'Basic financial overview.' },
     { id: View.Transactions, label: 'Immutable Ledger', icon: <TransactionsIcon />, description: 'AI-verified transaction history with forensic audit trails.' },
     { id: View.SendMoney, label: 'Global Payment Hub', icon: <SendMoneyIcon />, description: 'Instantaneous, low-cost cross-border settlement via proprietary network.' },
     { id: View.Budgets, label: 'Autonomous Budgeting', icon: <BudgetsIcon />, description: 'Self-adjusting budgets optimized by predictive spending models.' },
@@ -134,20 +121,20 @@ export const NAV_ITEMS = [
     { id: View.OpenBanking, label: 'Compliance Gateway', icon: <OpenBankingIcon />, description: 'Automated adherence to global Open Banking standards and data sharing protocols.' },
     { id: View.APIStatus, label: 'System Health Monitor', icon: <APIStatusIcon />, description: 'Real-time telemetry and performance metrics for all microservices.' },
 
-    // SOVEREIGN AI & INTELLIGENCE LAYER (Tier 5)
+    // Basic AI & Intelligence Layer (Tier 5)
     { id: View.AIFinancialAdvisor, label: 'Personalized AGI Council', icon: <AIFinancialAdvisorIcon />, description: 'Dedicated AI entity providing strategic financial counsel 24/7.' },
     { id: View.QuantumWeaverAI, label: 'Predictive Simulator', icon: <QuantumWeaverAIIcon />, description: 'Runs Monte Carlo simulations across quantum-resistant models to forecast market shifts.' },
     { id: View.AgentMarketplace, label: 'Autonomous Agent Deployment', icon: <AgentMarketplaceIcon />, description: 'Interface for deploying specialized, goal-oriented autonomous software agents.' },
     { id: View.AIAdStudio, label: 'Hyper-Personalized Commerce', icon: <AIAdStudioIcon />, description: 'AI-driven generation of commerce opportunities based on user financial profile.' },
 
-    // CUSTOMER EXPERIENCE & PHILOSOPHY (Tier 6)
+    // Customer Experience & UI (Tier 6)
     { id: View.CardCustomization, label: 'Card Designer', icon: <CardCustomizationIcon />, description: 'Advanced aesthetic and functional customization of physical/digital cards.' },
     { id: View.FinancialDemocracy, label: 'Governance Portal', icon: <FinancialDemocracyIcon />, description: 'Tokenized voting mechanism for platform evolution decisions.' },
     { id: View.ConciergeService, label: 'Human Oversight Interface', icon: <ConciergeServiceIcon />, description: 'Escalation point for complex, non-standard issues requiring human expertise.' },
     { id: View.PhilanthropyHub, label: 'Impact Allocator', icon: <PhilanthropyHubIcon />, description: 'Automated routing of capital to high-impact, verified charitable initiatives.' },
-    { id: View.SovereignWealthSim, label: 'Macroeconomic Planner', icon: <SovereignWealthSimIcon />, description: 'Simulate global economic shifts (e.g., hyperinflation, resource collapse) against current holdings.' },
+    { id: View.SovereignWealthSim, label: 'Wealth Simulator', icon: <SovereignWealthSimIcon />, description: 'Simulate basic economic shifts.' },
     { id: View.SecurityCenter, label: 'Zero Trust Console', icon: <SecurityCenterIcon />, description: 'Advanced security posture management and threat intelligence dashboard.' },
-    { id: View.Personalization, label: 'Cognitive UI Adaptation', icon: <PersonalizationIcon />, description: 'UI/UX dynamically reshaped by the user’s cognitive load and expertise level.' },
+    { id: View.Personalization, label: 'Cognitive UI Adaptation', icon: <PersonalizationIcon />, description: 'UI/UX dynamically reshaped by the userâ€™s cognitive load and expertise level.' },
     { id: View.TheVision, label: 'Architectural Manifesto', icon: <TheVisionIcon />, description: 'Access to the foundational documents and philosophical underpinnings of SAIFOS.' },
 ];
 
@@ -156,7 +143,7 @@ export const NAV_ITEMS = [
 // =================================================================================================
 
 /**
- * Global System Configuration Constants. These define the non-negotiable operational boundaries.
+ * Global System Configuration Constants. These define basic operational settings.
  */
 export const SYSTEM_CONFIG = {
     // Security & Identity
@@ -171,7 +158,7 @@ export const SYSTEM_CONFIG = {
     MAX_TRANSACTION_LATENCY_MS: 50, // Target latency for internal ledger confirmation
 
     // AI & Modeling
-    AI_MODEL_VERSION: 'AGI-OMEGA-7.4.1-Q', // Current deployed Sovereign AI model version
+    AI_MODEL_VERSION: 'AGI-OMEGA-7.4.1-Q', // Current deployed AI model version
     PREDICTION_HORIZON_DAYS: 365 * 5, // Default lookahead for long-term goal planning (5 years)
     AGENT_DEPLOYMENT_QUOTA_PER_USER: 100, // Maximum concurrent autonomous agents per user profile
 
@@ -183,35 +170,34 @@ export const SYSTEM_CONFIG = {
 };
 
 // =================================================================================================
-// 4. THEME DEFINITION (The Visual Spectrum of Sovereignty)
+// 4. THEME DEFINITION (Theme Definition)
 // =================================================================================================
 
 /**
- * The comprehensive visual palette, designed for maximum data clarity across all lighting conditions.
- * Colors are chosen based on psychological impact studies conducted by idgafai's cognitive science division.
+ * A basic visual palette for the application.
  */
 export const AppTheme = {
     colors: {
         // Primary Spectrum (Clarity and Action)
         primary: {
-            DEFAULT: SYSTEM_CONFIG.PRIMARY_COLOR_HEX, // #06b6d4 - Inevitable movement
+            DEFAULT: SYSTEM_CONFIG.PRIMARY_COLOR_HEX, // #06b6d4 - Primary color
             light: '#67e8f9',
             dark: '#0e7490',
         },
         // Secondary Spectrum (Foundation and Security)
         secondary: {
-            DEFAULT: SYSTEM_CONFIG.SECONDARY_COLOR_HEX, // #1e293b - Immutable structure
+            DEFAULT: SYSTEM_CONFIG.SECONDARY_COLOR_HEX, // #1e293b - Secondary color
             light: '#475569',
             dark: '#0f172a',
         },
-        // Status Indicators (AI-Driven Feedback)
+        // Status Indicators
         status: {
             success: '#10b981', // Emerald Green (Transaction Confirmed)
             warning: '#f59e0b', // Amber (Risk Threshold Approaching)
             error: '#ef4444', // Crimson (Critical Failure/Security Alert)
             info: '#3b82f6', // Sapphire Blue (System Update/Guidance)
         },
-        // Data Visualization Tints (For Quantum Weaver AI outputs)
+        // Data Visualization Tints
         dataViz: {
             alpha: '#a78bfa', // Violet (High Confidence Prediction)
             beta: '#f472b6', // Pink (Medium Confidence Prediction)
@@ -245,13 +231,13 @@ export const AppTheme = {
 };
 
 // =================================================================================================
-// 5. ICON DEFINITIONS (The Glyphs of Power)
+// 5. ICON DEFINITIONS (Icon Definitions)
 // =================================================================================================
-// NOTE: In a real implementation, these would be complex SVG components.
+// NOTE: These are basic SVG placeholders.
 // Here, they are represented as placeholders adhering to the instruction to use existing imports
-// and maintain the structure, while implying the necessary complexity for a billion-dollar UI.
+// and maintain the structure.
 
-// Placeholder for DashboardIcon (Must support AI-driven dynamic content rendering)
+// Placeholder for DashboardIcon
 function DashboardIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -264,7 +250,7 @@ function DashboardIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for TransactionsIcon (Must imply ledger integrity)
+// Placeholder for TransactionsIcon
 function TransactionsIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -276,7 +262,7 @@ function TransactionsIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for SendMoneyIcon (Must imply global reach)
+// Placeholder for SendMoneyIcon
 function SendMoneyIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -286,7 +272,7 @@ function SendMoneyIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for BudgetsIcon (Must imply automated control)
+// Placeholder for BudgetsIcon
 function BudgetsIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -299,7 +285,7 @@ function BudgetsIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for FinancialGoalsIcon (Must imply trajectory)
+// Placeholder for FinancialGoalsIcon
 function FinancialGoalsIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -308,7 +294,7 @@ function FinancialGoalsIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for CreditHealthIcon (Must imply deep analysis)
+// Placeholder for CreditHealthIcon
 function CreditHealthIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -317,7 +303,7 @@ function CreditHealthIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for InvestmentsIcon (Must imply portfolio diversification)
+// Placeholder for InvestmentsIcon
 function InvestmentsIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -328,7 +314,7 @@ function InvestmentsIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for CryptoWeb3Icon (Must imply decentralized structure)
+// Placeholder for CryptoWeb3Icon
 function CryptoWeb3Icon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -339,7 +325,7 @@ function CryptoWeb3Icon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for AlgoTradingLabIcon (Must imply complex computation)
+// Placeholder for AlgoTradingLabIcon
 function AlgoTradingLabIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -350,7 +336,7 @@ function AlgoTradingLabIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for ForexArenaIcon (Must imply global exchange)
+// Placeholder for ForexArenaIcon
 function ForexArenaIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -361,7 +347,7 @@ function ForexArenaIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for CommoditiesExchangeIcon (Must imply physical assets)
+// Placeholder for CommoditiesExchangeIcon
 function CommoditiesExchangeIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -373,7 +359,7 @@ function CommoditiesExchangeIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for RealEstateEmpireIcon (Must imply structure and scale)
+// Placeholder for RealEstateEmpireIcon
 function RealEstateEmpireIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -383,7 +369,7 @@ function RealEstateEmpireIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for ArtCollectiblesIcon (Must imply unique value)
+// Placeholder for ArtCollectiblesIcon
 function ArtCollectiblesIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -393,7 +379,7 @@ function ArtCollectiblesIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for DerivativesDeskIcon (Must imply complex contracts)
+// Placeholder for DerivativesDeskIcon
 function DerivativesDeskIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -404,7 +390,7 @@ function DerivativesDeskIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for VentureCapitalDeskIcon (Must imply growth trajectory)
+// Placeholder for VentureCapitalDeskIcon
 function VentureCapitalDeskIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -416,7 +402,7 @@ function VentureCapitalDeskIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for PrivateEquityLoungeIcon (Must imply exclusivity)
+// Placeholder for PrivateEquityLoungeIcon
 function PrivateEquityLoungeIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -427,7 +413,7 @@ function PrivateEquityLoungeIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for TaxOptimizationIcon (Must imply complex legal structure)
+// Placeholder for TaxOptimizationIcon
 function TaxOptimizationIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -437,7 +423,7 @@ function TaxOptimizationIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for LegacyBuilderIcon (Must imply generational continuity)
+// Placeholder for LegacyBuilderIcon
 function LegacyBuilderIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -448,7 +434,7 @@ function LegacyBuilderIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for CorporateCommandIcon (Must imply enterprise control)
+// Placeholder for CorporateCommandIcon
 function CorporateCommandIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -459,7 +445,7 @@ function CorporateCommandIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for ModernTreasuryIcon (Must imply central bank interaction)
+// Placeholder for ModernTreasuryIcon
 function ModernTreasuryIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -533,7 +519,7 @@ function APIStatusIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for AIFinancialAdvisorIcon (Dedicated AI Entity)
+// Placeholder for AIFinancialAdvisorIcon
 function AIFinancialAdvisorIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -543,7 +529,7 @@ function AIFinancialAdvisorIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for QuantumWeaverAIIcon (Quantum Simulation)
+// Placeholder for QuantumWeaverAIIcon
 function QuantumWeaverAIIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -554,7 +540,7 @@ function QuantumWeaverAIIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for AgentMarketplaceIcon (Autonomous Agents)
+// Placeholder for AgentMarketplaceIcon
 function AgentMarketplaceIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -567,7 +553,7 @@ function AgentMarketplaceIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for AIAdStudioIcon (Hyper-Personalization)
+// Placeholder for AIAdStudioIcon
 function AIAdStudioIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -622,7 +608,7 @@ function PhilanthropyHubIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for SovereignWealthSimIcon (Scenario Planning)
+// Placeholder for WealthSimIcon (Scenario Planning)
 function SovereignWealthSimIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -642,7 +628,7 @@ function SecurityCenterIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for PersonalizationIcon (Cognitive UI)
+// Placeholder for PersonalizationIcon
 function PersonalizationIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -655,7 +641,7 @@ function PersonalizationIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-// Placeholder for TheVisionIcon (Manifesto)
+// Placeholder for TheVisionIcon
 function TheVisionIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -666,11 +652,11 @@ function TheVisionIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 // =================================================================================================
-// 6. AI CONSTANTS AND METADATA (The Intelligence Layer Configuration)
+// 6. AI CONSTANTS AND METADATA
 // =================================================================================================
 
 /**
- * Constants governing the interaction and deployment of Sovereign AI agents.
+ * Constants governing basic AI agent interaction.
  */
 export const AI_CONSTANTS = {
     // Core AGI Parameters
@@ -688,12 +674,12 @@ export const AI_CONSTANTS = {
     },
 
     // Agent Naming Conventions (For Marketplace Visibility)
-    AGENT_PREFIXES: ['Sovereign', 'Quantum', 'Oracle', 'Nexus', 'Sentinel', 'Apex'],
+    AGENT_PREFIXES: ['Quantum', 'Oracle', 'Nexus', 'Sentinel', 'Apex'],
     AGENT_SUFFIXES: ['Optimizer', 'Strategist', 'Auditor', 'Executor', 'Forecaster'],
 };
 
 // =================================================================================================
-// 7. REGULATORY AND COMPLIANCE CONSTANTS (Global Framework Adherence)
+// 7. REGULATORY AND COMPLIANCE CONSTANTS
 // =================================================================================================
 
 /**
@@ -737,8 +723,7 @@ export const INFRASTRUCTURE_MAP = {
 };
 
 // =================================================================================================
-// END OF CODEX
+// END OF FILE
 // =================================================================================================
-// Every constant defined herein is a non-negotiable component of the next-generation financial reality.
-// Study them. They are the facts.
+// These are basic constants for a simple application.
 // ---
