@@ -41,6 +41,7 @@ import SSOView from './components/SSOView';
 import PersonalizationView from './components/PersonalizationView';
 import TheVisionView from './components/TheVisionView';
 import { DataContext } from './context/DataContext';
+import { View } from './types';
 
 export default function App() {
   const { activeView, setActiveView } = useContext(DataContext);
@@ -59,44 +60,44 @@ export default function App() {
         <Header />
         
         <main className="w-full flex-grow p-6">
-            {activeView === 'Dashboard' && <Dashboard />}
-            {activeView === 'Transactions' && <TransactionsView />}
-            {activeView === 'Send Money' && <SendMoneyView />}
-            {activeView === 'Budgets' && <BudgetsView />}
-            {activeView === 'Financial Goals' && <FinancialGoalsView />}
-            {activeView === 'Credit Health' && <CreditHealthView />}
-            {activeView === 'Investments' && <InvestmentsView />}
-            {activeView === 'Crypto & Web3' && <CryptoView />}
-            {activeView === 'Algo-Trading Lab' && <AlgoTradingLab />}
-            {activeView === 'Forex Arena' && <ForexArena />}
-            {activeView === 'Commodities Exchange' && <CommoditiesExchange />}
-            {activeView === 'Real Estate Empire' && <RealEstateEmpire />}
-            {activeView === 'Art & Collectibles' && <ArtCollectibles />}
-            {activeView === 'Derivatives Desk' && <DerivativesDesk />}
-            {activeView === 'Venture Capital' && <VentureCapitalDesk />}
-            {activeView === 'Private Equity' && <PrivateEquityLounge />}
-            {activeView === 'Tax Optimization' && <TaxOptimizationChamber />}
-            {activeView === 'Legacy Builder' && <LegacyBuilder />}
-            {activeView === 'Corporate Command' && <CorporateCommandView />}
-            {activeView === 'Modern Treasury' && <ModernTreasuryView />}
-            {activeView === 'Open Banking' && <OpenBankingView />}
-            {activeView === 'Financial Democracy' && <FinancialDemocracyView />}
-            {activeView === 'AI Ad Studio' && <AIAdStudioView />}
-            {activeView === 'Quantum Weaver' && <QuantumWeaverView />}
-            {activeView === 'Marketplace' && <MarketplaceView />}
-            {activeView === 'API Status' && <APIIntegrationView />}
-            {activeView === 'Settings' && <SettingsView />}
-            {activeView === 'Plaid Dashboard' && <PlaidDashboardView />}
-            {activeView === 'Stripe Dashboard' && <StripeDashboardView />}
-            {activeView === 'Marqeta Dashboard' && <MarqetaDashboardView />}
-            {activeView === 'SSO Configuration' && <SSOView />}
-            {activeView === 'concierge_service' && <ConciergeService />}
-            {activeView === 'Sovereign Wealth' && <SovereignWealth />}
-            {activeView === 'Philanthropy Hub' && <PhilanthropyHub />}
-            {activeView === 'Personalization' && <PersonalizationView />}
-            {activeView === 'The Vision' && <TheVisionView />}
-            {activeView === 'AI Advisor' && <AIAdvisorView />}
-            {activeView === 'Security Center' && <SecurityView />}
+            {activeView === View.Dashboard && <Dashboard />}
+            {activeView === View.Transactions && <TransactionsView />}
+            {activeView === View.SendMoney && <SendMoneyView />}
+            {activeView === View.Budgets && <BudgetsView />}
+            {activeView === View.FinancialGoals && <FinancialGoalsView />}
+            {activeView === View.CreditHealth && <CreditHealthView />}
+            {activeView === View.Investments && <InvestmentsView />}
+            {activeView === View.Crypto && <CryptoView />}
+            {activeView === View.AlgoTrading && <AlgoTradingLab />}
+            {activeView === View.Forex && <ForexArena />}
+            {activeView === View.Commodities && <CommoditiesExchange />}
+            {activeView === View.RealEstate && <RealEstateEmpire />}
+            {activeView === View.ArtCollectibles && <ArtCollectibles />}
+            {activeView === View.Derivatives && <DerivativesDesk />}
+            {activeView === View.VentureCapital && <VentureCapitalDesk />}
+            {activeView === View.PrivateEquity && <PrivateEquityLounge />}
+            {activeView === View.TaxOptimization && <TaxOptimizationChamber />}
+            {activeView === View.LegacyBuilder && <LegacyBuilder />}
+            {activeView === View.CorporateCommand && <CorporateCommandView />}
+            {activeView === View.ModernTreasury && <ModernTreasuryView />}
+            {activeView === View.OpenBanking && <OpenBankingView />}
+            {activeView === View.FinancialDemocracy && <FinancialDemocracyView />}
+            {activeView === View.AIAdStudio && <AIAdStudioView />}
+            {activeView === View.QuantumWeaver && <QuantumWeaverView />}
+            {activeView === View.Marketplace && <MarketplaceView />}
+            {activeView === View.APIIntegration && <APIIntegrationView />}
+            {activeView === View.Settings && <SettingsView />}
+            {activeView === View.DataNetwork && <PlaidDashboardView />}
+            {activeView === View.PaymentProcessor && <StripeDashboardView />}
+            {activeView === View.CardPrograms && <MarqetaDashboardView />}
+            {activeView === View.SSO && <SSOView />}
+            {activeView === View.Concierge && <ConciergeService />}
+            {activeView === View.SovereignWealth && <SovereignWealth />}
+            {activeView === View.Philanthropy && <PhilanthropyHub />}
+            {activeView === View.Personalization && <PersonalizationView />}
+            {activeView === View.TheVision && <TheVisionView />}
+            {activeView === View.AIAdvisor && <AIAdvisorView />}
+            {activeView === View.Security && <SecurityView />}
         </main>
       </div>
       
