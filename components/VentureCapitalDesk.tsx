@@ -441,7 +441,7 @@ const VentureCapitalDesk: React.FC = () => {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-6">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tighter text-cyan-400">Quantum Capital Nexus</h1>
-          <p className="text-lg text-gray-400 mt-1">Sovereign Investment Platform // Portfolio Management Layer 7</p>
+          <p className="text-lg text-gray-400 mt-1">Advanced Investment Platform // Portfolio Management Layer 7</p>
         </div>
         <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/30">
           Execute Automated Allocation <ArrowUpRight className="ml-2 h-4 w-4" />
@@ -457,7 +457,7 @@ const VentureCapitalDesk: React.FC = () => {
           <p className="text-base italic border-l-4 border-red-500 pl-3">
             "The market is not a democracy; it is a meritocracy governed by predictive accuracy. We eliminate the noise of human bias, fear, and legacy thinking. Capital flows where the data dictates maximum entropy reduction and exponential value creation. Compliance is automated. Due diligence is instantaneous. Failure to adapt is obsolescence."
           </p>
-          <p className="text-sm text-gray-500">— Core Directive 001, Deployed by the Architect.</p>
+          <p className="text-sm text-gray-500">â€” Core Directive 001, Deployed by the Architect.</p>
         </CardContent>
       </Card>
 
