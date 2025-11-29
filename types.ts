@@ -4,6 +4,7 @@ export enum View {
   AIAdvisor = 'AIAdvisor',
   AlgoTradingLab = 'AlgoTradingLab',
   APIIntegration = 'APIIntegration',
+  ApiSettings = 'ApiSettings',
   ArtCollectibles = 'ArtCollectibles',
   Budgets = 'Budgets',
   CommoditiesExchange = 'CommoditiesExchange',
@@ -75,83 +76,106 @@ export interface UpcomingBill {
 export interface SavingsGoal {
   id: string;
   name: string;
-  saved: number;
-  target: number;
+  targetAmount: number;
+  currentAmount: number;
   iconName: string;
 }
 
 export interface MarketMover {
-  ticker: string;
+  id: string;
   name: string;
+  symbol: string;
   price: number;
   change: number;
 }
 
 export interface RewardPoints {
-  balance: number;
+  total: number;
+  history: { date: string, points: number, event: string }[];
 }
 
 export interface CryptoAsset {
-  name: string;
-  value: number;
-  color: string;
+    id: string;
+    name: string;
+    symbol: string;
+    balance: number;
+    price: number;
+    change24h: number;
 }
 
 export interface NFTAsset {
-  id: string;
-  name: string;
-  imageUrl: string;
-  contractAddress: string;
+    id: string;
+    name: string;
+    collection: string;
+    imageUrl: string;
+    floorPrice: number;
 }
 
 export interface EIP6963ProviderDetail {
-  info: { uuid: string; name: string; icon: string };
-  provider: any;
+    info: {
+        uuid: string;
+        name: string;
+        icon: string;
+        rdns: string;
+    },
+    provider: any; // EIP1193Provider
 }
 
 export interface PaymentOrder {
   id: string;
   amount: number;
-  status: string;
-  dueDate?: string;
+  currency: string;
+  recipient: string;
+  status: 'Pending' | 'Completed' | 'Failed';
+  created: string;
 }
 
 export interface Invoice {
   id: string;
+  customer: string;
   amount: number;
-  status: string;
+  status: 'Draft' | 'Open' | 'Paid';
   dueDate: string;
 }
 
 export interface ComplianceCase {
   id: string;
-  type: string;
-  description: string;
-  status: string;
+  subject: string;
+  status: 'Open' | 'Under Review' | 'Closed';
+  priority: 'Low' | 'Medium' | 'High';
 }
 
 export interface CorporateTransaction {
-  id: string;
-  date: string;
-  amount: number;
-  merchant: string;
-  description: string;
+    id: string;
+    date: string;
+    amount: number;
+    description: string;
+    category: string;
+    department: string;
+    approver: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
 }
 
 export interface APIStatus {
-  provider: string;
-  status: string;
-  responseTime: number;
+    name: string;
+    status: 'Operational' | 'Degraded Performance' | 'Partial Outage' | 'Major Outage';
+    latency: number; // in ms
+    errorRate: number; // as percentage
 }
 
 export interface AIInsight {
-  id: string;
-  title: string;
-  description: string;
-  urgency: 'low' | 'medium' | 'high' | 'critical';
-  chartData?: any[];
-  chartType?: string;
-  chartMetricName?: string;
-  recommendation?: string;
-  metadata?: any;
+    id: string;
+    timestamp: string;
+    type: 'Optimization' | 'Warning' | 'Forecast' | 'Opportunity';
+    urgency: 'low' | 'medium' | 'high' | 'critical';
+    title: string;
+    description: string;
+    suggestedActions: string[];
+    relatedData: any;
 }
+
+export interface ApiKeys {
+    [key: string]: string;
+}
+
+// Add other types as the application grows
