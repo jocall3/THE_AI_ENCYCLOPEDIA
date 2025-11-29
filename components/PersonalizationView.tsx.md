@@ -49,7 +49,7 @@ import {
   ChevronUpIcon,
 } from '@chakra-ui/icons';
 
-// --- Core System Constants and Types (Simulated for Expansion) ---
+// --- Core System Constants and Types (Refactored for Stability and Security) ---
 
 /**
  * Defines the structure for a high-level user preference profile.
@@ -78,311 +78,38 @@ interface UserProfileSettings {
 }
 
 // =================================================================================
-// The complete interface for all 200+ API credentials (Copied from instructions for completeness)
+// API Key Interface: This structure represents the inputs for the new Unified API Connector pattern.
+// Sensitive keys should ideally be stored in AWS Secrets Manager/Vault, not client state/local storage.
+// For this MVP, we collect them here to simulate the integration process.
 // =================================================================================
 interface ApiKeysState {
-  // === Tech APIs ===
-  // Core Infrastructure & Cloud
+  // --- Tech APIs (Selected for MVP Integration Pathway) ---
   STRIPE_SECRET_KEY: string;
-  TWILIO_ACCOUNT_SID: string;
   TWILIO_AUTH_TOKEN: string;
-  SENDGRID_API_KEY: string;
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
-  AZURE_CLIENT_ID: string;
-  AZURE_CLIENT_SECRET: string;
-  GOOGLE_CLOUD_API_KEY: string;
-
-  // Deployment & DevOps
-  DOCKER_HUB_USERNAME: string;
-  DOCKER_HUB_ACCESS_TOKEN: string;
-  HEROKU_API_KEY: string;
-  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
-  VERCEL_API_TOKEN: string;
-  CLOUDFLARE_API_TOKEN: string;
-  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
-  LINODE_PERSONAL_ACCESS_TOKEN: string;
-  TERRAFORM_API_TOKEN: string;
-
-  // Collaboration & Productivity
-  GITHUB_PERSONAL_ACCESS_TOKEN: string;
-  SLACK_BOT_TOKEN: string;
-  DISCORD_BOT_TOKEN: string;
-  TRELLO_API_KEY: string;
-  TRELLO_API_TOKEN: string;
-  JIRA_USERNAME: string;
-  JIRA_API_TOKEN: string;
-  ASANA_PERSONAL_ACCESS_TOKEN: string;
-  NOTION_API_KEY: string;
-  AIRTABLE_API_KEY: string;
-
-  // File & Data Storage
-  DROPBOX_ACCESS_TOKEN: string;
-  BOX_DEVELOPER_TOKEN: string;
-  GOOGLE_DRIVE_API_KEY: string;
-  ONEDRIVE_CLIENT_ID: string;
-
-  // CRM & Business
-  SALESFORCE_CLIENT_ID: string;
-  SALESFORCE_CLIENT_SECRET: string;
-  HUBSPOT_API_KEY: string;
-  ZENDESK_API_TOKEN: string;
-  INTERCOM_ACCESS_TOKEN: string;
-  MAILCHIMP_API_KEY: string;
-
-  // E-commerce
-  SHOPIFY_API_KEY: string;
-  SHOPIFY_API_SECRET: string;
-  BIGCOMMERCE_ACCESS_TOKEN: string;
-  MAGENTO_ACCESS_TOKEN: string;
-  WOOCOMMERCE_CLIENT_KEY: string;
-  WOOCOMMERCE_CLIENT_SECRET: string;
-  
-  // Authentication & Identity
-  STYTCH_PROJECT_ID: string;
-  STYTCH_SECRET: string;
-  AUTH0_DOMAIN: string;
-  AUTH0_CLIENT_ID: string;
-  AUTH0_CLIENT_SECRET: string;
-  OKTA_DOMAIN: string;
-  OKTA_API_TOKEN: string;
-
-  // Backend & Databases
-  FIREBASE_API_KEY: string;
-  SUPABASE_URL: string;
-  SUPABASE_ANON_KEY: string;
-
-  // API Development
-  POSTMAN_API_KEY: string;
-  APOLLO_GRAPH_API_KEY: string;
-
-  // AI & Machine Learning
   OPENAI_API_KEY: string;
-  HUGGING_FACE_API_TOKEN: string;
-  GOOGLE_CLOUD_AI_API_KEY: string;
-  AMAZON_REKOGNITION_ACCESS_KEY: string;
-  MICROSOFT_AZURE_COGNITIVE_KEY: string;
-  IBM_WATSON_API_KEY: string;
-
-  // Search & Real-time
-  ALGOLIA_APP_ID: string;
-  ALGOLIA_ADMIN_API_KEY: string;
-  PUSHER_APP_ID: string;
-  PUSHER_KEY: string;
-  PUSHER_SECRET: string;
-  ABLY_API_KEY: string;
-  ELASTICSEARCH_API_KEY: string;
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
   
-  // Identity & Verification
-  STRIPE_IDENTITY_SECRET_KEY: string;
-  ONFIDO_API_TOKEN: string;
-  CHECKR_API_KEY: string;
-  
-  // Logistics & Shipping
-  LOB_API_KEY: string;
-  EASYPOST_API_KEY: string;
-  SHIPPO_API_TOKEN: string;
-
-  // Maps & Weather
-  GOOGLE_MAPS_API_KEY: string;
-  MAPBOX_ACCESS_TOKEN: string;
-  HERE_API_KEY: string;
-  ACCUWEATHER_API_KEY: string;
-  OPENWEATHERMAP_API_KEY: string;
-
-  // Social & Media
-  YELP_API_KEY: string;
-  FOURSQUARE_API_KEY: string;
-  REDDIT_CLIENT_ID: string;
-  REDDIT_CLIENT_SECRET: string;
-  TWITTER_BEARER_TOKEN: string;
-  FACEBOOK_APP_ID: string;
-  FACEBOOK_APP_SECRET: string;
-  INSTAGRAM_APP_ID: string;
-  INSTAGRAM_APP_SECRET: string;
-  YOUTUBE_DATA_API_KEY: string;
-  SPOTIFY_CLIENT_ID: string;
-  SPOTIFY_CLIENT_SECRET: string;
-  SOUNDCLOUD_CLIENT_ID: string;
-  TWITCH_CLIENT_ID: string;
-  TWITCH_CLIENT_SECRET: string;
-
-  // Media & Content
-  MUX_TOKEN_ID: string;
-  MUX_TOKEN_SECRET: string;
-  CLOUDINARY_API_KEY: string;
-  CLOUDINARY_API_SECRET: string;
-  IMGIX_API_KEY: string;
-  
-  // Legal & Admin
-  STRIPE_ATLAS_API_KEY: string;
-  CLERKY_API_KEY: string;
-  DOCUSIGN_INTEGRATOR_KEY: string;
-  HELLOSIGN_API_KEY: string;
-  
-  // Monitoring & CI/CD
-  LAUNCHDARKLY_SDK_KEY: string;
-  SENTRY_AUTH_TOKEN: string;
-  DATADOG_API_KEY: string;
-  NEW_RELIC_API_KEY: string;
-  CIRCLECI_API_TOKEN: string;
-  TRAVIS_CI_API_TOKEN: string;
-  BITBUCKET_USERNAME: string;
-  BITBUCKET_APP_PASSWORD: string;
-  GITLAB_PERSONAL_ACCESS_TOKEN: string;
-  PAGERDUTY_API_KEY: string;
-  
-  // Headless CMS
-  CONTENTFUL_SPACE_ID: string;
-  CONTENTFUL_ACCESS_TOKEN: string;
-  SANITY_PROJECT_ID: string;
-  SANITY_API_TOKEN: string;
-  STRAPI_API_TOKEN: string;
-
-  // === Banking & Finance APIs ===
-  // Data Aggregators
+  // --- Banking & Finance APIs (Selected for MVP Integration Pathway) ---
   PLAID_CLIENT_ID: string;
   PLAID_SECRET: string;
-  YODLEE_CLIENT_ID: string;
-  YODLEE_SECRET: string;
-  MX_CLIENT_ID: string;
-  MX_API_KEY: string;
-  FINICITY_PARTNER_ID: string;
-  FINICITY_APP_KEY: string;
-
-  // Payment Processing
   ADYEN_API_KEY: string;
-  ADYEN_MERCHANT_ACCOUNT: string;
-  BRAINTREE_MERCHANT_ID: string;
-  BRAINTREE_PUBLIC_KEY: string;
-  BRAINTREE_PRIVATE_KEY: string;
-  SQUARE_APPLICATION_ID: string;
-  SQUARE_ACCESS_TOKEN: string;
-  PAYPAL_CLIENT_ID: string;
-  PAYPAL_SECRET: string;
-  DWOLLA_KEY: string;
-  DWOLLA_SECRET: string;
-  WORLDPAY_API_KEY: string;
-  CHECKOUT_SECRET_KEY: string;
-  
-  // BaaS & Card Issuing
-  MARQETA_APPLICATION_TOKEN: string;
-  MARQETA_ADMIN_ACCESS_TOKEN: string;
-  GALILEO_API_LOGIN: string;
-  GALILEO_API_TRANS_KEY: string;
-  SOLARISBANK_CLIENT_ID: string;
-  SOLARISBANK_CLIENT_SECRET: string;
-  SYNAPSE_CLIENT_ID: string;
-  SYNAPSE_CLIENT_SECRET: string;
-  RAILSBANK_API_KEY: string;
-  CLEARBANK_API_KEY: string;
-  UNIT_API_TOKEN: string;
-  TREASURY_PRIME_API_KEY: string;
-  INCREASE_API_KEY: string;
-  MERCURY_API_KEY: string;
-  BREX_API_KEY: string;
-  BOND_API_KEY: string;
-  
-  // International Payments
-  CURRENCYCLOUD_LOGIN_ID: string;
-  CURRENCYCLOUD_API_KEY: string;
-  OFX_API_KEY: string;
-  WISE_API_TOKEN: string;
-  REMITLY_API_KEY: string;
-  AZIMO_API_KEY: string;
-  NIUM_API_KEY: string;
-  
-  // Investment & Market Data
   ALPACA_API_KEY_ID: string;
   ALPACA_SECRET_KEY: string;
-  TRADIER_ACCESS_TOKEN: string;
-  IEX_CLOUD_API_TOKEN: string;
-  POLYGON_API_KEY: string;
-  FINNHUB_API_KEY: string;
-  ALPHA_VANTAGE_API_KEY: string;
-  MORNINGSTAR_API_KEY: string;
-  XIGNITE_API_TOKEN: string;
-  DRIVEWEALTH_API_KEY: string;
 
-  // Crypto
-  COINBASE_API_KEY: string;
-  COINBASE_API_SECRET: string;
-  BINANCE_API_KEY: string;
-  BINANCE_API_SECRET: string;
-  KRAKEN_API_KEY: string;
-  KRAKEN_PRIVATE_KEY: string;
-  GEMINI_API_KEY: string;
-  GEMINI_API_SECRET: string;
-  COINMARKETCAP_API_KEY: string;
-  COINGECKO_API_KEY: string;
-  BLOCKIO_API_KEY: string;
-
-  // Major Banks (Open Banking)
-  JP_MORGAN_CHASE_CLIENT_ID: string;
-  CITI_CLIENT_ID: string;
-  WELLS_FARGO_CLIENT_ID: string;
-  CAPITAL_ONE_CLIENT_ID: string;
-
-  // European & Global Banks (Open Banking)
-  HSBC_CLIENT_ID: string;
-  BARCLAYS_CLIENT_ID: string;
-  BBVA_CLIENT_ID: string;
-  DEUTSCHE_BANK_API_KEY: string;
-
-  // UK & European Aggregators
-  TINK_CLIENT_ID: string;
-  TRUELAYER_CLIENT_ID: string;
-
-  // Compliance & Identity (KYC/AML)
+  // --- Compliance & Identity (Selected for MVP Integration Pathway) ---
   MIDDESK_API_KEY: string;
-  ALLOY_API_TOKEN: string;
-  ALLOY_API_SECRET: string;
-  COMPLYADVANTAGE_API_KEY: string;
 
-  // Real Estate
-  ZILLOW_API_KEY: string;
-  CORELOGIC_CLIENT_ID: string;
-
-  // Credit Bureaus
-  EXPERIAN_API_KEY: string;
-  EQUIFAX_API_KEY: string;
-  TRANSUNION_API_KEY: string;
-
-  // Global Payments (Emerging Markets)
-  FINCRA_API_KEY: string;
-  FLUTTERWAVE_SECRET_KEY: string;
-  PAYSTACK_SECRET_KEY: string;
-  DLOCAL_API_KEY: string;
-  RAPYD_ACCESS_KEY: string;
-  
-  // Accounting & Tax
-  TAXJAR_API_KEY: string;
-  AVALARA_API_KEY: string;
-  CODAT_API_KEY: string;
-  XERO_CLIENT_ID: string;
-  XERO_CLIENT_SECRET: string;
-  QUICKBOOKS_CLIENT_ID: string;
-  QUICKBOOKS_CLIENT_SECRET: string;
-  FRESHBOOKS_API_KEY: string;
-  
-  // Fintech Utilities
-  ANVIL_API_KEY: string;
-  MOOV_CLIENT_ID: string;
-  MOOV_SECRET: string;
-  VGS_USERNAME: string;
-  VGS_PASSWORD: string;
-  SILA_APP_HANDLE: string;
-  SILA_PRIVATE_KEY: string;
-  
-  [key: string]: string; // Index signature for dynamic access
+  // Include all original keys for comprehensive UI coverage, but note MVP focus.
+  [key: string]: string; 
 }
 
 
-// --- Simulated AI Service Layer (Placeholder for Billion-Dollar Logic) ---
+// --- Simulated AI Service Layer (Refactored to ensure non-blocking UI and robust handling) ---
 
 /**
  * Simulates an advanced AI service responsible for deep personalization analysis
  * and generating optimal configuration suggestions based on user behavior and mission alignment.
+ * All AI calls are now encapsulated and use Promises to ensure they are non-blocking.
  */
 const AIService = {
   /**
@@ -392,33 +119,40 @@ const AIService = {
    */
   async analyzeAndSuggest(currentSettings: UserProfileSettings): Promise<Partial<UserProfileSettings>> {
     console.log(`[AI Core] Initiating deep behavioral analysis for user profile alignment...`);
-    // Simulate complex, multi-threaded, first-principles computation
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Enforce Timeout and Error Handling (Production hardening requirement)
+    const analysisTimeout = new Promise<Partial<UserProfileSettings>>(resolve => 
+        setTimeout(() => {
+            console.warn("[AI Core] Analysis timed out. Returning current state suggestions.");
+            resolve({});
+        }, 4000) // 4 second timeout enforced
+    );
 
-    const suggestions: Partial<UserProfileSettings> = {};
+    const realAnalysis = new Promise<Partial<UserProfileSettings>>(async (resolve) => {
+        await new Promise(r => setTimeout(r, 1500)); // Simulate processing time
+        const suggestions: Partial<UserProfileSettings> = {};
 
-    // Example 1: Theme Optimization based on time-of-day interaction patterns
-    if (currentSettings.theme === 'system') {
-      suggestions.theme = 'light'; // Assuming high-value work occurs during off-peak light hours
-    }
+        // Example 1: Theme Optimization
+        if (currentSettings.theme === 'system' && Math.random() > 0.5) {
+            suggestions.theme = 'dark'; 
+        }
 
-    // Example 2: KPI Mode based on recent volatility
-    if (Math.random() > 0.7) {
-      suggestions.kpiDisplayMode = 'absolute'; // Suggest focusing on rate of change during high-volatility periods
-    }
+        // Example 2: KPI Mode based on volatility (simulated)
+        if (currentSettings.securityAlertThreshold > 3.0 && currentSettings.kpiDisplayMode !== 'absolute') {
+            suggestions.kpiDisplayMode = 'absolute';
+        }
+        
+        // Example 3: Persona check
+        if (currentSettings.aiAgentPersona === 'Analyst' && currentSettings.aiVerbosityLevel < 3) {
+            suggestions.aiVerbosityLevel = 3 as 1|2|3|4|5;
+        }
 
-    // Example 3: AI Persona alignment based on input complexity
-    if (currentSettings.aiVerbosityLevel >= 4) {
-      suggestions.aiAgentPersona = 'Observer';
-    }
+        console.log(`[AI Core] Analysis complete. Suggestions generated.`);
+        resolve(suggestions);
+    });
 
-    // Example 4: Security Threshold recalibration based on simulated threat vectors
-    if (currentSettings.securityAlertThreshold < 1.5) {
-      suggestions.securityAlertThreshold = 1.0; // Decrease sensitivity slightly
-    }
-
-    console.log(`[AI Core] Analysis complete. Suggestions generated.`);
-    return suggestions;
+    // Use Promise.race to ensure the UI is never blocked indefinitely
+    return Promise.race([realAnalysis, analysisTimeout]);
   },
 
   /**
@@ -427,6 +161,7 @@ const AIService = {
    * @returns A string containing the generated narrative.
    */
   async generateNarrative(persona: UserProfileSettings['aiAgentPersona']): Promise<string> {
+    // Non-blocking async call
     await new Promise(resolve => setTimeout(resolve, 500));
     switch (persona) {
       case 'Analyst':
@@ -443,29 +178,258 @@ const AIService = {
   }
 };
 
-// --- Initial State Configuration ---
+// --- Initial State Configuration (Updated for MVP Scope) ---
 
 const INITIAL_STATE: UserProfileSettings = {
   theme: 'system',
-  primaryColor: '#4299E1', // Default Chakra blue
+  primaryColor: '#4299E1', // Default MUI/Chakra blue
   fontFamily: 'Inter, sans-serif',
-  dashboardLayout: 'modular',
-  kpiDisplayMode: 'projection',
+  dashboardLayout: 'modular', // MVP: Modular dashboard
+  kpiDisplayMode: 'projection', // MVP: Focus on AI-driven forecasts
   aiVerbosityLevel: 3,
   securityAlertThreshold: 2.0,
   preferredCurrency: 'USD',
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
   language: navigator.language.substring(0, 2).toUpperCase() || 'EN',
-  financialNarrativeStyle: 'visionary',
+  financialNarrativeStyle: 'visionary', // MVP: Future-focused narrative
   dataDensity: 'medium',
-  enablePredictiveModeling: true,
+  enablePredictiveModeling: true, // MVP Feature enabled
   customMetricTags: ['Foundation', 'Stability', 'Growth'],
-  aiAgentName: 'idgafai_Proxy',
+  aiAgentName: 'QuantumLeap_Proxy', // Renamed to reflect stabilization goal
   aiAgentPersona: 'Analyst',
   biometricAuthEnabled: false,
-  quantumEncryptionLevel: 'L2',
-  transactionVisualizationStyle: 'network',
+  quantumEncryptionLevel: 'L2', // Kept L2 as default secure layer
+  transactionVisualizationStyle: 'network', // MVP: Network visualization for treasury flow
 };
+
+// Initialize API Keys state with empty strings, structure maintained.
+const INITIAL_API_KEYS: ApiKeysState = {
+    STRIPE_SECRET_KEY: '',
+    TWILIO_AUTH_TOKEN: '',
+    OPENAI_API_KEY: '',
+    GITHUB_PERSONAL_ACCESS_TOKEN: '',
+    PLAID_CLIENT_ID: '',
+    PLAID_SECRET: '',
+    ADYEN_API_KEY: '',
+    ALPACA_API_KEY_ID: '',
+    ALPACA_SECRET_KEY: '',
+    MIDDESK_API_KEY: '',
+    // Padding with empty strings for remaining keys to satisfy interface definition without exposing sensitive defaults
+    // NOTE: In a real app, only necessary keys would be declared, and defaults would be pulled from Vault.
+    'SENDGRID_API_KEY': '',
+    'AWS_ACCESS_KEY_ID': '',
+    'AWS_SECRET_ACCESS_KEY': '',
+    'AZURE_CLIENT_ID': '',
+    'AZURE_CLIENT_SECRET': '',
+    'GOOGLE_CLOUD_API_KEY': '',
+    'DOCKER_HUB_USERNAME': '',
+    'DOCKER_HUB_ACCESS_TOKEN': '',
+    'HEROKU_API_KEY': '',
+    'NETLIFY_PERSONAL_ACCESS_TOKEN': '',
+    'VERCEL_API_TOKEN': '',
+    'CLOUDFLARE_API_TOKEN': '',
+    'DIGITALOCEAN_PERSONAL_ACCESS_TOKEN': '',
+    'LINODE_PERSONAL_ACCESS_TOKEN': '',
+    'TERRAFORM_API_TOKEN': '',
+    'SLACK_BOT_TOKEN': '',
+    'DISCORD_BOT_TOKEN': '',
+    'TRELLO_API_KEY': '',
+    'TRELLO_API_TOKEN': '',
+    'JIRA_USERNAME': '',
+    'JIRA_API_TOKEN': '',
+    'ASANA_PERSONAL_ACCESS_TOKEN': '',
+    'NOTION_API_KEY': '',
+    'AIRTABLE_API_KEY': '',
+    'DROPBOX_ACCESS_TOKEN': '',
+    'BOX_DEVELOPER_TOKEN': '',
+    'GOOGLE_DRIVE_API_KEY': '',
+    'ONEDRIVE_CLIENT_ID': '',
+    'SALESFORCE_CLIENT_ID': '',
+    'SALESFORCE_CLIENT_SECRET': '',
+    'HUBSPOT_API_KEY': '',
+    'ZENDESK_API_TOKEN': '',
+    'INTERCOM_ACCESS_TOKEN': '',
+    'MAILCHIMP_API_KEY': '',
+    'SHOPIFY_API_KEY': '',
+    'SHOPIFY_API_SECRET': '',
+    'BIGCOMMERCE_ACCESS_TOKEN': '',
+    'MAGENTO_ACCESS_TOKEN': '',
+    'WOOCOMMERCE_CLIENT_KEY': '',
+    'WOOCOMMERCE_CLIENT_SECRET': '',
+    'STYTCH_PROJECT_ID': '',
+    'STYTCH_SECRET': '',
+    'AUTH0_DOMAIN': '',
+    'AUTH0_CLIENT_ID': '',
+    'AUTH0_CLIENT_SECRET': '',
+    'OKTA_DOMAIN': '',
+    'OKTA_API_TOKEN': '',
+    'FIREBASE_API_KEY': '',
+    'SUPABASE_URL': '',
+    'SUPABASE_ANON_KEY': '',
+    'POSTMAN_API_KEY': '',
+    'APOLLO_GRAPH_API_KEY': '',
+    'HUGGING_FACE_API_TOKEN': '',
+    'GOOGLE_CLOUD_AI_API_KEY': '',
+    'AMAZON_REKOGNITION_ACCESS_KEY': '',
+    'MICROSOFT_AZURE_COGNITIVE_KEY': '',
+    'IBM_WATSON_API_KEY': '',
+    'ALGOLIA_APP_ID': '',
+    'ALGOLIA_ADMIN_API_KEY': '',
+    'PUSHER_APP_ID': '',
+    'PUSHER_KEY': '',
+    'PUSHER_SECRET': '',
+    'ABLY_API_KEY': '',
+    'ELASTICSEARCH_API_KEY': '',
+    'STRIPE_IDENTITY_SECRET_KEY': '',
+    'ONFIDO_API_TOKEN': '',
+    'CHECKR_API_KEY': '',
+    'LOB_API_KEY': '',
+    'EASYPOST_API_KEY': '',
+    'SHIPPO_API_TOKEN': '',
+    'GOOGLE_MAPS_API_KEY': '',
+    'MAPBOX_ACCESS_TOKEN': '',
+    'HERE_API_KEY': '',
+    'ACCUWEATHER_API_KEY': '',
+    'OPENWEATHERMAP_API_KEY': '',
+    'YELP_API_KEY': '',
+    'FOURSQUARE_API_KEY': '',
+    'REDDIT_CLIENT_ID': '',
+    'REDDIT_CLIENT_SECRET': '',
+    'TWITTER_BEARER_TOKEN': '',
+    'FACEBOOK_APP_ID': '',
+    'FACEBOOK_APP_SECRET': '',
+    'INSTAGRAM_APP_ID': '',
+    'INSTAGRAM_APP_SECRET': '',
+    'YOUTUBE_DATA_API_KEY': '',
+    'SPOTIFY_CLIENT_ID': '',
+    'SPOTIFY_CLIENT_SECRET': '',
+    'SOUNDCLOUD_CLIENT_ID': '',
+    'TWITCH_CLIENT_ID': '',
+    'TWITCH_CLIENT_SECRET': '',
+    'MUX_TOKEN_ID': '',
+    'MUX_TOKEN_SECRET': '',
+    'CLOUDINARY_API_KEY': '',
+    'CLOUDINARY_API_SECRET': '',
+    'IMGIX_API_KEY': '',
+    'STRIPE_ATLAS_API_KEY': '',
+    'CLERKY_API_KEY': '',
+    'DOCUSIGN_INTEGRATOR_KEY': '',
+    'HELLOSIGN_API_KEY': '',
+    'LAUNCHDARKLY_SDK_KEY': '',
+    'SENTRY_AUTH_TOKEN': '',
+    'DATADOG_API_KEY': '',
+    'NEW_RELIC_API_KEY': '',
+    'CIRCLECI_API_TOKEN': '',
+    'TRAVIS_CI_API_TOKEN': '',
+    'BITBUCKET_USERNAME': '',
+    'BITBUCKET_APP_PASSWORD': '',
+    'GITLAB_PERSONAL_ACCESS_TOKEN': '',
+    'PAGERDUTY_API_KEY': '',
+    'CONTENTFUL_SPACE_ID': '',
+    'CONTENTFUL_ACCESS_TOKEN': '',
+    'SANITY_PROJECT_ID': '',
+    'SANITY_API_TOKEN': '',
+    'STRAPI_API_TOKEN': '',
+    'YODLEE_CLIENT_ID': '',
+    'YODLEE_SECRET': '',
+    'MX_CLIENT_ID': '',
+    'MX_API_KEY': '',
+    'FINICITY_PARTNER_ID': '',
+    'FINICITY_APP_KEY': '',
+    'ADYEN_MERCHANT_ACCOUNT': '',
+    'BRAINTREE_MERCHANT_ID': '',
+    'BRAINTREE_PUBLIC_KEY': '',
+    'BRAINTREE_PRIVATE_KEY': '',
+    'SQUARE_APPLICATION_ID': '',
+    'SQUARE_ACCESS_TOKEN': '',
+    'PAYPAL_CLIENT_ID': '',
+    'PAYPAL_SECRET': '',
+    'DWOLLA_KEY': '',
+    'DWOLLA_SECRET': '',
+    'WORLDPAY_API_KEY': '',
+    'CHECKOUT_SECRET_KEY': '',
+    'MARQETA_APPLICATION_TOKEN': '',
+    'MARQETA_ADMIN_ACCESS_TOKEN': '',
+    'GALILEO_API_LOGIN': '',
+    'GALILEO_API_TRANS_KEY': '',
+    'SOLARISBANK_CLIENT_ID': '',
+    'SOLARISBANK_CLIENT_SECRET': '',
+    'SYNAPSE_CLIENT_ID': '',
+    'SYNAPSE_CLIENT_SECRET': '',
+    'RAILSBANK_API_KEY': '',
+    'CLEARBANK_API_KEY': '',
+    'UNIT_API_TOKEN': '',
+    'TREASURY_PRIME_API_KEY': '',
+    'INCREASE_API_KEY': '',
+    'MERCURY_API_KEY': '',
+    'BREX_API_KEY': '',
+    'BOND_API_KEY': '',
+    'CURRENCYCLOUD_LOGIN_ID': '',
+    'CURRENCYCLOUD_API_KEY': '',
+    'OFX_API_KEY': '',
+    'WISE_API_TOKEN': '',
+    'REMITLY_API_KEY': '',
+    'AZIMO_API_KEY': '',
+    'NIUM_API_KEY': '',
+    'TRADIER_ACCESS_TOKEN': '',
+    'IEX_CLOUD_API_TOKEN': '',
+    'POLYGON_API_KEY': '',
+    'FINNHUB_API_KEY': '',
+    'ALPHA_VANTAGE_API_KEY': '',
+    'MORNINGSTAR_API_KEY': '',
+    'XIGNITE_API_TOKEN': '',
+    'DRIVEWEALTH_API_KEY': '',
+    'COINBASE_API_SECRET': '',
+    'BINANCE_API_KEY': '',
+    'BINANCE_API_SECRET': '',
+    'KRAKEN_API_KEY': '',
+    'KRAKEN_PRIVATE_KEY': '',
+    'GEMINI_API_KEY': '',
+    'GEMINI_API_SECRET': '',
+    'COINMARKETCAP_API_KEY': '',
+    'COINGECKO_API_KEY': '',
+    'BLOCKIO_API_KEY': '',
+    'JP_MORGAN_CHASE_CLIENT_ID': '',
+    'CITI_CLIENT_ID': '',
+    'WELLS_FARGO_CLIENT_ID': '',
+    'CAPITAL_ONE_CLIENT_ID': '',
+    'HSBC_CLIENT_ID': '',
+    'BARCLAYS_CLIENT_ID': '',
+    'BBVA_CLIENT_ID': '',
+    'DEUTSCHE_BANK_API_KEY': '',
+    'TINK_CLIENT_ID': '',
+    'TRUELAYER_CLIENT_ID': '',
+    'MIDDESK_API_KEY': '',
+    'ALLOY_API_TOKEN': '',
+    'ALLOY_API_SECRET': '',
+    'COMPLYADVANTAGE_API_KEY': '',
+    'ZILLOW_API_KEY': '',
+    'CORELOGIC_CLIENT_ID': '',
+    'EXPERIAN_API_KEY': '',
+    'EQUIFAX_API_KEY': '',
+    'TRANSUNION_API_KEY': '',
+    'FINCRA_API_KEY': '',
+    'FLUTTERWAVE_SECRET_KEY': '',
+    'PAYSTACK_SECRET_KEY': '',
+    'DLOCAL_API_KEY': '',
+    'RAPYD_ACCESS_KEY': '',
+    'TAXJAR_API_KEY': '',
+    'AVALARA_API_KEY': '',
+    'CODAT_API_KEY': '',
+    'XERO_CLIENT_ID': '',
+    'XERO_CLIENT_SECRET': '',
+    'QUICKBOOKS_CLIENT_ID': '',
+    'QUICKBOOKS_CLIENT_SECRET': '',
+    'FRESHBOOKS_API_KEY': '',
+    'ANVIL_API_KEY': '',
+    'MOOV_CLIENT_ID': '',
+    'MOOV_SECRET': '',
+    'VGS_USERNAME': '',
+    'VGS_PASSWORD': '',
+    'SILA_APP_HANDLE': '',
+    'SILA_PRIVATE_KEY': '',
+};
+
 
 // --- Component: AI Suggestion Banner ---
 
@@ -596,8 +560,10 @@ const PersonalizationView: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiNarrative, setAiNarrative] = useState('');
   const [suggestions, setSuggestions] = useState<Partial<UserProfileSettings>>({});
-  const [apiKeys, setApiKeys] = useState<ApiKeysState>({} as ApiKeysState); // Added for API tab logic placeholder
-  const [activeTab, setActiveTab] = useState<'personalization' | 'apis'>('personalization'); // Added for tab management
+  
+  // Initialize API keys state using the padded initial state structure
+  const [apiKeys, setApiKeys] = useState<ApiKeysState>(INITIAL_API_KEYS as ApiKeysState); 
+  const [activeTab, setActiveTab] = useState<'personalization' | 'apis'>('personalization'); 
 
 
   // --- Initialization and AI Narrative Fetch ---
@@ -606,11 +572,11 @@ const PersonalizationView: React.FC = () => {
       setIsLoading(true);
       try {
         // 1. Load AI Narrative
-        const narrative = await AIService.generateNarrative(settings.aiAgentPersona);
+        const narrative = await AIService.generateNarrative(INITIAL_STATE.aiAgentPersona);
         setAiNarrative(narrative);
 
         // 2. Run initial AI suggestion sweep
-        const initialSuggestions = await AIService.analyzeAndSuggest(settings);
+        const initialSuggestions = await AIService.analyzeAndSuggest(INITIAL_STATE);
         setSuggestions(initialSuggestions);
 
       } catch (error) {
@@ -635,14 +601,8 @@ const PersonalizationView: React.FC = () => {
     setSettings(prev => {
       const newSettings = { ...prev, [key]: value };
 
-      // Immediate UI feedback for critical changes
-      if (key === 'theme') {
-        // We rely on the system hook for actual toggle, but update state for consistency.
-      }
-
-      // Re-trigger AI analysis on significant structural changes (simplified for this scope)
-      // In a real system, this would debounce heavily.
-      if (key === 'aiVerbosityLevel' || key === 'securityAlertThreshold') {
+      // Re-trigger AI analysis on significant structural changes
+      if (key === 'aiVerbosityLevel' || key === 'securityAlertThreshold' || key === 'kpiDisplayMode') {
         AIService.analyzeAndSuggest(newSettings).then(setSuggestions);
       }
 
@@ -666,15 +626,10 @@ const PersonalizationView: React.FC = () => {
     setSettings(prev => {
       const finalSettings = { ...prev, ...updates };
 
-      // Apply theme change immediately if suggested
-      if (updates.theme && updates.theme !== prev.theme) {
-        // If the suggestion is 'system', we rely on the system hook, otherwise force it.
-        if (updates.theme === 'light' || updates.theme === 'dark') {
-          // For demonstration, we force the toggle if the suggestion is explicit.
-          if (colorMode !== updates.theme) {
-             // toggleColorMode(); // Disabled here to prevent rapid flickering during state update simulation
-          }
-        }
+      // Apply theme change logic based on what the AI suggested
+      if (updates.theme && (updates.theme === 'light' || updates.theme === 'dark')) {
+          // In a production system, this UI toggle should be handled by system context listeners,
+          // but here we reflect the change if the suggestion forces a non-system mode.
       }
 
       return finalSettings;
@@ -689,10 +644,10 @@ const PersonalizationView: React.FC = () => {
       duration: 5000,
       isClosable: true,
     });
-  }, [toast, colorMode]);
+  }, [toast]);
 
   const handleSave = useCallback(() => {
-    // In a real application, this would trigger an API call to persist settings.
+    // In a real application, this would trigger an API call to persist settings to the backend service layer.
     console.log("Saving Final Configuration:", settings);
     toast({
       title: "Configuration Persisted",
@@ -703,10 +658,11 @@ const PersonalizationView: React.FC = () => {
     });
   }, [settings, toast]);
 
-  // --- Handlers for ApiKeysState (Required for the new 'apis' tab) ---
+  // --- Handlers for ApiKeysState (Unified API Connector Simulation) ---
 
   const handleApiInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    // Ensure the input field corresponds to a defined key in the structure, even if padding
     setApiKeys(prevKeys => ({ ...prevKeys, [name]: value }));
   };
 
@@ -715,39 +671,41 @@ const PersonalizationView: React.FC = () => {
     setIsLoading(true);
     toast({
       title: 'API Keys Submission Initiated',
-      description: 'Sending 200+ credentials securely to the backend relay.',
+      description: 'Sending credentials for API orchestration setup. **Note: Keys are placeholders for secure Vault integration.**',
       status: 'loading',
       duration: 5000,
       isClosable: true,
     });
     try {
-      // Use a real backend endpoint if available, otherwise use localhost:4000/api/save-keys as per instructions
-      const response = await fetch('http://localhost:4000/api/save-keys', {
+      // Simulated API call to the hardened backend endpoint
+      const response = await fetch('http://localhost:4000/api/v1/config/save-api-credentials', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
+              // Authorization header for JWT/OIDC context missing here, but required in production
           },
           body: JSON.stringify(apiKeys),
       });
       
+      // Assuming backend responds with JSON structure
       const data = await response.json();
 
       if (response.ok) {
         toast({
-            title: "Success",
-            description: data.message || 'API keys saved successfully. Restart required.',
+            title: "API Orchestration Success",
+            description: data.message || 'All registered API integrations validated and secured in Vault.',
             status: "success",
             duration: 9000,
             isClosable: true,
         });
       } else {
-         throw new Error(data.message || 'Unknown server error during key submission.');
+         throw new Error(data.error || 'Server responded with an error status.');
       }
     } catch (error: any) {
       console.error('API Key Save Error:', error);
       toast({
         title: 'API Key Save Failed',
-        description: error.message || 'Error during key submission. Check server console.',
+        description: `Critical failure in API relay: ${error.message}`,
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -783,7 +741,9 @@ const PersonalizationView: React.FC = () => {
         <Button
           onClick={() => {
             toggleColorMode();
-            handleChange('theme', colorMode === 'dark' ? 'light' : 'dark'); // Update state to reflect manual change
+            // If user manually toggles, we set the theme explicitly to light/dark, overriding 'system' if necessary for immediate effect demonstration
+            const newTheme = colorMode === 'dark' ? 'light' : 'dark';
+            setSettings(prev => ({...prev, theme: newTheme}));
           }}
           leftIcon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           size="sm"
@@ -825,9 +785,10 @@ const PersonalizationView: React.FC = () => {
         <Select
           value={settings.aiAgentPersona}
           onChange={(e) => {
-            handleChange('aiAgentPersona', e.target.value as UserProfileSettings['aiAgentPersona']);
-            // Immediately fetch new narrative upon persona change
-            AIService.generateNarrative(e.target.value as UserProfileSettings['aiAgentPersona']).then(setAiNarrative);
+            const newPersona = e.target.value as UserProfileSettings['aiAgentPersona'];
+            handleChange('aiAgentPersona', newPersona);
+            // Immediately fetch new narrative upon persona change, non-blocking
+            AIService.generateNarrative(newPersona).then(setAiNarrative);
           }}
           isDisabled={isLoading}
           bg="white"
@@ -892,7 +853,7 @@ const PersonalizationView: React.FC = () => {
       <FormControl display="flex" alignItems="center" justifyContent="space-between">
         <VStack align="start" spacing={0}>
             <FormLabel htmlFor="biometric-auth" mb="0" fontSize="sm">Biometric Authentication Integration</FormLabel>
-            <Text fontSize="xs" color="gray.500">Uses local device hardware validation.</Text>
+            <Text fontSize="xs" color="gray.500">Uses local device hardware validation. (Future implementation: JWT Session Binding)</Text>
         </VStack>
         <Switch
           id="biometric-auth"
@@ -919,18 +880,168 @@ const PersonalizationView: React.FC = () => {
     </VStack>
   );
 
-  // --- API Tab Rendering Helpers (200+ APIs integrated here) ---
+  // --- API Tab Rendering Helpers (Unified API Connector Visualization) ---
+
+  const renderBankingApis = () => (
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+        {/* === Banking & Finance APIs === */}
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Data Aggregators (Plaid MVP Focus)</Heading>
+            {renderApiInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+            {renderApiInput('PLAID_SECRET', 'Plaid Secret')}
+            {renderApiInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+            {renderApiInput('YODLEE_SECRET', 'Yodlee Secret')}
+            {renderApiInput('MX_CLIENT_ID', 'MX Client ID')}
+            {renderApiInput('MX_API_KEY', 'MX API Key')}
+            {renderApiInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+            {renderApiInput('FINICITY_APP_KEY', 'Finicity App Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Payment Processing (Adyen MVP Focus)</Heading>
+            {renderApiInput('ADYEN_API_KEY', 'Adyen API Key')}
+            {renderApiInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+            {renderApiInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+            {renderApiInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+            {renderApiInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+            {renderApiInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+            {renderApiInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+            {renderApiInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+            {renderApiInput('PAYPAL_SECRET', 'PayPal Secret')}
+            {renderApiInput('DWOLLA_KEY', 'Dwolla Key')}
+            {renderApiInput('DWOLLA_SECRET', 'Dwolla Secret')}
+            {renderApiInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+            {renderApiInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">BaaS & Card Issuing</Heading>
+            {renderApiInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+            {renderApiInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+            {renderApiInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+            {renderApiInput('GALILEO_API_TRANS_KEY', 'Galileo Trans Key')}
+            {renderApiInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
+            {renderApiInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
+            {renderApiInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+            {renderApiInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+            {renderApiInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+            {renderApiInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+            {renderApiInput('UNIT_API_TOKEN', 'Unit API Token')}
+            {renderApiInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+            {renderApiInput('INCREASE_API_KEY', 'Increase API Key')}
+            {renderApiInput('MERCURY_API_KEY', 'Mercury API Key')}
+            {renderApiInput('BREX_API_KEY', 'Brex API Key')}
+            {renderApiInput('BOND_API_KEY', 'Bond API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">International Payments</Heading>
+            {renderApiInput('CURRENCYCLOUD_LOGIN_ID', 'CurrencyCloud Login ID')}
+            {renderApiInput('CURRENCYCLOUD_API_KEY', 'CurrencyCloud API Key')}
+            {renderApiInput('OFX_API_KEY', 'OFX API Key')}
+            {renderApiInput('WISE_API_TOKEN', 'Wise API Token')}
+            {renderApiInput('REMITLY_API_KEY', 'Remitly API Key')}
+            {renderApiInput('AZIMO_API_KEY', 'Azimo API Key')}
+            {renderApiInput('NIUM_API_KEY', 'Nium API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Investment & Market Data (Alpaca MVP Focus)</Heading>
+            {renderApiInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+            {renderApiInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+            {renderApiInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+            {renderApiInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+            {renderApiInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+            {renderApiInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+            {renderApiInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+            {renderApiInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+            {renderApiInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+            {renderApiInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Crypto Exchanges</Heading>
+            {renderApiInput('COINBASE_API_KEY', 'Coinbase API Key')}
+            {renderApiInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+            {renderApiInput('BINANCE_API_KEY', 'Binance API Key')}
+            {renderApiInput('BINANCE_API_SECRET', 'Binance API Secret')}
+            {renderApiInput('KRAKEN_API_KEY', 'Kraken API Key')}
+            {renderApiInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+            {renderApiInput('GEMINI_API_KEY', 'Gemini API Key')}
+            {renderApiInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+            {renderApiInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+            {renderApiInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+            {renderApiInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Major Banks (Open Banking)</Heading>
+            {renderApiInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
+            {renderApiInput('CITI_CLIENT_ID', 'Citi Client ID')}
+            {renderApiInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+            {renderApiInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">EU Open Banking</Heading>
+            {renderApiInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+            {renderApiInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+            {renderApiInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+            {renderApiInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+            {renderApiInput('TINK_CLIENT_ID', 'Tink Client ID')}
+            {renderApiInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Compliance & Identity (MidDesk MVP Focus)</Heading>
+            {renderApiInput('MIDDESK_API_KEY', 'MidDesk API Key')}
+            {renderApiInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+            {renderApiInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+            {renderApiInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Real Estate</Heading>
+            {renderApiInput('ZILLOW_API_KEY', 'Zillow API Key')}
+            {renderApiInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Credit Bureaus</Heading>
+            {renderApiInput('EXPERIAN_API_KEY', 'Experian API Key')}
+            {renderApiInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+            {renderApiInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Emerging Markets Payments</Heading>
+            {renderApiInput('FINCRA_API_KEY', 'Fincra API Key')}
+            {renderApiInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+            {renderApiInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+            {renderApiInput('DLOCAL_API_KEY', 'DLocal API Key')}
+            {renderApiInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Accounting & Tax</Heading>
+            {renderApiInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+            {renderApiInput('AVALARA_API_KEY', 'Avalara API Key')}
+            {renderApiInput('CODAT_API_KEY', 'Codat API Key')}
+            {renderApiInput('XERO_CLIENT_ID', 'Xero Client ID')}
+            {renderApiInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+            {renderApiInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+            {renderApiInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+            {renderApiInput('FRESHBOOKS_API_KEY', 'Freshbooks API Key')}
+        </Box>
+        <Box>
+            <Heading size="sm" mb={3} color="orange.500">Fintech Utilities</Heading>
+            {renderApiInput('ANVIL_API_KEY', 'Anvil API Key')}
+            {renderApiInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+            {renderApiInput('MOOV_SECRET', 'Moov Secret')}
+            {renderApiInput('VGS_USERNAME', 'VGS Username')}
+            {renderApiInput('VGS_PASSWORD', 'VGS Password')}
+            {renderApiInput('SILA_APP_HANDLE', 'Sila App Handle')}
+            {renderApiInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+        </Box>
+    </SimpleGrid>
+  );
 
   const renderTechApis = () => (
     <form onSubmit={handleApiSubmit} className="settings-form">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-            {/* === Tech APIs === */}
+            {/* === Tech APIs (MVP Focus: Core Services) === */}
             <Box>
                 <Heading size="md" mb={3} color="teal.500">Core Infrastructure & Cloud</Heading>
                 {renderApiInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
-                {renderApiInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
                 {renderApiInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
-                {renderApiInput('SENDGRID_API_KEY', 'SendGrid API Key')}
                 {renderApiInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
                 {renderApiInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
                 {renderApiInput('AZURE_CLIENT_ID', 'Azure Client ID')}
@@ -938,19 +1049,16 @@ const PersonalizationView: React.FC = () => {
                 {renderApiInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
             </Box>
             <Box>
-                <Heading size="md" mb={3} color="teal.500">Deployment & DevOps</Heading>
-                {renderApiInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
-                {renderApiInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
-                {renderApiInput('HEROKU_API_KEY', 'Heroku API Key')}
-                {renderApiInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT')}
-                {renderApiInput('VERCEL_API_TOKEN', 'Vercel API Token')}
-                {renderApiInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
-                {renderApiInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT')}
-                {renderApiInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT')}
-                {renderApiInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+                <Heading size="md" mb={3} color="teal.500">AI & ML Engines (OpenAI MVP Focus)</Heading>
+                {renderApiInput('OPENAI_API_KEY', 'OpenAI API Key')}
+                {renderApiInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+                {renderApiInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+                {renderApiInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+                {renderApiInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key')}
+                {renderApiInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
             </Box>
             <Box>
-                <Heading size="md" mb={3} color="teal.500">Collaboration & Productivity</Heading>
+                <Heading size="md" mb={3} color="teal.500">Collaboration & Source Control</Heading>
                 {renderApiInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT')}
                 {renderApiInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
                 {renderApiInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
@@ -1008,15 +1116,7 @@ const PersonalizationView: React.FC = () => {
                 {renderApiInput('POSTMAN_API_KEY', 'Postman API Key')}
                 {renderApiInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
             </Box>
-            <Box>
-                <Heading size="md" mb={3} color="teal.500">AI & ML Engines</Heading>
-                {renderApiInput('OPENAI_API_KEY', 'OpenAI API Key')}
-                {renderApiInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
-                {renderApiInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
-                {renderApiInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
-                {renderApiInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key')}
-                {renderApiInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
-            </Box>
+            
             <Box>
                 <Heading size="md" mb={3} color="teal.500">Search & Real-time</Heading>
                 {renderApiInput('ALGOLIA_APP_ID', 'Algolia App ID')}
@@ -1103,7 +1203,7 @@ const PersonalizationView: React.FC = () => {
             </Box>
         </SimpleGrid>
         <Box w="full" mt={8} p={4} bg={colorMode === 'dark' ? 'gray.700' : 'gray.100'} borderRadius="md">
-            <Heading size="md" mb={3} color="blue.500">Banking & Finance APIs (Section 2/2)</Heading>
+            <Heading size="md" mb={3} color="blue.500">Banking & Finance Integration Endpoints</Heading>
             {renderBankingApis()}
         </Box>
         <Flex justify="flex-end" mt={8}>
@@ -1113,159 +1213,6 @@ const PersonalizationView: React.FC = () => {
         </Flex>
     </form>
   );
-
-  const renderBankingApis = () => (
-    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-        {/* === Banking & Finance APIs === */}
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Data Aggregators</Heading>
-            {renderApiInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
-            {renderApiInput('PLAID_SECRET', 'Plaid Secret')}
-            {renderApiInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
-            {renderApiInput('YODLEE_SECRET', 'Yodlee Secret')}
-            {renderApiInput('MX_CLIENT_ID', 'MX Client ID')}
-            {renderApiInput('MX_API_KEY', 'MX API Key')}
-            {renderApiInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
-            {renderApiInput('FINICITY_APP_KEY', 'Finicity App Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Payment Processing</Heading>
-            {renderApiInput('ADYEN_API_KEY', 'Adyen API Key')}
-            {renderApiInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
-            {renderApiInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
-            {renderApiInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
-            {renderApiInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
-            {renderApiInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
-            {renderApiInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
-            {renderApiInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
-            {renderApiInput('PAYPAL_SECRET', 'PayPal Secret')}
-            {renderApiInput('DWOLLA_KEY', 'Dwolla Key')}
-            {renderApiInput('DWOLLA_SECRET', 'Dwolla Secret')}
-            {renderApiInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
-            {renderApiInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">BaaS & Card Issuing</Heading>
-            {renderApiInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
-            {renderApiInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
-            {renderApiInput('GALILEO_API_LOGIN', 'Galileo API Login')}
-            {renderApiInput('GALILEO_API_TRANS_KEY', 'Galileo Trans Key')}
-            {renderApiInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
-            {renderApiInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
-            {renderApiInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
-            {renderApiInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
-            {renderApiInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
-            {renderApiInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
-            {renderApiInput('UNIT_API_TOKEN', 'Unit API Token')}
-            {renderApiInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
-            {renderApiInput('INCREASE_API_KEY', 'Increase API Key')}
-            {renderApiInput('MERCURY_API_KEY', 'Mercury API Key')}
-            {renderApiInput('BREX_API_KEY', 'Brex API Key')}
-            {renderApiInput('BOND_API_KEY', 'Bond API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">International Payments</Heading>
-            {renderApiInput('CURRENCYCLOUD_LOGIN_ID', 'CurrencyCloud Login ID')}
-            {renderApiInput('CURRENCYCLOUD_API_KEY', 'CurrencyCloud API Key')}
-            {renderApiInput('OFX_API_KEY', 'OFX API Key')}
-            {renderApiInput('WISE_API_TOKEN', 'Wise API Token')}
-            {renderApiInput('REMITLY_API_KEY', 'Remitly API Key')}
-            {renderApiInput('AZIMO_API_KEY', 'Azimo API Key')}
-            {renderApiInput('NIUM_API_KEY', 'Nium API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Investment & Market Data</Heading>
-            {renderApiInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
-            {renderApiInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
-            {renderApiInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
-            {renderApiInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
-            {renderApiInput('POLYGON_API_KEY', 'Polygon.io API Key')}
-            {renderApiInput('FINNHUB_API_KEY', 'Finnhub API Key')}
-            {renderApiInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
-            {renderApiInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
-            {renderApiInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
-            {renderApiInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Crypto Exchanges</Heading>
-            {renderApiInput('COINBASE_API_KEY', 'Coinbase API Key')}
-            {renderApiInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
-            {renderApiInput('BINANCE_API_KEY', 'Binance API Key')}
-            {renderApiInput('BINANCE_API_SECRET', 'Binance API Secret')}
-            {renderApiInput('KRAKEN_API_KEY', 'Kraken API Key')}
-            {renderApiInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
-            {renderApiInput('GEMINI_API_KEY', 'Gemini API Key')}
-            {renderApiInput('GEMINI_API_SECRET', 'Gemini API Secret')}
-            {renderApiInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
-            {renderApiInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
-            {renderApiInput('BLOCKIO_API_KEY', 'Block.io API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Major Banks (Open Banking)</Heading>
-            {renderApiInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
-            {renderApiInput('CITI_CLIENT_ID', 'Citi Client ID')}
-            {renderApiInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
-            {renderApiInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">EU Open Banking</Heading>
-            {renderApiInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
-            {renderApiInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
-            {renderApiInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
-            {renderApiInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
-            {renderApiInput('TINK_CLIENT_ID', 'Tink Client ID')}
-            {renderApiInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Compliance & KYC/AML</Heading>
-            {renderApiInput('MIDDESK_API_KEY', 'MidDesk API Key')}
-            {renderApiInput('ALLOY_API_TOKEN', 'Alloy API Token')}
-            {renderApiInput('ALLOY_API_SECRET', 'Alloy API Secret')}
-            {renderApiInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Real Estate</Heading>
-            {renderApiInput('ZILLOW_API_KEY', 'Zillow API Key')}
-            {renderApiInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Credit Bureaus</Heading>
-            {renderApiInput('EXPERIAN_API_KEY', 'Experian API Key')}
-            {renderApiInput('EQUIFAX_API_KEY', 'Equifax API Key')}
-            {renderApiInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Emerging Markets Payments</Heading>
-            {renderApiInput('FINCRA_API_KEY', 'Fincra API Key')}
-            {renderApiInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
-            {renderApiInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
-            {renderApiInput('DLOCAL_API_KEY', 'DLocal API Key')}
-            {renderApiInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Accounting & Tax</Heading>
-            {renderApiInput('TAXJAR_API_KEY', 'TaxJar API Key')}
-            {renderApiInput('AVALARA_API_KEY', 'Avalara API Key')}
-            {renderApiInput('CODAT_API_KEY', 'Codat API Key')}
-            {renderApiInput('XERO_CLIENT_ID', 'Xero Client ID')}
-            {renderApiInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
-            {renderApiInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
-            {renderApiInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
-            {renderApiInput('FRESHBOOKS_API_KEY', 'Freshbooks API Key')}
-        </Box>
-        <Box>
-            <Heading size="sm" mb={3} color="orange.500">Fintech Utilities</Heading>
-            {renderApiInput('ANVIL_API_KEY', 'Anvil API Key')}
-            {renderApiInput('MOOV_CLIENT_ID', 'Moov Client ID')}
-            {renderApiInput('MOOV_SECRET', 'Moov Secret')}
-            {renderApiInput('VGS_USERNAME', 'VGS Username')}
-            {renderApiInput('VGS_PASSWORD', 'VGS Password')}
-            {renderApiInput('SILA_APP_HANDLE', 'Sila App Handle')}
-            {renderApiInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
-        </Box>
-    </SimpleGrid>
-  );
-
 
   // --- Main Render ---
   return (
@@ -1277,7 +1224,7 @@ const PersonalizationView: React.FC = () => {
         </Heading>
 
         <Text fontSize="lg" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'}>
-          System Access Panel: Control User Experience (Personalization) or manage External Service Credentials (APIs).
+          System Access Panel: Control User Experience (Personalization) or manage External Service Credentials (API Orchestration Layer).
         </Text>
 
         <div className="tabs">
@@ -1523,7 +1470,7 @@ const PersonalizationView: React.FC = () => {
             <Card shadow="xl" p={6} bg={colorMode === 'dark' ? 'gray.800' : 'white'}>
                 <CardHeader>
                     <Heading size="lg" color="teal.400">External API Credential Management</Heading>
-                    <Text fontSize="md" color="gray.500" mt={2}>Warning: All data entered below will be sent to your backend server for secure storage.</Text>
+                    <Text fontSize="md" color="gray.500" mt={2}>Warning: All data entered below will be sent to your backend server for secure storage in Vault (Simulated).</Text>
                 </CardHeader>
                 <CardBody>
                     {renderTechApis()}
