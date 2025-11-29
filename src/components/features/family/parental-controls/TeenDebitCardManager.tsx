@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Lock, Unlock, CreditCard, ClipboardList, CircleDollarSign, TrendingUp, TrendingDown, CheckCircle, MoreVertical, Settings, User } from 'lucide-react';
 
-// --- UI Component Definitions (Shadcn/ui Mock) ---
+// UI Component Definitions
 const Card = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => <div className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg ${className}`}>{children}</div>;
 const CardHeader = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => <div className={`p-6 border-b border-gray-200 dark:border-gray-800 ${className}`}>{children}</div>;
 const CardTitle = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => <h3 className={`text-lg font-semibold text-gray-900 dark:text-gray-100 ${className}`}>{children}</h3>;
@@ -54,7 +54,7 @@ const Badge = ({ children, variant = 'default', className = '' }: { children: Re
     return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses[variant]} ${className}`}>{children}</span>
 };
 
-// --- Type Definitions (Expanded for AI Features) ---
+// Type Definitions
 interface Merchant {
   name: string;
   category: string;
@@ -142,7 +142,7 @@ interface Teen {
   aiInsights: AISpendingInsight[];
 }
 
-// --- Utility Functions ---
+// Utility Functions
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 };
@@ -175,7 +175,7 @@ const generateMockTransactions = (count: number): Transaction[] => {
     return txs;
 };
 
-// --- Mock Data (Expanded) ---
+// Mock Data
 const MOCK_TEENS: Teen[] = [
   {
     id: 'teen-1',
@@ -244,8 +244,7 @@ const MOCK_TEENS: Teen[] = [
   },
 ];
 
-// --- Sub-Components (AI Features) ---
-
+// Sub-Components
 const BehavioralScorecard = React.memo(({ scoreData }: { scoreData: BehavioralScore }) => {
     const { score, factors, aiAnalysis } = scoreData;
     const scoreColor = score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-red-600';
@@ -618,7 +617,7 @@ const AICoachingChat = React.memo(() => {
 });
 
 
-// --- Main Component ---
+// Main Component
 export default function TeenDebitCardManager() {
   const [teens, setTeens] = useState<Teen[]>(MOCK_TEENS);
   const [selectedTeenId, setSelectedTeenId] = useState<string | null>(MOCK_TEENS[0]?.id || null);
@@ -790,7 +789,7 @@ export default function TeenDebitCardManager() {
                                 <User className="w-5 h-5" />
                                 {selectedTeen.name}'s Financial Overview
                             </CardTitle>
-                            <CardDescription>Card ending in â€¢â€¢â€¢â€¢ {selectedTeen.card.last4}</CardDescription>
+                            <CardDescription>Card ending in Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢ {selectedTeen.card.last4}</CardDescription>
                         </div>
                         <Button variant="ghost" size="icon">
                             <MoreVertical className="w-5 h-5"/>
