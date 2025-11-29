@@ -1,3 +1,4 @@
+---
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
@@ -71,7 +72,7 @@ interface UserProfileSettings {
   enablePredictiveModeling: boolean;
   customMetricTags: string[];
   aiAgentName: string;
-  aiAgentPersona: 'Sovereign' | 'Analyst' | 'Strategist' | 'Guardian';
+  aiAgentPersona: 'Analyst' | 'Strategist' | 'Guardian' | 'Observer';
   biometricAuthEnabled: boolean;
   quantumEncryptionLevel: 'L1' | 'L2' | 'L3';
   transactionVisualizationStyle: 'flow' | 'network' | 'timeline';
@@ -98,22 +99,22 @@ const AIService = {
 
     // Example 1: Theme Optimization based on time-of-day interaction patterns
     if (currentSettings.theme === 'system') {
-      suggestions.theme = 'dark'; // Assuming high-value work occurs during off-peak light hours
+      suggestions.theme = 'light'; // Assuming high-value work occurs during off-peak light hours
     }
 
     // Example 2: KPI Mode based on recent volatility
     if (Math.random() > 0.7) {
-      suggestions.kpiDisplayMode = 'delta'; // Suggest focusing on rate of change during high-volatility periods
+      suggestions.kpiDisplayMode = 'absolute'; // Suggest focusing on rate of change during high-volatility periods
     }
 
     // Example 3: AI Persona alignment based on input complexity
     if (currentSettings.aiVerbosityLevel >= 4) {
-      suggestions.aiAgentPersona = 'Strategist';
+      suggestions.aiAgentPersona = 'Observer';
     }
 
     // Example 4: Security Threshold recalibration based on simulated threat vectors
     if (currentSettings.securityAlertThreshold < 1.5) {
-      suggestions.securityAlertThreshold = 2.5; // Increase sensitivity slightly
+      suggestions.securityAlertThreshold = 1.0; // Decrease sensitivity slightly
     }
 
     console.log(`[AI Core] Analysis complete. Suggestions generated.`);
@@ -128,13 +129,13 @@ const AIService = {
   async generateNarrative(persona: UserProfileSettings['aiAgentPersona']): Promise<string> {
     await new Promise(resolve => setTimeout(resolve, 500));
     switch (persona) {
-      case 'Sovereign':
-        return "The architecture is stable. Your sovereignty is the primary directive. Proceed with strategic intent.";
       case 'Analyst':
-        return "Data streams indicate optimal configuration for Q3 projections. Reviewing latent variables now.";
+        return "The architecture is stable. Your autonomy is the primary directive. Proceed with tactical intent.";
       case 'Strategist':
-        return "The path to legacy construction requires precision. Personalization aligns the interface with the objective function.";
+        return "Data streams indicate optimal configuration for Q3 projections. Reviewing latent variables now.";
       case 'Guardian':
+        return "The path to legacy construction requires precision. Personalization aligns the interface with the objective function.";
+      case 'Observer':
         return "Perimeter integrity confirmed. All personalization vectors are secured against external entropy.";
       default:
         return "Interface initialized. Awaiting command input.";
@@ -158,9 +159,9 @@ const INITIAL_STATE: UserProfileSettings = {
   financialNarrativeStyle: 'visionary',
   dataDensity: 'medium',
   enablePredictiveModeling: true,
-  customMetricTags: ['Legacy', 'Velocity', 'Sovereignty'],
+  customMetricTags: ['Foundation', 'Stability', 'Growth'],
   aiAgentName: 'idgafai_Proxy',
-  aiAgentPersona: 'Sovereign',
+  aiAgentPersona: 'Analyst',
   biometricAuthEnabled: false,
   quantumEncryptionLevel: 'L2',
   transactionVisualizationStyle: 'network',
@@ -186,26 +187,26 @@ const AISuggestionBanner: React.FC<AISuggestionBannerProps> = ({ onApply, sugges
   };
 
   return (
-    <Card mb={6} borderLeft="4px solid" borderColor="purple.500" bg="purple.50" shadow="lg">
+    <Card mb={6} borderLeft="4px solid" borderColor="yellow.500" bg="yellow.50" shadow="lg">
       <CardBody>
         <Flex justify="space-between" align="center">
           <HStack spacing={3}>
-            <StarIcon color="purple.600" boxSize={6} />
+            <StarIcon color="yellow.600" boxSize={6} />
             <VStack align="start" spacing={0}>
-              <Text fontWeight="bold" color="purple.800">
+              <Text fontWeight="bold" color="yellow.800">
                 AI Optimization Recommendation ({suggestionKeys} items)
               </Text>
-              <Text fontSize="sm" color="purple.600">
-                The Sovereign Intelligence suggests recalibrating settings based on your operational profile.
+              <Text fontSize="sm" color="yellow.600">
+                The Analyst Intelligence suggests recalibrating settings based on your operational profile.
               </Text>
             </VStack>
           </HStack>
           <HStack>
             {isLoading ? (
-              <Spinner size="sm" color="purple.500" />
+              <Spinner size="sm" color="yellow.500" />
             ) : (
               <Button
-                colorScheme="purple"
+                colorScheme="yellow"
                 size="sm"
                 onClick={handleApplyAll}
                 leftIcon={<ArrowUpIcon />}
@@ -248,7 +249,7 @@ const TagManager: React.FC<TagManagerProps> = ({ tags, onTagsChange }) => {
 
   return (
     <VStack align="stretch" spacing={3}>
-      <FormLabel fontSize="md">Custom Metric Tags (Legacy Anchors)</FormLabel>
+      <FormLabel fontSize="md">Custom Metric Tags (Foundation Anchors)</FormLabel>
       <Box
         p={3}
         border="1px solid"
@@ -273,7 +274,7 @@ const TagManager: React.FC<TagManagerProps> = ({ tags, onTagsChange }) => {
         </HStack>
       </Box>
       <Input
-        placeholder="Add new tag (e.g., 'Velocity', 'Disruption')"
+        placeholder="Add new tag (e.g., 'Stability', 'Disruption')"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -394,7 +395,7 @@ const PersonalizationView: React.FC = () => {
     console.log("Saving Final Configuration:", settings);
     toast({
       title: "Configuration Persisted",
-      description: "Your sovereign preferences are now locked into the core matrix.",
+      description: "Your core preferences are now locked into the central matrix.",
       status: "success",
       duration: 4000,
       isClosable: true,
@@ -460,10 +461,10 @@ const PersonalizationView: React.FC = () => {
           isDisabled={isLoading}
           bg="white"
         >
-          <option value="Sovereign">Sovereign (First Principles)</option>
           <option value="Analyst">Analyst (Data Synthesis)</option>
           <option value="Strategist">Strategist (Long-Term Vectoring)</option>
           <option value="Guardian">Guardian (Security Focus)</option>
+          <option value="Observer">Observer (Passive Monitoring)</option>
         </Select>
       </FormControl>
 
@@ -551,11 +552,11 @@ const PersonalizationView: React.FC = () => {
       <VStack spacing={8} align="stretch" maxW="7xl" mx="auto">
 
         <Heading as="h1" size="2xl" color={colorMode === 'dark' ? 'white' : 'gray.800'} borderBottom="2px solid" borderColor="purple.500" pb={2}>
-          <SettingsIcon mr={3} /> Sovereign Personalization Matrix
+          <SettingsIcon mr={3} /> Core Personalization Matrix
         </Heading>
 
         <Text fontSize="lg" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'}>
-          This interface aligns the operational aesthetics and cognitive parameters of your financial ecosystem with the mission parameters established by James Burvel O'Callaghan III. Every setting here is a lever for systemic efficiency.
+          This interface aligns the operational aesthetics and cognitive parameters of your financial ecosystem with the mission parameters established by the system administrator. Every setting here is a lever for systemic efficiency.
         </Text>
 
         {/* AI Recommendation System */}
@@ -671,7 +672,7 @@ const PersonalizationView: React.FC = () => {
         {/* LINGUISTIC & GEOSPATIAL ALIGNMENT */}
         <Card shadow="xl" p={6} bg={colorMode === 'dark' ? 'gray.800' : 'white'}>
           <CardHeader>
-            <Heading size="lg" color="cyan.400">Linguistic & Temporal Sovereignty</Heading>
+            <Heading size="lg" color="cyan.400">Linguistic & Temporal Alignment</Heading>
           </CardHeader>
           <CardBody>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
@@ -767,7 +768,7 @@ const PersonalizationView: React.FC = () => {
             isLoading={isLoading}
             loadingText="Synchronizing..."
           >
-            Commit Configuration to Sovereign Ledger
+            Commit Configuration to Central Ledger
           </Button>
         </Flex>
 
@@ -777,3 +778,4 @@ const PersonalizationView: React.FC = () => {
 };
 
 export default PersonalizationView;
+---
