@@ -1,668 +1,249 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { DataContext } from '../context/DataContext';
 import Card from './Card';
-import { View, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction } from '../types'; // Expanded types from existing import
+import { View, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction } from '../types';
 import { GoogleGenAI } from '@google/genai';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
+// ---------------------------------------------------------------------------
+// ENTERPRISE ANALYTICS TYPES & INTERFACES
+// ---------------------------------------------------------------------------
 
-// --- Start of New Exported Types and Data Generation Functions ---
-
-export type DailyVolumeData = {
+export type TimeSeriesData = {
     date: string;
-    volume: number;
-    amount: number;
+    value: number;
+    secondaryValue?: number;
+    tertiaryValue?: number;
 };
 
-export type MonthlySpendData = {
-    month: string;
-    [category: string]: string | number; // e.g., { month: 'Jan', 'T_E': 1000, 'Software': 500 }
+export type CategoricalData = {
+    category: string;
+    value: number;
+    percentage?: number;
+    color?: string;
 };
 
-export type InvoiceAgingData = {
-    bucket: string;
-    count: number;
-    amount: number;
+export type FinancialRatio = {
+    name: string;
+    value: number;
+    benchmark: number;
+    status: 'Healthy' | 'Warning' | 'Critical';
+    delta: number;
 };
 
-export type VendorSpendData = {
+export type VendorPerformanceMetric = {
     vendor: string;
-    amount: number;
+    totalSpend: number;
+    transactionCount: number;
+    avgTransactionValue: number;
+    riskScore: number;
+    lastInteraction: string;
 };
 
-export type DepartmentalBudgetVarianceData = {
+export type DepartmentalKPI = {
     department: string;
-    actualSpend: number;
-    budget: number;
-    variance: number;
-    variancePct: number;
+    budgetUtilization: number;
+    operationalEfficiency: number;
+    complianceScore: number;
+    headcountSpend: number;
 };
 
-export type PaymentMethodUsageData = {
-    method: string;
-    count: number;
-    totalAmount: number;
+export type RiskAssessmentData = {
+    riskCategory: string;
+    probability: number;
+    impact: number;
+    mitigationStatus: string;
+    exposureValue: number;
 };
 
-export type CashFlowTrendData = {
+export type CashFlowProjection = {
     period: string;
     inflow: number;
     outflow: number;
-    netCashFlow: number;
+    netPosition: number;
+    cumulativeCash: number;
 };
 
-export type FixedVariableCostData = {
-    type: 'Fixed' | 'Variable';
-    amount: number;
+export type AuditLogEntry = {
+    timestamp: string;
+    user: string;
+    action: string;
+    severity: 'Low' | 'Medium' | 'High' | 'Critical';
+    details: string;
 };
 
-export type GeographicSpendData = {
-    region: string;
-    amount: number;
+export type TaxLiabilityBreakdown = {
+    jurisdiction: string;
+    taxType: string;
+    estimatedAmount: number;
+    dueDate: string;
+    status: 'Accrued' | 'Paid' | 'Pending';
 };
 
-// NEW: Tax Liability Data
-export type TaxLiabilityData = {
-    vatEstimate: number;
-    payrollTaxEstimate: number;
-    corporateTaxEstimate: number;
-};
+// ---------------------------------------------------------------------------
+// ADVANCED DATA PROCESSING ENGINES
+// ---------------------------------------------------------------------------
 
-// NEW: Budget Allocation Summary Data
-export type BudgetAllocationSummaryData = {
-    department: string;
-    budget: number;
-    actualSpend: number;
-    variance: number;
-};
-
-// NEW: Audit Trail Metrics Data
-export type AuditTrailData = {
-    date: string;
-    failedLogins: number;
-    suspiciousActivities: number;
-    dataAccessViolations: number;
-};
-
-// NEW: Employee Expense Types
-export type EmployeeExpenseCategoryData = {
-    category: string;
-    amount: number;
-};
-
-export type EmployeeExpenseMetrics = {
-    totalExpenses: number;
-    averageExpense: number;
-    topCategories: EmployeeExpenseCategoryData[];
-    monthlyTrend: { month: string; amount: number }[];
-};
-
-// NEW: Contract Compliance Types
-export type ContractStatusData = {
-    totalContracts: number;
-    expiringSoon: number; // e.g., next 90 days
-    nonCompliant: number;
-    autoRenewals: number;
-};
-
-// Exported Data Generation Functions
-
-export const generateDailyTransactionVolumes = (transactions: CorporateTransaction[]): DailyVolumeData[] => {
-    const dailyData: { [key: string]: { volume: number; amount: number } } = {};
+/**
+ * Generates a comprehensive daily volume analysis for transaction processing.
+ */
+export const generateDailyTransactionAnalytics = (transactions: CorporateTransaction[]): TimeSeriesData[] => {
+    const dailyMap: Record<string, { count: number; amount: number }> = {};
     transactions.forEach(tx => {
-        const date = new Date(tx.date).toISOString().split('T')[0]; // YYYY-MM-DD
-        if (!dailyData[date]) {
-            dailyData[date] = { volume: 0, amount: 0 };
-        }
-        dailyData[date].volume += 1;
-        dailyData[date].amount += tx.amount;
+        const date = new Date(tx.date).toISOString().split('T')[0];
+        if (!dailyMap[date]) dailyMap[date] = { count: 0, amount: 0 };
+        dailyMap[date].count++;
+        dailyMap[date].amount += tx.amount;
     });
-    return Object.entries(dailyData)
-        .map(([date, data]) => ({ date, ...data }))
+    return Object.entries(dailyMap)
+        .map(([date, data]) => ({ date, value: data.amount, secondaryValue: data.count }))
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 
-export const generateMonthlySpendByCategory = (transactions: CorporateTransaction[]): MonthlySpendData[] => {
-    const monthlyData: { [key: string]: { [category: string]: number } } = {};
-    transactions.forEach(tx => {
-        const month = new Date(tx.date).toISOString().substring(0, 7); // YYYY-MM
-        const category = tx.merchant.includes('Steakhouse') || tx.merchant.includes('Lunch') || tx.description.includes('Travel') ? 'T_E' :
-                         tx.merchant.includes('Cloud') || tx.merchant.includes('Software') || tx.description.includes('Software License') ? 'Software' :
-                         tx.merchant.includes('Marketing') || tx.description.includes('Ad') ? 'Marketing' :
-                         tx.merchant.includes('Rent') || tx.merchant.includes('Utilities') ? 'Facilities' :
-                         tx.description.includes('Payroll') || tx.description.includes('Salaries') ? 'Salaries' :
-                         'Other';
-        if (!monthlyData[month]) {
-            monthlyData[month] = { T_E: 0, Software: 0, Marketing: 0, Facilities: 0, Salaries: 0, Other: 0 };
-        }
-        monthlyData[month][category] = (monthlyData[month][category] || 0) + tx.amount;
-    });
-
-    return Object.entries(monthlyData)
-        .map(([month, data]) => ({ month, ...data }))
-        .sort((a, b) => a.month.localeCompare(b.month));
+/**
+ * Calculates sophisticated financial ratios based on available ledger data.
+ */
+export const calculateEnterpriseFinancialRatios = (invoices: Invoice[], orders: PaymentOrder[], transactions: CorporateTransaction[]): FinancialRatio[] => {
+    const currentAssets = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + i.amount, 0);
+    const currentLiabilities = orders.filter(o => o.status !== 'paid').reduce((sum, o) => sum + o.amount, 0);
+    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
+    const totalExpenses = transactions.reduce((sum, t) => sum + t.amount, 0);
+    
+    const currentRatio = currentLiabilities > 0 ? currentAssets / currentLiabilities : 0;
+    const netProfitMargin = totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
+    const burnRate = totalExpenses / 30; // Assuming 30 day period for simplicity of calculation context
+    
+    return [
+        { name: 'Current Ratio', value: currentRatio, benchmark: 1.5, status: currentRatio > 1.5 ? 'Healthy' : currentRatio > 1.0 ? 'Warning' : 'Critical', delta: 0.1 },
+        { name: 'Net Profit Margin', value: netProfitMargin, benchmark: 20, status: netProfitMargin > 20 ? 'Healthy' : netProfitMargin > 10 ? 'Warning' : 'Critical', delta: -2.5 },
+        { name: 'Daily Burn Rate', value: burnRate, benchmark: 5000, status: burnRate < 5000 ? 'Healthy' : 'Warning', delta: 12.4 }
+    ];
 };
 
-export const generateInvoiceAgingBuckets = (invoices: Invoice[]): InvoiceAgingData[] => {
-    const now = new Date();
-    const buckets = {
-        '0-30 Days': { count: 0, amount: 0 },
-        '31-60 Days': { count: 0, amount: 0 },
-        '61-90 Days': { count: 0, amount: 0 },
-        '90+ Days': { count: 0, amount: 0 },
-    };
-
-    invoices.filter(i => i.status === 'overdue' || i.status === 'pending').forEach(inv => {
-        const dueDate = new Date(inv.dueDate);
-        const diffTime = now.getTime() - dueDate.getTime(); // Positive if overdue
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays <= 30) {
-            buckets['0-30 Days'].count++;
-            buckets['0-30 Days'].amount += inv.amount;
-        } else if (diffDays <= 60) {
-            buckets['31-60 Days'].count++;
-            buckets['31-60 Days'].amount += inv.amount;
-        } else if (diffDays <= 90) {
-            buckets['61-90 Days'].count++;
-            buckets['61-90 Days'].amount += inv.amount;
-        } else {
-            buckets['90+ Days'].count++;
-            buckets['90+ Days'].amount += inv.amount;
-        }
-    });
-
-    return Object.entries(buckets).map(([bucket, data]) => ({ bucket, ...data }));
-};
-
-export const generatePaymentApprovalMetrics = (paymentOrders: PaymentOrder[]): { avgTimeHours: number; overThresholdCount: number; throughputLast30Days: number } => {
-    let totalApprovalTime = 0; // in hours
-    let approvedCount = 0;
-    let overThresholdCount = 0;
-    const approvalThresholdHours = 48; // 2 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    let throughputCount = 0;
-
-    paymentOrders.forEach(po => {
-        if (po.status === 'approved') {
-            if (po.requestDate && po.approvalDate) {
-                const request = new Date(po.requestDate).getTime();
-                const approval = new Date(po.approvalDate).getTime();
-                const diffHours = (approval - request) / (1000 * 60 * 60);
-                totalApprovalTime += diffHours;
-                approvedCount++;
-                if (diffHours > approvalThresholdHours) {
-                    overThresholdCount++;
-                }
-            }
-        }
-        if (po.requestDate && new Date(po.requestDate) >= thirtyDaysAgo) { // Use requestDate for throughput
-             throughputCount++;
-        }
-    });
-    return {
-        avgTimeHours: approvedCount > 0 ? totalApprovalTime / approvedCount : 0,
-        overThresholdCount: overThresholdCount,
-        throughputLast30Days: throughputCount,
-    };
-};
-
-export const generateComplianceCaseResolutionMetrics = (cases: ComplianceCase[]): { avgTimeDays: number; overThresholdCount: number; criticalCases: number } => {
-    let totalResolutionTime = 0; // in days
-    let resolvedCount = 0;
-    let overThresholdCount = 0;
-    let criticalCases = 0;
-    const resolutionThresholdDays = 30; // 30 days
-
-    cases.forEach(c => {
-        if (c.status === 'closed') {
-            if (c.openDate && c.closeDate) {
-                const open = new Date(c.openDate).getTime();
-                const close = new Date(c.closeDate).getTime();
-                const diffDays = (close - open) / (1000 * 60 * 60 * 24);
-                totalResolutionTime += diffDays;
-                resolvedCount++;
-                if (diffDays > resolutionThresholdDays) {
-                    overThresholdCount++;
-                }
-            }
-        }
-        if (c.priority === 'high' && c.status === 'open') {
-            criticalCases++;
-        }
-    });
-    return {
-        avgTimeDays: resolvedCount > 0 ? totalResolutionTime / resolvedCount : 0,
-        overThresholdCount: overThresholdCount,
-        criticalCases: criticalCases,
-    };
-};
-
-export const generateVendorSpendDistribution = (transactions: CorporateTransaction[]): VendorSpendData[] => {
-    const vendorSpend: { [vendor: string]: number } = {};
-    transactions.forEach(tx => {
-        const vendor = tx.merchant; // Using merchant as vendor for simplicity
-        vendorSpend[vendor] = (vendorSpend[vendor] || 0) + tx.amount;
-    });
-    return Object.entries(vendorSpend)
-        .map(([vendor, amount]) => ({ vendor, amount }))
-        .sort((a, b) => b.amount - a.amount);
-};
-
-export const generateDepartmentalBudgetVariance = (transactions: CorporateTransaction[]): DepartmentalBudgetVarianceData[] => {
-    const budgets = {
-        'IT': 150000, 'Marketing': 100000, 'Operations': 200000, 'HR': 75000, 'Finance': 50000, 'R&D': 120000, 'Facilities': 80000, 'Salaries': 300000, 'Legal': 20000, 'Other': 50000
-    };
-    const departmentalSpend: { [department: string]: number } = {};
-
-    transactions.forEach(tx => {
-        let department = 'Other';
-        if (tx.merchant.includes('Cloud') || tx.merchant.includes('Software') || tx.merchant.includes('Hardware')) department = 'IT';
-        else if (tx.merchant.includes('Marketing') || tx.description.includes('Ad Campaign')) department = 'Marketing';
-        else if (tx.merchant.includes('Logistics') || tx.description.includes('Supplies') || tx.description.includes('Office Equipment')) department = 'Operations';
-        else if (tx.merchant.includes('Recruitment') || tx.description.includes('Training') || tx.description.includes('Payroll')) department = 'HR';
-        else if (tx.description.includes('Audit') || tx.description.includes('Accounting')) department = 'Finance';
-        else if (tx.description.includes('Research') || tx.description.includes('Development')) department = 'R&D';
-        else if (tx.merchant.includes('Rent') || tx.merchant.includes('Utilities') || tx.merchant.includes('Maintenance')) department = 'Facilities';
-        else if (tx.description.includes('Legal Fees') || tx.merchant.includes('Law Firm')) department = 'Legal';
-        else if (tx.description.includes('Salaries')) department = 'Salaries';
-
-        departmentalSpend[department] = (departmentalSpend[department] || 0) + tx.amount;
-    });
-
-    // Ensure all budget categories are present, even if spend is 0
-    return Object.entries(budgets).map(([department, budget]) => {
-        const actualSpend = departmentalSpend[department] || 0;
-        const variance = actualSpend - budget;
-        const variancePct = budget > 0 ? (variance / budget) * 100 : 0;
-        return { department, actualSpend, budget, variance, variancePct };
-    });
-};
-
-export const generatePaymentMethodUsage = (paymentOrders: PaymentOrder[]): PaymentMethodUsageData[] => {
-    const methodUsage: { [method: string]: { count: number; totalAmount: number } } = {};
-    paymentOrders.forEach(po => {
-        const method = po.paymentMethod || 'Bank Transfer'; // Defaulting to Bank Transfer
-        if (!methodUsage[method]) {
-            methodUsage[method] = { count: 0, totalAmount: 0 };
-        }
-        methodUsage[method].count++;
-        methodUsage[method].totalAmount += po.amount;
-    });
-    return Object.entries(methodUsage).map(([method, data]) => ({ method, ...data }));
-};
-
-export const generateTopExpenses = (transactions: CorporateTransaction[], count: number = 5): VendorSpendData[] => {
-    const expenseAgg: { [item: string]: number } = {};
-    transactions.forEach(tx => {
-        expenseAgg[tx.description] = (expenseAgg[tx.description] || 0) + tx.amount;
-    });
-    return Object.entries(expenseAgg)
-        .map(([item, amount]) => ({ vendor: item, amount })) // Reusing VendorSpendData type for consistency
-        .sort((a, b) => b.amount - a.amount)
-        .slice(0, count);
-};
-
-export const generateOperatingCashFlowTrend = (transactions: CorporateTransaction[], invoices: Invoice[]): CashFlowTrendData[] => {
-    const cashFlowByMonth: { [month: string]: { inflow: number; outflow: number } } = {};
-
-    transactions.forEach(tx => {
-        const month = new Date(tx.date).toISOString().substring(0, 7);
-        if (!cashFlowByMonth[month]) cashFlowByMonth[month] = { inflow: 0, outflow: 0 };
-        cashFlowByMonth[month].outflow += tx.amount;
-    });
-
-    invoices.filter(inv => inv.status === 'paid').forEach(inv => {
-        const paymentDate = inv.paymentDate ? new Date(inv.paymentDate) : new Date(inv.issueDate); // Use paymentDate if available
-        const month = paymentDate.toISOString().substring(0, 7);
-        if (!cashFlowByMonth[month]) cashFlowByMonth[month] = { inflow: 0, outflow: 0 };
-        cashFlowByMonth[month].inflow += inv.amount;
-    });
-
-    return Object.entries(cashFlowByMonth)
-        .map(([month, data]) => ({
-            period: month,
-            inflow: data.inflow,
-            outflow: data.outflow,
-            netCashFlow: data.inflow - data.outflow,
-        }))
-        .sort((a, b) => a.period.localeCompare(b.period));
-};
-
-export const generateFixedVsVariableCosts = (transactions: CorporateTransaction[]): FixedVariableCostData[] => {
-    let fixedCost = 0;
-    let variableCost = 0;
-
-    transactions.forEach(tx => {
-        if (tx.merchant.includes('Rent') || tx.description.includes('Subscription Fee') || tx.description.includes('Insurance Premium')) {
-            fixedCost += tx.amount;
-        } else if (tx.merchant.includes('Supplies') || tx.merchant.includes('Travel') || tx.description.includes('Consulting Fees') || tx.description.includes('Marketing Campaign')) {
-            variableCost += tx.amount;
-        } else {
-            // Default to variable if not explicitly fixed
-            variableCost += tx.amount;
-        }
-    });
-
-    return [{ type: 'Fixed', amount: fixedCost }, { type: 'Variable', amount: variableCost }];
-};
-
-export const generateGeographicSpendDistribution = (transactions: CorporateTransaction[]): GeographicSpendData[] => {
-    const geoSpend: { [region: string]: number } = {};
-    const regions = ['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania'];
-
-    transactions.forEach(tx => {
-        const region = regions[Math.floor(Math.random() * regions.length)]; // Simulate region
-        geoSpend[region] = (geoSpend[region] || 0) + tx.amount;
-    });
-    return Object.entries(geoSpend).map(([region, amount]) => ({ region, amount }));
-};
-
-export const calculateDSO = (invoices: Invoice[]): number => {
-    const paidInvoices = invoices.filter(i => i.status === 'paid' && i.paymentDate && i.issueDate);
-    if (paidInvoices.length === 0) return 0;
-
-    let totalDays = 0;
-    let totalAmount = 0;
-    paidInvoices.forEach(inv => {
-        const issueDate = new Date(inv.issueDate).getTime();
-        const paymentDate = new Date(inv.paymentDate!).getTime();
-        const days = (paymentDate - issueDate) / (1000 * 60 * 60 * 24);
-        totalDays += days * inv.amount;
-        totalAmount += inv.amount;
-    });
-
-    return totalAmount > 0 ? totalDays / totalAmount : 0;
-};
-
-export const calculateDPO = (paymentOrders: PaymentOrder[]): number => {
-    const paidOrders = paymentOrders.filter(po => po.status === 'paid' && po.paymentDate && po.requestDate);
-    if (paidOrders.length === 0) return 0;
-
-    let totalDays = 0;
-    let totalAmount = 0;
-    paidOrders.forEach(po => {
-        const requestDate = new Date(po.requestDate).getTime();
-        const paymentDate = new Date(po.paymentDate!).getTime();
-        const days = (paymentDate - requestDate) / (1000 * 60 * 60 * 24);
-        totalDays += days * po.amount;
-        totalAmount += po.amount;
-    });
-
-    return totalAmount > 0 ? totalDays / totalAmount : 0;
-};
-
-export const calculateCurrentRatio = (invoices: Invoice[], paymentOrders: PaymentOrder[]): number => {
-    const currentAssets = invoices.filter(i => i.status !== 'paid').reduce((acc, inv) => acc + inv.amount, 0); // Accounts Receivable
-    const currentLiabilities = paymentOrders.filter(po => po.status === 'needs_approval' || po.status === 'pending').reduce((acc, po) => acc + po.amount, 0); // Accounts Payable
-    if (currentLiabilities === 0) return Infinity;
-    return currentAssets / currentLiabilities;
-};
-
-export const calculateQuickRatio = (invoices: Invoice[], paymentOrders: PaymentOrder[]): number => {
-    const currentAssets = invoices.filter(i => i.status !== 'paid').reduce((acc, inv) => acc + inv.amount, 0); // Accounts Receivable
-    // Assuming no inventory data, quick assets = current assets
-    const quickAssets = currentAssets;
-    const currentLiabilities = paymentOrders.filter(po => po.status === 'needs_approval' || po.status === 'pending').reduce((acc, po) => acc + po.amount, 0); // Accounts Payable
-    if (currentLiabilities === 0) return Infinity;
-    return quickAssets / currentLiabilities;
-};
-
-export const simulateFraudDetectionMetrics = (transactions: CorporateTransaction[], complianceCases: ComplianceCase[]): { highRiskTxnCount: number; flaggedVendors: number; totalFlags: number; foreignCurrencySpend: number; foreignCurrencyTxns: number } => {
-    let highRiskTxnCount = 0;
-    const flaggedVendors = new Set<string>();
-    let totalFlags = 0;
-    let foreignCurrencySpend = 0;
-    let foreignCurrencyTxns = 0;
-
-    transactions.forEach(tx => {
-        // Simple heuristic: large amounts, unusual merchants, or frequent small transactions
-        if (tx.amount > 15000 || tx.merchant.includes('DarkWeb') || (tx.amount < 50 && Math.random() < 0.1)) {
-            highRiskTxnCount++;
-            flaggedVendors.add(tx.merchant);
-            totalFlags++;
-        }
-        // Simulate foreign currency
-        if (Math.random() < 0.05) { // 5% of transactions are foreign currency
-            foreignCurrencyTxns++;
-            foreignCurrencySpend += tx.amount;
-        }
-    });
-
-    // Also consider compliance cases as flags
-    complianceCases.forEach(c => {
-        if (c.severity === 'high' || c.description.includes('fraud')) {
-            totalFlags++;
-            if (c.relatedEntity) flaggedVendors.add(c.relatedEntity);
-        }
-    });
-
-    return { highRiskTxnCount, flaggedVendors: flaggedVendors.size, totalFlags, foreignCurrencySpend, foreignCurrencyTxns };
-};
-
-export const simulateFinancialRatios = (invoices: Invoice[], transactions: CorporateTransaction[]): { grossProfitMargin: number; netProfitMargin: number; roi: number; cashConversionCycle: number; equityRatio: number; debtToEquityRatio: number } => {
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, inv) => acc + inv.amount, 0);
-    const totalExpenses = transactions.reduce((acc, tx) => acc + tx.amount, 0);
-
-    // Simulate Cost of Goods Sold (COGS) as a percentage of revenue
-    const cogs = totalRevenue * (0.4 + Math.random() * 0.1); // 40-50%
-    const grossProfit = totalRevenue - cogs;
-    const grossProfitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
-
-    // Simulate Operating Expenses as a percentage of revenue
-    const operatingExpenses = totalRevenue * (0.2 + Math.random() * 0.05); // 20-25%
-    const netProfit = grossProfit - operatingExpenses; // Simplified net profit
-    const netProfitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
-
-    const roi = Math.random() * 20 + 5; // Simulate 5-25% ROI
-    const cashConversionCycle = Math.random() * 60 + 30; // Simulate 30-90 days
-
-    // Simulate balance sheet items
-    const totalAssets = 5000000 + Math.random() * 1000000;
-    const totalEquity = totalAssets * (0.6 + Math.random() * 0.1); // 60-70% equity
-    const totalDebt = totalAssets - totalEquity;
-
-    const equityRatio = totalAssets > 0 ? (totalEquity / totalAssets) * 100 : 0;
-    const debtToEquityRatio = totalEquity > 0 ? totalDebt / totalEquity : Infinity;
-
-    return { grossProfitMargin, netProfitMargin, roi, cashConversionCycle, equityRatio, debtToEquityRatio };
-};
-
-export const simulateBudgetSummary = (transactions: CorporateTransaction[]): { totalBudgetAllocated: number; budgetVarianceTotal: number } => {
-    const budgets = generateDepartmentalBudgetVariance(transactions); // Reuse department budgets
-    const totalBudgetAllocated = budgets.reduce((acc, b) => acc + b.budget, 0);
-    const budgetVarianceTotal = budgets.reduce((acc, b) => acc + b.variance, 0);
-    return { totalBudgetAllocated, budgetVarianceTotal };
-};
-
-export const simulateDetailedSpendBreakdown = (transactions: CorporateTransaction[]): { saasSpend: number; utilitiesSpend: number; marketingSpend: number; rdSpend: number; employeeReimbursementSpend: number; itInfrastructureSpend: number; legalFees: number; consultingFees: number; officeSuppliesSpend: number; travelSpend: number; entertainmentSpend: number } => {
-    let saasSpend = 0;
-    let utilitiesSpend = 0;
-    let marketingSpend = 0;
-    let rdSpend = 0;
-    let employeeReimbursementSpend = 0;
-    let itInfrastructureSpend = 0;
-    let legalFees = 0;
-    let consultingFees = 0;
-    let officeSuppliesSpend = 0;
-    let travelSpend = 0;
-    let entertainmentSpend = 0;
-
-    transactions.forEach(tx => {
-        if (tx.merchant.includes('Software') || tx.merchant.includes('Cloud')) saasSpend += tx.amount;
-        else if (tx.merchant.includes('Power') || tx.merchant.includes('Water') || tx.merchant.includes('Gas') || tx.description.includes('Utility')) utilitiesSpend += tx.amount;
-        else if (tx.merchant.includes('Marketing') || tx.description.includes('Ad Campaign')) marketingSpend += tx.amount;
-        else if (tx.description.includes('Research') || tx.description.includes('Development')) rdSpend += tx.amount;
-        else if (tx.description.includes('Reimbursement') || tx.description.includes('Employee Expense')) employeeReimbursementSpend += tx.amount;
-        else if (tx.description.includes('Server') || tx.description.includes('Network') || tx.merchant.includes('Hardware')) itInfrastructureSpend += tx.amount;
-        else if (tx.description.includes('Legal Fees') || tx.merchant.includes('Law Firm')) legalFees += tx.amount;
-        else if (tx.description.includes('Consulting')) consultingFees += tx.amount;
-        else if (tx.description.includes('Office Supplies') || tx.merchant.includes('Staples')) officeSuppliesSpend += tx.amount;
-        else if (tx.description.includes('Flight') || tx.description.includes('Hotel') || tx.description.includes('Business Trip')) travelSpend += tx.amount;
-        else if (tx.description.includes('Dinner') || tx.description.includes('Event')) entertainmentSpend += tx.amount;
-    });
-
-    return { saasSpend, utilitiesSpend, marketingSpend, rdSpend, employeeReimbursementSpend, itInfrastructureSpend, legalFees, consultingFees, officeSuppliesSpend, travelSpend, entertainmentSpend };
-};
-
-export const simulateTransactionAnalysis = (transactions: CorporateTransaction[]): { totalRefunds: number; totalDiscounts: number; largeTransactions: number; smallTransactions: number; cardTxns: number; bankTransferTxns: number; avgTxnAmount: number } => {
-    let totalRefunds = 0;
-    let totalDiscounts = 0;
-    let largeTransactions = 0; // > $5000
-    let smallTransactions = 0; // < $100
-    let cardTxns = 0;
-    let bankTransferTxns = 0;
-    let totalAmount = 0;
-
-    transactions.forEach(tx => {
-        // Simulate refunds/discounts
-        if (Math.random() < 0.02) totalRefunds += tx.amount * (0.1 + Math.random() * 0.5); // 2% chance of refund
-        if (Math.random() < 0.05) totalDiscounts += tx.amount * (0.01 + Math.random() * 0.1); // 5% chance of discount
-
-        if (tx.amount > 5000) largeTransactions++;
-        if (tx.amount < 100) smallTransactions++;
-
-        // Simulate payment method
-        if (Math.random() < 0.6) cardTxns++; else bankTransferTxns++; // Simple split
-        totalAmount += tx.amount;
-    });
-
-    const avgTxnAmount = transactions.length > 0 ? totalAmount / transactions.length : 0;
-
-    return { totalRefunds, totalDiscounts, largeTransactions, smallTransactions, cardTxns, bankTransferTxns, avgTxnAmount };
-};
-
-export const simulateComplianceRisks = (complianceCases: ComplianceCase[]): string[] => {
-    const riskCategories = new Set<string>();
-    complianceCases.forEach(c => riskCategories.add(c.type));
-    // Also add some simulated common risks if not present
-    if (!riskCategories.has('AML')) riskCategories.add('AML');
-    if (!riskCategories.has('GDPR')) riskCategories.add('GDPR');
-    if (!riskCategories.has('Sanctions')) riskCategories.add('Sanctions');
-    if (!riskCategories.has('Data Privacy')) riskCategories.add('Data Privacy');
-    if (!riskCategories.has('Financial Reporting')) riskCategories.add('Financial Reporting');
-    return Array.from(riskCategories).slice(0, 3); // Top 3 risks
-};
-
-export const simulateAutomatedApprovals = (paymentOrders: PaymentOrder[]): number => {
-    const totalApproved = paymentOrders.filter(po => po.status === 'approved').length;
-    // Simulate that a percentage were automated
-    const automatedPct = 0.6 + Math.random() * 0.2; // 60-80% automated
-    return totalApproved > 0 ? (totalApproved * automatedPct) : 0;
-};
-
-// NEW: Simulate Estimated Tax Liabilities
-export const simulateEstimatedTaxLiabilities = (invoices: Invoice[], transactions: CorporateTransaction[]): TaxLiabilityData => {
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, inv) => acc + inv.amount, 0);
-    const totalExpenses = transactions.reduce((acc, tx) => acc + tx.amount, 0);
-
-    const vatRate = 0.20; // 20% VAT
-    const payrollTaxRate = 0.08; // 8% payroll tax for a portion of expenses
-    const corporateTaxRate = 0.25; // 25% corporate tax
-
-    // Simplified VAT calculation: assuming all revenue has VAT, and some expenses have input VAT
-    const estimatedOutputVAT = totalRevenue * vatRate;
-    const estimatedInputVAT = totalExpenses * vatRate * 0.7; // Assume 70% of expenses are VAT-able
-    const vatEstimate = estimatedOutputVAT - estimatedInputVAT;
-
-    // Simulate payroll expenses as a portion of total expenses
-    const payrollExpenses = totalExpenses * (0.3 + Math.random() * 0.1); // 30-40% of expenses are payroll
-    const payrollTaxEstimate = payrollExpenses * payrollTaxRate;
-
-    // Corporate tax based on simplified net profit (before tax)
-    const netProfitBeforeTax = totalRevenue - totalExpenses - payrollExpenses; // Very simplified
-    const corporateTaxEstimate = netProfitBeforeTax > 0 ? netProfitBeforeTax * corporateTaxRate : 0;
-
-    return { vatEstimate: Math.max(0, vatEstimate), payrollTaxEstimate, corporateTaxEstimate };
-};
-
-// NEW: Generate Budget Allocation Summary
-export const generateBudgetAllocationSummary = (transactions: CorporateTransaction[]): BudgetAllocationSummaryData[] => {
-    const departmentalVariance = generateDepartmentalBudgetVariance(transactions);
-    return departmentalVariance.map(item => ({
-        department: item.department,
-        budget: item.budget,
-        actualSpend: item.actualSpend,
-        variance: item.variance,
-    }));
-};
-
-// NEW: Simulate Audit Trail Metrics
-export const simulateAuditTrailMetrics = (): AuditTrailData[] => {
-    const data: AuditTrailData[] = [];
+/**
+ * Projects cash flow for the next 6 periods based on historical trends and outstanding obligations.
+ */
+export const generateCashFlowProjections = (invoices: Invoice[], orders: PaymentOrder[]): CashFlowProjection[] => {
+    const projections: CashFlowProjection[] = [];
     const today = new Date();
-    for (let i = 6; i >= 0; i--) { // Last 7 days
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        data.push({
-            date: date.toISOString().split('T')[0],
-            failedLogins: Math.floor(Math.random() * 10) + 1,
-            suspiciousActivities: Math.floor(Math.random() * 5),
-            dataAccessViolations: Math.floor(Math.random() * 3),
+    let currentCash = 1000000; // Base operating capital assumption
+
+    for (let i = 0; i < 6; i++) {
+        const futureDate = new Date(today);
+        futureDate.setMonth(today.getMonth() + i);
+        const periodKey = futureDate.toISOString().substring(0, 7);
+        
+        // Estimated inflows from receivables
+        const projectedInflow = invoices
+            .filter(inv => new Date(inv.dueDate).getMonth() === futureDate.getMonth())
+            .reduce((sum, inv) => sum + inv.amount, 0) * 0.95; // 95% collection rate assumption
+
+        // Estimated outflows from payables and recurring expenses
+        const projectedOutflow = orders
+            .filter(ord => new Date(ord.dueDate || '').getMonth() === futureDate.getMonth())
+            .reduce((sum, ord) => sum + ord.amount, 0) * 1.1; // 10% buffer for variable costs
+
+        const net = projectedInflow - projectedOutflow;
+        currentCash += net;
+
+        projections.push({
+            period: periodKey,
+            inflow: projectedInflow,
+            outflow: projectedOutflow,
+            netPosition: net,
+            cumulativeCash: currentCash
         });
     }
-    return data;
+    return projections;
 };
 
-// NEW: Generate Employee Expense Metrics
-export const generateEmployeeExpenseMetrics = (transactions: CorporateTransaction[]): EmployeeExpenseMetrics => {
-    const expenseCategories: { [key: string]: number } = {};
-    const monthlyTrend: { [month: string]: number } = {};
-    let totalExpenses = 0;
-    let expenseCount = 0;
-
+/**
+ * Analyzes vendor performance, risk, and spend concentration.
+ */
+export const analyzeVendorEcosystem = (transactions: CorporateTransaction[]): VendorPerformanceMetric[] => {
+    const vendorMap: Record<string, VendorPerformanceMetric> = {};
+    
     transactions.forEach(tx => {
-        // Simulate employee expense categories
-        let category = 'Other';
-        if (tx.description.includes('Travel') || tx.merchant.includes('Airline') || tx.merchant.includes('Hotel')) category = 'Travel';
-        else if (tx.description.includes('Meal') || tx.merchant.includes('Restaurant') || tx.description.includes('Entertainment')) category = 'Meals & Entertainment';
-        else if (tx.description.includes('Office Supply') || tx.merchant.includes('Staples') || tx.merchant.includes('Amazon')) category = 'Office Supplies';
-        else if (tx.description.includes('Software License') || tx.merchant.includes('Subscription') || tx.merchant.includes('Cloud')) category = 'Software & Subscriptions';
-        else if (tx.description.includes('Training') || tx.merchant.includes('Course') || tx.description.includes('Certification')) category = 'Professional Development';
-        else if (tx.description.includes('Home Office')) category = 'Home Office Setup';
-        else if (tx.description.includes('Commute') || tx.merchant.includes('Transit')) category = 'Commuting';
-
-        // Only count employee-like expenses, not all corporate transactions
-        if (['Travel', 'Meals & Entertainment', 'Office Supplies', 'Software & Subscriptions', 'Professional Development', 'Home Office Setup', 'Commuting'].includes(category)) {
-            expenseCategories[category] = (expenseCategories[category] || 0) + tx.amount;
-            totalExpenses += tx.amount;
-            expenseCount++;
-
-            const month = new Date(tx.date).toISOString().substring(0, 7);
-            monthlyTrend[month] = (monthlyTrend[month] || 0) + tx.amount;
+        if (!vendorMap[tx.merchant]) {
+            vendorMap[tx.merchant] = {
+                vendor: tx.merchant,
+                totalSpend: 0,
+                transactionCount: 0,
+                avgTransactionValue: 0,
+                riskScore: Math.floor(Math.random() * 100), // Simulated risk score based on external API (mock)
+                lastInteraction: tx.date
+            };
+        }
+        const v = vendorMap[tx.merchant];
+        v.totalSpend += tx.amount;
+        v.transactionCount++;
+        v.avgTransactionValue = v.totalSpend / v.transactionCount;
+        if (new Date(tx.date) > new Date(v.lastInteraction)) {
+            v.lastInteraction = tx.date;
         }
     });
 
-    const topCategories = Object.entries(expenseCategories)
-        .map(([category, amount]) => ({ category, amount }))
-        .sort((a, b) => b.amount - a.amount)
-        .slice(0, 5);
+    return Object.values(vendorMap).sort((a, b) => b.totalSpend - a.totalSpend);
+};
 
-    const sortedMonthlyTrend = Object.entries(monthlyTrend)
-        .map(([month, amount]) => ({ month, amount }))
-        .sort((a, b) => a.month.localeCompare(b.month));
-
-    return {
-        totalExpenses,
-        averageExpense: expenseCount > 0 ? totalExpenses / expenseCount : 0,
-        topCategories,
-        monthlyTrend: sortedMonthlyTrend,
+/**
+ * Segments operational spend into fixed, variable, and discretionary categories.
+ */
+export const segmentOperationalSpend = (transactions: CorporateTransaction[]): CategoricalData[] => {
+    const categories = {
+        'Fixed Infrastructure': 0,
+        'Variable COGS': 0,
+        'R&D Investment': 0,
+        'Sales & Marketing': 0,
+        'G&A': 0
     };
+
+    transactions.forEach(tx => {
+        if (tx.merchant.includes('Rent') || tx.merchant.includes('AWS') || tx.merchant.includes('Server')) categories['Fixed Infrastructure'] += tx.amount;
+        else if (tx.merchant.includes('Supplier') || tx.merchant.includes('Logistics')) categories['Variable COGS'] += tx.amount;
+        else if (tx.description.includes('Research') || tx.description.includes('Lab')) categories['R&D Investment'] += tx.amount;
+        else if (tx.merchant.includes('Ads') || tx.merchant.includes('Google') || tx.merchant.includes('Facebook')) categories['Sales & Marketing'] += tx.amount;
+        else categories['G&A'] += tx.amount;
+    });
+
+    return Object.entries(categories).map(([category, value]) => ({ category, value }));
 };
 
-// NEW: Simulate Contract Compliance Metrics
-export const simulateContractComplianceMetrics = (): ContractStatusData => {
-    const totalContracts = 500 + Math.floor(Math.random() * 200);
-    const expiringSoon = Math.floor(totalContracts * (0.05 + Math.random() * 0.05)); // 5-10% expiring in next 90 days
-    const nonCompliant = Math.floor(totalContracts * (0.01 + Math.random() * 0.03)); // 1-3% non-compliant
-    const autoRenewals = Math.floor(totalContracts * (0.3 + Math.random() * 0.1)); // 30-40% auto-renewing
-    return { totalContracts, expiringSoon, nonCompliant, autoRenewals };
+/**
+ * Simulates a complex tax liability estimation engine.
+ */
+export const estimateTaxLiabilities = (revenue: number, expenses: number): TaxLiabilityBreakdown[] => {
+    const profit = Math.max(0, revenue - expenses);
+    return [
+        { jurisdiction: 'Federal', taxType: 'Corporate Income Tax', estimatedAmount: profit * 0.21, dueDate: '2024-04-15', status: 'Accrued' },
+        { jurisdiction: 'State (CA)', taxType: 'Franchise Tax', estimatedAmount: profit * 0.0884, dueDate: '2024-04-15', status: 'Accrued' },
+        { jurisdiction: 'International', taxType: 'VAT/GST', estimatedAmount: revenue * 0.05, dueDate: 'Monthly', status: 'Pending' },
+        { jurisdiction: 'Local', taxType: 'Payroll Tax', estimatedAmount: expenses * 0.0765, dueDate: 'Bi-Weekly', status: 'Paid' }
+    ];
 };
 
+/**
+ * Generates a risk heatmap dataset based on compliance cases and transaction anomalies.
+ */
+export const generateEnterpriseRiskHeatmap = (cases: ComplianceCase[], transactions: CorporateTransaction[]): RiskAssessmentData[] => {
+    const risks: RiskAssessmentData[] = [
+        { riskCategory: 'AML/KYC', probability: 0.15, impact: 0.9, mitigationStatus: 'Monitoring', exposureValue: 500000 },
+        { riskCategory: 'Data Privacy (GDPR)', probability: 0.05, impact: 0.95, mitigationStatus: 'Controlled', exposureValue: 2000000 },
+        { riskCategory: 'Vendor Fraud', probability: 0.2, impact: 0.4, mitigationStatus: 'Active Investigation', exposureValue: 150000 },
+        { riskCategory: 'Tax Compliance', probability: 0.1, impact: 0.7, mitigationStatus: 'Audited', exposureValue: 750000 },
+        { riskCategory: 'Cybersecurity', probability: 0.3, impact: 0.99, mitigationStatus: 'Hardened', exposureValue: 5000000 }
+    ];
 
-// --- End of New Exported Types and Data Generation Functions ---
+    // Adjust based on actual data
+    if (cases.some(c => c.type === 'AML')) risks[0].probability += 0.2;
+    if (transactions.some(t => t.amount > 50000)) risks[2].probability += 0.1;
 
+    return risks;
+};
+
+// ---------------------------------------------------------------------------
+// MAIN COMPONENT: CORPORATE COMMAND CENTER
+// ---------------------------------------------------------------------------
 
 interface CorporateDashboardProps {
     setActiveView: (view: View) => void;
@@ -670,409 +251,409 @@ interface CorporateDashboardProps {
 
 const CorporateCommandView: React.FC<CorporateDashboardProps> = ({ setActiveView }) => {
     const context = useContext(DataContext);
-    const [aiInsight, setAiInsight] = useState('');
-    const [isInsightLoading, setIsInsightLoading] = useState(false);
-
-    if (!context) throw new Error("CorporateCommandView must be within a DataProvider.");
     
+    // -----------------------------------------------------------------------
+    // STATE MANAGEMENT
+    // -----------------------------------------------------------------------
+    const [activeTab, setActiveTab] = useState<'Overview' | 'Finance' | 'Operations' | 'Risk' | 'Strategy'>('Overview');
+    const [aiInsight, setAiInsight] = useState<string>('Initializing AI Neural Core...');
+    const [isAiProcessing, setIsAiProcessing] = useState<boolean>(false);
+    const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+    if (!context) throw new Error("CorporateCommandView requires DataContext.");
     const { paymentOrders, invoices, complianceCases, corporateTransactions } = context;
 
-    // --- Original Summary Stats (unchanged) ---
-    const summaryStats = {
-        pendingApprovals: paymentOrders.filter(p => p.status === 'needs_approval').length,
-        overdueInvoices: invoices.filter(i => i.status === 'overdue').length,
-        openCases: complianceCases.filter(c => c.status === 'open').length,
-        totalOutflow: corporateTransactions.reduce((acc, tx) => acc + tx.amount, 0)
-    };
+    // -----------------------------------------------------------------------
+    // REAL-TIME DATA AGGREGATION
+    // -----------------------------------------------------------------------
     
-    // --- Original Spending by Category (unchanged, but can be generated by new function too for consistency) ---
-    const spendingByCategoryLegacy = corporateTransactions.reduce((acc, tx) => {
-        const category = tx.merchant.includes('Steakhouse') || tx.merchant.includes('Lunch') ? 'T&E' :
-                         tx.merchant.includes('Cloud') || tx.merchant.includes('Software') ? 'Software' :
-                         'Other';
-        if (!acc[category]) acc[category] = 0;
-        acc[category] += tx.amount;
-        return acc;
-    }, {} as { [key: string]: number });
+    // Financials
+    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + i.amount, 0);
+    const totalExpenses = corporateTransactions.reduce((acc, t) => acc + t.amount, 0);
+    const netIncome = totalRevenue - totalExpenses;
+    const financialRatios = calculateEnterpriseFinancialRatios(invoices, paymentOrders, corporateTransactions);
+    const cashFlowForecast = generateCashFlowProjections(invoices, paymentOrders);
+    const taxLiabilities = estimateTaxLiabilities(totalRevenue, totalExpenses);
+
+    // Operations
+    const dailyVolume = generateDailyTransactionAnalytics(corporateTransactions);
+    const operationalSpend = segmentOperationalSpend(corporateTransactions);
+    const vendorMetrics = analyzeVendorEcosystem(corporateTransactions);
+    const topVendors = vendorMetrics.slice(0, 5);
     
-    const chartDataLegacy = Object.entries(spendingByCategoryLegacy).map(([name, value]) => ({ name, value })); // Kept for original chart
+    // Risk
+    const riskHeatmap = generateEnterpriseRiskHeatmap(complianceCases, corporateTransactions);
+    const openComplianceCases = complianceCases.filter(c => c.status === 'open');
+    const criticalRisks = riskHeatmap.filter(r => r.probability * r.impact > 0.15);
 
-    // --- NEW KPI & Chart Data Calculations ---
-
-    // Finance & Liquidity
-    const totalInflow = invoices.filter(i => i.status === 'paid').reduce((acc, inv) => acc + inv.amount, 0);
-    const avgInvoiceValue = invoices.length > 0 ? invoices.reduce((acc, inv) => acc + inv.amount, 0) / invoices.length : 0;
-    const { grossProfitMargin, netProfitMargin, roi, cashConversionCycle, equityRatio, debtToEquityRatio } = simulateFinancialRatios(invoices, corporateTransactions);
-    const dso = calculateDSO(invoices);
-    const dpo = calculateDPO(paymentOrders);
-    const currentRatio = calculateCurrentRatio(invoices, paymentOrders);
-    const quickRatio = calculateQuickRatio(invoices, paymentOrders);
-    const { vatEstimate, payrollTaxEstimate, corporateTaxEstimate } = simulateEstimatedTaxLiabilities(invoices, corporateTransactions);
-    const totalPaymentsProcessed = paymentOrders.length;
-    const totalInvoicesIssued = invoices.length;
-    const totalValueOfOverdueInvoices = invoices.filter(i => i.status === 'overdue').reduce((acc, inv) => acc + inv.amount, 0);
-    const totalValueOfOpenCases = complianceCases.filter(c => c.status === 'open').reduce((acc, c) => acc + (c.potentialFine || 0), 0); // Assuming potentialFine exists or is 0
-    const { totalBudgetAllocated, budgetVarianceTotal } = simulateBudgetSummary(corporateTransactions);
-
-    // Operational Efficiency
-    const { avgTimeHours: avgApprovalTimeHours, overThresholdCount: paymentApprovalOverdue, throughputLast30Days } = generatePaymentApprovalMetrics(paymentOrders);
-    const highValuePaymentOrders = paymentOrders.filter(po => po.amount > 10000).length;
-    const paidPayments = paymentOrders.filter(po => po.status === 'paid');
-    const onTimePaymentsPct = paidPayments.length > 0 ? paidPayments.filter(po => po.dueDate && po.paymentDate && new Date(po.paymentDate) <= new Date(po.dueDate)).length / paidPayments.length * 100 : 0;
-    const { saasSpend, utilitiesSpend, marketingSpend, rdSpend, employeeReimbursementSpend, itInfrastructureSpend, legalFees, consultingFees, officeSuppliesSpend, travelSpend, entertainmentSpend } = simulateDetailedSpendBreakdown(corporateTransactions);
-    const { totalRefunds, totalDiscounts, largeTransactions, smallTransactions, cardTxns, bankTransferTxns, avgTxnAmount } = simulateTransactionAnalysis(corporateTransactions);
-    const numUniquePaymentMethods = new Set(paymentOrders.map(po => po.paymentMethod)).size;
-    const numUniqueVendors = new Set(corporateTransactions.map(tx => tx.merchant)).size;
-    const employeeExpenseMetrics = generateEmployeeExpenseMetrics(corporateTransactions);
-
-    // Compliance & Risk
-    const totalComplianceFinesSimulated = complianceCases.reduce((acc, c) => acc + (c.potentialFine || 0), 0);
-    const { avgTimeDays: avgCaseResolutionTimeDays, overThresholdCount: caseResolutionOverdue, criticalCases } = generateComplianceCaseResolutionMetrics(complianceCases);
-    const { highRiskTxnCount, flaggedVendors, foreignCurrencySpend, foreignCurrencyTxns, totalFlags } = simulateFraudDetectionMetrics(corporateTransactions, complianceCases);
-    const top3ComplianceRisks = simulateComplianceRisks(complianceCases);
-    const totalApprovedPaymentsForAutomation = paymentOrders.filter(po => po.status === 'approved').length;
-    const automatedApprovalsPct = totalApprovedPaymentsForAutomation > 0 ? (simulateAutomatedApprovals(paymentOrders) / totalApprovedPaymentsForAutomation) * 100 : 0;
-    const auditTrailData = simulateAuditTrailMetrics();
-    const contractComplianceMetrics = simulateContractComplianceMetrics();
-
-    // Summing up audit trail metrics for overview
-    const auditFailedLoginsTotal = auditTrailData.reduce((acc, d) => acc + d.failedLogins, 0);
-    const auditSuspiciousActivitiesTotal = auditTrailData.reduce((acc, d) => acc + d.suspiciousActivities, 0);
-    const auditDataAccessViolationsTotal = auditTrailData.reduce((acc, d) => acc + d.dataAccessViolations, 0);
-
-
-    // Chart Data
-    const dailyTransactionVolumesData = generateDailyTransactionVolumes(corporateTransactions);
-    const monthlySpendByCategoryData = generateMonthlySpendByCategory(corporateTransactions);
-    const invoiceAgingData = generateInvoiceAgingBuckets(invoices);
-    const vendorSpendData = generateVendorSpendDistribution(corporateTransactions).slice(0, 7); // Top 7 vendors
-    const departmentalBudgetVarianceData = generateDepartmentalBudgetVariance(corporateTransactions);
-    const paymentMethodUsageData = generatePaymentMethodUsage(paymentOrders);
-    const topExpensesData = generateTopExpenses(corporateTransactions, 7); // Top 7 expenses by description
-    const operatingCashFlowTrendData = generateOperatingCashFlowTrend(corporateTransactions, invoices);
-    const fixedVsVariableCostsData = generateFixedVsVariableCosts(corporateTransactions);
-    const geographicSpendData = generateGeographicSpendDistribution(corporateTransactions);
-    const budgetAllocationSummaryData = generateBudgetAllocationSummary(corporateTransactions);
-    const employeeExpenseCategoriesChartData = employeeExpenseMetrics.topCategories;
-
-
-    // --- AI Insight Enhancement ---
+    // -----------------------------------------------------------------------
+    // AI INTELLIGENCE LAYER
+    // -----------------------------------------------------------------------
     useEffect(() => {
-        const generateInsight = async () => {
-            setIsInsightLoading(true);
+        const generateStrategicReport = async () => {
+            setIsAiProcessing(true);
             try {
                 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-                const dataSummary = `
-                    Pending Approvals: ${summaryStats.pendingApprovals}, Overdue Invoices: ${summaryStats.overdueInvoices}, Open Compliance Cases: ${summaryStats.openCases}.
-                    Total Outflow: $${summaryStats.totalOutflow.toFixed(2)}, Total Inflow: $${totalInflow.toFixed(2)}.
-                    Avg. Invoice Value: $${avgInvoiceValue.toFixed(2)}, DSO: ${dso.toFixed(1)} days, DPO: ${dpo.toFixed(1)} days.
-                    Current Ratio: ${currentRatio.toFixed(2)}, Quick Ratio: ${quickRatio.toFixed(2)}.
-                    Avg. Approval Time: ${avgApprovalTimeHours.toFixed(1)} hrs, Avg. Case Resolution: ${avgCaseResolutionTimeDays.toFixed(1)} days.
-                    High Risk Transactions: ${highRiskTxnCount}, Flagged Vendors: ${flaggedVendors}.
-                    Recent spending is focused on: ${chartDataLegacy.map(d=>d.name).join(', ')}.
-                    Top expenses include: ${topExpensesData.map(e => e.vendor).join(', ')}.
-                    Departments with significant variance: ${departmentalBudgetVarianceData.filter(d => Math.abs(d.variancePct) > 10).map(d => `${d.department} (${d.variancePct.toFixed(0)}%)`).join(', ')}.
-                    Compliance risks: ${top3ComplianceRisks.join(', ')}.
-                    Audit Failed Logins (7d): ${auditFailedLoginsTotal}, Suspicious Activities (7d): ${auditSuspiciousActivitiesTotal}.
-                    Expiring Contracts: ${contractComplianceMetrics.expiringSoon}, Non-Compliant Contracts: ${contractComplianceMetrics.nonCompliant}.
-                    Automated Approvals: ${automatedApprovalsPct.toFixed(1)}%.
-                `;
-                const prompt = `You are a corporate finance AI controller named idgafai. Based on the following summary, provide a single, concise (1-2 sentences) strategic recommendation or observation for the finance manager. Focus on key actionable insights for the betterment of humanity's financial future. Summary:\n${dataSummary}`;
+                
+                let promptContext = '';
+                if (activeTab === 'Overview') {
+                    promptContext = `Executive Summary: Revenue $${totalRevenue}, Expenses $${totalExpenses}, Net Income $${netIncome}. Critical Risks: ${criticalRisks.length}. Top Vendor: ${topVendors[0]?.vendor}.`;
+                } else if (activeTab === 'Finance') {
+                    promptContext = `Financial Deep Dive: Current Ratio ${financialRatios[0].value.toFixed(2)}, Net Margin ${financialRatios[1].value.toFixed(2)}%. Cash Flow Trend: ${cashFlowForecast[0].netPosition > 0 ? 'Positive' : 'Negative'}. Tax Liability: $${taxLiabilities.reduce((s, t) => s + t.estimatedAmount, 0).toFixed(2)}.`;
+                } else if (activeTab === 'Operations') {
+                    promptContext = `Ops Report: Transaction Volume ${dailyVolume.length} days active. Top Spend Category: ${operationalSpend.sort((a,b) => b.value - a.value)[0]?.category}. Vendor Count: ${vendorMetrics.length}.`;
+                } else if (activeTab === 'Risk') {
+                    promptContext = `Risk Assessment: Open Cases ${openComplianceCases.length}. Highest Risk Category: ${riskHeatmap.sort((a,b) => b.probability - a.probability)[0]?.riskCategory}. Exposure: $${riskHeatmap.reduce((s,r) => s + r.exposureValue, 0)}.`;
+                } else {
+                    promptContext = `Strategic Outlook: Based on burn rate of $${financialRatios[2].value.toFixed(2)}/day and projected cash flow. Suggest 3 strategic moves for growth and stability.`;
+                }
+
+                const prompt = `You are an advanced Corporate AI Controller. Analyze the following data context for the '${activeTab}' view and provide a high-level, professional, actionable strategic insight (max 2 sentences). Context: ${promptContext}`;
                 
                 const response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
                     contents: prompt,
                 });
                 setAiInsight(response.text);
+                setLastUpdated(new Date());
             } catch (error) {
-                console.error("Failed to generate corporate insight:", error);
-                setAiInsight("An error occurred while analyzing corporate data. Please check API key or network.");
+                console.error("AI Processing Error:", error);
+                setAiInsight("AI Neural Link disrupted. Using cached heuristics.");
             } finally {
-                setIsInsightLoading(false);
+                setIsAiProcessing(false);
             }
         };
-        generateInsight();
-    }, [
-        summaryStats.pendingApprovals, summaryStats.overdueInvoices, summaryStats.openCases, summaryStats.totalOutflow,
-        totalInflow, avgInvoiceValue, dso, dpo, currentRatio, quickRatio, avgApprovalTimeHours, avgCaseResolutionTimeDays,
-        highRiskTxnCount, flaggedVendors, chartDataLegacy, topExpensesData, departmentalBudgetVarianceData, top3ComplianceRisks,
-        auditFailedLoginsTotal, auditSuspiciousActivitiesTotal, contractComplianceMetrics.expiringSoon, contractComplianceMetrics.nonCompliant,
-        automatedApprovalsPct
-    ]);
 
-    const StatCard: React.FC<{ title: string; value: string | number; view?: View; formatter?: (val: number | string) => string; className?: string }> = ({ title, value, view, formatter, className }) => (
-        <Card variant={view ? "interactive" : "default"} onClick={view ? () => setActiveView(view) : undefined} className={`text-center ${className || ''}`}>
-            <p className="text-3xl font-bold text-white">{formatter ? formatter(value) : value}</p>
-            <p className="text-sm text-gray-400 mt-1">{title}</p>
-        </Card>
+        generateStrategicReport();
+    }, [activeTab, totalRevenue, totalExpenses, netIncome]); // Dependencies simplified for performance
+
+    // -----------------------------------------------------------------------
+    // VISUALIZATION HELPERS
+    // -----------------------------------------------------------------------
+    const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'];
+    
+    const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(val);
+    const formatNumber = (val: number) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(val);
+
+    // -----------------------------------------------------------------------
+    // SUB-COMPONENTS (Rendered inline for single-file requirement)
+    // -----------------------------------------------------------------------
+    
+    const TabButton = ({ id, label }: { id: typeof activeTab, label: string }) => (
+        <button 
+            onClick={() => setActiveTab(id)}
+            className={`px-6 py-3 text-sm font-bold tracking-wide transition-all duration-200 border-b-2 ${
+                activeTab === id 
+                ? 'border-blue-500 text-white bg-gray-800/50' 
+                : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800/30'
+            }`}
+        >
+            {label}
+        </button>
     );
 
-    const ChartWrapperCard: React.FC<{ title: string; children: React.ReactNode; className?: string }> = ({ title, children, className }) => (
-        <Card title={title} className={`p-4 ${className || ''}`}>
-            <div className="h-56 w-full"> {/* Increased height for better visualization */}
-                <ResponsiveContainer width="100%" height="100%">
-                    {children}
-                </ResponsiveContainer>
-            </div>
-        </Card>
+    const MetricCard = ({ title, value, subtext, trend, color = 'blue' }: { title: string, value: string, subtext?: string, trend?: number, color?: string }) => (
+        <div className={`bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg relative overflow-hidden group hover:border-${color}-500 transition-colors`}>
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110`} />
+            <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{title}</h3>
+            <div className="text-3xl font-bold text-white mb-1">{value}</div>
+            {subtext && <div className="text-gray-500 text-sm">{subtext}</div>}
+            {trend !== undefined && (
+                <div className={`text-sm font-medium mt-3 flex items-center ${trend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% <span className="text-gray-600 ml-1">vs last period</span>
+                </div>
+            )}
+        </div>
     );
 
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF0000', '#00FFFF'];
+    // -----------------------------------------------------------------------
+    // VIEW RENDERING
+    // -----------------------------------------------------------------------
 
     return (
-        <div className="space-y-8">
-            <h2 className="text-4xl font-extrabold text-white tracking-wider">Corporate Command Center</h2>
-
-            {/* AI Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card title="AI Strategic Insight" className="lg:col-span-1 bg-gray-800 border border-gray-700">
-                     {isInsightLoading ? <p className="text-gray-400 text-sm animate-pulse">Analyzing real-time data for strategic insights...</p> : 
-                         <p className="text-gray-200 text-base italic leading-relaxed">"{aiInsight}"</p>
-                     }
-                </Card>
-                <ChartWrapperCard title="Spending by Major Category" className="lg:col-span-2">
-                    <BarChart data={Object.entries(monthlySpendByCategoryData.reduce((acc, curr) => {
-                        Object.entries(curr).forEach(([key, val]) => {
-                            if (key !== 'month') acc[key] = (acc[key] || 0) + (val as number);
-                        });
-                        return acc;
-                    }, {} as { [key: string]: number })).map(([name, value]) => ({ name, value }))} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="name" stroke="#9ca3af" fontSize={12} width={90} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="value" fill="#06b6d4" radius={[0, 4, 4, 0]} barSize={25} />
-                    </BarChart>
-                </ChartWrapperCard>
+        <div className="min-h-screen bg-gray-900 text-white p-2 space-y-8 font-sans">
+            
+            {/* HEADER & NAVIGATION */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-6">
+                <div>
+                    <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                        NEXUS COMMAND
+                    </h1>
+                    <p className="text-gray-400 text-sm mt-1">Enterprise Operating System v4.2.0 • {lastUpdated.toLocaleString()}</p>
+                </div>
+                <div className="flex space-x-1 mt-4 md:mt-0 bg-gray-900 rounded-lg p-1 border border-gray-800">
+                    <TabButton id="Overview" label="EXECUTIVE" />
+                    <TabButton id="Finance" label="FINANCE" />
+                    <TabButton id="Operations" label="OPERATIONS" />
+                    <TabButton id="Risk" label="RISK & COMPLIANCE" />
+                    <TabButton id="Strategy" label="STRATEGY" />
+                </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-white mt-8 mb-4">Financial Health & Liquidity</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <StatCard title="Pending Approvals" value={summaryStats.pendingApprovals} view={View.PaymentOrders} />
-                <StatCard title="Overdue Invoices" value={summaryStats.overdueInvoices} view={View.Invoices} />
-                <StatCard title="Total Outflow (7d)" value={summaryStats.totalOutflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
-                <StatCard title="Total Inflow (Paid)" value={totalInflow} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Invoices} />
-                <StatCard title="Avg. Invoice Value" value={avgInvoiceValue} formatter={(v: number) => `$${v.toFixed(2)}`} view={View.Invoices} />
-                <StatCard title="Days Sales Outstanding" value={dso} formatter={(v: number) => `${v.toFixed(1)} days`} view={View.Invoices} />
-                <StatCard title="Days Payable Outstanding" value={dpo} formatter={(v: number) => `${v.toFixed(1)} days`} view={View.PaymentOrders} />
-                <StatCard title="Current Ratio" value={currentRatio} formatter={(v: number) => v.toFixed(2)} />
-                <StatCard title="Quick Ratio" value={quickRatio} formatter={(v: number) => v.toFixed(2)} />
-                <StatCard title="Gross Profit Margin" value={grossProfitMargin} formatter={(v: number) => `${v.toFixed(1)}%`} />
-                <StatCard title="Net Profit Margin" value={netProfitMargin} formatter={(v: number) => `${v.toFixed(1)}%`} />
-                <StatCard title="Estimated VAT Liability" value={vatEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
-                <StatCard title="Estimated Payroll Tax" value={payrollTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
-                <StatCard title="Estimated Corporate Tax" value={corporateTaxEstimate} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.TaxOptimization} />
-                <StatCard title="Budget Variance (Total)" value={budgetVarianceTotal} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} className={budgetVarianceTotal > 0 ? "bg-red-700/30 border-red-600" : "bg-green-700/30 border-green-600"} view={View.Budgets} />
-                <StatCard title="Total Budget Allocated" value={totalBudgetAllocated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Budgets} />
-                <StatCard title="Cash Conversion Cycle" value={cashConversionCycle} formatter={(v: number) => `${v.toFixed(1)} days`} />
-                <StatCard title="Equity Ratio" value={equityRatio} formatter={(v: number) => `${v.toFixed(1)}%`} />
-                <StatCard title="Debt To Equity Ratio" value={debtToEquityRatio} formatter={(v: number) => v.toFixed(2)} />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                <ChartWrapperCard title="Operating Cash Flow Trend">
-                    <BarChart data={operatingCashFlowTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="period" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                        <Bar dataKey="inflow" fill="#059669" name="Cash Inflow" />
-                        <Bar dataKey="outflow" fill="#ef4444" name="Cash Outflow" />
-                        <Bar dataKey="netCashFlow" fill="#10b981" name="Net Cash Flow" />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Invoice Aging Buckets (Amount)">
-                    <BarChart data={invoiceAgingData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="bucket" stroke="#9ca3af" fontSize={12} width={90} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={20} />
-                    </BarChart>
-                </ChartWrapperCard>
-                 <ChartWrapperCard title="Fixed vs Variable Costs">
-                    <BarChart data={fixedVsVariableCostsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="type" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#3b82f6" />
-                    </BarChart>
-                </ChartWrapperCard>
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mt-8 mb-4">Operational Efficiency & Spend</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <StatCard title="Payment Orders Processed" value={totalPaymentsProcessed} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
-                <StatCard title="Invoices Issued" value={totalInvoicesIssued} formatter={(v: number) => v.toLocaleString()} view={View.Invoices} />
-                <StatCard title="Avg. Approval Time" value={avgApprovalTimeHours} formatter={(v: number) => `${v.toFixed(1)} hrs`} className={avgApprovalTimeHours > 48 ? "bg-red-700/30 border-red-600" : ""} view={View.PaymentOrders} />
-                <StatCard title="Approval Throughput (30d)" value={throughputLast30Days} formatter={(v: number) => `${v} orders`} view={View.PaymentOrders} />
-                <StatCard title="High-Value POs (>$10k)" value={highValuePaymentOrders} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
-                <StatCard title="On-Time Payments %" value={onTimePaymentsPct} formatter={(v: number) => `${v.toFixed(1)}%`} className={onTimePaymentsPct < 90 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.PaymentOrders} />
-                <StatCard title="Avg. Transaction Amount" value={avgTxnAmount} formatter={(v: number) => `$${v.toFixed(2)}`} view={View.Transactions} />
-                <StatCard title="Large Transactions (>$5k)" value={largeTransactions} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Small Transactions (<$100)" value={smallTransactions} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Transactions by Card" value={cardTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Transactions by Bank Transfer" value={bankTransferTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Unique Payment Methods" value={numUniquePaymentMethods} formatter={(v: number) => v.toLocaleString()} view={View.PaymentOrders} />
-                <StatCard title="Unique Vendors" value={numUniqueVendors} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Total Employee Expenses" value={employeeExpenseMetrics.totalExpenses} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Avg. Employee Expense" value={employeeExpenseMetrics.averageExpense} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                <StatCard title="SAAS Spend" value={saasSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Utilities Spend" value={utilitiesSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Marketing Spend" value={marketingSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="R&D Spend" value={rdSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Employee Reimbursement" value={employeeReimbursementSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="IT Infrastructure Spend" value={itInfrastructureSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Legal Fees" value={legalFees} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Consulting Fees" value={consultingFees} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Office Supplies Spend" value={officeSuppliesSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Travel Spend" value={travelSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Entertainment Spend" value={entertainmentSpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} />
-                <StatCard title="Total Refunds" value={totalRefunds} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
-                <StatCard title="Total Discounts" value={totalDiscounts} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                <ChartWrapperCard title="Daily Transaction Volume (Amount)">
-                    <BarChart data={dailyTransactionVolumesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#fcd34d" />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Top 7 Vendors by Spend">
-                    <BarChart data={vendorSpendData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="vendor" stroke="#9ca3af" fontSize={12} width={100} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#60a5fa" radius={[0, 4, 4, 0]} barSize={20} />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Departmental Budget Variance">
-                    <BarChart data={departmentalBudgetVarianceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="department" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                        <Bar dataKey="actualSpend" fill="#059669" name="Actual Spend" />
-                        <Bar dataKey="budget" fill="#ef4444" name="Budget" />
-                    </BarChart>
-                </ChartWrapperCard>
-                 <ChartWrapperCard title="Payment Method Usage (Amount)">
-                    <BarChart data={paymentMethodUsageData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="method" stroke="#9ca3af" fontSize={12} width={100} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="totalAmount" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={20} />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Top 7 Expenses by Description">
-                    <BarChart data={topExpensesData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="vendor" stroke="#9ca3af" fontSize={12} width={100} /> {/* Reusing vendor key */}
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#d946ef" radius={[0, 4, 4, 0]} barSize={20} />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Geographic Spend Distribution">
-                    <BarChart data={geographicSpendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="region" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Bar dataKey="amount" fill="#ec4899" />
-                    </BarChart>
-                </ChartWrapperCard>
-            </div>
-
-
-            <h3 className="text-2xl font-bold text-white mt-8 mb-4">Compliance & Risk Management</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <StatCard title="Open Compliance Cases" value={summaryStats.openCases} view={View.Compliance} />
-                <StatCard title="Critical Cases (Open)" value={criticalCases} formatter={(v: number) => v.toLocaleString()} className={criticalCases > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.Compliance} />
-                <StatCard title="Avg. Case Resolution Time" value={avgCaseResolutionTimeDays} formatter={(v: number) => `${v.toFixed(1)} days`} className={avgCaseResolutionTimeDays > 30 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.Compliance} />
-                <StatCard title="Total Compliance Fines (Est.)" value={totalComplianceFinesSimulated} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Compliance} />
-                <StatCard title="High-Risk Transactions" value={highRiskTxnCount} formatter={(v: number) => v.toLocaleString()} className={highRiskTxnCount > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
-                <StatCard title="Flagged Vendors" value={flaggedVendors} formatter={(v: number) => v.toLocaleString()} view={View.SecurityCenter} />
-                <StatCard title="Foreign Currency Spend" value={foreignCurrencySpend} formatter={(v: number) => `$${(v / 1000).toFixed(1)}k`} view={View.Transactions} />
-                <StatCard title="Foreign Currency Transactions" value={foreignCurrencyTxns} formatter={(v: number) => v.toLocaleString()} view={View.Transactions} />
-                <StatCard title="Automated Approvals %" value={automatedApprovalsPct} formatter={(v: number) => `${v.toFixed(1)}%`} view={View.PaymentOrders} />
-                <StatCard title="Total Contracts" value={contractComplianceMetrics.totalContracts} formatter={(v: number) => v.toLocaleString()} />
-                <StatCard title="Expiring Contracts (90d)" value={contractComplianceMetrics.expiringSoon} formatter={(v: number) => v.toLocaleString()} className={contractComplianceMetrics.expiringSoon > 0 ? "bg-yellow-700/30 border-yellow-600" : ""} />
-                <StatCard title="Non-Compliant Contracts" value={contractComplianceMetrics.nonCompliant} formatter={(v: number) => v.toLocaleString()} className={contractComplianceMetrics.nonCompliant > 0 ? "bg-red-700/30 border-red-600" : ""} />
-                <StatCard title="Audit Failed Logins (7d)" value={auditFailedLoginsTotal} formatter={(v: number) => v.toLocaleString()} className={auditFailedLoginsTotal > 5 ? "bg-yellow-700/30 border-yellow-600" : ""} view={View.SecurityCenter} />
-                <StatCard title="Audit Suspicious Activity (7d)" value={auditSuspiciousActivitiesTotal} formatter={(v: number) => v.toLocaleString()} className={auditSuspiciousActivitiesTotal > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
-                <StatCard title="Audit Data Access Violations (7d)" value={auditDataAccessViolationsTotal} formatter={(v: number) => v.toLocaleString()} className={auditDataAccessViolationsTotal > 0 ? "bg-red-700/30 border-red-600" : ""} view={View.SecurityCenter} />
-                <Card title="Top 3 Compliance Risks">
-                     <ul className="list-disc pl-5 text-gray-300 text-sm">
-                        {top3ComplianceRisks.map((risk, idx) => <li key={idx}>{risk}</li>)}
-                     </ul>
+            {/* AI INSIGHT BAR */}
+            <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl rounded-lg" />
+                <Card className="relative bg-gray-800/80 backdrop-blur border border-blue-500/30 p-6">
+                    <div className="flex items-start space-x-4">
+                        <div className="p-3 bg-blue-500/10 rounded-full animate-pulse">
+                            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">AI Strategic Intelligence</h3>
+                            {isAiProcessing ? (
+                                <div className="h-6 bg-gray-700 rounded w-3/4 animate-pulse" />
+                            ) : (
+                                <p className="text-lg text-gray-100 leading-relaxed font-light">"{aiInsight}"</p>
+                            )}
+                        </div>
+                    </div>
                 </Card>
             </div>
-            {/* Added more charts for visual diversity using BarChart and PieChart */}
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ChartWrapperCard title="Budget vs. Actual Spend by Department">
-                    <BarChart data={budgetAllocationSummaryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="department" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                        <Bar dataKey="budget" fill="#fde047" name="Allocated Budget" />
-                        <Bar dataKey="actualSpend" fill="#22d3ee" name="Actual Spend" />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Monthly Spend Trend by Category (Last 6 Months)">
-                    <BarChart data={monthlySpendByCategoryData.slice(-6)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="month" stroke="#9ca3af" fontSize={12} />
-                        {/* FIX: Changed `formatter` to `tickFormatter` */}
-                        <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                        {/* Stacked bars for category breakdown */}
-                        <Bar dataKey="T_E" stackId="a" fill="#0ea5e9" name="T&E" />
-                        <Bar dataKey="Software" stackId="a" fill="#8b5cf6" name="Software" />
-                        <Bar dataKey="Marketing" stackId="a" fill="#ec4899" name="Marketing" />
-                        <Bar dataKey="Facilities" stackId="a" fill="#f59e0b" name="Facilities" />
-                        <Bar dataKey="Salaries" stackId="a" fill="#10b981" name="Salaries" />
-                        <Bar dataKey="Other" stackId="a" fill="#9ca3af" name="Other" />
-                    </BarChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Employee Expense Breakdown by Category">
-                    <PieChart>
-                        <Pie
-                            data={employeeExpenseCategoriesChartData}
-                            dataKey="amount"
-                            nameKey="category"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            fill="#8884d8"
-                            // FIX: Use `entry.name` and `entry.value` for label properties
-                            label={(entry) => `${entry.name}: $${entry.value.toFixed(0)}`}
-                        >
-                            {employeeExpenseCategoriesChartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+
+            {/* DYNAMIC CONTENT AREA */}
+            <div className="space-y-8 animate-fade-in">
+                
+                {/* OVERVIEW TAB */}
+                {activeTab === 'Overview' && (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <MetricCard title="Total Revenue (YTD)" value={formatCurrency(totalRevenue)} trend={12.5} color="green" />
+                            <MetricCard title="Net Income" value={formatCurrency(netIncome)} trend={8.2} color="blue" />
+                            <MetricCard title="Active Risks" value={criticalRisks.length.toString()} subtext="Critical Severity" trend={-5.0} color="red" />
+                            <MetricCard title="Cash Runway" value="14.2 Months" subtext="Based on current burn" color="purple" />
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-96">
+                            <Card title="Revenue vs Expenses Trend" className="lg:col-span-2 h-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={cashFlowForecast}>
+                                        <XAxis dataKey="period" stroke="#6b7280" fontSize={12} />
+                                        <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(val) => `$${val/1000}k`} />
+                                        <Tooltip contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#fff' }} />
+                                        <Legend />
+                                        <Bar dataKey="inflow" name="Inflow" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="outflow" name="Outflow" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Card>
+                            <Card title="Operational Spend Mix" className="h-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie data={operationalSpend} dataKey="value" nameKey="category" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
+                                            {operationalSpend.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend verticalAlign="bottom" height={36} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </Card>
+                        </div>
+                    </>
+                )}
+
+                {/* FINANCE TAB */}
+                {activeTab === 'Finance' && (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {financialRatios.map((ratio, idx) => (
+                                <MetricCard 
+                                    key={idx} 
+                                    title={ratio.name} 
+                                    value={typeof ratio.value === 'number' && ratio.value < 100 ? ratio.value.toFixed(2) : formatNumber(ratio.value)} 
+                                    subtext={`Benchmark: ${ratio.benchmark}`}
+                                    trend={ratio.delta}
+                                    color={ratio.status === 'Healthy' ? 'green' : ratio.status === 'Warning' ? 'yellow' : 'red'}
+                                />
                             ))}
-                        </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} formatter={(v: number) => `$${v.toFixed(2)}`} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                    </PieChart>
-                </ChartWrapperCard>
-                <ChartWrapperCard title="Audit Trail - Daily Events (Last 7 Days)">
-                    <BarChart data={auditTrailData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
-                        <YAxis stroke="#9ca3af" fontSize={12} allowDecimals={false} />
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', borderColor: '#4b5563' }} />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }} />
-                        <Bar dataKey="failedLogins" fill="#f43f5e" name="Failed Logins" />
-                        <Bar dataKey="suspiciousActivities" fill="#facc15" name="Suspicious Activities" />
-                        <Bar dataKey="dataAccessViolations" fill="#ef4444" name="Data Access Violations" />
-                    </BarChart>
-                </ChartWrapperCard>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <Card title="Projected Cash Position (6 Months)" className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={cashFlowForecast}>
+                                        <XAxis dataKey="period" stroke="#6b7280" />
+                                        <YAxis stroke="#6b7280" tickFormatter={(val) => `$${val/1000}k`} />
+                                        <Tooltip cursor={{fill: '#374151'}} contentStyle={{ backgroundColor: '#1f2937' }} />
+                                        <Bar dataKey="cumulativeCash" fill="#3b82f6" name="Cash Balance" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Card>
+                            <Card title="Estimated Tax Liability Breakdown" className="h-80 overflow-auto">
+                                <table className="w-full text-left text-sm text-gray-400">
+                                    <thead className="bg-gray-800 text-gray-200 uppercase font-bold">
+                                        <tr>
+                                            <th className="p-3">Jurisdiction</th>
+                                            <th className="p-3">Type</th>
+                                            <th className="p-3 text-right">Amount</th>
+                                            <th className="p-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-700">
+                                        {taxLiabilities.map((tax, i) => (
+                                            <tr key={i} className="hover:bg-gray-800/50">
+                                                <td className="p-3">{tax.jurisdiction}</td>
+                                                <td className="p-3">{tax.taxType}</td>
+                                                <td className="p-3 text-right font-mono text-white">{formatCurrency(tax.estimatedAmount)}</td>
+                                                <td className="p-3">
+                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${tax.status === 'Paid' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
+                                                        {tax.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </Card>
+                        </div>
+                    </>
+                )}
+
+                {/* OPERATIONS TAB */}
+                {activeTab === 'Operations' && (
+                    <>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <Card title="Daily Transaction Volume" className="lg:col-span-2 h-96">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dailyVolume}>
+                                        <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickFormatter={(d) => d.substring(5)} />
+                                        <YAxis yAxisId="left" stroke="#3b82f6" fontSize={12} tickFormatter={(val) => `$${val/1000}k`} />
+                                        <YAxis yAxisId="right" orientation="right" stroke="#10b981" fontSize={12} />
+                                        <Tooltip contentStyle={{ backgroundColor: '#1f2937' }} />
+                                        <Bar yAxisId="left" dataKey="value" fill="#3b82f6" name="Volume ($)" opacity={0.8} />
+                                        <Bar yAxisId="right" dataKey="secondaryValue" fill="#10b981" name="Count" barSize={10} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Card>
+                            <Card title="Top Vendor Ecosystem" className="h-96 overflow-auto">
+                                <div className="space-y-4">
+                                    {topVendors.map((vendor, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
+                                            <div>
+                                                <div className="font-bold text-white">{vendor.vendor}</div>
+                                                <div className="text-xs text-gray-500">{vendor.transactionCount} txns • Risk: {vendor.riskScore}/100</div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-mono text-blue-400">{formatCurrency(vendor.totalSpend)}</div>
+                                                <div className="text-xs text-gray-500">Avg: {formatCurrency(vendor.avgTransactionValue)}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        </div>
+                    </>
+                )}
+
+                {/* RISK TAB */}
+                {activeTab === 'Risk' && (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <MetricCard title="Compliance Score" value="94.2" subtext="Top 5% Industry" color="green" />
+                            <MetricCard title="Open Cases" value={openComplianceCases.length.toString()} subtext="Requires Attention" color="yellow" />
+                            <MetricCard title="Total Risk Exposure" value={formatCurrency(riskHeatmap.reduce((a,b)=>a+b.exposureValue,0))} color="red" />
+                            <MetricCard title="Audit Anomalies" value="3" subtext="Last 24 Hours" color="purple" />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <Card title="Enterprise Risk Heatmap" className="h-96">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={riskHeatmap} layout="vertical" margin={{ left: 40 }}>
+                                        <XAxis type="number" domain={[0, 1]} hide />
+                                        <YAxis type="category" dataKey="riskCategory" stroke="#9ca3af" width={120} fontSize={11} />
+                                        <Tooltip cursor={{fill: 'transparent'}} content={({ active, payload }) => {
+                                            if (active && payload && payload.length) {
+                                                const data = payload[0].payload;
+                                                return (
+                                                    <div className="bg-gray-900 border border-gray-700 p-3 rounded shadow-xl">
+                                                        <p className="font-bold text-white">{data.riskCategory}</p>
+                                                        <p className="text-sm text-gray-400">Prob: {(data.probability * 100).toFixed(0)}% | Impact: {(data.impact * 100).toFixed(0)}%</p>
+                                                        <p className="text-sm text-red-400">Exposure: {formatCurrency(data.exposureValue)}</p>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        }} />
+                                        <Bar dataKey="probability" name="Probability" stackId="a" fill="#f59e0b" barSize={20} />
+                                        <Bar dataKey="impact" name="Impact" stackId="a" fill="#ef4444" barSize={20} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Card>
+                            <Card title="Compliance Case Log" className="h-96 overflow-auto">
+                                <div className="space-y-2">
+                                    {complianceCases.map((c, i) => (
+                                        <div key={i} className="p-3 border-l-4 border-red-500 bg-gray-800/50 rounded flex justify-between items-center">
+                                            <div>
+                                                <div className="font-bold text-sm text-white">{c.type} Violation</div>
+                                                <div className="text-xs text-gray-500">{c.description}</div>
+                                            </div>
+                                            <span className={`px-2 py-1 text-xs rounded font-bold ${c.status === 'open' ? 'bg-red-900 text-red-200' : 'bg-gray-700 text-gray-300'}`}>
+                                                {c.status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                    ))}
+                                    {complianceCases.length === 0 && <div className="text-center text-gray-500 py-10">No active compliance cases detected. Systems nominal.</div>}
+                                </div>
+                            </Card>
+                        </div>
+                    </>
+                )}
+
+                {/* STRATEGY TAB */}
+                {activeTab === 'Strategy' && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <Card title="Strategic Growth Modeling" className="p-8 bg-gradient-to-br from-gray-800 to-gray-900">
+                            <div className="flex flex-col md:flex-row gap-8">
+                                <div className="flex-1 space-y-6">
+                                    <h3 className="text-2xl font-bold text-white">Scenario Analysis: Aggressive Expansion</h3>
+                                    <p className="text-gray-400">
+                                        Based on current liquidity of {formatCurrency(financialRatios[0].value * 1000000)} (simulated) and a burn rate of {formatCurrency(financialRatios[2].value)}, 
+                                        the enterprise can sustain a 15% increase in R&D spend for 8 months before requiring additional capital injection.
+                                    </p>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm text-gray-300">
+                                            <span>Market Penetration Probability</span>
+                                            <span>78%</span>
+                                        </div>
+                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '78%' }}></div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm text-gray-300">
+                                            <span>Regulatory Approval Confidence</span>
+                                            <span>92%</span>
+                                        </div>
+                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 bg-gray-800 p-6 rounded-xl border border-gray-700">
+                                    <h4 className="font-bold text-white mb-4">AI Recommendation Engine</h4>
+                                    <ul className="space-y-4">
+                                        <li className="flex items-start space-x-3">
+                                            <span className="text-green-400 text-xl">✓</span>
+                                            <span className="text-sm text-gray-300">Optimize vendor contracts to reduce variable OPEX by 12%.</span>
+                                        </li>
+                                        <li className="flex items-start space-x-3">
+                                            <span className="text-green-400 text-xl">✓</span>
+                                            <span className="text-sm text-gray-300">Accelerate receivables collection to improve DSO by 5 days.</span>
+                                        </li>
+                                        <li className="flex items-start space-x-3">
+                                            <span className="text-yellow-400 text-xl">⚠</span>
+                                            <span className="text-sm text-gray-300">Monitor geopolitical risk in supply chain region APAC-1.</span>
+                                        </li>
+                                    </ul>
+                                    <button className="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition-colors" onClick={() => setActiveView(View.Budgets)}>
+                                        Adjust Budgets
+                                    </button>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                )}
             </div>
         </div>
     );
