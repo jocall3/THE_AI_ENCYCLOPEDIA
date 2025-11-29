@@ -7,7 +7,6 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart,
 
 // --- Simple UUID alternative to avoid adding external dependency in this specific file if v4 is not globally available.
 // This is a minimal, non-cryptographic UUID generator. For commercial-grade, secure applications, a proper UUID library should be used.
-// Replaced uuidv4 with generateSimpleUUID for strict dependency adherence, if uuid is not assumed global.
 // Original: import { v4 as uuidv4 } from 'uuid';
 // Changed to: const uuidv4 = generateSimpleUUID; (if I need to replace it, otherwise stick with uuid if it's already there)
 // Given the strictness, I'll assume uuidv4 needs to be replaced or custom-implemented.
@@ -116,7 +115,7 @@ export interface ExtendedFinancialGoal extends FinancialGoal {
 /**
  * Philosophical thought: Utility functions are the unsung heroes of any robust application.
  * They provide pure, predictable operations, distilling complex logic into reusable, testable units.
- * Think of them as the finely crafted tools in a master artisan's kit â€“ simple in form, but essential for grand creations.
+ * Think of them as the finely crafted tools in a master artisan's kit Ã¢â‚¬â€œ simple in form, but essential for grand creations.
  *
  * Million Dollar Feature Overview: "The 'Date Whisperer' and 'Future Fortune Teller' Utilities!"
  * (Said in a jester's voice) "Hark, my friends, these humble functions, they may seem small and meek!
@@ -637,7 +636,7 @@ export const ContributionHistory: React.FC<{
 
             {activeTab === 'recurring' && (
                 <RecurringContributionManager
-                    goal={goal}
+                    goal={goal as ExtendedFinancialGoal}
                     onAddRecurringContribution={onAddRecurringContribution}
                     onUpdateRecurringContribution={onUpdateRecurringContribution}
                     onDeleteRecurringContribution={onDeleteRecurringContribution}
@@ -1565,7 +1564,7 @@ export const CreateGoalView: React.FC<{
  * (Jester voice) "Step right up, noble saver, and behold your goal's full glory!
  * No mere overview, but a 'Gallereia' of its complete story!
  * From humble pennies to soaring projections, a truly epic allegory!
- * Contributions, plans, risks, and AI wisdom â€“ all in one inventory!
+ * Contributions, plans, risks, and AI wisdom Ã¢â‚¬â€œ all in one inventory!
  * Tweak, adjust, observe, and conquer, your financial victory!"
  */
 export const GoalDetailView: React.FC<{
