@@ -751,7 +751,7 @@ const QuantumWeaverContent: FC = () => {
                         <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">System Operational Guidelines 10.1</h3>
                         <p className="text-gray-300 text-sm leading-relaxed italic">
                             "Our focus is on practical, incremental improvements. The data presented here provides a snapshot of current operations, intended to support informed decision-making. Sustainable growth requires careful attention to detail."
-                            <br/><span className="text-gray-500 not-italic mt-1 block">â€” System Administrator</span>
+                            <br/><span className="text-gray-500 not-italic mt-1 block">Ã¢â‚¬â€  System Administrator</span>
                         </p>
                     </div>
 
