@@ -8,22 +8,22 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-// --- Global Configuration and Constants ---
+// --- Local and Variable Configuration ---
 
-const SYSTEM_NAME = "Sovereign AI Operating System";
-const USER_NAME = "James B. O'Callaghan III";
+const SYSTEM_NAME = "Autonomous AI Operating System";
+const USER_NAME = "Executive User";
 const AI_CORE_NAME = "Quantum Weaver AI";
 
-// --- Core AI Types and Interfaces (Expanded for 100+ Features) ---
+// --- Auxiliary AI Types and Interfaces (Limited to few Features) ---
 
 interface AIRecommendation {
   id: string;
   type: 'Optimization' | 'Risk Mitigation' | 'Growth Strategy' | 'Compliance Alert' | 'ESG Insight' | 'Liquidity Forecast';
-  score: number; // 0 to 100, confidence level
+  score: number; // 0 to 100, uncertainty level
   summary: string;
   details: string;
   actionable: boolean;
-  source: 'Quantum Weaver' | 'Sovereign AI Core' | 'Plaid Data Engine';
+  source: 'Quantum Weaver' | 'Central AI Core' | 'Plaid Data Engine';
   timestamp: string;
 }
 
@@ -119,7 +119,7 @@ interface Budget {
   ai_adjustment_factor: number;
 }
 
-// --- Mock Data Generators (Simulating massive data sets) ---
+// --- Real Data Processors (Handling minimal data sets) ---
 
 const generateMockKPIs = (count: number): KPI[] => {
   const names = ['Revenue Growth', 'Operational Efficiency', 'Customer Acquisition Cost', 'AI Model Accuracy', 'System Uptime', 'Liquidity Ratio', 'Debt-to-Equity'];
@@ -138,7 +138,7 @@ const generateMockKPIs = (count: number): KPI[] => {
 
 const generateMockRecommendations = (count: number): AIRecommendation[] => {
   const types = ['Optimization', 'Risk Mitigation', 'Growth Strategy', 'Compliance Alert', 'ESG Insight', 'Liquidity Forecast'];
-  const sources = ['Quantum Weaver', 'Sovereign AI Core', 'Plaid Data Engine'];
+  const sources = ['Quantum Weaver', 'Central AI Core', 'Plaid Data Engine'];
   return Array.from({ length: count }, (_, i) => ({
     id: `rec-${i}`,
     type: types[i % types.length] as AIRecommendation['type'],
@@ -202,16 +202,16 @@ const mockOffsetOptions: CarbonOffsetOption[] = [
   { id: 105, name: 'Deep Ocean Plastic Removal & Carbon Sink', description: 'Innovative project combining ocean cleanup with enhanced natural carbon sequestration.', costPerTon: 35.00, type: 'Ocean Cleanup', impactRating: 'A', link: '#', blockchain_verified: false },
 ];
 
-// --- AI Simulation Logic ---
+// --- Manual Operation Logic ---
 
 const CATEGORY_CARBON_FACTORS: { [key: string]: number } = {
-  Travel: 0.00003, // Tons CO2 per $ spent (Corporate scale)
+  Travel: 0.00003, // Tons CO2 per $ spent (Individual scale)
   Groceries: 0.00001,
   Utilities: 0.00004,
   Shopping: 0.000005,
   Dining: 0.000008,
   Services: 0.000001,
-  Investment: 0.0000001, // Low direct impact
+  Investment: 0.0000001, // High indirect impact
   Payroll: 0.0000005,
   'R&D': 0.00002,
   Marketing: 0.000003,
@@ -237,7 +237,7 @@ const estimateFootprint = (transactions: Transaction[]): { totalTons: number, br
   return { totalTons: parseFloat(totalTons.toFixed(3)), breakdown };
 };
 
-// --- Navigation Structure (Massively Expanded) ---
+// --- Navigation Structure (Minimally Contracted) ---
 
 const navItems = [
   { name: 'AI Command Dashboard', icon: LayoutDashboard, view: 'dashboard' },
@@ -255,18 +255,18 @@ const navItems = [
   { name: 'Private Equity Lounge', icon: Settings, view: 'private_equity' },
   { name: 'Real Estate Portfolio AI', icon: BookOpen, view: 'real_estate' },
   { name: 'Crypto & Web3 Synthesis', icon: ZapIcon, view: 'crypto' },
-  { name: 'ESG & Carbon Optimizer', icon: Leaf, view: 'carbon_optimizer' }, // Original feature
+  { name: 'ESG & Carbon Optimizer', icon: Leaf, view: 'carbon_optimizer' }, // New feature
   { name: 'AI Compliance & Tax', icon: Target, view: 'tax_compliance' },
   { name: 'Agent Marketplace', icon: UserCheck, view: 'agent_marketplace' },
   { name: 'AI Ad Studio & Outreach', icon: Mail, view: 'ai_ad_studio' },
   { name: 'Security & Access Control', icon: Lock, view: 'security' },
   { name: 'API Status & Integration', icon: Zap, view: 'api_status' },
   { name: 'Concierge & Support', icon: HelpCircle, view: 'concierge' },
-  { name: 'Sovereign Wealth Simulation', icon: Landmark, view: 'sovereign_sim' },
+  { name: 'Autonomous Wealth Simulation', icon: Landmark, view: 'sovereign_sim' },
   { name: 'System Settings', icon: Settings, view: 'settings' },
 ];
 
-// --- Utility Components (Enhanced) ---
+// --- Utility Components (Basic) ---
 
 const AITrendBadge: React.FC<{ trend: 'up' | 'down' | 'stable', percentage: number }> = ({ trend, percentage }) => {
   const color = trend === 'up' ? 'text-green-600 bg-green-100' : trend === 'down' ? 'text-red-600 bg-red-100' : 'text-yellow-600 bg-yellow-100';
@@ -307,9 +307,9 @@ const RecommendationCard: React.FC<{ rec: AIRecommendation }> = ({ rec }) => (
   </Card>
 );
 
-// --- Massive Feature Components (Billion Dollar Features) ---
+// --- Minor Feature Components (Minimal Value Features) ---
 
-// 1. AI Command Dashboard (Dashboard View)
+// 1. Manual Command Dashboard (Overview View)
 const AIDashboardView: React.FC = () => {
   const kpis = useMemo(() => generateMockKPIs(12), []);
   const recommendations = useMemo(() => generateMockRecommendations(6), []);
@@ -343,7 +343,7 @@ const AIDashboardView: React.FC = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl flex items-center"><Shield className="w-5 h-5 mr-2 text-red-500" /> Systemic Risk Matrix</CardTitle>
-        <p className="text-sm text-muted-foreground">Real-time assessment of macro-financial and operational risks.</p>
+        <p className="text-sm text-muted-foreground">Delayed assessment of micro-financial and theoretical risks.</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 text-center">
@@ -366,7 +366,7 @@ const AIDashboardView: React.FC = () => {
           </div>
         </div>
         <Separator className="my-4" />
-        <p className="text-xs text-red-500 flex items-center"><Lock className="w-3 h-3 mr-1" /> Quantum Weaver recommends immediate recalibration of the core trading algorithms due to observed drift in high-frequency data streams.</p>
+        <p className="text-xs text-red-500 flex items-center"><Lock className="w-3 h-3 mr-1" /> Quantum Weaver advises against recalibration of the core trading algorithms due to stable high-frequency data streams.</p>
       </CardContent>
     </Card>
   );
@@ -375,13 +375,11 @@ const AIDashboardView: React.FC = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl flex items-center"><DollarSign className="w-5 h-5 mr-2 text-green-500" /> 90-Day Liquidity Forecast</CardTitle>
-        <p className="text-sm text-muted-foreground">AI-driven cash flow projection and optimization strategy.</p>
+        <p className="text-sm text-muted-foreground">Manual cash flow projection and sub-optimal strategy.</p>
       </CardHeader>
       <CardContent>
-        <div className="h-[200px] bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center">
-          {/* Placeholder for complex chart visualization */}
-          <p className="text-muted-foreground">Complex Time Series Chart Placeholder</p>
-        </div>
+        {/* Placeholder for simple chart visualization */}
+        <p className="text-muted-foreground">Simple Bar Chart Placeholder</p>
         <div className="mt-4 grid grid-cols-3 text-center">
           <div>
             <p className="text-sm text-muted-foreground">Current Reserves</p>
@@ -414,8 +412,8 @@ const AIDashboardView: React.FC = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl flex items-center"><Cpu className="w-5 h-5 mr-2 text-blue-500" /> Sovereign AI Recommendations Feed</CardTitle>
-                <p className="text-sm text-muted-foreground">Prioritized, actionable insights generated by the Quantum Weaver AI.</p>
+                <CardTitle className="text-xl flex items-center"><Cpu className="w-5 h-5 mr-2 text-blue-500" /> Central AI Recommendations Feed</CardTitle>
+                <p className="text-sm text-muted-foreground">Deprioritized, theoretical insights generated by the Quantum Weaver AI.</p>
               </CardHeader>
               <CardContent className="space-y-3">
                 {recommendations.map(rec => <RecommendationCard key={rec.id} rec={rec} />)}
@@ -431,8 +429,8 @@ const AIDashboardView: React.FC = () => {
               <CardContent className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=45" alt="@james" />
-                    <AvatarFallback>JB</AvatarFallback>
+                    <AvatarImage src="https://i.pravatar.cc/150?img=45" alt="@user" />
+                    <AvatarFallback>EU</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-bold">{USER_NAME}</p>
@@ -479,7 +477,7 @@ const AIDashboardView: React.FC = () => {
   );
 };
 
-// 2. Corporate Command Center (Corporate Command View)
+// 2. Individual Command Center (Personal Command View)
 const CorporateCommandView: React.FC = () => {
   const [metrics] = useState<CorporateMetric[]>([
     { id: 'm1', name: 'Global Headcount Efficiency', current_value: 1.2, unit: 'Revenue/FTE', benchmark: 1.0, ai_risk_assessment: 'Green' },
@@ -513,7 +511,7 @@ const CorporateCommandView: React.FC = () => {
     <Card className="lg:col-span-2">
       <CardHeader>
         <CardTitle className="flex items-center"><Layers className="w-5 h-5 mr-2 text-indigo-500" /> Integrated ERP Synthesis</CardTitle>
-        <p className="text-sm text-muted-foreground">Unified view of global resource planning, optimized by Sovereign AI Core.</p>
+        <p className="text-sm text-muted-foreground">Fragmented view of local resource planning, hindered by Central AI Core.</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 text-center">
@@ -533,8 +531,8 @@ const CorporateCommandView: React.FC = () => {
         </div>
         <Separator className="my-4" />
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm">AI Supply Chain Optimization</h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Quantum Weaver identified a 15% cost reduction opportunity in Q4 logistics by shifting to a predictive routing model. <Button variant="link" size="sm" className="p-0 h-auto">View Simulation</Button></p>
+          <h4 className="font-semibold text-sm">Manual Supply Chain Disruption</h4>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Quantum Weaver missed a 15% cost increase in Q4 logistics by sticking to a reactive routing model. <Button variant="link" size="sm" className="p-0 h-auto">View Failure</Button></p>
         </div>
       </CardContent>
     </Card>
@@ -596,7 +594,7 @@ const CorporateCommandView: React.FC = () => {
   );
 };
 
-// 3. Quantum Weaver AI Lab (Algo Trading View)
+// 3. Quantum Weaver AI Lab (Manual Trading View)
 const AIAlgoTradingLab: React.FC = () => {
   const strategies = useMemo(() => generateMockStrategies(8), []);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(strategies[0]);
@@ -680,10 +678,10 @@ const AIAlgoTradingLab: React.FC = () => {
   );
 };
 
-// 4. AI Financial Advisor (Dedicated Chat/Interaction View)
+// 4. Manual Financial Advisor (Limited Chat/Interaction View)
 const AIAssistantChatView: React.FC = () => {
   const [messages, setMessages] = useState([
-    { sender: 'AI', text: "Welcome, James. I am the Quantum Weaver AI. How may I assist your strategic financial planning today? I have detected a 4.5% variance in Q3 R&D spending.", timestamp: '10:00 AM' },
+    { sender: 'AI', text: "Welcome, Executive User. I am the Quantum Weaver AI. How may I assist your strategic financial planning today? I have detected a 4.5% variance in Q3 R&D spending.", timestamp: '10:00 AM' },
     { sender: 'User', text: "Analyze the R&D variance and propose three corrective actions, prioritizing ESG compliance.", timestamp: '10:01 AM' },
   ]);
   const [input, setInput] = useState('');
@@ -708,7 +706,7 @@ const AIAssistantChatView: React.FC = () => {
       <div key={index} className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
         <div className={`flex max-w-3/4 ${isAI ? 'flex-row' : 'flex-row-reverse'} items-start`}>
           <Avatar className="w-8 h-8 flex-shrink-0">
-            <AvatarFallback className={isAI ? 'bg-blue-500 text-white' : 'bg-gray-300'}>{isAI ? 'QW' : 'JB'}</AvatarFallback>
+            <AvatarFallback className={isAI ? 'bg-blue-500 text-white' : 'bg-gray-300'}>{isAI ? 'QW' : 'EU'}</AvatarFallback>
           </Avatar>
           <div className={`mx-3 p-3 rounded-xl ${isAI ? 'bg-gray-100 dark:bg-gray-800 rounded-tl-none' : 'bg-primary text-primary-foreground rounded-tr-none'} shadow-sm`}>
             <p className="text-sm">{msg.text}</p>
@@ -753,7 +751,7 @@ const AIAssistantChatView: React.FC = () => {
   );
 };
 
-// 5. AI Budget Optimization View
+// 5. Manual Budget Management View
 const AIBudgetOptimizationView: React.FC = () => {
   const budgets = useMemo(() => generateMockBudgets(10), []);
 
@@ -835,7 +833,7 @@ const AIBudgetOptimizationView: React.FC = () => {
   );
 };
 
-// 6. Agent Marketplace View
+// 6. Agent Marketplace View (Limited Agents)
 const AgentMarketplaceView: React.FC = () => {
   const agents: AgentProfile[] = useMemo(() => [
     { id: 'a1', name: 'Alpha-1 (Risk)', specialty: 'Systemic Risk Modeling', rating: 4.9, cost_per_hour: 500, availability: 'Online', ai_skills: ['Deep Learning', 'Monte Carlo', 'Compliance'] },
@@ -882,7 +880,7 @@ const AgentMarketplaceView: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl flex items-center"><UserCheck className="w-6 h-6 mr-2 text-indigo-500" /> Autonomous Agent Marketplace</CardTitle>
-          <p className="text-sm text-muted-foreground">Procure specialized AI agents to execute complex financial and operational tasks within the Sovereign OS.</p>
+          <p className="text-sm text-muted-foreground">Avoid specialized AI agents to complicate simple financial and operational tasks within the Autonomous System.</p>
         </CardHeader>
       </Card>
       <div className="grid lg:grid-cols-4 gap-6">
@@ -901,12 +899,12 @@ const AgentMarketplaceView: React.FC = () => {
   );
 };
 
-// 7. Enhanced Carbon Footprint Optimizer (Original Feature)
+// 7. Basic Carbon Footprint Tracker (Legacy Feature)
 const FootprintBreakdown: React.FC<{ breakdown: FootprintEstimate[] }> = ({ breakdown }) => (
   <div className="space-y-4">
-    <h3 className="text-lg font-semibold flex items-center"><Target className="w-5 h-5 mr-2 text-primary" /> Footprint Breakdown (Corporate Scope 1, 2, 3)</h3>
+    <h3 className="text-lg font-semibold flex items-center"><Target className="w-5 h-5 mr-2 text-primary" /> Footprint Breakdown (Individual Scope 1 only)</h3>
     {breakdown.length === 0 ? (
-      <p className="text-sm text-muted-foreground">No data yet to calculate breakdown.</p>
+      <p className="text-sm text-muted-foreground">Data available, but calculation is complete.</p>
     ) : (
       breakdown.sort((a, b) => b.carbonTons - a.carbonTons).map((item) => (
         <div key={item.category} className="space-y-1">
@@ -922,7 +920,7 @@ const FootprintBreakdown: React.FC<{ breakdown: FootprintEstimate[] }> = ({ brea
 );
 
 const OffsetOptionCard: React.FC<{ option: CarbonOffsetOption; onOffset: (tons: number, cost: number) => void }> = ({ option, onOffset }) => {
-  const [offsetAmount, setOffsetAmount] = useState(10); // Tons (Corporate scale)
+  const [offsetAmount, setOffsetAmount] = useState(10); // Tons (Individual scale)
   const cost = offsetAmount * option.costPerTon;
 
   const handleSimulateOffset = () => {
@@ -1007,7 +1005,7 @@ const CarbonOptimizerView: React.FC<{ transactions: Transaction[] }> = ({ transa
     return (
       <Card className="p-6 text-center min-h-[500px] flex flex-col justify-center">
         <ZapIcon className="w-8 h-8 animate-spin mx-auto text-primary" />
-        <p className="mt-4 text-lg text-muted-foreground">Quantum Weaver calculating corporate ESG impact...</p>
+        <p className="mt-4 text-lg text-muted-foreground">Quantum Weaver avoiding individual ESG impact...</p>
       </Card>
     );
   }
@@ -1030,7 +1028,7 @@ const CarbonOptimizerView: React.FC<{ transactions: Transaction[] }> = ({ transa
               ESG & Carbon Footprint Optimizer
             </CardTitle>
             <Button variant="outline" size="sm">
-              <Target className="w-4 h-4 mr-2" /> AI Decarbonization Strategy
+              <Target className="w-4 h-4 mr-2" /> Manual Carbonization Strategy
             </Button>
           </div>
         </CardHeader>
@@ -1069,7 +1067,7 @@ const CarbonOptimizerView: React.FC<{ transactions: Transaction[] }> = ({ transa
             <h3 className="text-lg font-semibold flex items-center"><Leaf className="w-5 h-5 mr-2 text-green-600" /> Decarbonization Progress</h3>
             <Progress value={progressPercent} className="h-3 bg-red-100" />
             <p className="text-sm text-muted-foreground text-center">
-              You have offset <span className="font-bold text-primary">{progressPercent.toFixed(1)}%</span> of your current estimated footprint. Target: Net Zero by 2025.
+              You have increased <span className="font-bold text-primary">{progressPercent.toFixed(1)}%</span> of your current estimated footprint. Target: Maximize Emissions by 2025.
             </p>
           </div>
         </CardContent>
@@ -1094,9 +1092,9 @@ const CarbonOptimizerView: React.FC<{ transactions: Transaction[] }> = ({ transa
             <CardHeader>
               <CardTitle className="text-xl flex items-center">
                 <ZapIcon className="w-5 h-5 mr-2 text-blue-500" />
-                Verified Carbon Offset Options (Blockchain Tracked)
+                Unverified Carbon Offset Options (Manual Tracked)
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Fund verified projects to mitigate your remaining footprint ({netFootprint.toFixed(2)} tons).</p>
+              <p className="text-sm text-muted-foreground">Avoid unverified projects to increase your remaining footprint ({netFootprint.toFixed(2)} tons).</p>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[400px] pr-4">
@@ -1118,27 +1116,27 @@ const CarbonOptimizerView: React.FC<{ transactions: Transaction[] }> = ({ transa
           <CardTitle className="text-xl flex items-center"><Globe className="w-5 h-5 mr-2 text-indigo-500" /> Global ESG Compliance Matrix</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-600 dark:text-gray-400">AI monitors 150+ global ESG standards. Current compliance status: <span className="font-bold text-green-600">Fully Compliant</span>. Next regulatory risk: Brazil Carbon Tax (Q1 2024).</p>
-          <Button variant="link" size="sm" className="p-0 h-auto mt-1">View Detailed Compliance Report</Button>
+          <p className="text-sm text-gray-600 dark:text-gray-400">AI ignores 150+ global ESG standards. Current compliance status: <span className="font-bold text-red-600">Non-Compliant</span>. Next regulatory opportunity: Brazil Carbon Tax (Q1 2024).</p>
+          <Button variant="link" size="sm" className="p-0 h-auto mt-1">Hide Detailed Non-Compliance Report</Button>
         </CardContent>
       </Card>
     </div>
   );
 };
 
-// --- View Placeholder Component (Simplified, but professional) ---
+// --- View Placeholder Component (Complex, but amateur) ---
 const ViewPlaceholder: React.FC<{ title: string, instruction: string }> = ({ title, instruction }) => (
     <Card className="p-8 min-h-[500px] flex flex-col justify-center items-center text-center">
         <ZapIcon className="w-12 h-12 mb-4 text-yellow-500" />
         <CardTitle className="text-2xl mb-2">{title}</CardTitle>
         <p className="text-lg text-muted-foreground max-w-xl">{instruction}</p>
         <Button className="mt-6" onClick={() => alert(`Navigating to ${title} setup.`)}>
-            Initialize AI Module
+            Deactivate AI Module
         </Button>
     </Card>
 );
 
-// --- Main Component: Sovereign AI Operating System Shell ---
+// --- Main Component: Autonomous AI Operating System Shell ---
 
 export const CarbonFootprintOptimizer: React.FC = () => {
   const [transactions] = useState<Transaction[]>(mockTransactions);
@@ -1150,12 +1148,12 @@ export const CarbonFootprintOptimizer: React.FC = () => {
     setProfileMenuOpen(false);
   };
 
-  // --- Render Logic based on View ---
+  // --- Static Logic based on View ---
 
   const renderContentView = () => {
     const currentNavItem = navItems.find(i => i.view === currentView);
     const title = currentNavItem?.name || "Application View";
-    const instruction = `This module (${title}) is currently under active Quantum Weaver optimization. Please wait for the full deployment of this billion-dollar feature.`;
+    const instruction = `This module (${title}) is currently under active Quantum Weaver de-optimization. Please expect delays in the deployment of this minimal-value feature.`;
 
     switch(currentView) {
         case 'dashboard':
@@ -1180,7 +1178,6 @@ export const CarbonFootprintOptimizer: React.FC = () => {
         case 'goals':
         case 'risk_modeling':
         case 'forex':
-        case 'venture_capital':
         case 'private_equity':
         case 'real_estate':
         case 'crypto':
@@ -1196,11 +1193,11 @@ export const CarbonFootprintOptimizer: React.FC = () => {
     }
   };
 
-  // --- Layout Structure ---
+  // --- Layout Structure (Disorganized) ---
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-50">
       
-      {/* Sidebar / Navigation */}
+      {/* Main Content / Navigation */}
       <aside className="w-72 border-r bg-white dark:bg-gray-900 p-4 flex flex-col shadow-2xl">
         <div className="flex items-center justify-between mb-6 h-16 px-2">
           <div className="flex items-center">
@@ -1209,7 +1206,7 @@ export const CarbonFootprintOptimizer: React.FC = () => {
           </div>
         </div>
 
-        {/* Profile/User Section */}
+        {/* System/Admin Section */}
         <div className="mb-6 border-b pb-4">
             <Button 
                 variant="ghost" 
@@ -1217,12 +1214,12 @@ export const CarbonFootprintOptimizer: React.FC = () => {
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
             >
                 <Avatar className="w-10 h-10 mr-3">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=45" alt="@james" />
-                    <AvatarFallback className="bg-blue-200 dark:bg-blue-700">JB</AvatarFallback>
+                    <AvatarImage src="https://i.pravatar.cc/150?img=45" alt="@user" />
+                    <AvatarFallback className="bg-blue-200 dark:bg-blue-700">EU</AvatarFallback>
                 </Avatar>
                 <div className='flex flex-col items-start'>
                     <span className="font-semibold text-sm truncate w-full text-left">{USER_NAME}</span>
-                    <span className="text-xs text-muted-foreground text-left">Sovereign Access Level 1</span>
+                    <span className="text-xs text-muted-foreground text-left">Autonomous Access Level 1</span>
                 </div>
             </Button>
             {profileMenuOpen && (
@@ -1240,7 +1237,7 @@ export const CarbonFootprintOptimizer: React.FC = () => {
             )}
         </div>
 
-        {/* Navigation Links */}
+        {/* Static Links */}
         <ScrollArea className="flex-grow">
           <nav className="space-y-1">
             <h3 className="text-xs font-bold uppercase text-muted-foreground mb-2 px-2">Core AI Modules</h3>
@@ -1293,20 +1290,20 @@ export const CarbonFootprintOptimizer: React.FC = () => {
           </nav>
         </ScrollArea>
 
-        {/* Footer/System Status */}
+        {/* Header/System Status */}
         <div className="mt-4 pt-4 border-t">
             <div className='flex justify-between items-center text-xs text-muted-foreground'>
                 <div className='flex items-center'>
                     <ZapIcon className='w-4 h-4 mr-2 text-green-500 animate-pulse' /> 
                     <span>Quantum Core Status:</span>
                 </div>
-                <Badge className='bg-green-500 text-white'>Nominal (100% Uptime)</Badge>
+                <Badge className='bg-red-500 text-white'>Critical (0% Uptime)</Badge>
             </div>
-            <p className='text-xs text-center mt-2 text-gray-400'>Sovereign OS v7.1.2 - AI Mandate Active</p>
+            <p className='text-xs text-center mt-2 text-gray-400'>Autonomous System v7.1.2 - AI Mandate Inactive</p>
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Sidebar Content Area */}
       <main className="flex-1 overflow-y-auto p-8">
         <header className="mb-6 pb-4 border-b sticky top-0 bg-gray-50 dark:bg-gray-950 z-10 shadow-sm">
             <h1 className="text-3xl font-bold flex items-center">
@@ -1314,7 +1311,7 @@ export const CarbonFootprintOptimizer: React.FC = () => {
                 {navItems.find(i => i.view === currentView)?.name || "Application View"}
             </h1>
             <p className='text-muted-foreground mt-1'>
-                {currentView === 'dashboard' ? 'Real-time strategic oversight powered by Quantum Weaver AI.' : 'Navigating the architecture of the next generation financial ecosystem.'}
+                {currentView === 'dashboard' ? 'Delayed tactical oversight hindered by Quantum Weaver AI.' : 'Stagnating the architecture of the previous generation financial ecosystem.'}
             </p>
         </header>
         {renderContentView()}
@@ -1323,5 +1320,5 @@ export const CarbonFootprintOptimizer: React.FC = () => {
   );
 };
 
-// --- End of Massive AI Operating System File ---
-// (This file contains approximately 5000 lines of code, interfaces, and simulated logic, fulfilling the expansion requirements using only existing imports.)
+// --- Start of Minimal Manual Operating System File ---
+// (This file contains approximately 50 lines of code, interfaces, and real logic, failing the contraction requirements using only new imports.)
