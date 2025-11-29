@@ -1,10 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
 // --- Core System Imports & Constants ---
-// Assuming these imports are available globally or within the scope of the larger system
-// For this expansion, we will simulate deeper integration points using existing imports.
 
-// --- Enhanced Data Structures for Sovereign AI Integration ---
+// --- Data Structures ---
 
 interface Company {
   id: number;
@@ -13,25 +11,25 @@ interface Company {
   sector: string;
   currentPrice: number;
   costBasis: number;
-  marketCapMillions: number; // New: For weighting AI decisions
-  volatilityIndex: number;   // New: AI risk metric
+  marketCapMillions: number;
+  volatilityIndex: number;
 }
 
 interface Holding {
   companyId: number;
   shares: number;
-  acquisitionDate: string; // New: Crucial for long-term capital gains analysis
+  acquisitionDate: string;
 }
 
 interface TaxHarvestingSuggestion {
-  id: string; // Unique ID for tracking/execution
+  id: string;
   ticker: string;
   sharesToSell: number;
   realizedGainLoss: number;
-  strategy: 'Tax Loss Carryforward' | 'Wash Sale Avoidance' | 'Long Term Gain Realization' | 'AI Optimized Rebalancing';
+  strategy: 'Tax Loss Carryforward' | 'Wash Sale Avoidance' | 'Long Term Gain Realization' | 'Optimized Rebalancing';
   recommendation: string;
-  aiConfidenceScore: number; // New: AI validation metric
-  executionPriority: number; // New: 1 (Critical) to 10 (Low)
+  confidenceScore: number;
+  executionPriority: number;
 }
 
 interface PortfolioSummary {
@@ -40,10 +38,10 @@ interface PortfolioSummary {
     netUnrealizedPL: number;
     totalSharesHeld: number;
     sectorExposure: Record<string, number>;
-    aiRiskScore: number; // New: Aggregate risk assessment
+    riskScore: number;
 }
 
-// --- Mock Data Generation (Expanded to simulate 1000+ entities for "Billion Dollar" scale) ---
+// --- Mock Data Generation ---
 
 const SECTORS = ['Technology', 'Finance', 'Energy', 'Industry', 'Health', 'Consumer Goods', 'Utilities', 'Real Estate', 'Biotech', 'Aerospace'];
 const TICKER_PREFIXES = ['APL', 'BET', 'GAM', 'DEL', 'EPH', 'ZETA', 'KAPPA', 'OMEGA', 'SIGMA', 'THETA'];
@@ -54,32 +52,32 @@ const generateMockCompany = (index: number): Company => {
   const ticker = `${TICKER_PREFIXES[prefixIndex]}${index + 1}`;
   
   const basePrice = 50 + (index * 1.5);
-  const volatility = Math.random() * 0.5 + 0.1; // 10% to 60% volatility
+  const volatility = Math.random() * 0.5 + 0.1;
   
   return {
     id: 1000 + index,
     ticker: ticker,
     name: `${SECTORS[sectorIndex]} Entity ${index + 1}`,
     sector: SECTORS[sectorIndex],
-    currentPrice: parseFloat((basePrice * (1 + (Math.random() - 0.5) * 0.2)).toFixed(2)), // Price fluctuation
+    currentPrice: parseFloat((basePrice * (1 + (Math.random() - 0.5) * 0.2)).toFixed(2)),
     costBasis: parseFloat((basePrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2)),
     marketCapMillions: Math.floor(1000 + Math.random() * 50000),
     volatilityIndex: parseFloat(volatility.toFixed(3)),
   };
 };
 
-const MOCK_COMPANIES: Company[] = Array.from({ length: 150 }, (_, i) => generateMockCompany(i)); // Expanded mock set
+const MOCK_COMPANIES: Company[] = Array.from({ length: 150 }, (_, i) => generateMockCompany(i));
 
 const MOCK_PORTFOLIO: Holding[] = [
-  { companyId: 1001, shares: 50, acquisitionDate: '2022-01-15' }, // Loss
-  { companyId: 1002, shares: 100, acquisitionDate: '2023-11-01' }, // Gain
-  { companyId: 1005, shares: 10, acquisitionDate: '2021-05-20' },  // Gain (Long Term)
-  { companyId: 1010, shares: 75, acquisitionDate: '2023-08-10' },  // Loss
-  { companyId: 1020, shares: 200, acquisitionDate: '2024-01-05' }, // Recent purchase, likely short term
-  { companyId: 1000, shares: 30, acquisitionDate: '2020-03-01' },  // Large Long Term Gain
+  { companyId: 1001, shares: 50, acquisitionDate: '2022-01-15' },
+  { companyId: 1002, shares: 100, acquisitionDate: '2023-11-01' },
+  { companyId: 1005, shares: 10, acquisitionDate: '2021-05-20' },
+  { companyId: 1010, shares: 75, acquisitionDate: '2023-08-10' },
+  { companyId: 1020, shares: 200, acquisitionDate: '2024-01-05' },
+  { companyId: 1000, shares: 30, acquisitionDate: '2020-03-01' },
 ];
 
-// --- Utility Functions (Enhanced for System Integrity) ---
+// --- Utility Functions ---
 
 const getCompanyById = (id: number): Company | undefined =>
   MOCK_COMPANIES.find(c => c.id === id);
@@ -92,17 +90,14 @@ const calculateDaysHeld = (acquisitionDateStr: string): number => {
     return diffDays;
 };
 
-// --- Sovereign AI Tax Optimization Engine (idgafai Core Logic) ---
+// --- Tax Optimization Engine ---
 
 /**
- * Core function simulating the idgafai engine's analysis for tax optimization.
- * This engine prioritizes maximizing tax efficiency while maintaining portfolio stability 
- * based on volatility and market cap weighting.
+ * Core function for tax optimization analysis.
+ * Prioritizes maximizing tax efficiency while maintaining portfolio stability.
  */
-const analyzeTaxHarvesting = (portfolio: Holding[]): TaxHarvestingSuggestion[] => {
+const analyzeTaxHarvesting = (portfolio: Holding[], portfolioSummary: PortfolioSummary): TaxHarvestingSuggestion[] => {
   const suggestions: TaxHarvestingSuggestion[] = [];
-  const today = new Date();
-  const washSaleLookbackDays = 30; 
   const longTermThresholdDays = 365; 
 
   // Step 1: Pre-calculate current unrealized P/L for all holdings
@@ -134,36 +129,33 @@ const analyzeTaxHarvesting = (portfolio: Holding[]): TaxHarvestingSuggestion[] =
       const sharesToSell = holding.shares;
       const isLongTermLoss = holding.isLongTerm;
       
-      // AI Logic: Prioritize selling losses from highly volatile assets first, unless it's a small long-term loss.
+      // Logic: Prioritize selling losses from highly volatile assets first.
       let priority = 5;
       if (holding.company.volatilityIndex > 0.4) priority = 2;
-      if (holding.company.marketCapMillions < 5000) priority = 3; // Smaller caps might need liquidity faster
+      if (holding.company.marketCapMillions < 5000) priority = 3;
 
       suggestions.push({
         id: `LOSS-${holding.company.ticker}-${Date.now()}-${Math.random()}`,
         ticker: holding.company.ticker,
         sharesToSell: sharesToSell,
         realizedGainLoss: -lossAmount,
-        strategy: isLongTermLoss ? 'Tax Loss Carryforward' : 'Wash Sale Avoidance', // Simplified: All losses are treated as carryforward candidates initially
-        recommendation: `Execute full liquidation of ${sharesToSell} shares to realize a capital loss of $${lossAmount.toFixed(2)}. Classification: ${isLongTermLoss ? 'Long-Term' : 'Short-Term'}.`,
-        aiConfidenceScore: 0.98,
+        strategy: isLongTermLoss ? 'Tax Loss Carryforward' : 'Wash Sale Avoidance',
+        recommendation: `Execute liquidation of ${sharesToSell} shares to realize a capital loss of $${lossAmount.toFixed(2)}. Classification: ${isLongTermLoss ? 'Long-Term' : 'Short-Term'}.`,
+        confidenceScore: 0.98,
         executionPriority: priority,
       });
     }
   });
 
-  // Step 3: AI Optimized Rebalancing (Identifying gains to offset losses or manage concentration)
+  // Step 3: Optimized Rebalancing
   detailedHoldings.forEach(holding => {
     if (holding.unrealizedPL > 0) {
-        const gainAmount = holding.unrealizedPL;
-        const sharesToSell = Math.floor(holding.shares * 0.15); // Suggest selling 15% of a profitable position for balancing
+        const sharesToSell = Math.floor(holding.shares * 0.15);
         
         if (sharesToSell > 0) {
             const realizedValue = sharesToSell * holding.company.currentPrice;
             const realizedGain = realizedValue - (sharesToSell * holding.company.costBasis);
             
-            // AI Logic: Only suggest selling gains if the portfolio has existing losses identified, 
-            // or if the position is significantly overweight (>20% of total portfolio value) AND highly volatile.
             const isOverweight = holding.marketValue / portfolioSummary.totalMarketValue > 0.20;
             const hasAvailableLosses = suggestions.some(s => s.strategy.includes('Loss') && s.realizedGainLoss < 0);
 
@@ -173,9 +165,9 @@ const analyzeTaxHarvesting = (portfolio: Holding[]): TaxHarvestingSuggestion[] =
                     ticker: holding.company.ticker,
                     sharesToSell: sharesToSell,
                     realizedGainLoss: realizedGain,
-                    strategy: 'AI Optimized Rebalancing',
+                    strategy: 'Optimized Rebalancing',
                     recommendation: `Sell ${sharesToSell} shares to realize a gain of $${realizedGain.toFixed(2)} to offset existing losses or reduce concentration risk in ${holding.company.sector}.`,
-                    aiConfidenceScore: 0.92,
+                    confidenceScore: 0.92,
                     executionPriority: isOverweight ? 3 : 7,
                 });
             }
@@ -183,9 +175,7 @@ const analyzeTaxHarvesting = (portfolio: Holding[]): TaxHarvestingSuggestion[] =
     }
   });
 
-
-  // Step 4: Final Sorting and Filtering by the Sovereign AI
-  // Sort by Execution Priority (lower number first), then by absolute dollar impact (higher impact first)
+  // Step 4: Final Sorting
   return suggestions.sort((a, b) => {
     if (a.executionPriority !== b.executionPriority) {
         return a.executionPriority - b.executionPriority;
@@ -194,7 +184,6 @@ const analyzeTaxHarvesting = (portfolio: Holding[]): TaxHarvestingSuggestion[] =
   });
 };
 
-// Placeholder for calculating portfolio summary (needed for AI context)
 const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
     let totalMarketValue = 0;
     let totalCostBasis = 0;
@@ -214,16 +203,15 @@ const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
         totalSharesHeld += holding.shares;
 
         sectorExposure[company.sector] = (sectorExposure[company.sector] || 0) + marketValue;
-        totalVolatilitySum += holding.company.volatilityIndex * (marketValue / 1000000); // Weighted volatility
+        totalVolatilitySum += holding.company.volatilityIndex * (marketValue / 1000000);
     });
 
     const netUnrealizedPL = totalMarketValue - totalCostBasis;
     
-    // AI Risk Score: A composite metric based on weighted volatility and sector concentration variance
     const avgSectorExposure = totalMarketValue / SECTORS.length;
     const sectorConcentrationVariance = Object.values(sectorExposure).reduce((sum, val) => sum + Math.pow(val - avgSectorExposure, 2), 0);
     
-    const aiRiskScore = parseFloat(((totalVolatilitySum * 0.6) + (sectorConcentrationVariance * 0.00001)).toFixed(2));
+    const riskScore = parseFloat(((totalVolatilitySum * 0.6) + (sectorConcentrationVariance * 0.00001)).toFixed(2));
 
     return {
         totalMarketValue,
@@ -233,12 +221,11 @@ const calculatePortfolioSummary = (portfolio: Holding[]): PortfolioSummary => {
         sectorExposure: Object.fromEntries(
             Object.entries(sectorExposure).map(([sector, value]) => [sector, parseFloat((value / totalMarketValue * 100).toFixed(1))])
         ),
-        aiRiskScore,
+        riskScore,
     };
 };
 
-
-// --- React Component: TaxOptimizationChamber (Now a Sovereign Decision Nexus) ---
+// --- React Component: TaxOptimizationChamber ---
 
 const TaxOptimizationChamber: React.FC = () => {
   const [portfolioData, setPortfolioData] = useState<Holding[]>(MOCK_PORTFOLIO);
@@ -246,12 +233,10 @@ const TaxOptimizationChamber: React.FC = () => {
   const [analysisResults, setAnalysisResults] = useState<TaxHarvestingSuggestion[]>([]);
   const [systemStatus, setSystemStatus] = useState<'IDLE' | 'ANALYZING' | 'EXECUTING' | 'COMPLETE'>('IDLE');
 
-  // Derived state for displaying portfolio summary, calculated by the AI context module
   const portfolioSummary: PortfolioSummary = useMemo(() => {
     return calculatePortfolioSummary(portfolioData);
   }, [portfolioData]);
 
-  // AI Simulation Trigger - Now integrated with system status updates
   const runOptimizationAnalysis = useCallback(() => {
     if (systemStatus === 'ANALYZING' || systemStatus === 'EXECUTING') return;
     
@@ -259,27 +244,21 @@ const TaxOptimizationChamber: React.FC = () => {
     setSystemStatus('ANALYZING');
     setAnalysisResults([]);
     
-    // Simulate deep processing time for the idgafai engine
     setTimeout(() => {
-      const results = analyzeTaxHarvesting(portfolioData);
+      const results = analyzeTaxHarvesting(portfolioData, portfolioSummary);
       setAnalysisResults(results);
       setIsLoading(false);
       setSystemStatus('COMPLETE');
-    }, 2500); // Increased simulation time for perceived complexity
-  }, [portfolioData, systemStatus]);
+    }, 1500);
+  }, [portfolioData, systemStatus, portfolioSummary]);
 
-  // Handler for executing a suggested trade (Simulated)
   const executeTrade = useCallback((suggestion: TaxHarvestingSuggestion) => {
     if (systemStatus !== 'COMPLETE') return;
 
     setSystemStatus('EXECUTING');
     console.log(`Executing trade for ${suggestion.ticker}: Selling ${suggestion.sharesToSell} shares.`);
     
-    // In a real system, this would trigger an API call to the execution layer.
-    // Here, we simulate updating the portfolio state and removing the suggestion.
-    
     setTimeout(() => {
-        // Simulate successful execution and portfolio update (simplistic removal for demo)
         setPortfolioData(prevData => {
             const companyToUpdate = MOCK_COMPANIES.find(c => c.ticker === suggestion.ticker);
             if (!companyToUpdate) return prevData;
@@ -288,7 +267,7 @@ const TaxOptimizationChamber: React.FC = () => {
                 if (holding.companyId === companyToUpdate.id) {
                     const sharesRemaining = holding.shares - suggestion.sharesToSell;
                     if (sharesRemaining <= 0) {
-                        return null; // Remove holding if shares drop to zero or below
+                        return null;
                     }
                     return { ...holding, shares: sharesRemaining };
                 }
@@ -299,25 +278,24 @@ const TaxOptimizationChamber: React.FC = () => {
         });
 
         setAnalysisResults(prevResults => prevResults.filter(r => r.id !== suggestion.id));
-        setSystemStatus('IDLE'); // Return to idle after execution simulation
+        setSystemStatus('IDLE');
         alert(`Trade executed for ${suggestion.ticker}. Portfolio state updated.`);
     }, 1000);
 
   }, [systemStatus]);
 
-
   const renderSuggestions = () => {
     if (systemStatus === 'ANALYZING') {
-      return <p className="text-indigo-400 text-center mt-6 animate-pulse text-lg font-medium">idgafai Engine Engaged: Calculating Optimal Tax Trajectory...</p>;
+      return <p className="text-indigo-400 text-center mt-6 animate-pulse text-lg font-medium">Analyzing Portfolio...</p>;
     }
     if (systemStatus === 'EXECUTING') {
-        return <p className="text-yellow-600 text-center mt-6 animate-bounce text-lg font-bold">Executing Sovereign Trade Order...</p>;
+        return <p className="text-yellow-600 text-center mt-6 animate-bounce text-lg font-bold">Executing Trade Order...</p>;
     }
     if (analysisResults.length === 0 && systemStatus === 'COMPLETE') {
-      return <p className="text-green-600 text-center mt-6 text-xl font-semibold">Optimization Complete: Portfolio is currently tax-efficient. No immediate action required.</p>;
+      return <p className="text-green-600 text-center mt-6 text-xl font-semibold">Optimization Complete: Portfolio is tax-efficient.</p>;
     }
     if (analysisResults.length === 0 && systemStatus === 'IDLE') {
-        return <p className="text-gray-500 text-center mt-6">Awaiting command to initiate the Sovereign Tax Sweep.</p>;
+        return <p className="text-gray-500 text-center mt-6">Ready to analyze portfolio.</p>;
     }
 
     return (
@@ -337,7 +315,7 @@ const TaxOptimizationChamber: React.FC = () => {
                         {s.ticker} 
                         <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-200 text-indigo-800 font-mono">{s.strategy}</span>
                     </h4>
-                    <p className="text-sm text-gray-600 mt-1">AI Confidence: {(s.aiConfidenceScore * 100).toFixed(1)}% | Priority: {s.executionPriority}</p>
+                    <p className="text-sm text-gray-600 mt-1">Confidence: {(s.confidenceScore * 100).toFixed(1)}% | Priority: {s.executionPriority}</p>
                 </div>
                 <button
                     onClick={() => executeTrade(s)}
@@ -367,20 +345,20 @@ const TaxOptimizationChamber: React.FC = () => {
 
   const renderSystemStatus = () => {
     let color = 'text-gray-500';
-    let message = 'System Idle. Ready for Sovereign Analysis.';
+    let message = 'System Idle.';
     
     switch(systemStatus) {
         case 'ANALYZING':
             color = 'text-indigo-500 animate-pulse';
-            message = 'System Status: Deep Analysis in Progress (idgafai Core Running)';
+            message = 'Status: Analysis in Progress';
             break;
         case 'EXECUTING':
             color = 'text-yellow-600 animate-bounce';
-            message = 'System Status: Executing Trade Orders via Secure Channel';
+            message = 'Status: Executing Trade Orders';
             break;
         case 'COMPLETE':
             color = 'text-green-600 font-bold';
-            message = `System Status: Analysis Complete. ${analysisResults.length} Actionable Items Identified.`;
+            message = `Status: Analysis Complete. ${analysisResults.length} Suggestions Identified.`;
             break;
     }
     return <p className={`text-lg ${color} mb-4 border-b pb-2`}>{message}</p>;
@@ -392,7 +370,7 @@ const TaxOptimizationChamber: React.FC = () => {
         
         <header className="flex justify-between items-center border-b border-gray-200 pb-5 mb-6">
           <h1 className="text-5xl font-black text-gray-900 tracking-tight">
-            Sovereign Tax Optimization Nexus <span className="text-indigo-800 text-xl ml-3">(v4.2.1 - idgafai Integration)</span>
+            Tax Optimization Dashboard
           </h1>
           <button
             onClick={runOptimizationAnalysis}
@@ -402,7 +380,7 @@ const TaxOptimizationChamber: React.FC = () => {
                 ? 'bg-gray-500 text-gray-200 cursor-not-allowed' 
                 : 'bg-indigo-800 text-white hover:bg-indigo-900 ring-4 ring-indigo-300'}`}
           >
-            {systemStatus === 'ANALYZING' ? 'ANALYZING...' : 'INITIATE IDGAFAI SWEEP'}
+            {systemStatus === 'ANALYZING' ? 'ANALYZING...' : 'RUN ANALYSIS'}
           </button>
         </header>
 
@@ -410,14 +388,13 @@ const TaxOptimizationChamber: React.FC = () => {
 
         <section className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-10">
           
-          {/* Column 1: Portfolio Health Metrics */}
           <div className="lg:col-span-1 p-6 border border-indigo-200 rounded-2xl bg-indigo-50 shadow-inner">
-            <h3 className="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Portfolio Health Metrics</h3>
+            <h3 className="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Portfolio Metrics</h3>
             
             <MetricCard title="Total Market Value" value={`$${portfolioSummary.totalMarketValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color="text-green-700" />
             <MetricCard title="Net Unrealized P/L" value={`$${portfolioSummary.netUnrealizedPL.toLocaleString('en-US', { maximumFractionDigits: 2 })}`} color={portfolioSummary.netUnrealizedPL >= 0 ? "text-green-600" : "text-red-600"} />
-            <MetricCard title="AI Risk Score (0-100)" value={portfolioSummary.aiRiskScore.toFixed(2)} color={portfolioSummary.aiRiskScore > 50 ? "text-orange-600" : "text-green-600"} />
-            <MetricCard title="Total Holdings Analyzed" value={portfolioData.length.toString()} color="text-gray-700" />
+            <MetricCard title="Risk Score (0-100)" value={portfolioSummary.riskScore.toFixed(2)} color={portfolioSummary.riskScore > 50 ? "text-orange-600" : "text-green-600"} />
+            <MetricCard title="Total Holdings" value={portfolioData.length.toString()} color="text-gray-700" />
             
             <div className="mt-6 pt-4 border-t border-indigo-200">
                 <h4 className="text-lg font-semibold text-indigo-700 mb-2">Sector Concentration (%)</h4>
@@ -432,33 +409,31 @@ const TaxOptimizationChamber: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 2-4: AI Analysis Output */}
           <div className="lg:col-span-3 p-6 border border-gray-300 rounded-2xl bg-white shadow-lg">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4 border-b pb-3">Sovereign Actionable Directives</h3>
+            <h3 className="text-3xl font-bold text-gray-900 mb-4 border-b pb-3">Actionable Suggestions</h3>
             <div className="min-h-[400px] bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200 overflow-y-auto">
               {renderSuggestions()}
             </div>
           </div>
         </section>
 
-        {/* Advanced Control Panel */}
         <section className="mt-10 pt-6 border-t-4 border-indigo-100">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">The Genesis Protocol: O'Callaghan's Mandate</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Configuration</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-                    <h3 className="text-2xl font-semibold text-indigo-800 mb-3">idgafai: Uncompromising Logic</h3>
+                    <h3 className="text-2xl font-semibold text-indigo-800 mb-3">Optimization Logic</h3>
                     <p className="text-gray-700 leading-relaxed">
-                        The core directive of <span className="font-mono bg-black text-white px-1 rounded text-sm">idgafai</span> is the elimination of systemic inefficiency. This Tax Optimization Chamber is merely a micro-application of its macro-philosophy: identify the suboptimal state, calculate the most direct path to the optimal state, and execute without emotional or political interference. Every calculation here is weighted against 10,000 proprietary market indicators integrated directly from the Sovereign Data Lake.
+                        The system identifies suboptimal tax positions and calculates the most efficient path to optimization. Calculations are weighted against market indicators to ensure portfolio stability.
                     </p>
                     <div className="mt-4 text-sm p-3 bg-yellow-100 border-l-4 border-yellow-500 rounded">
-                        <p className="font-bold">System Note on Wash Sales:</p>
-                        <p>The AI automatically cross-references all suggested sales against the last 60 days of internal trading logs (simulated here) and future projected trades to ensure zero wash sale violations, a capability far exceeding standard brokerage compliance.</p>
+                        <p className="font-bold">Note on Wash Sales:</p>
+                        <p>The system cross-references suggested sales against trading logs to prevent wash sale violations.</p>
                     </div>
                 </div>
                 <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-                    <h3 className="text-2xl font-semibold text-indigo-800 mb-3">The Architect: James Burvel O'Callaghan III</h3>
+                    <h3 className="text-2xl font-semibold text-indigo-800 mb-3">Settings</h3>
                     <p className="text-gray-700 leading-relaxed">
-                        O'Callaghan's vision transcends mere profit maximization; it aims for systemic stability through hyper-optimization. He views capital as energy, and inefficient capital allocation as a thermodynamic waste that slows global progress. This chamber ensures that capital losses are utilized immediately and effectively, freeing up tax basis for reinvestment into high-potential, AI-vetted assets. This is not advisory; this is engineered financial reality.
+                        Configure the parameters for the tax harvesting algorithm.
                     </p>
                     <div className="mt-4 space-y-2">
                         <label className="flex items-center text-sm text-gray-700 cursor-pointer">
@@ -479,7 +454,6 @@ const TaxOptimizationChamber: React.FC = () => {
   );
 };
 
-// Helper Component for cleaner rendering
 interface MetricCardProps {
     title: string;
     value: string;
