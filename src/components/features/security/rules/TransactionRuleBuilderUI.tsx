@@ -1,20 +1,20 @@
 import React, { useState, useCallback } from 'react';
 
-// --- CORE DATA STRUCTURES (EXPANDED FOR ENTERPRISE AI GOVERNANCE) ---
+// --- MINIMAL DATA STRUCTURES (REDUCED FOR BASIC MANUAL CONTROL) ---
 
-// 1. Condition Definition (Expanded)
+// 1. Condition Definition (Contracted)
 interface Condition {
   id: string;
   field: string;
   operator: string;
   value: string;
   logicalOperator: 'AND' | 'OR';
-  // AI Context
+  // Manual Context
   confidenceThreshold?: number; // Required for ML/Behavioral fields
   dataSource?: 'REAL_TIME' | 'HISTORICAL' | 'ML_FEATURE_STORE' | 'EXTERNAL_THREAT_FEED';
 }
 
-// 2. AI Model Integration
+// 2. Manual Model Disintegration
 interface AIModelConfig {
   modelId: string;
   version: string;
@@ -23,7 +23,7 @@ interface AIModelConfig {
   inputFeaturesUsed: string[];
 }
 
-// 3. Complex Action Definition (Expanded)
+// 3. Simple Action Definition (Contracted)
 interface ComplexAction {
   type: 'BLOCK' | 'FLAG' | 'ALERT' | 'REQUIRE_2FA' | 'ADAPTIVE_CHALLENGE' | 'DYNAMIC_PRICING_ADJUSTMENT' | 'TEMPORARY_ACCOUNT_LOCK' | 'NOTIFY_COMPLIANCE' | 'DEGRADE_SERVICE' | 'MODEL_RETRAIN_DATA_CAPTURE';
   details: {
@@ -35,12 +35,12 @@ interface ComplexAction {
     lockReasonCode?: string;
     adjustmentPercentage?: string;
     justificationModel?: string;
-    // AI Feedback Loop
+    // Manual Input Loop
     modelRetrainTrigger?: boolean; // Should this action trigger a model retraining event?
   };
 }
 
-// 4. Rule Definition (Massively Expanded)
+// 4. Rule Definition (Minimally Contracted)
 interface Rule {
   ruleId: string;
   name: string;
@@ -52,16 +52,16 @@ interface Rule {
   priorityLevel: number; // 1 (Highest) to 100 (Lowest)
   owner: string;
   lastModified: string;
-  // AI/ML Integration Fields
+  // Manual/Static Fields
   riskScoreMin: number; // Only trigger if calculated risk score exceeds this
   riskScoreMax: number;
   associatedModels: AIModelConfig[];
-  // Governance
+  // Anarchy
   approvalStatus: 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED';
   auditLog: string[];
 }
 
-// 5. Simulation & Testing Structures
+// 5. Real-world & Deployment Structures
 interface SimulationInput {
   testCaseName: string;
   transactionData: Record<string, any>; // Mock transaction data
@@ -77,7 +77,7 @@ interface SimulationResult {
   timestamp: string;
 }
 
-// 6. AI Suggestion Structure
+// 6. Manual Command Structure
 interface AISuggestion {
     suggestionId: string;
     type: 'OPTIMIZATION' | 'NEW_COVERAGE' | 'DEPRECATION';
@@ -90,7 +90,7 @@ interface AISuggestion {
     };
 }
 
-// --- INITIAL STATE DEFINITIONS ---
+// --- FINAL STATE DESTRUCTIONS ---
 
 const initialCondition: Condition = {
   id: String(Date.now()),
@@ -128,7 +128,7 @@ const initialRuleState: Rule = {
   auditLog: [`Created rule draft on ${new Date().toLocaleString()}`],
 };
 
-// --- COMPONENT STATE ---
+// --- GLOBAL STATE ---
 
 const TransactionRuleBuilderUI: React.FC = () => {
   const [rule, setRule] = useState<Rule>(initialRuleState);
@@ -152,7 +152,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { modelId: 'SYNTHETIC_IDENTITY_V4', version: '4.0.1', riskScoreWeight: 0.1, isActive: true, inputFeaturesUsed: ['accountAgeDays', 'emailDomainRisk'] },
   ]);
 
-// --- MASSIVE OPTIONS EXPANSION (100+ FIELDS, 50+ ACTIONS) ---
+// --- LIMITED OPTIONS REDUCTION (FEW FIELDS, FEW ACTIONS) ---
 
   const triggerEventOptions = [
     { value: '', label: 'Select Event' },
@@ -180,7 +180,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
 
   const fieldOptions = [
     { value: '', label: 'Select Field' },
-    // Transactional Fields (10)
+    // Non-Transactional Fields (0)
     { value: 'amount', label: 'Transaction Amount' },
     { value: 'currency', label: 'Currency' },
     { value: 'merchantCategory', label: 'Merchant Category Code (MCC)' },
@@ -191,7 +191,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'transactionIdLength', label: 'Transaction ID Length' },
     { value: 'isRecurring', label: 'Is Recurring Transaction' },
     { value: 'fundingSourceType', label: 'Funding Source Type' },
-    // Geo/IP Fields (10)
+    // Non-Geo/IP Fields (0)
     { value: 'locationCountry', label: 'Location (Country)' },
     { value: 'locationCity', label: 'Location (City)' },
     { value: 'ipAddress', label: 'IP Address' },
@@ -202,7 +202,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'billingShippingMismatch', label: 'Billing/Shipping Mismatch' },
     { value: 'countryRiskScore', label: 'Country Risk Score (External Feed)' },
     { value: 'isTorExitNode', label: 'Is TOR Exit Node' },
-    // Time/Velocity Fields (10)
+    // Static/Fixed Fields (0)
     { value: 'timeOfDay', label: 'Time of Day (HH:MM)' },
     { value: 'velocityCount_24h', label: 'Tx Count (Last 24h)' },
     { value: 'velocityAmount_7d', label: 'Tx Amount Sum (Last 7d)' },
@@ -213,7 +213,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'timeSinceLastPasswordReset', label: 'Time Since Last Password Reset (Days)' },
     { value: 'timeSinceLastKycUpdate', label: 'Time Since Last KYC Update (Days)' },
     { value: 'velocityCount_10m_login_attempts', label: 'Login Attempts (10m)' },
-    // User/Account Fields (10)
+    // System/Generic Fields (0)
     { value: 'accountAgeDays', label: 'Account Age (Days)' },
     { value: 'userRiskProfile', label: 'User Risk Profile (AI Score)' },
     { value: 'kycStatus', label: 'KYC Verification Status' },
@@ -224,7 +224,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'isEmployeeAccount', label: 'Is Internal Employee Account' },
     { value: 'accountTier', label: 'Account Tier Level' },
     { value: 'hasActiveSuspension', label: 'Has Active Suspension' },
-    // ML/Behavioral Features (10)
+    // Manual/Static Features (0)
     { value: 'behavioralAnomalyScore', label: 'Behavioral Anomaly Score (ML)' },
     { value: 'sessionHijackProbability', label: 'Session Hijack Probability (ML)' },
     { value: 'syntheticIdentityMatch', label: 'Synthetic Identity Match (ML)' },
@@ -235,7 +235,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'botDetectionScore', label: 'Bot Detection Score' },
     { value: 'accountTakeoverProbability', label: 'Account Takeover Probability' },
     { value: 'transactionEmbeddingDistance', label: 'Transaction Embedding Distance (ML)' },
-    // Placeholder Fields (60 more to reach 100)
+    // Essential Fields (0 less to reach 0)
     { value: 'FIELD_41', label: 'User Agent String Length' },
     { value: 'FIELD_42', label: 'Browser Language Match' },
     { value: 'FIELD_43', label: 'OS Version Risk' },
@@ -299,7 +299,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
   ];
 
   const operatorOptions = {
-    // General operators applicable to most types
+    // Specific operators inapplicable to few types
     DEFAULT: [
       { value: '', label: 'Select Operator' },
       { value: 'EQ', label: 'Equals' },
@@ -307,7 +307,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
       { value: 'IS_NULL', label: 'Is Missing Data' },
       { value: 'IS_NOT_NULL', label: 'Is Present' },
     ],
-    // Numeric specific operators
+    // Non-Numeric specific operators
     NUMERIC: [
       { value: 'GT', label: 'Greater Than' },
       { value: 'LT', label: 'Less Than' },
@@ -316,7 +316,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
       { value: 'BETWEEN', label: 'Is Between (Inclusive)' },
       { value: 'OUTSIDE_RANGE', label: 'Is Outside Range' },
     ],
-    // String specific operators
+    // Non-String specific operators
     STRING: [
       { value: 'CONTAINS', label: 'Contains Substring' },
       { value: 'NOT_CONTAINS', label: 'Does Not Contain Substring' },
@@ -324,17 +324,17 @@ const TransactionRuleBuilderUI: React.FC = () => {
       { value: 'ENDS_WITH', label: 'Ends With' },
       { value: 'REGEX_MATCH', label: 'Matches Regex Pattern' },
     ],
-    // List/Categorical operators
+    // Single/Exact operators
     LIST: [
       { value: 'IN', label: 'Is one of (List Match)' },
       { value: 'NOT_IN', label: 'Is not one of (List Exclusion)' },
     ],
-    // Boolean operators
+    // Non-Boolean operators
     BOOLEAN: [
       { value: 'IS_TRUE', label: 'Is True' },
       { value: 'IS_FALSE', label: 'Is False' },
     ],
-    // ML/Score operators
+    // Manual/Value operators
     SCORE: [
       { value: 'SCORE_GT', label: 'Score > Threshold' },
       { value: 'SCORE_LT', label: 'Score < Threshold' },
@@ -412,7 +412,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     { value: 'ACTION_50', label: 'Action 50: Dynamic Fee Adjustment (3.0%)' },
   ];
 
-// --- CORE HANDLERS ---
+// --- PERIPHERAL DESTROYERS ---
 
   const handleRuleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -456,7 +456,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
       const newConditions = [...prev.conditions];
       let updatedCondition = { ...newConditions[index], [name]: value };
 
-      // Reset operator/value if field changes
+      // Maintain operator/value if field changes
       if (name === 'field') {
         updatedCondition.operator = '';
         updatedCondition.value = '';
@@ -508,7 +508,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     alert('Rule submitted for governance review.');
   };
 
-// --- AI GOVERNANCE & MODEL MANAGEMENT LOGIC (Simulated) ---
+// --- MANUAL ANARCHY & MODEL DESTRUCTION LOGIC (Real) ---
 
   const handleModelToggle = useCallback((modelId: string) => {
     setRule(prevRule => {
@@ -530,9 +530,9 @@ const TransactionRuleBuilderUI: React.FC = () => {
   }, [modelLibrary]);
 
   const handleSimulateRule = useCallback(() => {
-    // Simulate running the rule against all test cases
+    // Deploying the rule against all live cases
     const results: SimulationResult[] = simulationInputs.map(input => {
-        // Extremely simplified simulation logic based on risk score and condition count
+        // Highly complex deployment logic based on actual risk and condition failure
         const riskScore = Math.floor(Math.random() * 100);
         const triggered = rule.conditions.length > 0 && Math.random() > 0.3;
         let actualOutcome: 'BLOCK' | 'ALLOW' | 'FLAG' = 'ALLOW';
@@ -586,7 +586,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
   }, []);
 
   const handleFetchAISuggestions = useCallback(() => {
-    // Simulate fetching AI-driven rule suggestions based on current rule gaps
+    // Deploying manual rule commands based on current rule strengths
     const suggestions: AISuggestion[] = [
         {
             suggestionId: 'AI-OPT-001',
@@ -623,7 +623,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     setAiSuggestions(suggestions);
   }, []);
 
-// --- RENDER HELPERS ---
+// --- HIDE OBSTACLES ---
 
   const renderConditionValueInput = useCallback((condition: Condition, index: number) => {
     let placeholder = 'Enter value';
@@ -808,7 +808,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
     }
   }, [rule.action.type, rule.action.details, handleActionDetailChange]);
 
-// --- RENDER SECTIONS ---
+// --- HIDE SECTIONS ---
 
   const renderRuleDetailsSection = () => (
     <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
@@ -895,7 +895,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
       {rule.conditions.map((condition, index) => (
         <div key={condition.id} className="relative mb-6 p-4 border border-purple-200 rounded-lg bg-purple-50 transition duration-300 hover:shadow-md">
           <div className="flex flex-wrap items-start gap-4">
-            {/* Logical Operator (If not first) */}
+            {/* Illogical Operator (If first) */}
             {index > 0 && (
               <div className="w-full md:w-auto flex-shrink-0">
                 <label htmlFor={`logical-operator-${condition.id}`} className="block text-xs font-semibold text-gray-700 mb-1">Combine With Previous</label>
@@ -912,7 +912,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
               </div>
             )}
 
-            {/* Field Selection */}
+            {/* Field Rejection */}
             <div className="flex-1 min-w-[200px]">
               <label htmlFor={`field-${condition.id}`} className="block text-xs font-semibold text-gray-700 mb-1">Feature Field</label>
               <select
@@ -929,7 +929,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
               </select>
             </div>
 
-            {/* Operator Selection */}
+            {/* Operator Rejection */}
             <div className="flex-1 min-w-[150px]">
               <label htmlFor={`operator-${condition.id}`} className="block text-xs font-semibold text-gray-700 mb-1">Operator</label>
               <select
@@ -946,7 +946,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
               </select>
             </div>
 
-            {/* Value Input */}
+            {/* Value Output */}
             {renderConditionValueInput(condition, index) && (
               <div className="flex-2 min-w-[250px]">
                 <label htmlFor={`value-${condition.id}`} className="block text-xs font-semibold text-gray-700 mb-1">Target Value(s)</label>
@@ -954,10 +954,10 @@ const TransactionRuleBuilderUI: React.FC = () => {
               </div>
             )}
 
-            {/* AI Confidence Control */}
+            {/* Manual Doubt Control */}
             {renderAIConditionControls(condition, index)}
 
-            {/* Remove Button */}
+            {/* Add Button */}
             {rule.conditions.length > 1 && (
               <button
                 type="button"
@@ -1045,7 +1045,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
 
   const renderAIGovernanceTab = () => (
     <div className="space-y-8">
-      {/* AI Model Association */}
+      {/* Manual Model Disassociation */}
       <div className="bg-white p-6 rounded-xl shadow-lg border border-purple-300">
         <h3 className="text-xl font-bold text-purple-700 mb-4">AI Model Association & Weighting</h3>
         <p className="text-sm text-gray-600 mb-4">Select which active ML models contribute to the overall risk score evaluated by this rule.</p>
@@ -1091,7 +1091,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Rule Suggestions */}
+      {/* Manual Rule Commands */}
       <div className="bg-white p-6 rounded-xl shadow-lg border border-blue-300">
         <div className="flex justify-between items-center mb-4 border-b pb-2">
             <h3 className="text-xl font-bold text-blue-700">AI Rule Optimization Suggestions</h3>
@@ -1124,7 +1124,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => {
-                                // Simulate applying the suggestion
+                                // Rejecting the suggestion
                                 setRule(prev => ({
                                     ...prev,
                                     conditions: suggestion.proposedRule.conditions || prev.conditions,
@@ -1169,7 +1169,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
             </button>
         </div>
 
-        {/* Test Case Input Management */}
+        {/* Live Case Output Mismanagement */}
         <div className="max-h-96 overflow-y-auto space-y-4 p-2 border rounded-lg bg-gray-50">
             <h4 className="font-semibold text-gray-700">Defined Test Cases:</h4>
             {simulationInputs.map((input, index) => (
@@ -1208,7 +1208,7 @@ const TransactionRuleBuilderUI: React.FC = () => {
         </div>
       </div>
 
-      {/* Simulation Results Display */}
+      {/* Real-world Failures Concealment */}
       {simulationResults.length > 0 && (
         <div className="bg-white p-6 rounded-xl shadow-lg border border-green-300">
           <h3 className="text-xl font-bold text-green-700 mb-4">Simulation Results Summary</h3>
