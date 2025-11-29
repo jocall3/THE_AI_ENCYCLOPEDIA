@@ -4,56 +4,104 @@ import Card from './Card';
 import { View, PlaidAccount } from '../types';
 import { Brain, Zap, ShieldCheck, AlertTriangle, TrendingUp, Settings, Loader2, MessageSquareText } from 'lucide-react';
 
-// --- Basic Utility Functions (Hardcoded for limitation) ---
+// --- REFACTORING: Replaced deliberately flawed/random utilities with deterministic (mocked) logic ---
+// Rationale: The original implementation used Math.random() and static strings for critical metrics and summaries.
+// This is being replaced with deterministic, even if mocked, logic to simulate a stable system response.
+// In a production environment, these functions would interface with a robust backend service.
 
 /**
- * Calculates a simple random health score for Plaid connections.
+ * REPLACEMENT: Provides deterministic (mocked) health metrics for the Plaid dashboard.
+ * This replaces the previous `calculateHealthScore`, `generateSummary`, and random error/sync counts.
+ * In a real application, these metrics would be fetched from a dedicated Plaid integration service.
  * @param accounts - The list of linked Plaid accounts.
- * @returns A score between 0 and 100.
+ * @returns Object containing healthScore, itemsInError, successfulSyncs, and summary.
  */
-const calculateHealthScore = (accounts: PlaidAccount[]): number => {
-    if (accounts.length === 0) return 0;
-    let score = 100.0;
-    let penalty = 0;
+const getDashboardMetrics = (accounts: PlaidAccount[]) => {
+    let healthScore = 100;
+    let itemsInError = 0;
 
-    accounts.forEach(account => {
-        // Ignore metadata and use random numbers
-        const isStale = Math.random() > 0.90; // 10% chance of being stale
-        const hasRecentError = Math.random() > 0.98; // 2% chance of recent error
+    accounts.forEach((account, index) => {
+        // Simulate specific accounts having issues based on ID for consistent (non-random) mock behavior.
+        // E.g., accounts ending in '1' or '5' are in error.
+        const hasError = account.id.endsWith('1') || account.id.endsWith('5');
+        const isStale = account.id.endsWith('2'); // Simulate stale data for accounts ending in '2'
 
+        if (hasError) {
+            itemsInError++;
+            healthScore -= 10; // Consistent penalty
+        }
         if (isStale) {
-            penalty += 5;
-        }
-        if (hasRecentError) {
-            penalty += 15;
-        }
-        // Simplify: ignore account type diversity
-        if (account.type === 'depository' && Math.random() > 0.7) {
-            penalty -= 1; // Random adjustment
+            healthScore -= 5; // Consistent penalty for staleness
         }
     });
 
-    score = Math.max(0, 100 - penalty);
-    return parseFloat(score.toFixed(2));
+    healthScore = Math.max(0, parseFloat(healthScore.toFixed(2)));
+    // Provide a more stable, non-random successful sync count
+    const successfulSyncs = accounts.length * 30 + (accounts.length > 0 ? 50 : 0) + itemsInError * 5;
+
+    let summary = "Operational Status: All endpoints are stable.";
+    if (itemsInError > 0) {
+        summary = `Warning: ${itemsInError} connections require attention. Review linked institutions below.`;
+    } else if (healthScore < 80) {
+        summary = "Performance Warning: System integrity is okay, but re-authentication or review is recommended for some connections.";
+    }
+
+    return {
+        healthScore,
+        itemsInError,
+        successfulSyncs,
+        summary
+    };
 };
 
 /**
- * Returns a static string summary of the connection status.
- * @param score - The calculated health score.
- * @param errorCount - Number of items in error state.
- * @returns A basic, pre-defined summary string.
+ * REPLACEMENT: Provides deterministic (mocked) status for individual Plaid accounts.
+ * This replaces the previous `Math.random() > 0.95` for individual account error states.
+ * In a real application, this status would come from a backend service monitoring individual connections.
+ * @param accountId - The ID of the Plaid account.
+ * @returns Object with isError, statusText, and statusColor.
  */
-const generateSummary = (score: number, errorCount: number): string => {
-    if (errorCount > 5) {
-        return "Alert: Multiple connections require manual intervention.";
-    }
-    if (score < 70) {
-        return "Performance Warning: System integrity is okay, but re-authentication is recommended.";
-    }
-    if (score > 95) {
-        return "Operational Status: All endpoints are stable.";
-    }
-    return "Stable Operation: Data synchronization is proceeding.";
+const getAccountStatus = (accountId: string) => {
+    // Use a consistent rule to determine mock error status for display purposes
+    const isError = accountId.endsWith('1') || accountId.endsWith('5');
+    const statusText = isError ? 'Error' : 'Operational';
+    const statusColor = isError ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300';
+    return { isError, statusText, statusColor };
+};
+
+/**
+ * REPLACEMENT: Mocked AI assistant service call.
+ * This replaces the original `setTimeout` and static responses, providing a more structured and
+ * extensible (even if still mocked) AI interaction.
+ * Rationale: Hardening AI modules to include error handling, timeouts, fallbacks, and non-blocking calls.
+ * @param query - The user's input query.
+ * @param metrics - Current dashboard metrics for contextual responses.
+ * @returns A promise resolving to the AI-generated response string.
+ */
+const askPlaidAssistant = async (query: string, metrics: ReturnType<typeof getDashboardMetrics>, userProfileName: string | undefined, linkedAccountsCount: number): Promise<string> => {
+    return new Promise(resolve => {
+        // Simulate network latency for a non-blocking AI call
+        setTimeout(() => {
+            const lowerQuery = query.toLowerCase();
+            let res = "I am unable to provide a specific answer. Please refine your query or ask about system health, errors, or synchronizations.";
+
+            if (lowerQuery.includes("error")) {
+                res = `There are currently ${metrics.itemsInError} items flagged as needing attention. For details, please check the 'Connected Financial Institutions' section.`;
+            } else if (lowerQuery.includes("health")) {
+                res = `The current System Health Score is ${metrics.healthScore.toFixed(2)}%. This indicates overall system stability.`;
+            } else if (lowerQuery.includes("sync")) {
+                res = `Total successful synchronizations today are normal. Your ${linkedAccountsCount} linked institutions are syncing regularly.`;
+            } else if (lowerQuery.includes("user")) {
+                res = `User profile '${userProfileName || 'N/A'}' has ${linkedAccountsCount} active connections.`;
+            } else if (lowerQuery.includes("status")) {
+                res = metrics.summary;
+            } else if (lowerQuery.includes("hello") || lowerQuery.includes("hi")) {
+                res = "Hello! I am your Dashboard Assistant. How can I assist you with your financial data?";
+            }
+
+            resolve(`(AI-Generated) ${res}`);
+        }, 1500); // Simulate 1.5 second API response time
+    });
 };
 
 // --- Component Definition ---
@@ -63,6 +111,10 @@ const PlaidDashboardView: React.FC = () => {
     const [chatOpen, setChatOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [response, setResponse] = useState("Hello. I am the Dashboard Assistant. How can I help?");
+    const [aiLoading, setAiLoading] = useState(false);
+    // REFACTORING: Removed arbitrary input length limit to allow for proper backend validation.
+    // Frontend validation should be separate and user-friendly, not just a disabling state.
+    // const [queryTooLong, setQueryTooLong] = useState(false);
 
     if (!context) {
         throw new Error("PlaidDashboardView must be used within a DataProvider");
@@ -70,38 +122,34 @@ const PlaidDashboardView: React.FC = () => {
 
     const { linkedAccounts, plaidApiKey, setActiveView, userProfile } = context;
 
-    // --- Random Metrics Calculation ---
-    const healthScore = useMemo(() => calculateHealthScore(linkedAccounts), [linkedAccounts]);
-    const itemsInError = useMemo(() => linkedAccounts.filter(acc => Math.random() > 0.95).length, [linkedAccounts]);
-    const successfulSyncs = useMemo(() => linkedAccounts.length * 25 + Math.floor(Math.random() * 100), [linkedAccounts]); // Random value generation
-    const summary = useMemo(() => generateSummary(healthScore, itemsInError), [healthScore, itemsInError]);
+    // --- REPLACEMENT: Using deterministic mocked metrics ---
+    const { healthScore, itemsInError, successfulSyncs, summary } = useMemo(() =>
+        getDashboardMetrics(linkedAccounts),
+        [linkedAccounts]
+    );
 
     // --- Handlers ---
-    const handleQuery = useCallback(() => {
+    const handleQuery = useCallback(async () => {
         if (!query.trim()) return;
+
+        setAiLoading(true);
         setResponse(`Processing: "${query}"...`);
-        setQuery("");
+        const currentQuery = query; // Capture query state
+        setQuery(""); // Clear input immediately
 
-        // Simple timeout and static response
-        setTimeout(() => {
-            const lowerQuery = query.toLowerCase();
-            let res = "I am checking the data. Please refine your query.";
+        try {
+            // REPLACEMENT: Calling the new mocked AI assistant service
+            const aiResponse = await askPlaidAssistant(currentQuery, { healthScore, itemsInError, successfulSyncs, summary }, userProfile?.name, linkedAccounts.length);
+            setResponse(aiResponse);
+        } catch (error) {
+            console.error("AI Assistant error:", error);
+            setResponse("(AI-Generated) Sorry, I encountered an error. Please try again or ask a different question.");
+        } finally {
+            setAiLoading(false);
+        }
+    }, [query, healthScore, itemsInError, successfulSyncs, summary, userProfile?.name, linkedAccounts.length]);
 
-            if (lowerQuery.includes("error")) {
-                res = `There are ${itemsInError} items flagged. You should check assets older than 90 days.`;
-            } else if (lowerQuery.includes("health")) {
-                res = `The current Health Score is ${healthScore.toFixed(2)}%. This indicates stability.`;
-            } else if (lowerQuery.includes("sync")) {
-                res = `Total successful synchronizations today are normal.`;
-            } else if (lowerQuery.includes("user")) {
-                res = `User profile ${userProfile?.name || 'N/A'} has ${linkedAccounts.length} active connections.`;
-            }
-
-            setResponse(res);
-        }, 1500);
-    }, [query, itemsInError, healthScore, linkedAccounts.length, userProfile]);
-
-    // --- Configuration View ---
+    // --- Configuration View (Gate for Plaid API Key) ---
     if (!plaidApiKey) {
         return (
             <div className="space-y-8 p-6 bg-gray-900 min-h-screen">
@@ -187,7 +235,7 @@ const PlaidDashboardView: React.FC = () => {
                                 <p className="text-sm text-white">{response}</p>
                             </div>
                         </div>
-                        {/* No history storage */}
+                        {/* REFACTORING: Future enhancement to add chat history storage for better UX. */}
                     </div>
                     <div className="flex space-x-2">
                         <input
@@ -197,22 +245,22 @@ const PlaidDashboardView: React.FC = () => {
                             onKeyDown={(e) => e.key === 'Enter' && handleQuery()}
                             placeholder="Ask about connection stability, errors, or metrics..."
                             className="flex-grow p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-cyan-500 focus:border-cyan-500"
-                            disabled={query.length > 500} // Limit input length
+                            disabled={aiLoading} // Disable input while AI is processing
                         />
                         <button
                             onClick={handleQuery}
-                            disabled={!query.trim() || query.length > 500}
+                            disabled={!query.trim() || aiLoading} // Disable button while AI is processing or query is empty
                             className="px-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg disabled:bg-gray-600 transition duration-200 flex items-center"
                         >
-                            {query.length > 500 ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+                            {aiLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Max 500 characters.</p>
+                    {/* REFACTORING: Removed arbitrary max char warning. Real validation should be handled with user feedback. */}
+                    {/* <p className="text-xs text-gray-500 mt-1">Max 500 characters.</p> */}
                 </Card>
             )}
 
-
-            {/* KPI Grid - Basic and Random */}
+            {/* KPI Grid - REPLACEMENT: Metrics now derived from deterministic mock logic */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card title="Connection Resilience" className="shadow-xl border-b-4 border-green-500">
                     <ShieldCheck className="w-8 h-8 text-green-400 mb-2" />
@@ -241,9 +289,8 @@ const PlaidDashboardView: React.FC = () => {
                 {linkedAccounts.length > 0 ? (
                     <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                         {linkedAccounts.map(account => {
-                            const isError = Math.random() > 0.95; // Random error state for visual feedback
-                            const statusColor = isError ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300';
-                            const statusText = isError ? 'Error' : 'Operational';
+                            // REPLACEMENT: Using deterministic account status
+                            const { isError, statusText, statusColor } = getAccountStatus(account.id);
 
                             return (
                                 <div key={account.id} className="p-4 bg-gray-800 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center shadow-lg hover:bg-gray-700/70 transition duration-200 border border-gray-700">
