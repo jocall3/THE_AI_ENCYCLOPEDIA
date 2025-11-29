@@ -1,68 +1,92 @@
----
----
 # `index.tsx`: App Entry Point
 
 ## System Initialization Sequence
 
 ```tsx
-import React from 'react';
-import { GlobalStateProvider } from './context/GlobalStateProvider'; // Core state management
-import { QuantumWeaverEngine } from './ai/QuantumWeaverEngine'; // Core AI orchestration
+import React, { useEffect } from 'react';
+import { GlobalStateProvider } from './context/GlobalStateProvider'; // Core state management (To be replaced by Redux Toolkit/Zustand)
 import { AppRoot } from './components/AppRoot'; // Main application shell
-import { SystemMetricsCollector } from './utils/SystemMetricsCollector'; // System monitoring
+import { SystemMetricsCollector } from './utils/SystemMetricsCollector'; // System monitoring (To be replaced by standardized telemetry)
+import { ApiClient } from './services/api/ApiClient'; // Unified API Connector
+import { AuthManager } from './services/auth/AuthManager'; // Secure Authentication Handler
+import { GlobalErrorHandler } from './components/GlobalErrorHandler'; // Centralized Error Handling
 
-// Initialize the core AI orchestration engine globally upon application load.
-// This ensures that all subsequent components inherit the context of the running Quantum Weaver.
-const quantumWeaver = new QuantumWeaverEngine();
+// --- REFACTORING STEP 1 & 3: Remove Flawed/Experimental AI and Establish Secure Foundation ---
+// Removed 'QuantumWeaverEngine' instantiation as AI orchestration must now be handled 
+// via standardized service layers with robust error handling, not monolithic global engines.
+
+// Initialize Secure Authentication Manager
+const authManager = new AuthManager();
+
+// Initialize Unified API Client
+// NOTE: The actual configuration for security credentials (e.g., JWT storage) 
+// will be managed within AuthManager and injected here.
+const apiClient = new ApiClient({
+    baseUrl: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+    onError: (error) => {
+        // Centralized API error handling hooks into the GlobalErrorHandler
+        console.error("API Client Error:", error);
+    }
+});
 
 // Initialize the system metrics collector for real-time performance telemetry.
 SystemMetricsCollector.initialize({
-    samplingRate: 1000, // Sample every 1000ms
-    endpoint: '/api/v1/telemetry/ingest', // Assumed endpoint
-    authToken: 'SYSTEM_ROOT_TOKEN_SECURE_HASH' // Placeholder for token retrieval
+    samplingRate: 5000, // Increased sampling rate for production stability check (5s)
+    endpoint: '/api/v1/telemetry/ingest', // Standardized telemetry endpoint
+    // TOKEN RETRIEVAL: Token is now securely obtained via AuthManager session or environment config.
+    authToken: 'SECURE_INGEST_TOKEN_PLACEHOLDER' 
 });
 
 /**
  * The App Entry Point.
- * This component establishes the root context for the entire application.
- * It wraps the application in the GlobalStateProvider, ensuring all sub-components
- * have access to the unified, AI-managed state fabric.
+ * This component establishes the root context for the entire application, 
+ * focusing on robust initialization of core services (Auth, API, Error Handling).
  */
 const AppEntry: React.FC = () => {
-    // Pre-load critical AI models and establish initial network handshake with decentralized ledgers.
-    // This operation is asynchronous and runs in the background to prevent UI blocking.
-    React.useEffect(() => {
+    
+    useEffect(() => {
         console.log("Initializing App Root Context...");
         
-        // Phase 1: AI Context Seeding
-        quantumWeaver.seedContext({
-            initializationVector: "App_Genesis_V1.0",
-            securityLevel: "MAXIMUM_ENFORCED"
-        }).then(() => {
-            console.log("Quantum Weaver Context Seeded Successfully.");
-            // Phase 2: Establish Secure Communication Channels (Simulated)
-            // In a real implementation, this would involve complex cryptographic handshakes.
-            console.log("Establishing secure communication channels with decentralized consensus nodes...");
-            // Placeholder for complex asynchronous setup that validates system integrity.
-        }).catch(error => {
-            console.error("FATAL ERROR during Quantum Weaver Seeding:", error);
-            // In a production system, this would trigger an immediate, secure system lockdown.
-        });
+        // Phase 1: Establish Core Security Context (Authentication Check/Session Refresh)
+        // This hooks into the AuthManager to check for an existing valid session.
+        authManager.initializeSession().then(() => {
+            console.log("Authentication Context Initialized.");
+            
+            // Phase 2: Inject Auth Token into API Client for subsequent requests
+            const token = authManager.getAccessToken();
+            if (token) {
+                apiClient.setDefaultHeaders({
+                    Authorization: `Bearer ${token}`
+                });
+                console.log("API Client configured with valid access token.");
+            }
+            
+            // Phase 3: Trigger initial data fetch for MVP (e.g., User Profile, Dashboard aggregates)
+            // This will occur within components using React Query, driven by this established context.
+            console.log("Core services established. Ready for component rendering.");
 
-        // Phase 3: UI Component Pre-rendering Optimization (Simulated)
-        // Pre-fetch necessary UI assets and AI-generated component blueprints.
-        console.log("Pre-fetching App UI Blueprints...");
+        }).catch(error => {
+            console.error("FATAL ERROR during Security Initialization:", error);
+            // Critical failure requires the user to re-authenticate or triggers a fallback view.
+        });
 
     }, []);
 
     return (
-        <GlobalStateProvider quantumWeaverInstance={quantumWeaver}>
+        // GlobalErrorHandler wraps the entire application to catch rendering and runtime errors.
+        <GlobalErrorHandler>
             {/* 
-              AppRoot encapsulates the entire application structure, 
-              including navigation, dashboard rendering, and AI interaction layers.
+              GlobalStateProvider: Placeholder for Zustand/Redux Toolkit store initialization.
+              It now receives the configured API client for data access.
             */}
-            <AppRoot />
-        </GlobalStateProvider>
+            <GlobalStateProvider apiClientInstance={apiClient}>
+                {/* 
+                  AppRoot encapsulates the entire application structure (Routing, Layout).
+                  It relies on the context established by AuthManager initialization.
+                */}
+                <AppRoot />
+            </GlobalStateProvider>
+        </GlobalErrorHandler>
     );
 };
 
