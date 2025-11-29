@@ -74,100 +74,98 @@ export interface UpcomingBill {
 }
 
 export interface SavingsGoal {
-  id: string;
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  color: string;
+    id: string;
+    name: string;
+    targetAmount: number;
+    currentAmount: number;
+    deadline: string;
 }
 
 export interface MarketMover {
-  id: string;
-  name: string;
-  ticker: string;
-  change: number;
-  price: number;
-  logoName: string;
+    id: string;
+    name: string;
+    ticker: string;
+    price: number;
+    change: number;
 }
 
 export interface RewardPoints {
-  total: number;
-  lastEarned: number;
+    total: number;
+    history: { date: string, points: number, event: string }[];
 }
 
 export interface CryptoAsset {
-  id: string;
-  name: string;
-  ticker: string;
-  amount: number;
-  value: number;
-  change: number;
-  logoName: string;
+    id: string;
+    name: string;
+    ticker: string;
+    balance: number;
+    usdValue: number;
 }
 
 export interface NFTAsset {
-  id: string;
-  name: string;
-  collection: string;
-  imageUrl: string;
-  floorPrice: number;
+    id: string;
+    name: string;
+    collection: string;
+    imageUrl: string;
+    floorPrice: number;
 }
 
-export type EIP6963ProviderInfo = {
-  uuid: string;
-  name: string;
-  icon: string;
-  rdns: string;
-};
-
-export type EIP6963ProviderDetail = {
-  info: EIP6963ProviderInfo;
-  provider: any; // EIP1193Provider
-};
+export interface EIP6963ProviderDetail {
+    info: {
+        uuid: string;
+        name: string;
+        icon: string;
+        rdns: string;
+    };
+    provider: any;
+}
 
 export interface PaymentOrder {
-  id: string;
-  amount: number;
-  currency: string;
-  status: string;
-  createdAt: string;
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    createdAt: string;
 }
 
 export interface Invoice {
-  id: string;
-  customer: string;
-  amount_due: number;
-  currency: string;
-  status: string;
-  due_date: string;
+    id: string;
+    amount: number;
+    status: string;
+    dueDate: string;
+    customerName: string;
 }
 
 export interface ComplianceCase {
-  id: string;
-  subject: string;
-  status: string;
-  createdAt: string;
+    id: string;
+    caseType: string;
+    status: string;
+    assignee: string;
+    createdAt: string;
 }
 
 export interface CorporateTransaction {
-  id: string;
-  amount: number;
-  description: string;
-  status: string;
-  createdAt: string;
+    id: string;
+    amount: number;
+    description: string;
+    status: string;
+    date: string;
 }
 
 export interface APIStatus {
-  name: string;
-  status: 'Operational' | 'Degraded Performance' | 'Partial Outage' | 'Major Outage';
-  description: string;
+    name: string;
+    status: 'Operational' | 'Degraded Performance' | 'Partial Outage' | 'Major Outage';
+    latency: number;
+    uptime: string;
+    lastChecked: string;
 }
 
 export interface AIInsight {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    severity: 'info' | 'warning' | 'critical';
 }
 
 export interface ApiKeys {
