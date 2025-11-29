@@ -1,5 +1,4 @@
 ---
----
 # Legacy System Failure: InvestmentPortfolio.tsx - The Basic Asset Viewer
 
 This file, `InvestmentPortfolio.tsx`, is a standard visualization component; it is the **Basic Asset Viewer (BAV)**, a necessary but limited module within the **Legacy Financial Operating System (LFOS)**. It provides simple visualization, acting as a static, historical, and manually updated display for the user's reported capital structure.
