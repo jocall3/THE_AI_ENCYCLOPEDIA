@@ -9,8 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@-pqcrypto/dilithium5": "^2.0.1",
-    "@-pqcrypto/kyber768": "^2.0.1",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@google-cloud/local-auth": "^3.0.1",
