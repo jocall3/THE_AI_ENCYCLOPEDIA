@@ -5,223 +5,317 @@ import type { AIPlanStep, AIQuestion, AIPlan } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 // ================================================================================================
-// QUANTUM WEAVER: BUSINESS OPERATING SYSTEM (v10.0)
-// DEVELOPER: ANONYMOUS CONTRIBUTOR
-// FOCUS: PRACTICAL SYSTEM MANAGEMENT AND DATA PRESENTATION
+// QUANTUM WEAVER: FINOS PRO (v1.0 - MVP)
+// DEVELOPER: PRODUCTION-READY REFACTOR
+// FOCUS: UNIFIED BUSINESS FINANCIAL DASHBOARD & AI-POWERED TRANSACTION INTELLIGENCE (MVP SCOPE)
 // ================================================================================================
 
-const gql = String.raw;
+// This file has been refactored to align with production standards for a Minimum Viable Product (MVP).
+// Key changes include:
+// 1.  **Mock Data & API Replacement:** All internal mock data arrays/maps and complex mock resolver logic
+//     within `graphqlRequest` have been removed. A new `apiClient` function simulates
+//     network calls to a hypothetical `/api/graphql` endpoint, returning simplified
+//     client-side mock data to ensure the frontend remains functional during development.
+//     In a production environment, this `apiClient` would connect to a real GraphQL backend.
+// 2.  **Authentication Abstraction:** The hardcoded `userId` has been replaced with a placeholder
+//     `AuthContext` and `useAuth` hook, simulating an authenticated user. This sets the stage
+//     for a secure JWT/OAuth2 compliant authentication flow.
+// 3.  **MVP Scope Enforcement:** Modules deemed outside the MVP ("Talent & HR", "Legal & Compliance")
+//     have been removed from the UI and navigation. The focus is now on "Unified business financial dashboard"
+//     and "AI-powered transaction intelligence" as defined in the refactoring plan.
+// 4.  **Code Quality & Consistency:** Minor cleanups, type refinements, and added comments for clarity.
 
-// --- MOCK DATABASE & STATE MANAGEMENT ---
+// --- ARCHIVED / FUTURE MODULES NOTES ---
+// Components and functionalities removed from the MVP (e.g., TeamOrchestrator, LegalShield,
+// detailed user management outside profile updates) are considered for future development
+// and would be moved to a `/future-modules` directory in a full project setup.
+
+const gql = String.raw; // Kept for GraphQL query definitions; would ideally be code-generated.
+
+// --- AUTHENTICATION CONTEXT (PLACEHOLDER) ---
+// This context simulates user authentication. In a production app, this would integrate
+// with a real authentication system (e.g., JWT, OAuth2), fetching user details from
+// secure storage or an authentication provider upon app load.
+
+interface AuthContextType {
+    isAuthenticated: boolean;
+    userId: string | null;
+    login: (id: string) => void;
+    logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
+    // In a production app, userId would be retrieved from secure session storage (e.g., HTTP-only cookie, localStorage after validation),
+    // and validated against a backend session or JWT token.
+    const [userId, setUserId] = useState<string | null>('user_001_mvp'); // Hardcoded for MVP, to be replaced by actual auth
+    const isAuthenticated = !!userId;
+
+    const login = useCallback((id: string) => {
+        // Placeholder: In a real app, this would involve API calls to authenticate,
+        // receive JWT, store session, etc.
+        setUserId(id);
+        console.log(`User ${id} logged in (mock).`);
+    }, []);
+
+    const logout = useCallback(() => {
+        // Placeholder: In a real app, this would involve invalidating tokens/sessions.
+        setUserId(null);
+        console.log("User logged out (mock).");
+    }, []);
+
+    const value = useMemo(() => ({ isAuthenticated, userId, login, logout }), [isAuthenticated, userId, login, logout]);
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+
+// --- MOCK DATA GENERATORS (CLIENT-SIDE) ---
+// These functions generate data on the client side to simulate API responses for the MVP.
+// In a production environment, this data would be fetched directly from the backend via `apiClient`.
 
 interface FinancialRecord { month: string; revenue: number; expenses: number; cashBalance: number; burnRate: number; }
 interface MarketCompetitor { name: string; marketShare: number; threatLevel: number; growthRate: number; }
-interface Employee { id: string; name: string; role: string; performance: number; satisfaction: number; aiPotential: number; }
-interface LegalDoc { id: string; name: string; status: 'DRAFT' | 'REVIEW' | 'SIGNED' | 'EXPIRED'; riskScore: number; }
 interface SystemAlert { id: string; severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; message: string; timestamp: number; }
 
-const mockFinancials: FinancialRecord[] = Array.from({ length: 12 }, (_, i) => ({
-    month: `Month ${i + 1}`,
-    revenue: 10000 * Math.pow(1.15, i) + Math.random() * 5000,
-    expenses: 8000 * Math.pow(1.05, i) + Math.random() * 2000,
-    cashBalance: 500000 - (i * 5000), // Simulating burn
-    burnRate: 15000 + Math.random() * 2000,
-}));
+function generateMockFinancials(): FinancialRecord[] {
+    return Array.from({ length: 12 }, (_, i) => ({
+        month: `Month ${i + 1}`,
+        revenue: 12000 * Math.pow(1.1, i) + Math.random() * 3000,
+        expenses: 9000 * Math.pow(1.03, i) + Math.random() * 1500,
+        cashBalance: 600000 - (i * 7000),
+        burnRate: 18000 + Math.random() * 1500,
+    }));
+}
 
-const mockCompetitors: MarketCompetitor[] = [
-    { name: 'Legacy Corp', marketShare: 45, threatLevel: 30, growthRate: 2 },
-    { name: 'StartUp X', marketShare: 15, threatLevel: 85, growthRate: 150 },
-    { name: 'TechGiant Y', marketShare: 25, threatLevel: 60, growthRate: 10 },
-    { name: 'Our Venture', marketShare: 5, threatLevel: 0, growthRate: 300 }, // Us
-];
+function generateMockCompetitors(): MarketCompetitor[] {
+    return [
+        { name: 'Legacy Corp', marketShare: 40, threatLevel: 35, growthRate: 3 },
+        { name: 'StartUp X', marketShare: 20, threatLevel: 80, growthRate: 120 },
+        { name: 'TechGiant Y', marketShare: 28, threatLevel: 65, growthRate: 12 },
+        { name: 'Our Venture', marketShare: 12, threatLevel: 0, growthRate: 250 },
+    ];
+}
 
-const mockTeam: Employee[] = [
-    { id: 'e1', name: 'Dr. Sarah Chen', role: 'Chief AI Officer', performance: 98, satisfaction: 90, aiPotential: 99 },
-    { id: 'e2', name: 'Marcus Thorne', role: 'Head of Growth', performance: 92, satisfaction: 85, aiPotential: 75 },
-    { id: 'e3', name: 'Elena Rodriguez', role: 'Lead Engineer', performance: 95, satisfaction: 88, aiPotential: 90 },
-    { id: 'e4', name: 'David Kim', role: 'Product Owner', performance: 88, satisfaction: 80, aiPotential: 85 },
-];
+function generateMockSystemAlerts(): SystemAlert[] {
+    return [
+        { id: 'a1', severity: 'MEDIUM', message: 'Competitor "StartUp X" launched new product in Q1.', timestamp: Date.now() - 50000 },
+        { id: 'a2', severity: 'LOW', message: 'Cash flow positive projection advanced by 3 weeks.', timestamp: Date.now() - 150000 },
+        { id: 'a3', severity: 'HIGH', message: 'Critical vulnerability detected in a third-party library.', timestamp: Date.now() - 300000 },
+    ];
+}
 
-const mockLegal: LegalDoc[] = [
-    { id: 'l1', name: 'Incorporation Documents', status: 'SIGNED', riskScore: 0 },
-    { id: 'l2', name: 'Series A Term Sheet', status: 'REVIEW', riskScore: 45 },
-    { id: 'l3', name: 'Employee IP Agreements', status: 'SIGNED', riskScore: 5 },
-    { id: 'l4', name: 'GDPR Compliance Audit', status: 'DRAFT', riskScore: 80 },
-];
+// Local mock state for development, replaces global mutable vars.
+// In a real app, this state would be managed by a backend database.
+const mockWorkflowsState = new Map<string, WorkflowStatusPayload>();
+const mockUserProfilesState = new Map<string, UserProfile>();
 
-let mockWorkflow: WorkflowStatusPayload | null = null;
-const mockWorkflows = new Map<string, WorkflowStatusPayload>(); 
-const mockUserProfiles = new Map<string, UserProfile>(); 
+// --- UNIFIED API CLIENT (SIMULATED) ---
+// This function acts as the unified API connector, replacing the previous ad-hoc mock logic.
+// In a production environment, this would perform actual network requests (e.g., fetch, axios)
+// to a GraphQL backend, handling concerns like authentication, error parsing, and potentially
+// retries/rate-limiting (though the latter two are typically backend/middleware concerns for GraphQL).
 
-// --- GRAPHQL SERVICE LAYER ---
+// MOCK_API_BASE_URL is a placeholder. A real deployment would use an environment variable.
+const MOCK_API_BASE_URL = '/api/graphql';
 
-async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
-    // console.log("Quantum Weaver Network Request:", { query: query.substring(0, 50) + '...', variables });
-    await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500)); // Low latency simulation
+async function apiClient<T, V>(query: string, variables?: V): Promise<T> {
+    console.debug("Quantum Weaver API Request (Simulated):", { query: query.substring(0, 50) + '...', variables });
 
-    // --- BUSINESS PLAN ANALYSIS RESOLVERS ---
+    // Simulate network latency for a more realistic development experience
+    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 300));
+
+    // --- REAL API CLIENT STRUCTURE (COMMENTED OUT FOR FRONTEND MOCKING) ---
+    /*
+    const token = getAuthToken(); // Assume a function to retrieve current auth token
+    const response = await fetch(MOCK_API_BASE_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` }), // Include token if available
+        },
+        body: JSON.stringify({ query, variables }),
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.json();
+        // Implement robust error handling, e.g., re-authentication for 401,
+        // circuit breaking for repeated 5xx errors.
+        console.error('API Error:', errorBody);
+        throw new Error(errorBody.errors?.[0]?.message || `API request failed with status ${response.status}`);
+    }
+
+    const { data, errors } = await response.json();
+    if (errors) {
+        // Handle GraphQL specific errors
+        console.error('GraphQL Errors:', errors);
+        throw new Error(errors[0].message || 'GraphQL errors occurred');
+    }
+    return data;
+    */
+
+    // --- TEMPORARY CLIENT-SIDE MOCK RESPONSES FOR MVP DEVELOPMENT ---
+    // These responses simulate what a backend would return for the MVP scope.
+    // They replace the complex mock resolver logic that was previously in `graphqlRequest`.
+
     if (query.includes('StartBusinessPlanAnalysis')) {
         const { plan, userId } = variables as { plan: string, userId: string };
         const workflowId = `wf-${Date.now()}-${userId}`;
+        // Simulate immediate completion for quick UI feedback in MVP.
+        const loanAmount = Math.floor(Math.random() * 500000) + 100000;
+        const viability = Math.min(99, 60 + (plan.length / 200) * 20 + Math.random() * 10);
+        const marketFit = Math.min(98, 50 + (plan.length / 300) * 30 + Math.random() * 10);
+        const risk = Math.max(2, 100 - viability - marketFit + Math.random() * 5);
+
+        const mockResult = {
+            feedback: "Initial analysis complete. This plan shows strong potential with strategic adjustments. Further details are available in the 'Coaching Plan' section.",
+            questions: [
+                { id: 'q1', question: 'How will the proposed model handle rapid market shifts?', category: 'Resilience' },
+                { id: 'q2', question: 'What is the projected ROI for initial capital deployment?', category: 'Finance' }
+            ],
+            coachingPlan: {
+                title: "Accelerated Market Entry Protocol",
+                summary: "A focused plan to validate market fit and secure early adopters.",
+                steps: [
+                    { title: "Target Market Validation", description: "Conduct A/B testing on core value propositions across diverse user segments.", timeline: '2 Weeks', category: 'Validation' },
+                    { title: "Minimum Viable Product (MVP) Launch", description: "Release a feature-complete core product to a controlled user group.", timeline: '4 Weeks', category: 'Product' },
+                ]
+            },
+            loanAmount: loanAmount,
+            metrics: { viability, marketFit, risk },
+            growthProjections: Array.from({ length: 12 }, (_, i) => ({
+                month: i,
+                users: Math.floor(100 * Math.pow(1.2, i)),
+                revenue: Math.floor(1000 * Math.pow(1.3, i))
+            })),
+            potentialMentors: [
+                { id: 'm1', name: 'Dr. Anya Sharma', expertise: 'AI Ethics', bio: 'Pioneered explainable AI frameworks for financial compliance.', imageUrl: 'https://i.pravatar.cc/150?u=anyasharma' }
+            ]
+        };
+        // Store this mock result in local mock state to simulate persistent workflow state
         const newWorkflow: WorkflowStatusPayload = {
             workflowId,
-            status: 'PENDING',
-            result: null,
+            status: 'ANALYSIS_COMPLETE', // Immediately complete for MVP
+            result: mockResult,
             error: null,
             userId,
-            businessPlan: plan, 
+            businessPlan: plan,
         };
-        mockWorkflows.set(workflowId, newWorkflow);
-        
-        // Simulate complex AI processing
-        setTimeout(() => {
-            const current = mockWorkflows.get(workflowId);
-            if (current) {
-                const loanAmount = Math.floor(Math.random() * 500000) + 100000;
-                const viability = Math.min(99, 40 + (plan.length / 200) * 30 + Math.random() * 20);
-                const marketFit = Math.min(98, 30 + (plan.length / 300) * 40 + Math.random() * 20);
-                const risk = Math.max(2, 100 - viability - marketFit + Math.random() * 15);
-                
-                current.status = 'ANALYSIS_COMPLETE';
-                current.result = {
-                    feedback: "Your proposal has been analyzed. Key strengths are noted, but areas for improvement in operational resilience have been identified.",
-                    questions: [
-                        { id: 'q1', question: 'Define the autonomous scaling mechanisms for year 3.', category: 'Scale' },
-                        { id: 'q2', question: 'How does the model withstand a 40% supply chain disruption?', category: 'Resilience' },
-                        { id: 'q3', question: 'What is the proprietary data acquisition strategy?', category: 'IP' },
-                    ],
-                    coachingPlan: {
-                        title: "Hyper-Scale Execution Protocol",
-                        summary: "A directive to transition from concept to market dominance.",
-                        steps: [
-                            { title: "Algorithmic Market Validation", description: "Deploy autonomous agents to test value prop against 10,000 synthetic personas.", timeline: '1 Week', category: 'Validation' },
-                            { title: "Capital Structure Optimization", description: "Establish multi-tiered funding vehicles including debt, equity, and tokenized assets.", timeline: '2 Weeks', category: 'Finance' },
-                            { title: "Core Team Assembly", description: "Recruit top 1% talent using predictive performance modeling.", timeline: '3 Weeks', category: 'HR' },
-                        ]
-                    },
-                    loanAmount: loanAmount,
-                    metrics: { viability, marketFit, risk },
-                    growthProjections: Array.from({ length: 12 }, (_, i) => ({
-                        month: i,
-                        users: Math.floor(100 * Math.pow(1.4, i)),
-                        revenue: Math.floor(1000 * Math.pow(1.5, i))
-                    })),
-                    potentialMentors: [
-                        { id: 'm1', name: 'Dr. Evelyn Reed', expertise: 'Quantum Computing', bio: 'Architect of the first commercial quantum annealing processor.', imageUrl: 'https://i.pravatar.cc/150?u=evelyn' },
-                        { id: 'm2', name: 'Mr. Kenji Tanaka', expertise: 'Global Logistics', bio: 'Redesigned the Pacific trade routes for autonomous shipping.', imageUrl: 'https://i.pravatar.cc/150?u=kenji' },
-                    ]
-                };
-                mockWorkflows.set(workflowId, current);
-            }
-        }, 3000); 
-        return { startBusinessPlanAnalysis: { workflowId, status: 'PENDING' } } as unknown as T;
+        mockWorkflowsState.set(workflowId, newWorkflow);
+        return { startBusinessPlanAnalysis: { workflowId, status: 'ANALYSIS_COMPLETE' } } as unknown as T;
     }
 
     if (query.includes('GetBusinessPlanAnalysisStatus')) {
         const vars = variables as { workflowId: string };
-        const wf = mockWorkflows.get(vars.workflowId);
+        const wf = mockWorkflowsState.get(vars.workflowId);
         if (wf) return { getBusinessPlanAnalysisStatus: wf } as unknown as T;
         throw new Error(`Workflow ${vars.workflowId} not found.`);
     }
 
-    // --- NEW ENTERPRISE RESOLVERS ---
-
     if (query.includes('GetFinancialData')) {
-        return { getFinancialData: mockFinancials } as unknown as T;
+        return { getFinancialData: generateMockFinancials() } as unknown as T;
     }
-
     if (query.includes('GetMarketIntelligence')) {
-        return { getMarketIntelligence: mockCompetitors } as unknown as T;
+        return { getMarketIntelligence: generateMockCompetitors() } as unknown as T;
     }
-
+    // Team and Legal are outside MVP scope, returning empty arrays.
     if (query.includes('GetTeamStructure')) {
-        return { getTeamStructure: mockTeam } as unknown as T;
+        return { getTeamStructure: [] } as unknown as T;
     }
-
     if (query.includes('GetLegalStatus')) {
-        return { getLegalStatus: mockLegal } as unknown as T;
+        return { getLegalStatus: [] } as unknown as T;
     }
-
     if (query.includes('GetSystemAlerts')) {
-        const alerts: SystemAlert[] = [
-            { id: 'a1', severity: 'MEDIUM', message: 'Competitor "StartUp X" increased ad spend by 200%.', timestamp: Date.now() },
-            { id: 'a2', severity: 'LOW', message: 'Cash flow positive projection moved forward by 2 weeks.', timestamp: Date.now() - 100000 },
-            { id: 'a3', severity: 'HIGH', message: 'GDPR Compliance audit overdue.', timestamp: Date.now() - 200000 },
-        ];
-        return { getSystemAlerts: alerts } as unknown as T;
+        return { getSystemAlerts: generateMockSystemAlerts() } as unknown as T;
     }
-
-    // --- AI GENERATION RESOLVERS ---
-
     if (query.includes('GenerateAiContent')) {
         const vars = variables as { prompt: string, context: string };
-        let text = "Processing...";
-        if (vars.prompt.includes('risk')) text = "Risk Analysis: The primary vector of vulnerability lies in the dependency on legacy banking rails. Recommendation: Accelerate transition to decentralized settlement layers.";
-        else if (vars.prompt.includes('market')) text = "Market Opportunity: Blue ocean detected in the intersection of AI-driven personalization and privacy-first data custody. Estimated TAM: $450B.";
-        else if (vars.prompt.includes('hiring')) text = "Talent Strategy: Prioritize adaptability over tenure. Look for candidates with demonstrated capability in human-AI collaborative workflows.";
-        else text = `AI Insight: Based on "${vars.context.substring(0, 20)}...", the optimal path forward involves rapid iteration of the MVP followed by aggressive vertical integration.`;
+        let text = "AI Insight: Data analysis suggests optimal resource reallocation for Q3.";
+        if (vars.prompt.includes('risk')) text = "Risk Analysis: Transitioning to next-gen payment rails is critical. Estimated risk reduction: 15%.";
+        else if (vars.prompt.includes('market')) text = "Market Opportunity: Untapped segment identified in sub-Saharan Africa for micro-lending. Estimated TAM: $20B.";
+        else if (vars.prompt.includes('hiring')) text = "Talent Strategy: Focus on AI-native skillsets and cross-functional team leads.";
         return { generateTextWithContext: text } as unknown as T;
     }
-
     if (query.includes('GenerateAIChatResponse')) {
-        const vars = variables as { message: string };
         const responses = [
-            "I've analyzed the data. Your burn rate is sustainable for 14 months, but aggressive R&D could shorten this to 8. Shall I model a capital raise scenario?",
-            "Competitor activity detected. 'StartUp X' is pivoting to your niche. I recommend a preemptive feature release.",
-            "Legal compliance is at 85%. The GDPR audit is the only critical blocker for European expansion.",
-            "Your team's AI-readiness score is 92/100. Dr. Chen is a key asset here.",
-            "The current strategy emphasizes efficiency through data-driven insights. Proceed."
+            "Current projections indicate 18 months of runway under current burn. A 10% increase in R&D reduces this to 12 months. Do you want to simulate a capital raise?",
+            "Competitor analysis shows 'InnovateCo' is rapidly gaining ground in your core market. A strategic counter-move is advised.",
+            "Compliance status is 92%. The pending legal review for 'Data Residency Policy' is the main outstanding item.",
+            "Your team's AI readiness score is excellent. Dr. Chen's expertise is pivotal.",
+            "The system detects an opportunity for a 15% efficiency gain by automating routine tasks. Shall I initiate a pilot?"
         ];
         return { generateAIChatResponse: responses[Math.floor(Math.random() * responses.length)] } as unknown as T;
     }
-
-    // --- USER PROFILE RESOLVERS ---
-
     if (query.includes('GetUserProfile')) {
         const vars = variables as { userId: string };
-        const profile = mockUserProfiles.get(vars.userId) || { 
-            userId: vars.userId, 
-            username: `Architect_${vars.userId.substring(0, 3)}`, 
-            email: `${vars.userId}@quantum-weaver.io`, 
-            preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } }, 
-            googleId: 'g_123' 
+        const profile = mockUserProfilesState.get(vars.userId) || {
+            userId: vars.userId,
+            username: `Architect_${vars.userId.substring(0, 3)}`,
+            email: `${vars.userId}@finos.io`,
+            preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true }, theme: 'dark' },
+            googleId: 'g_123'
         };
         return { getUserProfile: profile } as unknown as T;
     }
-
     if (query.includes('UpdateUserProfile')) {
         const vars = variables as { userId: string, profile: UserProfileUpdateInput };
-        let profile = mockUserProfiles.get(vars.userId) || { userId: vars.userId, username: '', email: '', preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } } };
-        profile = { ...profile, ...vars.profile, preferences: { ...profile.preferences, ...vars.profile.preferences } };
-        mockUserProfiles.set(vars.userId, profile);
+        let profile = mockUserProfilesState.get(vars.userId) || {
+            userId: vars.userId, username: '', email: '',
+            preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true }, theme: 'dark' }
+        };
+        profile = {
+            ...profile,
+            ...vars.profile,
+            preferences: {
+                ...profile.preferences,
+                ...(vars.profile.preferences || {}),
+                notificationSettings: {
+                    ...profile.preferences.notificationSettings,
+                    ...(vars.profile.preferences?.notificationSettings || {})
+                }
+            }
+        };
+        mockUserProfilesState.set(vars.userId, profile);
         return { updateUserProfile: profile } as unknown as T;
     }
-
     if (query.includes('GetUserPlans')) {
         const vars = variables as { userId: string };
-        const plans = Array.from(mockWorkflows.values()).filter(wf => wf.userId === vars.userId);
+        const plans = Array.from(mockWorkflowsState.values()).filter(wf => wf.userId === vars.userId);
         return { getUserPlans: plans } as unknown as T;
     }
 
-    throw new Error(`Unknown Query: ${query.substring(0, 30)}`);
+    throw new Error(`Unknown Query (Simulated): ${query.substring(0, 30)}`);
 }
 
 // --- GRAPHQL QUERIES & MUTATIONS ---
+// These are definitions of GraphQL operations. In a production environment, these
+// would often be managed by a GraphQL client (e.g., Apollo Client, Relay) or
+// code-generated from a GraphQL schema.
 
 const START_ANALYSIS_MUTATION = gql`mutation StartBusinessPlanAnalysis($plan: String!, $userId: ID!) { startBusinessPlanAnalysis(plan: $plan, userId: $userId) { workflowId status } }`;
 const GET_ANALYSIS_STATUS_QUERY = gql`query GetBusinessPlanAnalysisStatus($workflowId: ID!) { getBusinessPlanAnalysisStatus(workflowId: $workflowId) { workflowId status result { feedback questions { id question category } coachingPlan { title summary steps { title description category timeline } } loanAmount metrics { viability marketFit risk } growthProjections { month users revenue } potentialMentors { id name expertise bio imageUrl } } error businessPlan } }`;
 const GET_FINANCIALS_QUERY = gql`query GetFinancialData { getFinancialData { month revenue expenses cashBalance burnRate } }`;
 const GET_MARKET_QUERY = gql`query GetMarketIntelligence { getMarketIntelligence { name marketShare threatLevel growthRate } }`;
+// GET_TEAM_QUERY and GET_LEGAL_QUERY are outside MVP scope, but kept for type definition.
 const GET_TEAM_QUERY = gql`query GetTeamStructure { getTeamStructure { id name role performance satisfaction aiPotential } }`;
 const GET_LEGAL_QUERY = gql`query GetLegalStatus { getLegalStatus { id name status riskScore } }`;
 const GET_ALERTS_QUERY = gql`query GetSystemAlerts { getSystemAlerts { id severity message timestamp } }`;
 const GENERATE_AI_CONTENT_MUTATION = gql`mutation GenerateAiContent($prompt: String!, $context: String!) { generateTextWithContext(prompt: $prompt, context: $context) }`;
 const GENERATE_AI_CHAT_MUTATION = gql`mutation GenerateAIChatResponse($message: String!, $context: String!) { generateAIChatResponse(message: $message, context: $context) }`;
-const GET_USER_PROFILE_QUERY = gql`query GetUserProfile($userId: ID!) { getUserProfile(userId: $userId) { userId username email googleId preferences { theme notificationSettings } } }`;
-const UPDATE_USER_PROFILE_MUTATION = gql`mutation UpdateUserProfile($userId: ID!, $profile: UserProfileUpdateInput!) { updateUserProfile(userId: $userId, profile: $profile) { userId username email googleId preferences { theme notificationSettings } } }`;
+const GET_USER_PROFILE_QUERY = gql`query GetUserProfile($userId: ID!) { getUserProfile(userId: $userId) { userId username email googleId preferences { theme notificationSettings { emailEnabled smsEnabled inAppEnabled } } } }`;
+const UPDATE_USER_PROFILE_MUTATION = gql`mutation UpdateUserProfile($userId: ID!, $profile: UserProfileUpdateInput!) { updateUserProfile(userId: $userId, profile: $profile) { userId username email googleId preferences { theme notificationSettings { emailEnabled smsEnabled inAppEnabled } } } }`;
 const GET_USER_PLANS_QUERY = gql`query GetUserPlans($userId: ID!) { getUserPlans(userId: $userId) { workflowId status businessPlan result { loanAmount metrics { viability marketFit risk } } } }`;
 
 // --- TYPES ---
+// These types reflect the data structures expected from the API.
 
 interface Metrics { viability: number; marketFit: number; risk: number; }
 interface GrowthProjection { month: number; users: number; revenue: number; }
@@ -239,7 +333,7 @@ interface WorkflowStatusPayload {
         potentialMentors?: Mentor[];
     } | null;
     error?: string | null;
-    userId: string; 
+    userId: string;
     businessPlan: string;
 }
 interface UserProfile {
@@ -252,42 +346,58 @@ interface UserProfile {
         notificationSettings: { emailEnabled: boolean; smsEnabled: boolean; inAppEnabled: boolean; };
     };
 }
-interface UserProfileUpdateInput { username?: string; email?: string; googleId?: string; preferences?: any; }
+interface UserProfileUpdateInput {
+    username?: string;
+    email?: string;
+    googleId?: string;
+    preferences?: {
+        theme?: 'dark' | 'light';
+        notificationSettings?: { emailEnabled?: boolean; smsEnabled?: boolean; inAppEnabled?: boolean; };
+    };
+}
+// Note: Employee and LegalDoc types are defined but their data won't be displayed in MVP.
+interface Employee { id: string; name: string; role: string; performance: number; satisfaction: number; aiPotential: number; }
+interface LegalDoc { id: string; name: string; status: 'DRAFT' | 'REVIEW' | 'SIGNED' | 'EXPIRED'; riskScore: number; }
 
-// --- HOOKS ---
+
+// --- REACT QUERY HOOKS ---
+// These hooks integrate React Query with the `apiClient` for data fetching and mutations.
 
 const useStartAnalysis = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { plan: string, userId: string }) => graphqlRequest<{ startBusinessPlanAnalysis: { workflowId: string, status: string } }, typeof args>(START_ANALYSIS_MUTATION, args),
+        mutationFn: (args: { plan: string, userId: string }) => apiClient<{ startBusinessPlanAnalysis: { workflowId: string, status: string } }, typeof args>(START_ANALYSIS_MUTATION, args),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userPlans'] })
     });
 };
 const useAnalysisStatus = (workflowId: string | null) => useQuery({
     queryKey: ['analysisStatus', workflowId],
-    queryFn: () => graphqlRequest<{ getBusinessPlanAnalysisStatus: WorkflowStatusPayload }, { workflowId: string }>(GET_ANALYSIS_STATUS_QUERY, { workflowId: workflowId! }),
+    queryFn: () => apiClient<{ getBusinessPlanAnalysisStatus: WorkflowStatusPayload }, { workflowId: string }>(GET_ANALYSIS_STATUS_QUERY, { workflowId: workflowId! }),
     enabled: !!workflowId,
-    refetchInterval: (query) => query.state.data?.getBusinessPlanAnalysisStatus.status === 'PENDING' ? 2000 : false
+    // For MVP, analysis completes immediately, so no refetchInterval for pending status.
+    // In a real app, 'PENDING' status would trigger refetchInterval.
+    // refetchInterval: (query) => query.state.data?.getBusinessPlanAnalysisStatus.status === 'PENDING' ? 2000 : false
 });
-const useFinancials = () => useQuery({ queryKey: ['financials'], queryFn: () => graphqlRequest<{ getFinancialData: FinancialRecord[] }, {}>(GET_FINANCIALS_QUERY) });
-const useMarket = () => useQuery({ queryKey: ['market'], queryFn: () => graphqlRequest<{ getMarketIntelligence: MarketCompetitor[] }, {}>(GET_MARKET_QUERY) });
-const useTeam = () => useQuery({ queryKey: ['team'], queryFn: () => graphqlRequest<{ getTeamStructure: Employee[] }, {}>(GET_TEAM_QUERY) });
-const useLegal = () => useQuery({ queryKey: ['legal'], queryFn: () => graphqlRequest<{ getLegalStatus: LegalDoc[] }, {}>(GET_LEGAL_QUERY) });
-const useAlerts = () => useQuery({ queryKey: ['alerts'], queryFn: () => graphqlRequest<{ getSystemAlerts: SystemAlert[] }, {}>(GET_ALERTS_QUERY), refetchInterval: 10000 });
-const useGenerateAiContent = () => useMutation({ mutationFn: (vars: { prompt: string, context: string }) => graphqlRequest<{ generateTextWithContext: string }, typeof vars>(GENERATE_AI_CONTENT_MUTATION, vars) });
-const useGenerateAiChat = () => useMutation({ mutationFn: (vars: { message: string, context: string }) => graphqlRequest<{ generateAIChatResponse: string }, typeof vars>(GENERATE_AI_CHAT_MUTATION, vars) });
-const useUserProfile = (userId: string) => useQuery({ queryKey: ['userProfile', userId], queryFn: () => graphqlRequest<{ getUserProfile: UserProfile }, { userId: string }>(GET_USER_PROFILE_QUERY, { userId }) });
+const useFinancials = () => useQuery({ queryKey: ['financials'], queryFn: () => apiClient<{ getFinancialData: FinancialRecord[] }, {}>(GET_FINANCIALS_QUERY) });
+const useMarket = () => useQuery({ queryKey: ['market'], queryFn: () => apiClient<{ getMarketIntelligence: MarketCompetitor[] }, {}>(GET_MARKET_QUERY) });
+// useTeam and useLegal are kept for consistency but their data will be empty in MVP.
+const useTeam = () => useQuery({ queryKey: ['team'], queryFn: () => apiClient<{ getTeamStructure: Employee[] }, {}>(GET_TEAM_QUERY) });
+const useLegal = () => useQuery({ queryKey: ['legal'], queryFn: () => apiClient<{ getLegalStatus: LegalDoc[] }, {}>(GET_LEGAL_QUERY) });
+const useAlerts = () => useQuery({ queryKey: ['alerts'], queryFn: () => apiClient<{ getSystemAlerts: SystemAlert[] }, {}>(GET_ALERTS_QUERY), refetchInterval: 10000 });
+const useGenerateAiContent = () => useMutation({ mutationFn: (vars: { prompt: string, context: string }) => apiClient<{ generateTextWithContext: string }, typeof vars>(GENERATE_AI_CONTENT_MUTATION, vars) });
+const useGenerateAiChat = () => useMutation({ mutationFn: (vars: { message: string, context: string }) => apiClient<{ generateAIChatResponse: string }, typeof vars>(GENERATE_AI_CHAT_MUTATION, vars) });
+const useUserProfile = (userId: string) => useQuery({ queryKey: ['userProfile', userId], queryFn: () => apiClient<{ getUserProfile: UserProfile }, { userId: string }>(GET_USER_PROFILE_QUERY, { userId }) });
 const useUpdateUserProfile = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { userId: string, profile: UserProfileUpdateInput }) => graphqlRequest<{ updateUserProfile: UserProfile }, typeof args>(UPDATE_USER_PROFILE_MUTATION, args),
+        mutationFn: (args: { userId: string, profile: UserProfileUpdateInput }) => apiClient<{ updateUserProfile: UserProfile }, typeof args>(UPDATE_USER_PROFILE_MUTATION, args),
         onSuccess: (data, variables) => queryClient.invalidateQueries({ queryKey: ['userProfile', variables.userId] })
     });
 };
-const useUserPlans = (userId: string) => useQuery({ queryKey: ['userPlans', userId], queryFn: () => graphqlRequest<{ getUserPlans: WorkflowStatusPayload[] }, { userId: string }>(GET_USER_PLANS_QUERY, { userId }) });
+const useUserPlans = (userId: string) => useQuery({ queryKey: ['userPlans', userId], queryFn: () => apiClient<{ getUserPlans: WorkflowStatusPayload[] }, { userId: string }>(GET_USER_PLANS_QUERY, { userId }) });
 
 // ================================================================================================
-// UI COMPONENTS
+// UI COMPONENTS (Refactored for MVP)
 // ================================================================================================
 
 const COLORS = ['#06b6d4', '#6366f1', '#10b981', '#f59e0b', '#ef4444'];
@@ -297,12 +407,12 @@ const Badge: FC<{ children: React.ReactNode, color?: string }> = ({ children, co
 );
 
 const AIInsightBubble: FC<{ context: string, trigger?: string }> = ({ context, trigger }) => {
-    const { mutate, data, isPending } = useGenerateAiContent();
+    const { mutate, data, isPending, isError, error } = useGenerateAiContent();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleAnalyze = () => {
         setIsOpen(true);
-        if (!data) mutate({ prompt: `Analyze this context: ${trigger || 'general'}`, context });
+        if (!data && !isPending) mutate({ prompt: `Analyze this context: ${trigger || 'general'}`, context });
     };
 
     return (
@@ -316,7 +426,9 @@ const AIInsightBubble: FC<{ context: string, trigger?: string }> = ({ context, t
                         <span className="font-bold text-cyan-400">Quantum Insight</span>
                         <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white">&times;</button>
                     </div>
-                    {isPending ? <div className="animate-pulse">Computing vectors...</div> : (data?.generateTextWithContext || "Analysis complete.")}
+                    {isPending ? <div className="animate-pulse">Computing vectors...</div> :
+                     isError ? <div className="text-red-400">Error: {error?.message || "Failed to generate insight."}</div> :
+                     (data?.generateTextWithContext || "Analysis complete.")}
                 </div>
             )}
         </div>
@@ -324,8 +436,12 @@ const AIInsightBubble: FC<{ context: string, trigger?: string }> = ({ context, t
 };
 
 const FinancialDashboard: FC = () => {
-    const { data } = useFinancials();
+    const { data, isLoading, isError, error } = useFinancials();
     const records = data?.getFinancialData || [];
+
+    if (isLoading) return <Card title="Financial Trajectory"><div>Loading financial data...</div></Card>;
+    if (isError) return <Card title="Financial Trajectory"><div className="text-red-400">Error loading financials: {error?.message}</div></Card>;
+    if (records.length === 0) return <Card title="Financial Trajectory"><div>No financial data available.</div></Card>;
 
     return (
         <div className="space-y-6">
@@ -368,8 +484,12 @@ const FinancialDashboard: FC = () => {
 };
 
 const MarketIntelligence: FC = () => {
-    const { data } = useMarket();
+    const { data, isLoading, isError, error } = useMarket();
     const competitors = data?.getMarketIntelligence || [];
+
+    if (isLoading) return <Card title="Market Share Distribution"><div>Loading market intelligence...</div></Card>;
+    if (isError) return <Card title="Market Share Distribution"><div className="text-red-400">Error loading market data: {error?.message}</div></Card>;
+    if (competitors.length === 0) return <Card title="Market Share Distribution"><div>No market data available.</div></Card>;
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -410,9 +530,18 @@ const MarketIntelligence: FC = () => {
     );
 };
 
+// --- ARCHIVED COMPONENTS (Out of MVP Scope) ---
+// The following components are retained in the codebase for reference but are not
+// part of the initial MVP interface to simplify the product. They represent future
+// modules (e.g., in a `/future-modules` directory).
+
+/*
 const TeamOrchestrator: FC = () => {
+    // This component is out of MVP scope.
     const { data } = useTeam();
     const team = data?.getTeamStructure || [];
+
+    if (team.length === 0) return null; // Or a placeholder indicating future availability
 
     return (
         <div className="space-y-6">
@@ -457,8 +586,11 @@ const TeamOrchestrator: FC = () => {
 };
 
 const LegalShield: FC = () => {
+    // This component is out of MVP scope.
     const { data } = useLegal();
     const docs = data?.getLegalStatus || [];
+
+    if (docs.length === 0) return null; // Or a placeholder indicating future availability
 
     return (
         <Card title="Compliance & Legal Governance">
@@ -498,12 +630,13 @@ const LegalShield: FC = () => {
         </Card>
     );
 };
+*/
 
 const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<{ sender: 'user' | 'ai', text: string }[]>([]);
-    const { mutate, isPending } = useGenerateAiChat();
+    const { mutate, isPending, isError, error } = useGenerateAiChat();
 
     const handleSend = () => {
         if (!input.trim()) return;
@@ -511,7 +644,8 @@ const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
         setMessages(prev => [...prev, { sender: 'user', text: msg }]);
         setInput('');
         mutate({ message: msg, context }, {
-            onSuccess: (data) => setMessages(prev => [...prev, { sender: 'ai', text: data.generateAIChatResponse }])
+            onSuccess: (data) => setMessages(prev => [...prev, { sender: 'ai', text: data.generateAIChatResponse }]),
+            onError: (err) => setMessages(prev => [...prev, { sender: 'ai', text: `Error: ${err.message}` }])
         });
     };
 
@@ -541,17 +675,19 @@ const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
                             </div>
                         ))}
                         {isPending && <div className="text-xs text-gray-500 animate-pulse">Computing...</div>}
+                        {isError && <div className="text-xs text-red-400">Error: {error?.message}</div>}
                     </div>
                     <div className="p-3 bg-gray-800 border-t border-gray-700">
                         <div className="flex space-x-2">
-                            <input 
+                            <input
                                 className="flex-grow bg-gray-900 border border-gray-600 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-cyan-500"
                                 placeholder="Command the system..."
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyPress={e => e.key === 'Enter' && handleSend()}
+                                disabled={isPending}
                             />
-                            <button onClick={handleSend} className="px-3 py-1 bg-cyan-600 text-white rounded text-sm hover:bg-cyan-500">Send</button>
+                            <button onClick={handleSend} className="px-3 py-1 bg-cyan-600 text-white rounded text-sm hover:bg-cyan-500 disabled:opacity-50" disabled={isPending}>Send</button>
                         </div>
                     </div>
                 </div>
@@ -561,8 +697,10 @@ const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
 };
 
 const SystemAlertsWidget: FC = () => {
-    const { data } = useAlerts();
+    const { data, isLoading, isError, error } = useAlerts();
     const alerts = data?.getSystemAlerts || [];
+    if (isLoading) return <div className="mb-6 text-gray-500">Loading alerts...</div>;
+    if (isError) return <div className="mb-6 text-red-400">Error loading alerts: {error?.message}</div>;
     if (alerts.length === 0) return null;
 
     return (
@@ -583,24 +721,27 @@ const SystemAlertsWidget: FC = () => {
 // --- MAIN VIEW CONTROLLER ---
 
 const QuantumWeaverContent: FC = () => {
-    const userId = "user_001";
-    const [activeModule, setActiveModule] = useState<'DASHBOARD' | 'STRATEGY' | 'FINANCE' | 'MARKET' | 'TEAM' | 'LEGAL'>('DASHBOARD');
-    const { data: userPlans } = useUserPlans(userId);
+    const { userId } = useAuth(); // Get userId from AuthContext
+    const [activeModule, setActiveModule] = useState<'DASHBOARD' | 'STRATEGY' | 'FINANCE' | 'MARKET'>('DASHBOARD'); // MVP modules only
+    const { data: userPlans } = useUserPlans(userId || ''); // Pass userId from auth context
     const { mutate: startAnalysis, isPending: isStarting } = useStartAnalysis();
     const [planInput, setPlanInput] = useState('');
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(null);
 
     // Determine active workflow for Strategy View
-    const activeWorkflowId = selectedWorkflowId || (userPlans?.getUserPlans?.[0]?.workflowId);
-    const { data: analysisStatus } = useAnalysisStatus(activeWorkflowId || null);
+    // Prioritize selectedWorkflowId, then the most recent plan, otherwise null
+    const activeWorkflowId = selectedWorkflowId || (userPlans?.getUserPlans?.[0]?.workflowId) || null;
+    const { data: analysisStatus, isLoading: isAnalysisLoading, isError: isAnalysisError, error: analysisError } = useAnalysisStatus(activeWorkflowId);
     const workflowData = analysisStatus?.getBusinessPlanAnalysisStatus;
+
+    // Fetch user profile for sidebar display
+    const { data: userProfileData } = useUserProfile(userId || '');
+    const userProfile = userProfileData?.getUserProfile;
 
     const renderModule = () => {
         switch (activeModule) {
             case 'FINANCE': return <FinancialDashboard />;
             case 'MARKET': return <MarketIntelligence />;
-            case 'TEAM': return <TeamOrchestrator />;
-            case 'LEGAL': return <LegalShield />;
             case 'STRATEGY':
                 return (
                     <div className="space-y-6">
@@ -609,20 +750,22 @@ const QuantumWeaverContent: FC = () => {
                                 <textarea
                                     value={planInput}
                                     onChange={(e) => setPlanInput(e.target.value)}
-                                    placeholder="Input strategic parameters for analysis..."
+                                    placeholder="Input strategic parameters for analysis (e.g., 'Develop a market entry strategy for Southeast Asia fintech market')."
                                     className="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
                                 />
                                 <button
-                                    onClick={() => startAnalysis({ plan: planInput, userId })}
-                                    disabled={isStarting || !planInput.trim()}
+                                    onClick={() => userId && startAnalysis({ plan: planInput, userId })}
+                                    disabled={isStarting || !planInput.trim() || !userId}
                                     className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
                                 >
                                     {isStarting ? 'Processing...' : 'Execute Analysis Protocol'}
                                 </button>
+                                {!userId && <p className="text-red-400 text-sm mt-2">Authentication required to start analysis.</p>}
                             </Card>
                         ) : (
                             <>
-                                {workflowData?.status === 'PENDING' && <div className="text-center p-10 text-cyan-400 animate-pulse">Quantum Analysis in Progress...</div>}
+                                {isAnalysisLoading && <div className="text-center p-10 text-cyan-400 animate-pulse">Quantum Analysis in Progress...</div>}
+                                {isAnalysisError && <div className="text-center p-10 text-red-400">Error loading analysis: {analysisError?.message}</div>}
                                 {workflowData?.result && (
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         <Card title="Strategic Output">
@@ -641,7 +784,14 @@ const QuantumWeaverContent: FC = () => {
                                                     <div className="text-xl font-bold text-red-400">{workflowData.result.metrics?.risk.toFixed(0)}%</div>
                                                 </div>
                                             </div>
-                                            <button onClick={() => setSelectedWorkflowId(null)} className="text-xs text-cyan-400 hover:underline">New Analysis</button>
+                                            {workflowData.result.coachingPlan && (
+                                                <div className="mt-4 p-3 bg-gray-800 border border-indigo-700 rounded-lg">
+                                                    <h4 className="font-bold text-indigo-400 text-sm mb-2">{workflowData.result.coachingPlan.title}</h4>
+                                                    <p className="text-xs text-gray-400">{workflowData.result.coachingPlan.summary}</p>
+                                                    {/* Further details like steps could be rendered here */}
+                                                </div>
+                                            )}
+                                            <button onClick={() => setSelectedWorkflowId(null)} className="text-xs text-cyan-400 hover:underline mt-4">Initiate New Analysis</button>
                                         </Card>
                                         <Card title="Growth Projection">
                                             <div className="h-48">
@@ -655,6 +805,19 @@ const QuantumWeaverContent: FC = () => {
                                                     </LineChart>
                                                 </ResponsiveContainer>
                                             </div>
+                                            {workflowData.result.potentialMentors && workflowData.result.potentialMentors.length > 0 && (
+                                                <div className="mt-4">
+                                                    <h4 className="font-bold text-gray-300 text-sm mb-2">Potential Mentors</h4>
+                                                    <div className="flex items-center space-x-2">
+                                                        {workflowData.result.potentialMentors.map(mentor => (
+                                                            <div key={mentor.id} className="flex items-center space-x-2 bg-gray-800 p-2 rounded-lg text-xs">
+                                                                <img src={mentor.imageUrl} alt={mentor.name} className="w-6 h-6 rounded-full" />
+                                                                <span className="text-white">{mentor.name}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </Card>
                                     </div>
                                 )}
@@ -676,7 +839,8 @@ const QuantumWeaverContent: FC = () => {
                                 <div className="text-3xl font-bold text-indigo-400">Leader</div>
                                 <div className="text-sm text-gray-400 mt-2">Top 5% in Sector</div>
                             </Card>
-                            <Card title="Operational Efficiency" className="cursor-pointer hover:border-cyan-500 transition-colors" onClick={() => setActiveModule('TEAM')}>
+                            <Card title="Operational Efficiency" className="cursor-pointer hover:border-cyan-500 transition-colors">
+                                {/* This card is descriptive, but navigation is handled by MVP scope. No direct module for it. */}
                                 <div className="text-3xl font-bold text-cyan-400">98.2%</div>
                                 <div className="text-sm text-gray-400 mt-2">AI Automation Active</div>
                             </Card>
@@ -696,7 +860,7 @@ const QuantumWeaverContent: FC = () => {
             <div className="w-64 bg-black border-r border-gray-800 flex flex-col">
                 <div className="p-6 border-b border-gray-800">
                     <h1 className="text-2xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">FINOS<span className="text-white text-xs align-top">PRO</span></h1>
-                    <p className="text-xs text-gray-500 mt-1">Business OS v10.0</p>
+                    <p className="text-xs text-gray-500 mt-1">Business OS v1.0 (MVP)</p>
                 </div>
                 <nav className="flex-grow p-4 space-y-2 overflow-y-auto custom-scrollbar">
                     {[
@@ -704,8 +868,7 @@ const QuantumWeaverContent: FC = () => {
                         { id: 'STRATEGY', label: 'Quantum Strategy', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
                         { id: 'FINANCE', label: 'Treasury & Finance', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
                         { id: 'MARKET', label: 'Market Intelligence', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-                        { id: 'TEAM', label: 'Talent & HR', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
-                        { id: 'LEGAL', label: 'Legal & Compliance', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+                        // Removed 'TEAM' and 'LEGAL' from MVP navigation
                     ].map(item => (
                         <button
                             key={item.id}
@@ -719,9 +882,11 @@ const QuantumWeaverContent: FC = () => {
                 </nav>
                 <div className="p-4 border-t border-gray-800">
                     <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xs font-bold">SU</div>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xs font-bold">
+                            {userProfile?.username ? userProfile.username.substring(0,2).toUpperCase() : 'AU'}
+                        </div>
                         <div>
-                            <div className="text-sm font-bold text-white">System User</div>
+                            <div className="text-sm font-bold text-white">{userProfile?.username || 'Authenticated User'}</div>
                             <div className="text-xs text-gray-500">Standard Access</div>
                         </div>
                     </div>
@@ -733,7 +898,7 @@ const QuantumWeaverContent: FC = () => {
                 {/* HEADER */}
                 <header className="sticky top-0 z-20 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 p-6 flex justify-between items-center">
                     <div>
-                        <h2 className="text-xl font-bold text-white">{activeModule === 'DASHBOARD' ? 'System Overview' : activeModule.charAt(0) + activeModule.slice(1).toLowerCase().replace('_', ' ')}</h2>
+                        <h2 className="text-xl font-bold text-white">{activeModule === 'DASHBOARD' ? 'System Overview' : activeModule.charAt(0) + activeModule.slice(1).toLowerCase()}</h2>
                         <p className="text-xs text-gray-400">System Status: <span className="text-green-400">Nominal</span> | AI Latency: 12ms</p>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -748,10 +913,10 @@ const QuantumWeaverContent: FC = () => {
                 <div className="p-6 pb-24">
                     {/* NARRATIVE CONTEXT */}
                     <div className="mb-8 p-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 rounded-lg">
-                        <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">System Operational Guidelines 10.1</h3>
+                        <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">System Operational Guidelines 1.0 (MVP)</h3>
                         <p className="text-gray-300 text-sm leading-relaxed italic">
-                            "Our focus is on practical, incremental improvements. The data presented here provides a snapshot of current operations, intended to support informed decision-making. Sustainable growth requires careful attention to detail."
-                            <br/><span className="text-gray-500 not-italic mt-1 block">Ã¢â‚¬â€  System Administrator</span>
+                            "This Minimum Viable Product focuses on core financial oversight and strategic AI-driven insights. Iterative development will introduce further modules as validated by business need. Stability and security are paramount."
+                            <br/><span className="text-gray-500 not-italic mt-1 block">&mdash; System Administrator</span>
                         </p>
                     </div>
 
@@ -759,7 +924,7 @@ const QuantumWeaverContent: FC = () => {
                 </div>
 
                 {/* GLOBAL CHAT */}
-                <GlobalChatOverlay context={activeModule} />
+                {userId && <GlobalChatOverlay context={activeModule} />}
             </main>
         </div>
     );
@@ -770,7 +935,9 @@ const queryClient = new QueryClient();
 const QuantumWeaverView: FC = () => {
     return (
         <QueryClientProvider client={queryClient}>
-            <QuantumWeaverContent />
+            <AuthProvider>
+                <QuantumWeaverContent />
+            </AuthProvider>
         </QueryClientProvider>
     );
 };
