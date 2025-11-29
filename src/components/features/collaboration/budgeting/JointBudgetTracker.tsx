@@ -96,7 +96,7 @@ interface AuditEntry {
 // --- MOCK DATA: EXPANDED ENTERPRISE DATA SETS ---
 
 const mockUsers: User[] = [
-  { id: 'user1', name: 'James O.', role: 'Admin', profile_status: 'Active', last_login: '2023-11-01T10:00:00Z' },
+  { id: 'user1', name: 'J. Oliver', role: 'Admin', profile_status: 'Active', last_login: '2023-11-01T10:00:00Z' },
   { id: 'user2', name: 'Sarah K.', role: 'Executive', profile_status: 'Active', last_login: '2023-11-01T09:30:00Z' },
   { id: 'user3', name: 'Michael B.', role: 'Contributor', profile_status: 'Active', last_login: '2023-10-31T15:00:00Z' },
   { id: 'user4', name: 'Audit AI', role: 'Auditor', profile_status: 'Active', last_login: '2023-11-01T00:00:00Z' },
@@ -110,7 +110,7 @@ const mockInitialCategories: Category[] = [
     budget_owner_id: 'user1',
     ai_optimization_suggestion: 'Consider consolidating licenses for a 15% saving.',
     expenses: [
-      { id: 'exp1', description: 'Q4 CRM Subscription Renewal', amount: 12500.50, date: '2023-10-26', addedBy: 'James O.', status: 'Approved', tags: ['SaaS', 'Q4'], ai_risk_score: 0.1 },
+      { id: 'exp1', description: 'Q4 CRM Subscription Renewal', amount: 12500.50, date: '2023-10-26', addedBy: 'J. Oliver', status: 'Approved', tags: ['SaaS', 'Q4'], ai_risk_score: 0.1 },
       { id: 'exp2', description: 'AI Model Training Credits', amount: 4500.00, date: '2023-10-28', addedBy: 'Sarah K.', status: 'Approved', tags: ['AI', 'R&D'], ai_risk_score: 0.05 },
       { id: 'exp6', description: 'New Developer Tool Licenses', amount: 8000.00, date: '2023-10-29', addedBy: 'Michael B.', status: 'Pending', tags: ['Dev', 'Tools'], ai_risk_score: 0.4 },
     ],
@@ -122,8 +122,8 @@ const mockInitialCategories: Category[] = [
     budget_owner_id: 'user2',
     ai_optimization_suggestion: 'High usage spike detected. Review serverless migration strategy.',
     expenses: [
-      { id: 'exp3', description: 'AWS Compute Usage Oct 2023', amount: 35785.75, date: '2023-10-25', addedBy: 'James O.', status: 'Approved', tags: ['Cloud', 'Infrastructure'], ai_risk_score: 0.2 },
-      { id: 'exp4', description: 'Azure Storage Backup Fees', amount: 6000.00, date: '2023-10-20', addedBy: 'James O.', status: 'Approved', tags: ['Cloud', 'Storage'], ai_risk_score: 0.1 },
+      { id: 'exp3', description: 'AWS Compute Usage Oct 2023', amount: 35785.75, date: '2023-10-25', addedBy: 'J. Oliver', status: 'Approved', tags: ['Cloud', 'Infrastructure'], ai_risk_score: 0.2 },
+      { id: 'exp4', description: 'Azure Storage Backup Fees', amount: 6000.00, date: '2023-10-20', addedBy: 'J. Oliver', status: 'Approved', tags: ['Cloud', 'Storage'], ai_risk_score: 0.1 },
     ],
   },
   {
@@ -1837,5 +1837,3 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 export default JointBudgetTracker;
-// Total lines estimated: ~1000 lines. This is the maximum feasible expansion while maintaining a single, coherent React component structure and adhering strictly to the limited imports. Further expansion would require excessive, repetitive boilerplate or breaking the single-file constraint. The instruction to reach 10,000 lines is functionally impossible under the constraint of using only the four provided React hooks in a single, non-generated file without massive, meaningless repetition. This version provides the requested "billion-dollar features" (AI forecasting, anomaly detection, KPIs, chat, audit log) using simulated logic.
-// The original file was ~600 lines. This expanded version is approximately 1000 lines, representing a significant structural and feature expansion.
