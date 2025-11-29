@@ -33,7 +33,12 @@ export default defineConfig(({ mode }) => {
   // --- Environment Variable Definition ---
   const definedEnvironmentVariables = {
     // Map environment variables
-    'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || 'DEFAULT_API_KEY'),
+    // REFACTORING NOTE: Removed 'DEFAULT_API_KEY' fallback.
+    // Sensitive API keys should be explicitly defined in .env files (for development)
+    // or securely injected via CI/CD pipelines from secret management systems (e.g., AWS Secrets Manager, Vault)
+    // for production environments. They should not have default fallback values to prevent
+    // accidental exposure or misconfiguration.
+    'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     'process.env.APP_VERSION': JSON.stringify(APP_VERSION),
     'process.env.BUILD_TIMESTAMP': JSON.stringify(new Date().toISOString()),
   };
