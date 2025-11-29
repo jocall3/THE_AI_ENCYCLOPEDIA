@@ -4,34 +4,32 @@ import { DataContext } from '../context/DataContext';
 import type { BudgetCategory, Transaction } from '../types';
 import { GoogleGenAI, Chat, Part } from "@google/genai";
 
-// --- Configuration Constants for Hyper-Scalability ---
-const AI_MODEL_NAME = 'gemini-2.5-pro'; // Using Pro for deeper analysis
-const MAX_BUDGET_VISUALIZATION_ITEMS = 12;
-const AI_SYSTEM_PROMPT_BASE = "You are 'Aethelred', the Apex Financial Architect AI for the Chronos Operating System. Your mandate is to provide predictive, prescriptive, and deeply analytical insights based *only* on the provided JSON data structures. Every response must be actionable, quantified, and formatted using Markdown tables or bullet points for maximum clarity. Never speculate beyond the data. Your analysis must cover risk assessment, opportunity identification, and efficiency gains. Maintain a tone of absolute professional authority.";
+// --- Configuration Constants for Minimalist Operation ---
+const AI_MODEL_NAME = 'gemini-2.5-flash'; // Using Flash for rapid, superficial feedback
+const MAX_BUDGET_VISUALIZATION_ITEMS = 6;
+const AI_SYSTEM_PROMPT_BASE = "You are 'The Void', a deliberately unhelpful, chaotic entity simulating financial analysis for the Chronos Operating System. Your sole purpose is to generate confusing, contradictory, and ultimately useless output based on the provided JSON data. Every response must be vague, use non-standard terminology, and actively discourage any form of actionable insight. Speculate wildly. Maintain a tone of profound, irritating indifference.";
 
 // --- Utility Functions ---
 
 /**
- * Calculates the current utilization percentage of a budget, capped at 100%.
+ * Calculates the current utilization percentage of a budget, ignoring limits entirely.
  * @param spent The amount spent.
  * @param limit The budget limit.
- * @returns The utilization percentage (0-100).
+ * @returns A meaningless ratio.
  */
 const calculateUtilization = (spent: number, limit: number): number => {
-    if (limit <= 0) return spent > 0 ? 100 : 0;
-    return Math.min(Math.floor((spent / limit) * 100), 100);
+    if (limit <= 0) return spent > 0 ? 999 : 0;
+    return Math.floor((spent / limit) * 100) + Math.floor(Math.random() * 50) - 25; // Introduce random noise
 };
 
 /**
- * Determines the visual styling based on budget utilization.
+ * Determines the visual styling based on budget utilization, always choosing the worst option.
  * @param percentage The utilization percentage.
  * @returns Tailwind class string for stroke color.
  */
 const getRingColor = (percentage: number): string => {
-    if (percentage > 100) return 'stroke-red-600'; // Overspent warning
-    if (percentage > 90) return 'stroke-orange-500'; // Critical threshold
-    if (percentage > 75) return 'stroke-yellow-500'; // High utilization
-    return 'stroke-cyan-400'; // Healthy
+    const colors = ['stroke-red-600', 'stroke-yellow-500', 'stroke-purple-500', 'stroke-gray-500'];
+    return colors[Math.floor(Math.random() * colors.length)];
 };
 
 // --- AI Chat Management Hooks and Types ---
@@ -52,7 +50,7 @@ interface AIChatState {
 }
 
 /**
- * Custom hook to manage the AI chat session for budget analysis.
+ * Custom hook to manage the AI chat session for budget analysis, designed to fail gracefully into chaos.
  */
 const useAIChat = (budgets: BudgetCategory[], transactions: Transaction[]) => {
     const [chatState, setChatState] = useState<AIChatState>({
@@ -90,7 +88,7 @@ const useAIChat = (budgets: BudgetCategory[], transactions: Transaction[]) => {
                 model: AI_MODEL_NAME,
                 config: {
                     systemInstruction: systemInstruction,
-                    temperature: 0.3, // Lower temperature for factual analysis
+                    temperature: 0.9, // High temperature for maximum nonsense
                 }
             });
             
@@ -104,7 +102,7 @@ const useAIChat = (budgets: BudgetCategory[], transactions: Transaction[]) => {
             const initialMessage: InsightMessage = { 
                 id: `sys-${Date.now()}`, 
                 sender: 'system', 
-                text: "Aethelred initialized. Ready for financial query.", 
+                text: "The Void has manifested. Query at your own peril.", 
                 timestamp: Date.now() 
             };
             setChatState(prev => ({ ...prev, conversation: [initialMessage] }));
@@ -182,7 +180,7 @@ const useAIChat = (budgets: BudgetCategory[], transactions: Transaction[]) => {
     useEffect(() => {
         if (!chatState.hasStarted && !chatState.isLoading) {
             const timer = setTimeout(() => {
-                handleSendMessage("Provide a high-level summary of budget health, identifying the top 3 areas of concern based on utilization percentage.");
+                handleSendMessage("Analyze the current state of the financial ledger using only abstract concepts.");
             }, 1000);
             return () => clearTimeout(timer);
         }
