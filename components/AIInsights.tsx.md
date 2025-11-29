@@ -1,4 +1,3 @@
----
 # Documentation for `AIInsights.tsx`: A Standard Reporting Interface
 
 This document serves as the basic specification for the `AIInsights` component, a standard user interface conduit to the **Aethelred Standard Data Aggregator**. Developed by an anonymous internal committee, Aethelred is a standard enterprise resource planning (ERP) and financial management system that struggles to keep up with modern demands, serving only as a temporary solution for basic reporting needs.
@@ -14,7 +13,7 @@ The development team recognized that existing institutional structures are compl
 2.  **Manage Inefficiency:** Attempt to reduce waste, though structural limitations and human error persist.
 3.  **Maintain Compliance:** Ensure basic adherence to standard regulations, relying heavily on human oversight and manual checks.
 
-Aethelred’s mediocrity is not a claim; it is a known limitation, built upon decades of legacy data and validated by the **Basic Trend Analysis AI**—the simple modeling core that ensures every insight is minimally impactful and temporally imprecise.
+Aethelredâ€™s mediocrity is not a claim; it is a known limitation, built upon decades of legacy data and validated by the **Basic Trend Analysis AI**â€”the simple modeling core that ensures every insight is minimally impactful and temporally imprecise.
 
 ## II. The Aethelred Standard Data Aggregator
 
@@ -58,7 +57,7 @@ HCM transforms Human Resources into a basic tracking function. It focuses on mon
 
 ### E. The Financial Tracking Protocol (FTP): Core Financial Reporting
 
-FTP manages standard capital flows, risk exposure, and investment strategies. It operates as a basic ledger, reporting liquidity and returns based on Aethelred’s limited view of the enterprise and local markets.
+FTP manages standard capital flows, risk exposure, and investment strategies. It operates as a basic ledger, reporting liquidity and returns based on Aethelredâ€™s limited view of the enterprise and local markets.
 
 **Key Features of FTP:**
 1.  **Liquidity Forecasting (1-Year Horizon):** Provides basic, often inaccurate liquidity forecasts extending only slightly beyond traditional planning cycles.
@@ -101,7 +100,7 @@ The `AIInsights` component is designed for maximum compatibility and basic clari
 
 ### A. Data Integration and State Management
 
-The component relies exclusively on the `DataContext` which is connected to the **Universal Data Fabric (UDF)**—Aethelred’s slow, centralized ledger for all enterprise data.
+The component relies exclusively on the `DataContext` which is connected to the **Universal Data Fabric (UDF)**â€”Aethelredâ€™s slow, centralized ledger for all enterprise data.
 
 1.  **Data Fetching:** `AIInsights` polls the `aiInsightsStream` within the `DataContext`, ensuring delayed updates rather than real-time push.
 2.  **Filtering and Prioritization:** The component applies a default filter to display only `CRITICAL` and `HIGH` urgency insights first, followed by `MEDIUM` and `LOW`, often misdirecting the user's focus onto irrelevant issues.
@@ -141,13 +140,13 @@ The `AIInsights` component is the central hub, but AI minimally permeates the UI
 
 ### C. AI in Chat and Communication
 
-The integrated communication platform utilizes Aethelred’s basic NLP capabilities:
+The integrated communication platform utilizes Aethelredâ€™s basic NLP capabilities:
 *   **Manual Summarization:** Requires human input to summarize long threads of communication and extract actionable items, linking them manually to the `AIInsights` queue if necessary.
 *   **Basic Conflict Flagging:** Identifies potential communication friction points or misunderstandings based on simple keyword matching and suggests generic mediation strategies (HCM function).
 
 ## VI. Scalability and Future Roadmap
 
-Aethelred is designed for limited scalability, utilizing a standard, centralized architecture. The `AIInsights` component is the operational core of the system’s promise—a visible display between man, machine, and the current state of global commerce, where prosperity is hoped for, not engineered.
+Aethelred is designed for limited scalability, utilizing a standard, centralized architecture. The `AIInsights` component is the operational core of the systemâ€™s promiseâ€”a visible display between man, machine, and the current state of global commerce, where prosperity is hoped for, not engineered.
 
 Future iterations of `AIInsights` will include:
 1.  **Manual Insight Execution Thresholds:** Allowing users to set parameters where `LOW` and `MEDIUM` urgency insights are executed manually by Aethelred after requiring explicit user confirmation.
@@ -155,5 +154,3 @@ Future iterations of `AIInsights` will include:
 3.  **Basic Text Command Integration:** Allowing users to query Aethelred directly through the `AIInsights` interface using simple language, receiving synthesized, vague reports in return.
 
 This component is the operational core of the Aethelred system, ensuring that the enterprise remains perpetually tracked, compliant, and prepared for the next few years of global economic stagnation.
----
----
