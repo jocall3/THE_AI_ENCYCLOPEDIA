@@ -1,7 +1,7 @@
 import React, { useState, useMemo, FC, ChangeEvent, FormEvent, useCallback } from 'react';
 import { User, Shield, Users, Globe, Building, Gift, Baby, ScrollText, CheckCircle, Download, Printer, ArrowLeft, ArrowRight, Zap, Cpu, Database, FileText, Settings, HelpCircle, Loader2, MessageSquareText, TrendingUp, BarChart3, Mail, Phone, MapPin, Calendar, Briefcase, DollarSign, Heart, Landmark, BookOpen, Fingerprint, Lock, Key, Server, Cloud, Bot, Brain, Layers, ZapIcon } from 'lucide-react';
 
-// --- AI Integration Placeholder Types ---
+// --- AI Integration Types ---
 interface AIResponse {
     status: 'idle' | 'loading' | 'success' | 'error';
     message: string;
@@ -15,16 +15,16 @@ interface PersonalInfo {
     address: string;
     maritalStatus: 'single' | 'married' | 'divorced' | 'widowed';
     hasChildren: boolean;
-    ssnLast4: string; // Billion Dollar Feature: Securely masked identifier
-    residencyJurisdiction: string; // Billion Dollar Feature: AI-suggested jurisdiction based on input
+    ssnLast4: string; // Masked identifier
+    residencyJurisdiction: string; // Jurisdiction
 }
 
 interface Executor {
     fullName: string;
     relationship: string;
     email: string;
-    phone: string; // Billion Dollar Feature: Contact verification via secure API
-    aiVerificationScore: number; // Billion Dollar Feature: AI trust score for executor
+    phone: string; // Contact verification
+    aiVerificationScore: number; // Trust score
 }
 
 interface Beneficiary {
@@ -32,50 +32,50 @@ interface Beneficiary {
     fullName: string;
     relationship: string;
     percentage: number;
-    contingencyPlan: string; // Billion Dollar Feature: AI-generated contingency text
+    contingencyPlan: string; // Contingency text
 }
 
 interface DigitalAsset {
     id: string;
     platform: string;
     username: string;
-    accessInstructions: string; // Billion Dollar Feature: Encrypted instruction storage
-    recoveryPhraseHint: string; // Billion Dollar Feature: Hint for recovery phrase
-    aiAccessProtocol: 'manual' | 'automated_vault' | 'conditional_release'; // Billion Dollar Feature: AI-defined access protocol
+    accessInstructions: string; // Instruction storage
+    recoveryPhraseHint: string; // Recovery hint
+    aiAccessProtocol: 'manual' | 'automated_vault' | 'conditional_release'; // Access protocol
 }
 
 interface SpecificGift {
     id: string;
-    itemDescription: string; // Billion Dollar Feature: Detailed item description using NLP
-    recipientIdentifier: string; // Billion Dollar Feature: Recipient ID linked to profile
-    valuationEstimate: number; // Billion Dollar Feature: AI-estimated market value
+    itemDescription: string; // Item description
+    recipientIdentifier: string; // Recipient ID
+    valuationEstimate: number; // Estimated value
 }
 
 interface Guardian {
     fullName: string;
     relationship: string;
     contactEmail: string;
-    aiSuitabilityRating: number; // Billion Dollar Feature: AI assessment of guardianship suitability
+    aiSuitabilityRating: number; // Suitability rating
 }
 
 interface FinalArrangements {
     preference: 'burial' | 'cremation' | 'other';
-    detailedInstructions: string; // Billion Dollar Feature: Rich text editor for detailed instructions
-    prepaidServiceContractID: string; // Billion Dollar Feature: Link to external service contracts
-    AI_Optimization_Notes: string; // Billion Dollar Feature: AI notes on optimizing arrangements for tax/legal compliance
+    detailedInstructions: string; // Detailed instructions
+    prepaidServiceContractID: string; // Service contract ID
+    AI_Optimization_Notes: string; // Optimization notes
 }
 
 interface TrustStructure {
     trustType: 'revocable' | 'irrevocable' | 'special_needs';
     trusteeName: string;
-    fundingInstructions: string; // Billion Dollar Feature: Automated funding workflow integration
+    fundingInstructions: string; // Funding instructions
 }
 
 interface DocumentMetadata {
     version: string;
     creationTimestamp: number;
     lastModifiedBy: string;
-    blockchainHash: string; // Billion Dollar Feature: Immutable record hash
+    blockchainHash: string; // Record hash
 }
 
 interface FormDataState {
@@ -90,7 +90,7 @@ interface FormDataState {
     finalArrangements: FinalArrangements;
     trustStructure: TrustStructure;
     documentMetadata: DocumentMetadata;
-    aiComplianceCheck: { status: 'pending' | 'passed' | 'failed', report: string }; // Billion Dollar Feature: Real-time compliance check
+    aiComplianceCheck: { status: 'pending' | 'passed' | 'failed', report: string }; // Compliance check
 }
 
 const initialFormData: FormDataState = {
@@ -108,7 +108,7 @@ const initialFormData: FormDataState = {
     aiComplianceCheck: { status: 'pending', report: '' }
 };
 
-// --- Utility Components (Billion Dollar UI Elements) ---
+// --- Utility Components ---
 
 const AIChatInterface: FC<{ context: string, onMessageSend: (message: string) => void, aiState: AIResponse }> = ({ context, onMessageSend, aiState }) => {
     const [input, setInput] = useState('');
@@ -125,7 +125,7 @@ const AIChatInterface: FC<{ context: string, onMessageSend: (message: string) =>
         <div className="bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-cyan-600/30 h-96 flex flex-col">
             <div className="flex items-center mb-3 pb-2 border-b border-cyan-600/50">
                 <Bot className="w-5 h-5 text-cyan-400 mr-2" />
-                <h3 className="font-bold text-lg text-cyan-300">Legacy AI Assistant</h3>
+                <h3 className="font-bold text-lg text-cyan-300">AI Assistant</h3>
             </div>
             <div className="flex-grow overflow-y-auto space-y-3 text-sm custom-scrollbar">
                 <div className="text-gray-400 italic">
@@ -204,7 +204,7 @@ const SelectField: FC<any> = ({ label, name, value, onChange, options, icon: Ico
     </div>
 );
 
-// --- AI Simulation Hook (For demonstration, replaces actual API calls) ---
+// --- AI Simulation Hook ---
 const useAIInteraction = (formData: FormDataState) => {
     const [aiState, setAiState] = useState<AIResponse>({ status: 'idle', message: 'Ready to assist with your estate planning queries.' });
 
@@ -279,7 +279,7 @@ const Step1PersonalInfo: FC<{ data: PersonalInfo, updateData: (field: keyof Pers
             <div className="grid md:grid-cols-2 gap-6 bg-gray-800 p-6 rounded-xl shadow-inner border border-gray-700">
                 <InputField label="Full Legal Name" name="fullName" value={data.fullName} onChange={handleChange} placeholder="Johnathan A. Doe" required />
                 <InputField label="Date of Birth" name="dateOfBirth" value={data.dateOfBirth} onChange={handleChange} type="date" required />
-                <InputField label="Residential Address (Primary)" name="address" value={data.address} onChange={handleChange} placeholder="123 Sovereign Way, Metropolis" required />
+                <InputField label="Residential Address (Primary)" name="address" value={data.address} onChange={handleChange} placeholder="123 Main St, Metropolis" required />
                 <SelectField
                     label="Marital Status"
                     name="maritalStatus"
@@ -777,7 +777,7 @@ const Step8FinalArrangements: FC<{ data: FinalArrangements, updateData: (field: 
     );
 };
 
-// --- Trust Structure & Metadata (Billion Dollar Expansion) ---
+// --- Trust Structure & Metadata ---
 
 const Step9TrustStructure: FC<{ data: TrustStructure, updateData: (field: keyof TrustStructure, value: any) => void, aiContext: string, aiState: AIResponse, triggerAI: (msg: string) => void }> = ({ data, updateData, aiContext, aiState, triggerAI }) => {
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -1052,9 +1052,9 @@ const DigitalTrustAndWillCreator: FC = () => {
             <div className="max-w-7xl mx-auto">
                 <header className="text-center mb-10 border-b border-cyan-700/50 pb-4">
                     <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 tracking-tight">
-                        Quantum Legacy Architect <Zap className="inline w-8 h-8 ml-2 text-yellow-400" />
+                        Digital Trust Creator <Zap className="inline w-8 h-8 ml-2 text-yellow-400" />
                     </h1>
-                    <p className="text-gray-400 mt-2 text-lg">Next-Generation Digital Trust & Will Creation Platform (v10.0)</p>
+                    <p className="text-gray-400 mt-2 text-lg">Digital Trust & Will Creation Platform</p>
                 </header>
 
                 <div className="flex flex-col lg:flex-row gap-10">
