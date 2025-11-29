@@ -2,14 +2,14 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { PlusCircle, Trash2, ArrowRight, X, Zap, Settings, DollarSign, ListChecks, Bell, Tag, Banknote, Cpu, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
 
 // =============================================================================
-// 1. CORE INFRASTRUCTURE & TYPE DEFINITIONS (The Foundation of the Billion Dollar System)
+// 1. BASIC TYPES (Standard definitions)
 // =============================================================================
 
 type Id = string;
 type RuleExecutionStatus = 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ERROR';
 type RulePriority = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10; // 10 being highest priority
 
-// --- IF Conditions (The Predictive Input Layer) ---
+// --- IF Conditions (Simple value comparisons) ---
 type ConditionSubject = 'transaction_amount' | 'category' | 'merchant' | 'account' | 'day_of_week' | 'time_of_day' | 'transaction_type' | 'ai_sentiment_score' | 'metadata_key';
 type ConditionOperator = 'is' | 'is_not' | 'greater_than' | 'less_than' | 'contains' | 'starts_with' | 'ends_with' | 'is_between' | 'matches_regex';
 
@@ -18,20 +18,20 @@ interface Condition {
   subject: ConditionSubject;
   operator: ConditionOperator;
   value: any;
-  metadata?: { [key: string]: any }; // For future AI/ML context storage
+  metadata?: { [key: string]: any }; // Extra data
 }
 
-// --- THEN Actions (The Autonomous Execution Layer) ---
+// --- THEN Actions (Simple effects) ---
 type ActionType = 'transfer_money' | 'send_notification' | 'categorize_as' | 'add_tag' | 'execute_external_api' | 'adjust_budget' | 'trigger_alert' | 'log_event';
 
 interface Action {
   id: Id;
   type: ActionType;
   parameters: { [key: string]: any };
-  executionOrder: number; // Ensures sequential execution if multiple actions are triggered
+  executionOrder: number; // Order of operations
 }
 
-// --- The overall Rule (The Enterprise Automation Blueprint) ---
+// --- The Rule Structure (Data model) ---
 interface Rule {
   id: string;
   name: string;
@@ -50,7 +50,7 @@ interface Rule {
 }
 
 // =============================================================================
-// 2. MOCK DATA & CONFIGURATION (Simulating Global Enterprise Context)
+// 2. MOCK DATA (Static test values)
 // =============================================================================
 
 const MOCK_CATEGORIES = ['Groceries', 'Dining Out', 'Utilities', 'Transport', 'Entertainment', 'Shopping', 'Income', 'Transfers', 'Investment_Buy', 'Subscription_Service'];
@@ -60,7 +60,7 @@ const TIME_OF_DAY_OPTIONS = ['Morning (6am-12pm)', 'Afternoon (12pm-5pm)', 'Even
 const TRANSACTION_TYPES = ['DEBIT', 'CREDIT', 'FEE', 'INTEREST'];
 
 // =============================================================================
-// 3. UI PRIMITIVES (High-Fidelity, Accessible Components)
+// 3. UI HELPERS (Basic HTML wrappers)
 // =============================================================================
 
 interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -132,7 +132,7 @@ const ToggleSwitch: React.FC<{ checked: boolean, onChange: (checked: boolean) =>
 );
 
 // =============================================================================
-// 4. DYNAMIC MAPPING & AI INTEGRATION POINTS
+// 4. STATIC MAPPINGS (Hardcoded configuration)
 // =============================================================================
 
 const OPERATORS_BY_SUBJECT: Record<ConditionSubject, ConditionOperator[]> = {
@@ -143,7 +143,7 @@ const OPERATORS_BY_SUBJECT: Record<ConditionSubject, ConditionOperator[]> = {
     day_of_week: ['is'],
     time_of_day: ['is'],
     transaction_type: ['is', 'is_not'],
-    ai_sentiment_score: ['greater_than', 'less_than', 'is_between'], // Score between -1.0 and 1.0
+    ai_sentiment_score: ['greater_than', 'less_than', 'is_between'], // Simple float value
     metadata_key: ['is', 'contains'],
 };
 
@@ -155,55 +155,55 @@ const SUBJECT_CONFIG: Record<ConditionSubject, { label: string, icon: React.Elem
     day_of_week: { label: 'Day of Week', icon: Zap, inputType: 'select' },
     time_of_day: { label: 'Time of Day', icon: Zap, inputType: 'select' },
     transaction_type: { label: 'Transaction Type', icon: AlertTriangle, inputType: 'select' },
-    ai_sentiment_score: { label: 'AI Sentiment Score', icon: Cpu, inputType: 'number' },
+    ai_sentiment_score: { label: 'Sentiment Score', icon: Cpu, inputType: 'number' },
     metadata_key: { label: 'Metadata Key/Value', icon: Settings, inputType: 'text' },
 };
 
 const ACTION_CONFIG: Record<ActionType, { label: string, icon: React.ElementType, defaultParams: () => { [key: string]: any } }> = {
     transfer_money: { 
-        label: 'Execute Secure Transfer', 
+        label: 'Transfer Money', 
         icon: DollarSign, 
-        defaultParams: () => ({ fromAccount: MOCK_ACCOUNTS[0], toAccount: MOCK_ACCOUNTS[1], amount: 10.00, memo: 'Automated Transfer' }) 
+        defaultParams: () => ({ fromAccount: MOCK_ACCOUNTS[0], toAccount: MOCK_ACCOUNTS[1], amount: 10.00, memo: 'Transfer' }) 
     },
     categorize_as: { 
-        label: 'Apply Classification Tag', 
+        label: 'Categorize Transaction', 
         icon: ListChecks, 
         defaultParams: () => ({ category: MOCK_CATEGORIES[0] }) 
     },
     add_tag: { 
-        label: 'Apply Metadata Tag', 
+        label: 'Add Tag', 
         icon: Tag, 
-        defaultParams: () => ({ tag: '#AutoRule', applyTo: 'Transaction' }) 
+        defaultParams: () => ({ tag: '#Tag', applyTo: 'Transaction' }) 
     },
     send_notification: { 
-        label: 'Dispatch Secure Notification', 
+        label: 'Send Notification', 
         icon: Bell, 
-        defaultParams: () => ({ message: 'Rule triggered successfully.', recipient: 'SystemAdmin' }) 
+        defaultParams: () => ({ message: 'Rule triggered.', recipient: 'Admin' }) 
     },
     execute_external_api: {
-        label: 'Integrate External Service (API)',
+        label: 'Call External API',
         icon: Cpu,
-        defaultParams: () => ({ endpoint: 'https://api.corp.com/trigger', payload: {}, method: 'POST' })
+        defaultParams: () => ({ endpoint: 'https://api.example.com/webhook', payload: {}, method: 'POST' })
     },
     adjust_budget: {
-        label: 'Update Budget Allocation',
+        label: 'Adjust Budget',
         icon: ShieldCheck,
         defaultParams: () => ({ budgetName: 'Monthly Spending', adjustmentType: 'ADD', amount: 50.00 })
     },
     trigger_alert: {
-        label: 'Trigger High-Severity Alert',
+        label: 'Trigger Alert',
         icon: AlertTriangle,
-        defaultParams: () => ({ severity: 'CRITICAL', alertCode: 'RUL_001' })
+        defaultParams: () => ({ severity: 'CRITICAL', alertCode: 'ALERT_001' })
     },
     log_event: {
-        label: 'Audit Log Entry',
+        label: 'Log Event',
         icon: Loader2,
-        defaultParams: () => ({ eventType: 'RULE_EXECUTION', details: 'Rule successfully processed transaction.' })
+        defaultParams: () => ({ eventType: 'RULE_EXECUTION', details: 'Rule processed.' })
     }
 };
 
 // =============================================================================
-// 5. SUB-COMPONENTS (Modular Logic Units)
+// 5. CHILD COMPONENTS (Row renderers)
 // =============================================================================
 
 interface ConditionRowProps {
@@ -327,8 +327,6 @@ const ActionRow: React.FC<ActionRowProps> = React.memo(({ action, onUpdate, onPa
         // When type changes, reset parameters to default for the new type
         const defaultParams = ACTION_CONFIG[newType].defaultParams();
         onUpdate(action.id, 'type', newType);
-        // We rely on the parent component to handle parameter reset if necessary, 
-        // but here we ensure the type is updated.
     };
 
     const renderParameterInputs = useMemo(() => {
@@ -379,7 +377,7 @@ const ActionRow: React.FC<ActionRowProps> = React.memo(({ action, onUpdate, onPa
                  return (
                     <div className="flex-grow flex items-center gap-2">
                         <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Message:</span>
-                        <Input type="text" placeholder="System Alert: Review transaction..." value={action.parameters.message || ''} onChange={(e) => commonParamUpdate('message', e.target.value)} className="flex-grow !p-2 !text-xs" />
+                        <Input type="text" placeholder="Alert message..." value={action.parameters.message || ''} onChange={(e) => commonParamUpdate('message', e.target.value)} className="flex-grow !p-2 !text-xs" />
                     </div>
                  );
             case 'execute_external_api':
@@ -457,13 +455,13 @@ const ActionRow: React.FC<ActionRowProps> = React.memo(({ action, onUpdate, onPa
 });
 
 // =============================================================================
-// 6. MAIN RULE BUILDER COMPONENT (The Orchestrator)
+// 6. MAIN COMPONENT (Form logic)
 // =============================================================================
 
 const initialRuleState: Rule = {
     id: crypto.randomUUID(),
-    name: 'New Enterprise Automation Rule',
-    description: 'Define complex financial logic for autonomous processing.',
+    name: 'New Rule',
+    description: 'Rule description.',
     priority: 5,
     conditions: [
         { id: crypto.randomUUID(), subject: 'transaction_amount', operator: 'greater_than', value: 1000.00 },
@@ -471,14 +469,14 @@ const initialRuleState: Rule = {
     ],
     conditionLogic: 'AND',
     actions: [
-        { id: crypto.randomUUID(), type: 'send_notification', executionOrder: 1, parameters: { message: 'High-value transaction detected.', recipient: 'SecurityTeam' } },
+        { id: crypto.randomUUID(), type: 'send_notification', executionOrder: 1, parameters: { message: 'High-value transaction.', recipient: 'Admin' } },
         { id: crypto.randomUUID(), type: 'adjust_budget', executionOrder: 2, parameters: { budgetName: 'Large Purchases', adjustmentType: 'ADD', amount: 1000.00 } },
     ],
     isEnabled: false,
     status: 'DRAFT',
     lastExecuted: null,
     executionCount: 0,
-    createdBy: 'SystemUser',
+    createdBy: 'User',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
 };
@@ -502,7 +500,7 @@ export default function FinancialRuleBuilder() {
         if (c.id === id) {
           const updatedCondition = { ...c, [field]: value };
           
-          // Logic to handle subject/operator consistency
+          // Reset operator if invalid for subject
           if (field === 'subject') {
               const newSubject = value as ConditionSubject;
               const validOps = OPERATORS_BY_SUBJECT[newSubject];
@@ -547,7 +545,7 @@ export default function FinancialRuleBuilder() {
                 const updatedAction: Action = { ...a, [field]: value };
                 
                 if (field === 'type') {
-                    // Reset parameters when type changes
+                    // Clear params on type change
                     updatedAction.parameters = ACTION_CONFIG[value as ActionType].defaultParams();
                 }
                 return updatedAction;
@@ -555,7 +553,6 @@ export default function FinancialRuleBuilder() {
             return a;
         });
         
-        // Re-sort actions by executionOrder if needed, though we rely on array index for now
         return { ...prev, actions };
     });
   }, []);
@@ -570,7 +567,7 @@ export default function FinancialRuleBuilder() {
   const removeAction = useCallback((id: Id) => {
     setRule(prev => {
         const remainingActions = prev.actions.filter(a => a.id !== id);
-        // Re-sequence execution order after removal
+        // Fix order numbers
         const reSequencedActions = remainingActions.map((action, index) => ({
             ...action,
             executionOrder: index + 1
@@ -581,12 +578,12 @@ export default function FinancialRuleBuilder() {
   
   const handleSave = async () => {
     if (rule.conditions.length === 0 || rule.actions.length === 0) {
-        alert("Validation Error: A rule must contain at least one condition (IF) and one action (THEN).");
+        alert("Validation Error: A rule must contain at least one condition and one action.");
         return;
     }
     
     setIsSaving(true);
-    // Simulate API latency for saving the enterprise blueprint
+    // Fake delay
     await new Promise(resolve => setTimeout(resolve, 1200)); 
 
     setRule(prev => ({
@@ -595,8 +592,8 @@ export default function FinancialRuleBuilder() {
         updatedAt: new Date().toISOString(),
     }));
     setIsSaving(false);
-    console.log('Rule Blueprint Saved:', rule);
-    alert(`Rule "${rule.name}" successfully committed to the Enterprise Automation Ledger.`);
+    console.log('Rule saved:', rule);
+    alert(`Rule "${rule.name}" saved successfully.`);
   };
 
   const handleToggleEnable = (isEnabled: boolean) => {
@@ -609,7 +606,7 @@ export default function FinancialRuleBuilder() {
 
   const isReadyToSave = rule.conditions.length > 0 && rule.actions.length > 0;
 
-  // --- Render Helpers ---
+  // --- Helpers ---
   const getStatusBadge = (status: RuleExecutionStatus) => {
     let colorClass = 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     switch (status) {
@@ -633,36 +630,36 @@ export default function FinancialRuleBuilder() {
     <div className="p-4 sm:p-8 md:p-12 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans min-h-screen">
       <div className="max-w-6xl mx-auto">
         
-        {/* Global Header & Metadata */}
+        {/* Header */}
         <header className="mb-10 p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border-t-4 border-indigo-600">
           <div className="flex justify-between items-start mb-4">
             <div>
                 <h1 className="text-4xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
-                    Autonomous Financial Blueprint
+                    Financial Rule Builder
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1 text-lg">Rule ID: {rule.id.substring(0, 8)}... | Version 1.0.0</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1 text-lg">Rule ID: {rule.id.substring(0, 8)}...</p>
             </div>
             {getStatusBadge(rule.status)}
           </div>
 
-          {/* Core Rule Settings */}
+          {/* Basic Settings */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
             <Input
-                label="Rule Name (Mandatory)"
+                label="Rule Name"
                 type="text"
                 value={rule.name}
                 onChange={(e) => setRule(prev => ({ ...prev, name: e.target.value }))}
                 className="text-lg font-bold"
             />
             <Input
-                label="Description (Contextual Metadata)"
+                label="Description"
                 type="text"
                 value={rule.description}
                 onChange={(e) => setRule(prev => ({ ...prev, description: e.target.value }))}
                 className="text-sm"
             />
             <div className="flex flex-col">
-                <label className="text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">Execution Priority (1=Highest)</label>
+                <label className="text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">Priority (1=Highest)</label>
                 <Select value={rule.priority} onChange={(e) => setRule(prev => ({ ...prev, priority: parseInt(e.target.value) as RulePriority }))} className="!text-sm">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(p => (
                         <option key={p} value={p}>{p} {p === 1 ? '(Critical)' : p === 10 ? '(Low)' : ''}</option>
@@ -673,7 +670,7 @@ export default function FinancialRuleBuilder() {
           
           <div className="mt-4 flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-800">
             <ToggleSwitch 
-                label={rule.isEnabled ? "Rule is LIVE and Executing" : "Rule is Paused/Draft"}
+                label={rule.isEnabled ? "Rule Enabled" : "Rule Disabled"}
                 checked={rule.isEnabled}
                 onChange={handleToggleEnable}
             />
@@ -687,18 +684,18 @@ export default function FinancialRuleBuilder() {
 
         <div className="space-y-10">
             
-            {/* IF Conditions Block */}
+            {/* Conditions */}
             <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-indigo-200/50 dark:border-indigo-900/50">
                 <h2 className="text-2xl font-bold mb-6 flex items-center text-indigo-600 dark:text-indigo-400">
                     <Zap size={24} className="mr-3" />
-                    1. INITIATION CRITERIA (IF)
+                    1. IF (Conditions)
                 </h2>
 
                 <div className="space-y-4">
                     {rule.conditions.length === 0 ? (
                          <div className="text-center py-10 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                             <AlertTriangle size={32} className="mx-auto text-yellow-500 mb-2" />
-                            <p className="text-gray-500 dark:text-gray-400 font-medium">No conditions defined. This rule will trigger on every transaction if enabled.</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">No conditions defined.</p>
                         </div>
                     ) : (
                         rule.conditions.map((condition, index) => (
@@ -711,7 +708,7 @@ export default function FinancialRuleBuilder() {
                                 {index < rule.conditions.length - 1 && (
                                     <div className="flex items-center justify-center my-2">
                                         <span className={`text-sm font-extrabold px-4 py-1 rounded-full shadow-md ${rule.conditionLogic === 'AND' ? 'bg-indigo-500 text-white' : 'bg-green-500 text-white'}`}>
-                                            {rule.conditionLogic === 'AND' ? 'AND (All Must Be True)' : 'OR (Any Can Be True)'}
+                                            {rule.conditionLogic === 'AND' ? 'AND' : 'OR'}
                                         </span>
                                     </div>
                                 )}
@@ -725,7 +722,7 @@ export default function FinancialRuleBuilder() {
                         onClick={addCondition}
                         className="flex items-center gap-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 transition"
                     >
-                        <PlusCircle size={18} /> Add Condition Parameter
+                        <PlusCircle size={18} /> Add Condition
                     </button>
                     <div className="flex items-center space-x-3">
                         <span className="text-sm text-gray-600 dark:text-gray-400">Logic:</span>
@@ -747,17 +744,17 @@ export default function FinancialRuleBuilder() {
                 </div>
             </div>
 
-            {/* THEN Actions Block */}
+            {/* Actions */}
             <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-green-200/50 dark:border-green-900/50">
                  <h2 className="text-2xl font-bold mb-6 flex items-center text-green-600 dark:text-green-400">
                     <ShieldCheck size={24} className="mr-3" />
-                    2. AUTONOMOUS RESPONSE (THEN)
+                    2. THEN (Actions)
                 </h2>
                 <div className="space-y-4">
                     {rule.actions.length === 0 ? (
                          <div className="text-center py-10 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                             <AlertTriangle size={32} className="mx-auto text-red-500 mb-2" />
-                            <p className="text-gray-500 dark:text-gray-400 font-medium">No actions defined. The rule will execute but do nothing.</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">No actions defined.</p>
                         </div>
                     ) : (
                         rule.actions
@@ -777,11 +774,11 @@ export default function FinancialRuleBuilder() {
                     onClick={addAction}
                     className="mt-6 flex items-center gap-2 text-sm font-semibold text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200 transition border border-green-300 dark:border-green-700 px-3 py-1.5 rounded-lg"
                 >
-                    <PlusCircle size={18} /> Add Next Action Step
+                    <PlusCircle size={18} /> Add Action
                 </button>
             </div>
             
-            {/* Finalization and Persistence */}
+            {/* Save Button */}
             <div className="flex justify-end pt-6 pb-12">
                  <Button 
                     onClick={handleSave} 
@@ -791,10 +788,10 @@ export default function FinancialRuleBuilder() {
                     {isSaving ? (
                         <>
                             <Loader2 size={18} className="animate-spin" />
-                            Committing Blueprint...
+                            Saving...
                         </>
                     ) : (
-                        'Commit & Deploy Rule'
+                        'Save Rule'
                     )}
                 </Button>
             </div>
