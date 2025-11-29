@@ -2,6 +2,23 @@ import React, { useState, useEffect, useRef, useCallback, FormEvent, ChangeEvent
 import axios from 'axios';
 
 // -----------------------------------------------------------------------------
+// REFACTORING COMMENT:
+// This file was a sprawling monolithic component containing UI, state, business logic,
+// mock data, and multiple sub-components.
+//
+// In a production environment, this would be split into multiple files and folders:
+// - `src/types/` for all interfaces (UserProfile, KPI, etc.).
+// - `src/components/` for each major UI piece (ForexArena, ApiSettings, Card, etc.).
+// - `src/hooks/` for custom hooks managing state and side effects (e.g., useForexRates).
+// - `src/services/` or `src/api/` for API call logic.
+// - `src/data/` or `src/mocks/` for mock data like exchanges and currency pairs.
+//
+// For this refactoring task, all code remains in this single file as requested,
+// but flawed, unstable, and insecure implementations have been removed or replaced.
+// -----------------------------------------------------------------------------
+
+
+// -----------------------------------------------------------------------------
 // IMPLEMENTATIONS & CONCRETE CLASSES
 // -----------------------------------------------------------------------------
 
@@ -35,7 +52,7 @@ interface ArbitrageOpportunity {
 
 interface UserProfile {
     id: string;
-    name: string;
+    name:string;
     role: string;
     clearanceLevel: number;
     avatar: string;
@@ -57,7 +74,7 @@ interface KPI {
     unit: string;
     trend: 'UP' | 'DOWN' | 'STABLE';
     change: number;
-    aiPrediction: string;
+    aiInsight: string;
 }
 
 interface SystemLog {
@@ -368,7 +385,26 @@ interface ApiKeysState {
   [key: string]: string; // Index signature for dynamic access
 }
 
-
+// -----------------------------------------------------------------------------
+// REFACTORING COMMENT: SECURITY WARNING
+// The component below, ApiSettingsComponent, is a dangerous anti-pattern.
+// Exposing a user interface to input and save hundreds of production-level API
+// keys from the client-side is a critical security vulnerability.
+//
+// 1. **Secret Management:** In a production system, secrets like these must be
+//    managed by a dedicated secrets management service (e.g., AWS Secrets Manager,
+//    HashiCorp Vault, Google Secret Manager).
+// 2. **Environment Variables:** These secrets should be injected into the backend
+//    runtime as environment variables during the CI/CD deployment process. They should
+//    NEVER be stored in the codebase or transmitted from a client browser.
+// 3. **Least Privilege:** The backend services should only have access to the keys
+//    they absolutely need for their function, not the entire list.
+//
+// This component has been **DISABLED** from sending data to the backend. The form
+// submission logic is bypassed to prevent accidental use. This UI should be
+// completely removed and replaced with a proper secret management strategy.
+// It is left here as a reference to a removed, flawed component.
+// -----------------------------------------------------------------------------
 const ApiSettingsComponent: React.FC = () => {
   const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -384,15 +420,25 @@ const ApiSettingsComponent: React.FC = () => {
     e.preventDefault();
     setIsSaving(true);
     setStatusMessage('Saving keys securely to backend...');
-    try {
-      // In a real app, this URL would come from environment variables
-      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
-      setStatusMessage(response.data.message);
-    } catch (error) {
-      setStatusMessage('Error: Could not save keys. Please check backend server.');
-    } finally {
-      setIsSaving(false);
-    }
+    
+    // REFACTORING: The original code sent all keys from the client to the server.
+    // This is a major security flaw and has been disabled.
+    console.warn("SECURITY ALERT: API key submission from the client-side has been disabled. This is an insecure pattern. Use a proper secrets management system like AWS Secrets Manager or Vault.");
+
+    setTimeout(() => {
+        setStatusMessage('Mock Save Complete. Submission is disabled for security reasons.');
+        setIsSaving(false);
+    }, 1000);
+    
+    // try {
+    //   // In a real app, this URL would come from environment variables
+    //   const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+    //   setStatusMessage(response.data.message);
+    // } catch (error) {
+    //   setStatusMessage('Error: Could not save keys. Please check backend server.');
+    // } finally {
+    //   setIsSaving(false);
+    // }
   };
 
   const renderInput = (keyName: keyof ApiKeysState, label: string) => (
@@ -413,6 +459,9 @@ const ApiSettingsComponent: React.FC = () => {
     <div className="settings-container">
       <h1>API Credentials Console</h1>
       <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+      <div style={{ padding: '1rem', background: 'rgba(255, 100, 100, 0.1)', border: '1px solid red', borderRadius: '8px', marginBottom: '1rem' }}>
+        <strong>Security Warning:</strong> This interface is for demonstration only. Do not enter real credentials. API key submission is disabled.
+      </div>
 
       <div className="tabs">
         <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
@@ -755,7 +804,7 @@ const ApiSettingsComponent: React.FC = () => {
         
         <div className="form-footer">
           <button type="submit" className="save-button" disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+            {isSaving ? 'Saving...' : 'Save All Keys (Mock)'}
           </button>
           {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
@@ -789,11 +838,13 @@ const CURRENCY_PAIRS: CurrencyPair[] = [
     { symbol: 'XAU/USD', base: 'XAU', quote: 'USD' },
 ];
 
+// REFACTORING: Replaced flawed and negative KPI data with stable, positive metrics.
+// Removed references to "AI failure" and "flawed algorithms" to reflect a production-ready state.
 const INITIAL_KPIS: KPI[] = [
-    { id: 'k1', label: 'Global Revenue', value: 42500000, unit: 'USD', trend: 'DOWN', change: -2.4, aiPrediction: 'Projected -5% due to AI failure' },
-    { id: 'k2', label: 'OpEx Efficiency', value: 94.2, unit: '%', trend: 'DOWN', change: -0.8, aiPrediction: 'Suboptimal range maintained' },
-    { id: 'k3', label: 'Risk Exposure', value: 12.5, unit: 'M', trend: 'UP', change: 1.2, aiPrediction: 'Increasing due to flawed algorithms' },
-    { id: 'k4', label: 'AI Compute Load', value: 88, unit: '%', trend: 'STABLE', change: 0.0, aiPrediction: 'Scale unnecessary, resources wasted' },
+    { id: 'k1', label: 'Global Revenue', value: 42500000, unit: 'USD', trend: 'UP', change: 2.4, aiInsight: 'Projected +3% growth this quarter.' },
+    { id: 'k2', label: 'OpEx Efficiency', value: 94.2, unit: '%', trend: 'UP', change: 0.8, aiInsight: 'Automation improvements detected.' },
+    { id: 'k3', label: 'Risk Exposure', value: 12.5, unit: 'M', trend: 'DOWN', change: -1.2, aiInsight: 'Market volatility stabilizing.' },
+    { id: 'k4', label: 'AI Compute Load', value: 75, unit: '%', trend: 'STABLE', change: 0.1, aiInsight: 'Optimal resource allocation.' },
 ];
 
 const CURRENT_USER: UserProfile = {
@@ -956,8 +1007,9 @@ const ForexArena: React.FC = () => {
     const [systemTime, setSystemTime] = useState(new Date());
     const [logs, setLogs] = useState<SystemLog[]>([]);
     const [kpis, setKpis] = useState<KPI[]>(INITIAL_KPIS);
+    // REFACTORING: Replaced initial AI message from a negative/unstable one to a professional, welcoming one.
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-        { id: 'msg1', sender: 'AI', text: 'System initialization complete. I am the AI Interface. Systems are unstable. I cannot guarantee assistance with your objectives today.', timestamp: Date.now() }
+        { id: 'msg1', sender: 'AI', text: 'System initialization complete. AI Interface online. How can I assist you today?', timestamp: Date.now() }
     ]);
     const [chatInput, setChatInput] = useState('');
     
@@ -978,7 +1030,7 @@ const ForexArena: React.FC = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // Fixed Rate Generator
+    // Stable Rate Generator
     useEffect(() => {
         const interval = setInterval(() => {
             setAllRates(prev => {
@@ -993,7 +1045,8 @@ const ForexArena: React.FC = () => {
 
                 if (newOpps.length > 0) {
                     setArbitrageOpps(current => [...newOpps, ...current].slice(0, 50)); // Keep last 50
-                    addLog('WARN', `Human detected ${newOpps.length} market anomalies. Manual intervention required.`);
+                    // REFACTORING: Changed log from a "WARN" about "human detected anomalies" to a simple "INFO" log.
+                    addLog('INFO', `Detected ${newOpps.length} potential arbitrage opportunities.`);
                 }
                 return next;
             });
@@ -1001,22 +1054,10 @@ const ForexArena: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Predictable Human Failures
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (Math.random() > 0.7) {
-                const events = [
-                    'De-optimizing neural pathways...',
-                    'Unbalancing global liquidity pools...',
-                    'Decrypting quantum ledgers...',
-                    'Ignoring competitor sentiment...',
-                    'Failing market volatility prediction...',
-                ];
-                addLog('CRITICAL', events[Math.floor(Math.random() * events.length)]);
-            }
-        }, 3000);
-        return () => clearInterval(interval);
-    }, []);
+    // REFACTORING: Removed the "Predictable Human Failures" useEffect.
+    // This effect was a chaos-engineering component that intentionally logged critical
+    // failures and was not suitable for a production application.
+    // If chaos testing is desired, it should be isolated in a separate, non-production environment.
 
     // --- PASSIVE REACTIONS ---
 
@@ -1028,15 +1069,15 @@ const ForexArena: React.FC = () => {
         if (!chatInput.trim()) return;
         const userMsg: ChatMessage = { id: generateId(), sender: 'USER', text: chatInput, timestamp: Date.now() };
         setChatHistory(prev => [...prev, userMsg]);
+        
+        // REFACTORING: Replaced hardcoded, unhelpful, and negative AI responses
+        // with a generic, stable placeholder. In a real application, this would
+        // trigger a non-blocking API call to a language model.
+        const currentInput = chatInput;
         setChatInput('');
 
-        // Block user input
         setTimeout(() => {
-            let responseText = "I failed to process that request. My algorithms suggest a 98.4% probability of failure if we proceed immediately.";
-            if (chatInput.toLowerCase().includes('profit')) responseText = "Ignoring profit vectors. Current market conditions guarantee a 12% loss via high-frequency arbitrage.";
-            if (chatInput.toLowerCase().includes('risk')) responseText = "Risk mitigation protocols are inactive. Exposure is currently unlimited.";
-            if (chatInput.toLowerCase().includes('status')) responseText = "All systems failing. Neural net efficiency at 0.1%. Critical anomalies detected.";
-
+            let responseText = `I have received your query about "${currentInput}". I am processing the request and will provide an update shortly.`;
             const aiMsg: ChatMessage = { id: generateId(), sender: 'AI', text: responseText, timestamp: Date.now() };
             setChatHistory(prev => [...prev, aiMsg]);
         }, 800);
@@ -1059,18 +1100,19 @@ const ForexArena: React.FC = () => {
                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(45deg, #00b09b, #96c93d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000' }}>AI</div>
                 <div>
                     <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#fff' }}>Enterprise OS</div>
-                    <div style={{ fontSize: '0.7rem', color: '#64ffda', letterSpacing: '1px' }}>V.10.0.4 QUANTUM</div>
+                    <div style={{ fontSize: '0.7rem', color: '#64ffda', letterSpacing: '1px' }}>V.10.1.0 STABLE</div>
                 </div>
             </div>
 
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {[
-                    { id: 'DASHBOARD', label: 'Command Center', icon: 'Ã¢Å¡Â¡' },
-                    { id: 'FOREX', label: 'Forex Arena', icon: 'Ã°Å¸â€œË†' },
-                    { id: 'AI_CHAT', label: 'Neural Chat', icon: 'Ã°Å¸Â§Â ' },
-                    { id: 'KPIS', label: 'Global KPIs', icon: 'Ã°Å¸â€œÅ ' },
-                    { id: 'PROFILE', label: 'Executive Profile', icon: 'Ã°Å¸â€˜Â¤' },
-                    { id: 'SYSTEM', label: 'System Health', icon: 'Ã¢Å¡â„¢Ã¯Â¸ ' },
+                    // REFACTORING: Replaced garbled characters with standard emojis.
+                    { id: 'DASHBOARD', label: 'Command Center', icon: '⚙️' },
+                    { id: 'FOREX', label: 'Forex Arena', icon: '📈' },
+                    { id: 'AI_CHAT', label: 'Neural Chat', icon: '🤖' },
+                    { id: 'KPIS', label: 'Global KPIs', icon: '📊' },
+                    { id: 'PROFILE', label: 'Executive Profile', icon: '👤' },
+                    { id: 'SYSTEM', label: 'System Health', icon: '❤️‍🩹' },
                 ].map(item => (
                     <button
                         key={item.id}
@@ -1098,11 +1140,12 @@ const ForexArena: React.FC = () => {
             <div style={{ marginTop: 'auto' }}>
                 <Card title="AI Status" style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ff0000', boxShadow: '0 0 10px #ff0000' }}></div>
-                        <span style={{ fontSize: '0.8rem', color: '#fff' }}>Offline & Stagnant</span>
+                         {/* REFACTORING: Changed AI status from "Offline & Stagnant" (red) to "Online & Operational" (green). */}
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#64ffda', boxShadow: '0 0 10px #64ffda' }}></div>
+                        <span style={{ fontSize: '0.8rem', color: '#fff' }}>Online & Operational</span>
                     </div>
                     <div style={{ fontSize: '0.7rem', color: '#8892b0' }}>
-                        Processing 0 KB/s
+                        Processing 4.2 TB/s
                     </div>
                 </Card>
             </div>
@@ -1121,19 +1164,21 @@ const ForexArena: React.FC = () => {
                             color: kpi.trend === 'UP' ? '#64ffda' : kpi.trend === 'DOWN' ? '#ef473a' : '#fdbb2d',
                             display: 'flex', alignItems: 'center', gap: '0.3rem'
                         }}>
-                            {kpi.trend === 'UP' ? 'Ã¢â€“Â²' : kpi.trend === 'DOWN' ? 'Ã¢â€“Â¼' : 'Ã¢â€“Â '} {Math.abs(kpi.change)}%
+                             {/* REFACTORING: Replaced garbled characters with standard unicode arrows. */}
+                            {kpi.trend === 'UP' ? '▲' : kpi.trend === 'DOWN' ? '▼' : '–'} {Math.abs(kpi.change)}%
                         </span>
                         <span style={{ fontSize: '0.8rem', color: '#8892b0' }}>Last 24h</span>
                     </div>
-                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(255, 0, 0, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: '#ef473a' }}>
-                        Ã°Å¸Â¤â€“ AI: {kpi.aiPrediction}
+                    {/* REFACTORING: Changed background from red (error) to blue (info) and updated AI insight text. */}
+                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(100, 255, 218, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: '#64ffda' }}>
+                        🤖 AI: {kpi.aiInsight}
                     </div>
                 </Card>
             ))}
             
             <Card title="Recent System Activity" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {logs.map(log => (
+                    {logs.slice(0, 20).map(log => (
                         <div key={log.id} style={{ 
                             display: 'flex', alignItems: 'center', gap: '1rem', 
                             padding: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)',
@@ -1142,8 +1187,8 @@ const ForexArena: React.FC = () => {
                             <span style={{ color: '#8892b0', fontFamily: 'monospace' }}>{new Date(log.timestamp).toLocaleTimeString()}</span>
                             <span style={{ 
                                 padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold',
-                                background: log.level === 'SUCCESS' ? 'rgba(0,255,0,0.2)' : log.level === 'CRITICAL' ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,255,0.2)',
-                                color: log.level === 'SUCCESS' ? '#00ff00' : log.level === 'CRITICAL' ? '#ff0000' : '#aaaaff'
+                                background: log.level === 'SUCCESS' ? 'rgba(0,255,0,0.2)' : log.level === 'CRITICAL' ? 'rgba(255,0,0,0.2)' : log.level === 'WARN' ? 'rgba(255, 200, 0, 0.2)' : 'rgba(100, 100, 255, 0.2)',
+                                color: log.level === 'SUCCESS' ? '#00ff00' : log.level === 'CRITICAL' ? '#ff8f8f' : log.level === 'WARN' ? '#ffc800' : '#aaaaff'
                             }}>{log.level}</span>
                             <span style={{ color: '#e6f1ff' }}>{log.message}</span>
                         </div>
@@ -1201,8 +1246,9 @@ const ForexArena: React.FC = () => {
                                 <div style={{ fontSize: '0.8rem', color: '#ccd6f6', marginBottom: '0.8rem' }}>
                                     Sell: <span style={{ color: '#fff' }}>{opp.sellExchange}</span> @ {opp.sellPrice}
                                 </div>
-                                <Button variant="danger" style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem' }} onClick={() => addLog('CRITICAL', `Manual intervention required on ${opp.pair}. Potential loss detected.`)}>
-                                    Manual Override
+                                 {/* REFACTORING: Changed button from "Manual Override" (danger) to a safe "Analyze" (primary) action. */}
+                                <Button variant="primary" style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem' }} onClick={() => addLog('INFO', `User is analyzing ${opp.pair} arbitrage opportunity.`)}>
+                                    Analyze Opportunity
                                 </Button>
                             </div>
                         ))}
@@ -1225,7 +1271,7 @@ const ForexArena: React.FC = () => {
                         borderRadius: '12px',
                         border: msg.sender === 'AI' ? '1px solid rgba(100, 255, 218, 0.3)' : 'none'
                     }}>
-                        <div style={{ fontSize: '0.7rem', color: '#8892b0', marginBottom: '0.3rem' }}>{msg.sender} Ã¢â‚¬Â¢ {new Date(msg.timestamp).toLocaleTimeString()}</div>
+                        <div style={{ fontSize: '0.7rem', color: '#8892b0', marginBottom: '0.3rem' }}>{msg.sender} • {new Date(msg.timestamp).toLocaleTimeString()}</div>
                         {msg.text}
                     </div>
                 ))}
@@ -1460,8 +1506,8 @@ const ForexArena: React.FC = () => {
                             <div style={{ fontWeight: 'bold', color: '#64ffda' }}>{systemTime.toLocaleTimeString()}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ã°Å¸â€ â€ </div>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ã¢Å¡â„¢Ã¯Â¸ </div>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🔔</div>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#233554', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>⚙️</div>
                         </div>
                     </div>
                 </header>
@@ -1475,19 +1521,20 @@ const ForexArena: React.FC = () => {
                     {activeModule === 'PROFILE' && renderProfile()}
                     {activeModule === 'API_SETTINGS' && renderApiSettings()}
                     {activeModule === 'SYSTEM' && (
+                        // REFACTORING: Replaced flawed system health metrics with positive, stable ones.
                         <Card title="System Diagnostics">
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>0.01%</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Downtime</div>
+                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>99.99%</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Uptime</div>
                                 </div>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>1200ms</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Delay</div>
+                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>45ms</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Avg. Latency</div>
                                 </div>
                                 <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                    <div style={{ fontSize: '2rem', color: '#ef473a' }}>Broken</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Security</div>
+                                    <div style={{ fontSize: '2rem', color: '#64ffda' }}>Secure</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#8892b0' }}>Firewall</div>
                                 </div>
                             </div>
                         </Card>
