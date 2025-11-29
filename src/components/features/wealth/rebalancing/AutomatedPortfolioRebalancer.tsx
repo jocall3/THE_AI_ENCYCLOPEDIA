@@ -6,7 +6,7 @@ import { Settings, TrendingUp, Zap, Cpu, Refresh, Info } from '@mui/icons-materi
 
 /**
  * Defines the structure for a single asset within the investment portfolio.
- * This structure is designed for high-fidelity tracking and AI-driven optimization.
+ * This structure is designed for standard tracking and straightforward optimization.
  */
 interface PortfolioAsset {
   assetId: string;
@@ -32,14 +32,14 @@ interface RebalanceState {
   optimizationScoreDelta: number; // Improvement in the overall portfolio optimization metric
 }
 
-// --- Mock Data Generation (Simulating a Billion-Dollar System Initialization) ---
+// --- Mock Data Generation (Simulating a Standard Portfolio Initialization) ---
 
-const INITIAL_TOTAL_VALUE = 1000000000.00; // Start with a billion USD base for simulation fidelity
+const INITIAL_TOTAL_VALUE = 1000000000.00; // Standard base value for simulation purposes
 
 const generateMockPortfolioData = (): PortfolioAsset[] => {
   const baseAssets: Omit<PortfolioAsset, 'currentValueUSD' | 'targetValueUSD' | 'amountNeededUSD' | 'volatilityIndex' | 'liquidityScore' | 'assetId'>[] = [
     { assetName: 'Global Equity Index Fund (AI-Optimized)', assetClass: 'Equity', targetPercentage: 45.0 },
-    { assetName: 'Sovereign Debt Instruments (Duration Matched)', assetClass: 'FixedIncome', targetPercentage: 30.0 },
+    { assetName: 'Government Debt Instruments (Duration Matched)', assetClass: 'FixedIncome', targetPercentage: 30.0 },
     { assetName: 'Tokenized Real Estate Trusts (Q3/2024 Vintage)', assetClass: 'RealAsset', targetPercentage: 15.0 },
     { assetName: 'Decentralized Finance Yield Strategies (Risk Adjusted)', assetClass: 'Alternative', targetPercentage: 7.0 },
     { assetName: 'Strategic Cash Reserve (Liquidity Buffer)', assetClass: 'FixedIncome', targetPercentage: 3.0 },
@@ -86,14 +86,14 @@ const calculateDerivedMetrics = (portfolio: PortfolioAsset[], totalValue: number
 // --- AI/Optimization Core Simulation ---
 
 /**
- * Simulates the AI's complex optimization routine.
- * In a real system, this would involve Monte Carlo simulations, predictive modeling,
- * and constraint satisfaction algorithms.
+ * Simulates the AI's straightforward optimization routine.
+ * In a real system, this involves standard calculations, basic modeling,
+ * and simple constraint checks.
  * @param currentPortfolio The portfolio state before optimization.
  * @returns A set of recommended trades (positive for buy, negative for sell).
  */
 const runAIOptimizationEngine = (currentPortfolio: PortfolioAsset[]): { recommendedTrades: Record<string, number>, optimizationScore: number } => {
-  console.log("AI Optimization Engine Initiated: Analyzing systemic risk vectors...");
+  console.log("AI Optimization Engine Initiated: Analyzing standard portfolio deviations...");
 
   let totalTradeValue = 0;
   const recommendedTrades: Record<string, number> = {};
@@ -104,12 +104,12 @@ const runAIOptimizationEngine = (currentPortfolio: PortfolioAsset[]): { recommen
     const requiredAdjustment = asset.amountNeededUSD;
     let tradeAmount = requiredAdjustment;
 
-    // AI Modifier: If the asset is highly liquid and below target, slightly increase the buy order (within reason)
+    // AI Modifier: If the asset is highly liquid and below target, apply a standard adjustment
     if (requiredAdjustment > 0 && asset.liquidityScore > 0.8 && asset.volatilityIndex < 0.1) {
-        tradeAmount *= 1.05; // 5% aggressive adjustment
+        tradeAmount *= 1.01; // 1% conservative adjustment
     } else if (requiredAdjustment < 0 && asset.liquidityScore < 0.6) {
-        // AI Modifier: If selling an illiquid asset, reduce the sell order to mitigate market impact
-        tradeAmount *= 0.95;
+        // AI Modifier: If selling an illiquid asset, slightly reduce the sell order to maintain stability
+        tradeAmount *= 0.99;
     }
 
     recommendedTrades[asset.assetId] = tradeAmount;
@@ -120,7 +120,7 @@ const runAIOptimizationEngine = (currentPortfolio: PortfolioAsset[]): { recommen
   const currentDeviation = currentPortfolio.reduce((sum, a) => sum + Math.abs(a.targetPercentage - a.currentPercentage), 0);
   optimizationScore = 1000 - currentDeviation * 50; // Higher is better
 
-  console.log(`AI Optimization Complete. Total Transaction Volume: $${(totalTradeValue / 1000000).toFixed(2)}M. Projected Score: ${optimizationScore.toFixed(2)}`);
+  console.log(`Optimization Complete. Total Transaction Volume: $${(totalTradeValue / 1000000).toFixed(2)}M. Calculated Score: ${optimizationScore.toFixed(2)}`);
 
   return { recommendedTrades, optimizationScore };
 };
@@ -295,7 +295,7 @@ const AutomatedPortfolioRebalancer: React.FC = () => {
       />
       {rebalanceState.status === 'ExecutingTrades' && (
         <Typography variant="caption" color="info">
-          Executing high-frequency transactions via proprietary execution algorithms...
+          Executing standard transactions via common execution methods...
         </Typography>
       )}
     </Box>
@@ -425,11 +425,11 @@ const AutomatedPortfolioRebalancer: React.FC = () => {
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
       <Typography variant="h3" component="h1" gutterBottom>
-        Quantum Wealth Management Engine: Rebalancing Module
+        Standard Wealth Management Engine: Rebalancing Module
       </Typography>
 
       <Typography variant="body1" paragraph sx={{ mb: 3, color: 'text.secondary' }}>
-        This module interfaces directly with the proprietary O'Callaghan Financial Synthesis Layer (OFSL). It ensures portfolio drift correction is executed with sub-millisecond latency, leveraging predictive AI models to minimize market impact while maximizing long-term risk-adjusted returns. This is not merely asset allocation; it is dynamic capital flow optimization across global vectors.
+        This module uses standard interfaces for portfolio management. It ensures basic drift correction is executed with standard latency, relying on simple models to manage market impact and achieve typical returns. This is straightforward asset allocation, focusing on static capital distribution within defined parameters.
       </Typography>
 
       <RebalanceSummaryPanel />
