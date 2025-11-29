@@ -3,7 +3,7 @@ import React, { useContext, useState, useMemo, useCallback, useEffect, useRef } 
 import { DataContext } from '../context/DataContext';
 import Card from './Card';
 import { FinancialGoal } from '../types';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Legend, CartesianGrid, BarChart, Bar, ScatterChart, Scatter, ZAxis, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Legend, CartesianGrid, BarChart, Bar, ReferenceLine } from 'recharts';
 
 // --- Simple UUID alternative to avoid adding external dependency in this specific file if v4 is not globally available.
 // This is a minimal, non-cryptographic UUID generator. For commercial-grade, secure applications, a proper UUID library should be used.
@@ -115,7 +115,7 @@ export interface ExtendedFinancialGoal extends FinancialGoal {
 /**
  * Philosophical thought: Utility functions are the unsung heroes of any robust application.
  * They provide pure, predictable operations, distilling complex logic into reusable, testable units.
- * Think of them as the finely crafted tools in a master artisan's kit ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ simple in form, but essential for grand creations.
+ * Think of them as the finely crafted tools in a master artisan's kit ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ simple in form, but essential for grand creations.
  *
  * Million Dollar Feature Overview: "The 'Date Whisperer' and 'Future Fortune Teller' Utilities!"
  * (Said in a jester's voice) "Hark, my friends, these humble functions, they may seem small and meek!
@@ -131,7 +131,12 @@ export interface ExtendedFinancialGoal extends FinancialGoal {
  */
 export const formatDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    try {
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    } catch (e) {
+        console.error("Invalid date string provided:", dateString);
+        return dateString;
+    }
 };
 
 /**
@@ -708,24 +713,34 @@ export const ProjectionSimulator: React.FC<{ goal: ExtendedFinancialGoal }> = ({
 
 
     const projectionData = useMemo(() => {
-        const data = [];
+        const data: { month: number; projectedValue: number; target: number; inflationAdjustedTarget: number; requiredMonthly: number }[] = [];
         let currentValue = goal.currentAmount;
         let inflationAdjustedTarget = goal.targetAmount;
         const monthlyRate = annualReturn / 100 / 12;
         const monthlyInflation = inflationRate / 100 / 12;
-
+        
+        const currentRequiredMonthlySaving = (goal.targetAmount - goal.currentAmount) / (monthsRemaining > 0 ? monthsRemaining : 1);
+        
         for (let i = 0; i <= monthsRemaining; i++) { // Include month 0 for initial state
+            let projectedValue = currentValue;
+            let target = goal.targetAmount;
+            let inflationAdjustedTargetValue = inflationAdjustedTarget;
+            
             if (i > 0) {
-                currentValue = currentValue * (1 + monthlyRate) + effectiveMonthlyContribution;
-                inflationAdjustedTarget = inflationAdjustedTarget * (1 + monthlyInflation);
+                projectedValue = currentValue * (1 + monthlyRate) + effectiveMonthlyContribution;
+                inflationAdjustedTargetValue = inflationAdjustedTarget * Math.pow(1 + monthlyInflation, i); // Recalculate inflation impact correctly over time
             }
+            
             data.push({
                 month: i,
-                projectedValue: parseFloat(currentValue.toFixed(2)),
-                target: parseFloat(goal.targetAmount.toFixed(2)),
-                inflationAdjustedTarget: parseFloat(inflationAdjustedTarget.toFixed(2)),
-                requiredMonthly: (goal.targetAmount - goal.currentAmount) / (monthsRemaining > 0 ? monthsRemaining : 1) // This is static, but good for context
+                projectedValue: parseFloat(projectedValue.toFixed(2)),
+                target: parseFloat(target.toFixed(2)),
+                inflationAdjustedTarget: parseFloat(inflationAdjustedTargetValue.toFixed(2)),
+                requiredMonthly: currentRequiredMonthlySaving // Static for readability in chart legend/tooltip
             });
+            
+            currentValue = projectedValue;
+            if (i === 0) inflationAdjustedTarget = inflationAdjustedTargetValue; // Only lock initial target for inflation calc baseline
         }
         return data;
     }, [goal.currentAmount, goal.targetAmount, monthsRemaining, effectiveMonthlyContribution, annualReturn, inflationRate]);
@@ -860,7 +875,7 @@ export const MonteCarloAnalysis: React.FC<{goal: ExtendedFinancialGoal}> = ({ go
             setIsRunning(false);
         }, 500); // Simulate network/computation delay
 
-    }, [goal, monthlyContribution, monthsRemaining, meanReturn, volatility, simulations]);
+    }, [goal.currentAmount, goal.targetAmount, monthlyContribution, monthsRemaining, meanReturn, volatility, simulations]);
 
     const distributionData = useMemo(() => {
         if (!results) return [];
@@ -1091,7 +1106,9 @@ export const AiInsightsAndRecalibration: React.FC<{
             };
         }
 
-        if (goal.status === 'on_track' && (goal.currentAmount / goal.targetAmount) > 0.9) {
+        const status = goal.status || 'needs_attention'; // Default status if not explicitly calculated upstream
+        
+        if (status === 'on_track' && (goal.currentAmount / goal.targetAmount) > 0.9) {
             return {
                 summary: "Excellent! You are very close to achieving your goal.",
                 steps: [
@@ -1102,7 +1119,7 @@ export const AiInsightsAndRecalibration: React.FC<{
             };
         }
         
-        if (goal.status === 'behind' || goal.status === 'needs_attention') {
+        if (status === 'behind' || status === 'needs_attention') {
             const desiredMonthly = goal.plan?.monthlyContribution || currentRequiredMonthlySaving;
             const suggestedIncrease = Math.ceil(desiredMonthly * 0.2); // Suggest a 20% increase
             const suggestedNewAmount = goal.targetAmount * 0.9; // Suggest reducing by 10%
@@ -1143,7 +1160,7 @@ export const AiInsightsAndRecalibration: React.FC<{
             summary: "Your goal is on track!",
             steps: ["Keep up the great work!", "Consider allocating any surplus funds to other goals.", "Review your progress regularly."]
         };
-    }, [goal, monthsRemaining, currentRequiredMonthlySaving, effectiveMonthlyContribution]);
+    }, [goal.plan, goal.targetAmount, goal.currentAmount, monthsRemaining, currentRequiredMonthlySaving, effectiveMonthlyContribution]);
 
     const { summary: aiSummary, steps: aiActionableSteps } = suggestAdjustments();
 
@@ -1152,7 +1169,7 @@ export const AiInsightsAndRecalibration: React.FC<{
             <h4 className="text-lg font-semibold text-white mb-4">AI-Generated Plan & Insights</h4>
             {goal.plan ? (
                 <div className="space-y-4 text-gray-300">
-                    <p><strong className="text-white">Summary:</strong> {goal.plan.summary}</p>
+                    <p><strong className="text-white">Plan Summary:</strong> {goal.plan.summary}</p>
                     <div>
                         <strong className="text-white">Actionable Steps from Plan:</strong>
                         <ul className="list-disc list-inside mt-2 space-y-1 text-sm pl-2">
@@ -1180,7 +1197,7 @@ export const AiInsightsAndRecalibration: React.FC<{
                 </div>
             ) : (
                 <div className="text-center py-8">
-                    <p className="text-gray-400 mb-4">No AI plan has been generated for this goal yet.</p>
+                    <p className="text-gray-400 mb-4">No AI plan has been generated for this goal yet. This uses simulated LLM integration to provide context-aware advice.</p>
                     <button onClick={() => onGeneratePlan(goal.id)} disabled={loadingGoalId === goal.id} className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium disabled:bg-gray-500 disabled:cursor-not-allowed">
                         {loadingGoalId === goal.id ? 'Generating Plan...' : 'Generate AI Plan'}
                     </button>
@@ -1300,7 +1317,7 @@ export const GoalDependenciesManager: React.FC<{
                 <span className="font-semibold text-white">{goal.name}</span>
                 <span className="text-gray-400">{getRelationshipText('current', link.relationshipType)}</span>
                 <span className="font-semibold text-white">{targetGoal.name}</span>
-                {link.triggerAmount && (
+                {link.triggerAmount !== undefined && (
                     <span className="text-gray-500 text-xs">(at ${link.triggerAmount.toLocaleString()})</span>
                 )}
             </div>
@@ -1443,6 +1460,7 @@ export const CreateGoalView: React.FC<{
             onGoalCreate({
                 ...goalData,
                 targetAmount: parseFloat(goalData.targetAmount),
+                startDate: goalData.startDate, // Ensure startDate is passed
             });
         }
     };
@@ -1564,7 +1582,7 @@ export const CreateGoalView: React.FC<{
  * (Jester voice) "Step right up, noble saver, and behold your goal's full glory!
  * No mere overview, but a 'Gallereia' of its complete story!
  * From humble pennies to soaring projections, a truly epic allegory!
- * Contributions, plans, risks, and AI wisdom ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ all in one inventory!
+ * Contributions, plans, risks, and AI wisdom ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ all in one inventory!
  * Tweak, adjust, observe, and conquer, your financial victory!"
  */
 export const GoalDetailView: React.FC<{
@@ -1584,7 +1602,7 @@ export const GoalDetailView: React.FC<{
     type Tab = 'overview' | 'contributions' | 'projections' | 'monte-carlo' | 'insights' | 'dependencies';
     const [activeTab, setActiveTab] = useState<Tab>('overview');
 
-    const progress = (goal.currentAmount / goal.targetAmount) * 100;
+    const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
     const Icon = GOAL_ICONS[goal.iconName] || GOAL_ICONS.default;
     const monthsRemaining = monthsBetween(new Date(), new Date(goal.targetDate));
     const requiredMonthlySaving = (goal.targetAmount - goal.currentAmount) / (monthsRemaining > 0 ? monthsRemaining : 1);
