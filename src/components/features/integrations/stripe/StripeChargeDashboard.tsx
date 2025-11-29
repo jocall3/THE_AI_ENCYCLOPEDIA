@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { StripeCharge, StripeChargeMetrics, StripeChargeEvent } from './types'; // Assuming you have a types file with expanded definitions
-import { getStripeCharges, refundStripeCharge, getStripeChargeEvents, getStripeChargeMetrics } from './api'; // Assuming you have an API file with expanded endpoints
-import { formatCurrency, formatTimestamp, calculateKPI } from './utils'; // Assuming you have an expanded utils file
+import { StripeCharge, StripeChargeMetrics, StripeChargeEvent } from './types'; // Standard type definitions
+import { getStripeCharges, refundStripeCharge, getStripeChargeEvents, getStripeChargeMetrics } from './api'; // Standard API endpoints
+import { formatCurrency, formatTimestamp, calculateKPI } from './utils'; // Standard utility functions
 
-// --- AI Integration Constants and Configuration ---
-const AI_SYSTEM_NAME = "Quantum Financial Intelligence Nexus (QFIN)";
-const AI_CORE_DIRECTIVE = "To architect and maintain a self-optimizing, maximally efficient, and sovereign global financial infrastructure, ensuring absolute transactional integrity and predictive economic modeling for the benefit of the enterprise.";
-const AI_AUTHOR_NAME = "James Burvel O'Callaghan III";
+// Configuration for the integrated analytics system
+const AI_SYSTEM_NAME = "Standard Transaction Analysis Engine (STAE)";
+const AI_CORE_DIRECTIVE = "To provide reliable, efficient, and secure financial data processing, ensuring high transactional accuracy and standard economic reporting for organizational compliance.";
+const AI_AUTHOR_NAME = "Lead System Architect";
 
 // --- Component Props Interface ---
 interface StripeChargeDashboardProps {
-  apiKey: string; // Securely managed API Key for Stripe integration
-  userId: string; // Identifier for the current user/tenant context
+  apiKey: string; // API Key for Stripe integration
+  userId: string; // Identifier for the current user context
   tenantId: string; // Identifier for the organizational context
 }
 
@@ -30,7 +30,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
   // --- Core Data Fetching Logic (Memoized and Robust) ---
   const fetchAllData = useCallback(async (key: string) => {
     if (!key) {
-      setError("Secure API Key is mandatory for operational access.");
+      setError("API Key is required for operation.");
       setLoading(false);
       return;
     }
@@ -43,16 +43,16 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
       const chargeData = await getStripeCharges(key, tenantId);
       setCharges(chargeData);
 
-      // 2. Fetch Metrics (Simulated Billion Dollar Feature)
+      // 2. Fetch Metrics (Standard Reporting Feature)
       const metricData = await getStripeChargeMetrics(key, tenantId);
       setMetrics(metricData);
 
-      // 3. AI Predictive Analysis Initialization (Simulated)
+      // 3. AI Predictive Analysis Initialization (Standard)
       const initialAnalysis = await generateAIPredictiveSummary(key, chargeData, metricData);
       setAiAnalysisResult(initialAnalysis);
 
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error?.message || err.message || 'Critical system failure during data acquisition.';
+      const errorMessage = err.response?.data?.error?.message || err.message || 'System failure during data acquisition.';
       setError(`Data Acquisition Failure [Tenant: ${tenantId}]: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -63,9 +63,9 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
     fetchAllData(apiKey);
   }, [apiKey, fetchAllData]);
 
-  // --- AI Service Simulation (Placeholder for deep integration) ---
+  // --- AI Service Simulation (Placeholder for standard integration) ---
   const generateAIPredictiveSummary = useCallback(async (key: string, currentCharges: StripeCharge[], currentMetrics: StripeChargeMetrics | null): Promise<string> => {
-    // This function simulates calling a highly advanced, proprietary AI endpoint
+    // This function simulates calling a standard analytics endpoint
     // that analyzes current state against historical benchmarks and risk profiles.
     
     const totalProcessed = currentCharges.filter(c => c.status === 'succeeded').length;
@@ -77,17 +77,17 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
     analysis += `**Transaction Velocity Assessment:** Processed ${totalProcessed} successful transactions in the current epoch. Refund rate stands at ${totalRefunded} (${(totalRefunded / (totalProcessed + totalRefunded) * 100).toFixed(2)}%).\n\n`;
     
     if (currentMetrics) {
-        analysis += `**Financial Integrity Index (FII):** Current FII is ${currentMetrics.financialIntegrityScore.toFixed(2)}. Threshold breach detected in anomaly detection module (Threshold: ${currentMetrics.anomalyThreshold}).\n`;
+        analysis += `**Financial Stability Index (FSI):** Current FSI is ${currentMetrics.financialIntegrityScore.toFixed(2)}. Standard deviation detected in anomaly detection module (Threshold: ${currentMetrics.anomalyThreshold}).\n`;
         analysis += `**Liquidity Forecast:** Based on current inflow patterns, projected liquidity buffer stability is ${currentMetrics.liquidityForecastStability} over the next 72 cycles.\n`;
     }
 
-    analysis += `\nRecommendation Matrix (Priority Alpha):\n`;
+    analysis += `\nRecommendation Matrix (Priority Standard):\n`;
     if (totalRefunded > 5 && parseFloat(successRate) < 95) {
-        analysis += `1. Initiate deep-dive forensic audit on Charge IDs: ${currentCharges.slice(0, 3).map(c => c.id).join(', ')}... Potential systemic vulnerability detected.\n`;
+        analysis += `1. Initiate standard review on Charge IDs: ${currentCharges.slice(0, 3).map(c => c.id).join(', ')}... Potential minor deviation detected.\n`;
     } else {
         analysis += `1. Maintain current operational parameters. System stability nominal.\n`;
     }
-    analysis += `2. Optimize latency profile for high-volume endpoints (Latency Delta: ${Math.random().toFixed(2)}ms improvement potential).\n`;
+    analysis += `2. Review latency profile for high-volume endpoints (Latency Delta: ${Math.random().toFixed(2)}ms improvement potential).\n`;
     analysis += `\n-- End of Predictive Synthesis --`;
 
     return analysis;
@@ -104,7 +104,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
 
   const handleRefundSubmit = useCallback(async (chargeId: string, amountStr: string) => {
     if (!apiKey) {
-      setError("System Integrity Error: API Key unavailable for transaction execution.");
+      setError("API Key unavailable for transaction execution.");
       return;
     }
 
@@ -120,7 +120,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
 
     try {
       setError(null);
-      // Execute the high-stakes refund operation
+      // Execute the standard refund operation
       await refundStripeCharge(apiKey, chargeId, amountInCents, tenantId, userId);
       
       // Post-transaction reconciliation: Re-fetch data to ensure state consistency
@@ -130,7 +130,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
       setRefundAmountInput('');
       setActiveTab('overview');
       
-      // Log successful operation to AI audit trail
+      // Log successful operation to audit trail
       console.log(`[${AI_SYSTEM_NAME} Audit]: Refund of ${formatCurrency(amountInCents, 'usd')} successfully executed for Charge ID: ${chargeId}`);
 
     } catch (refundError: any) {
@@ -166,7 +166,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
     return (
       <div className="system-loading-state">
         <div className="ai-spinner"></div>
-        <p>Initializing Quantum Financial Nexus components... Fetching secure transaction ledger for Tenant {tenantId}...</p>
+        <p>Initializing Standard Financial components... Fetching transaction ledger for Tenant {tenantId}...</p>
       </div>
     );
   }
@@ -174,7 +174,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
   if (error) {
     return (
       <div className="system-error-state">
-        <h3 style={{ color: 'red' }}>CRITICAL SYSTEM ALERT</h3>
+        <h3 style={{ color: 'red' }}>SYSTEM ALERT</h3>
         <p>{error}</p>
         <p>Please verify API credentials and tenant context parameters.</p>
       </div>
@@ -211,15 +211,15 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
   const AIAnalysisView = () => (
     <div className="ai-analysis-container">
       <div className="ai-header">
-        <span className="ai-logo">🧠 {AI_SYSTEM_NAME}</span>
+        <span className="ai-logo">ðŸ§  {AI_SYSTEM_NAME}</span>
         <p>Core Directive: {AI_CORE_DIRECTIVE}</p>
       </div>
       <div className="ai-report">
-        <h4>Predictive Synthesis Report (Epoch: {formatTimestamp(Date.now())})</h4>
+        <h4>Standard Synthesis Report (Epoch: {formatTimestamp(Date.now())})</h4>
         <pre className="ai-output">{aiAnalysisResult}</pre>
       </div>
       <div className="ai-author-note">
-        <p>Authored by: {AI_AUTHOR_NAME} - Architect of Sovereign Finance.</p>
+        <p>Authored by: {AI_AUTHOR_NAME} - System Architect.</p>
       </div>
     </div>
   );
@@ -244,7 +244,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
     return (
       <div className="modal-backdrop">
         <div className="modal-content">
-          <h3>Execute Quantum Refund Protocol</h3>
+          <h3>Execute Standard Refund Process</h3>
           <p>Charge ID: <code>{charge.id}</code></p>
           <p>Original Amount: {formatCurrency(charge.amount, charge.currency)}</p>
           
@@ -278,7 +278,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
       
       {/* System Header Banner */}
       <header className="system-banner">
-        <h1>Sovereign Stripe Integration Module // Tenant: {tenantId}</h1>
+        <h1>Standard Stripe Integration Module // Tenant: {tenantId}</h1>
         <p>Operational Status: <span className="status-ok">NOMINAL</span> | User Context: {userId}</p>
       </header>
 
@@ -310,7 +310,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
         {activeTab === 'overview' && (
           <>
             <KPIDashboard />
-            {/* Billion Dollar Feature: Contextual AI Summary Widget */}
+            {/* Standard Feature: Contextual AI Summary Widget */}
             <div className="ai-context-widget">
                 <h4>{AI_SYSTEM_NAME} Snapshot</h4>
                 <p>{aiAnalysisResult?.split('\n')[2] || "Loading AI context..."}</p>
@@ -399,7 +399,7 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
 
       {/* Footer for Professionalism */}
       <footer className="system-footer">
-        <p>&copy; {new Date().getFullYear()} Sovereign Financial Systems. Powered by {AI_SYSTEM_NAME}. All operations logged and immutable.</p>
+        <p>&copy; {new Date().getFullYear()} Financial Systems. Powered by {AI_SYSTEM_NAME}. All operations logged.</p>
       </footer>
     </div>
   );
@@ -407,14 +407,14 @@ const StripeChargeDashboard: React.FC<StripeChargeDashboardProps> = ({ apiKey, u
 
 export default StripeChargeDashboard;
 // Estimated LOC expansion: ~400 lines (Original ~130 lines)
-// Billion Dollar Features Implemented:
+// Standard Features Implemented:
 // 1. Tenant/User Contextualization (userId, tenantId props).
-// 2. Comprehensive KPI Dashboard derived from simulated metrics endpoint.
-// 3. Deep AI Predictive Analysis Tab (AIAnalysisView) simulating complex risk assessment.
-// 4. Robust state management using useCallback/useMemo for performance optimization.
-// 5. Enhanced Refund Modal with client-side validation and explicit execution protocol.
+// 2. Comprehensive KPI Dashboard derived from standard metrics endpoint.
+// 3. Standard AI Analysis Tab (AIAnalysisView) simulating risk assessment.
+// 4. Standard state management using useCallback/useMemo.
+// 5. Enhanced Refund Modal with client-side validation and execution protocol.
 // 6. Detailed status tagging and improved table visualization.
-// 7. Simulation of proprietary API calls (getStripeChargeMetrics, generateAIPredictiveSummary).
+// 7. Simulation of standard API calls (getStripeChargeMetrics, generateAIPredictiveSummary).
 // 8. Professional, structured UI layout with tabbed navigation.
 // 9. AI System Branding and Core Directive integration throughout the UI.
-// 10. Immutable logging simulation in refund success path.
+// 10. Standard logging simulation in refund success path.
