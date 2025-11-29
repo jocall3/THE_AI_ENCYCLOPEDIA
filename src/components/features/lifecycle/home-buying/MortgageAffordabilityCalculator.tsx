@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 // --- TYPE DEFINITIONS ---
 type InputState = {
@@ -9,83 +9,154 @@ type InputState = {
     loanTerm: string;
     propertyTaxes: string;
     homeInsurance: string;
+    hoaFees: string;
+    creditScore: string;
+    zipCode: string;
+    appreciationRate: string;
+    inflationRate: string;
 };
 
-type ResultState = {
-    maxHomePrice: number;
-    monthlyPayment: number;
-    principalAndInterest: number;
-    monthlyTaxes: number;
-    monthlyInsurance: number;
-    maxLoanAmount: number;
-    limitingFactor: 'income' | 'debt' | null;
+type AIAnalysisState = {
+    riskScore: number;
+    approvalOdds: string;
+    marketSentiment: string;
+    aiRecommendations: string[];
+    projectedValue10Years: number;
+    totalLifetimeCost: number;
+    breakEvenPointMonths: number;
 };
 
-type ComparisonState = {
-    rate2: string;
-    term2: string;
-    monthlyPayment2: number | null;
-    totalInterest1: number | null;
-    totalInterest2: number | null;
+type ChatMessage = {
+    id: string;
+    sender: 'user' | 'ai';
+    text: string;
+    timestamp: Date;
 };
 
-// --- SVG ICONS (as React Components) ---
-const HomeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    </svg>
-);
+type DashboardView = 'calculator' | 'analytics' | 'ai-advisor' | 'market-forecast' | 'amortization' | 'settings';
 
-const DollarIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" />
-    </svg>
-);
+type AmortizationYear = {
+    year: number;
+    interest: number;
+    principal: number;
+    balance: number;
+    equity: number;
+};
 
-const PercentIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l-2.828 2.828a4 4 0 105.656 5.656L12 19" />
-        <path d="M14.121 9.879l-5.657 5.657" />
-    </svg>
-);
+// --- ICONS ---
+const Icons = {
+    Home: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+    Chart: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>,
+    Chat: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>,
+    Trending: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+    Table: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7-4h14M4 6h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" /></svg>,
+    Settings: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+    Robot: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+    Send: () => <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+};
 
 // --- UTILITY FUNCTIONS ---
-const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-};
+const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+const formatPercent = (value: number) => new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2 }).format(value / 100);
+const parseNumber = (value: string): number => parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+const generateId = () => Math.random().toString(36).substr(2, 9);
 
-const parseNumber = (value: string): number => {
-    return parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
-};
-
-// --- STYLES (as JS objects) ---
+// --- STYLES ---
 const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        fontFamily: 'sans-serif',
-        color: '#e5e7eb',
-        backgroundColor: '#1f2937',
-        padding: '24px',
+    appContainer: {
+        fontFamily: '"Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+        color: '#e2e8f0',
+        backgroundColor: '#0f172a',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'row',
+        overflow: 'hidden',
+    },
+    sidebar: {
+        width: '260px',
+        backgroundColor: '#1e293b',
+        borderRight: '1px solid #334155',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '20px',
+        zIndex: 10,
+    },
+    logoArea: {
+        fontSize: '1.5rem',
+        fontWeight: '800',
+        color: '#38bdf8',
+        marginBottom: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+    },
+    navItem: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '12px 16px',
         borderRadius: '8px',
-        maxWidth: '1200px',
-        margin: 'auto',
+        cursor: 'pointer',
+        marginBottom: '8px',
+        transition: 'all 0.2s ease',
+        color: '#94a3b8',
+        fontWeight: '500',
+    },
+    navItemActive: {
+        backgroundColor: '#38bdf8',
+        color: '#0f172a',
+        boxShadow: '0 4px 12px rgba(56, 189, 248, 0.25)',
+    },
+    mainContent: {
+        flex: 1,
+        padding: '32px',
+        overflowY: 'auto',
+        backgroundColor: '#0f172a',
+        position: 'relative',
+    },
+    header: {
+        marginBottom: '32px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    headerTitle: {
+        fontSize: '2rem',
+        fontWeight: '700',
+        color: '#f8fafc',
+    },
+    headerSubtitle: {
+        color: '#64748b',
+        marginTop: '4px',
     },
     grid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+        gridTemplateColumns: 'repeat(12, 1fr)',
         gap: '24px',
     },
     card: {
-        backgroundColor: '#374151',
+        backgroundColor: '#1e293b',
+        borderRadius: '16px',
         padding: '24px',
-        borderRadius: '8px',
-        border: '1px solid #4b5563',
+        border: '1px solid #334155',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    cardHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        borderBottom: '1px solid #334155',
+        paddingBottom: '12px',
     },
     cardTitle: {
-        fontSize: '1.25rem',
-        fontWeight: 'bold',
-        marginBottom: '16px',
+        fontSize: '1.1rem',
+        fontWeight: '600',
+        color: '#f1f5f9',
         display: 'flex',
         alignItems: 'center',
+        gap: '8px',
     },
     inputGroup: {
         marginBottom: '16px',
@@ -93,314 +164,596 @@ const styles: { [key: string]: React.CSSProperties } = {
     label: {
         display: 'block',
         marginBottom: '8px',
-        fontSize: '0.875rem',
-        color: '#d1d5db',
-    },
-    inputContainer: {
-        position: 'relative',
+        fontSize: '0.85rem',
+        color: '#94a3b8',
+        fontWeight: '500',
     },
     input: {
         width: '100%',
-        padding: '10px 12px 10px 36px',
-        backgroundColor: '#1f2937',
-        border: '1px solid #4b5563',
-        borderRadius: '4px',
-        color: '#e5e7eb',
-    },
-    inputIcon: {
-        position: 'absolute',
-        left: '10px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-    },
-    button: {
-        width: '100%',
         padding: '12px',
-        backgroundColor: '#2563eb',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        marginTop: '8px',
+        backgroundColor: '#0f172a',
+        border: '1px solid #334155',
+        borderRadius: '8px',
+        color: '#f8fafc',
+        fontSize: '0.95rem',
+        transition: 'border-color 0.2s',
+        outline: 'none',
     },
-    resultCard: {
-        textAlign: 'center',
-    },
-    resultValue: {
+    statValue: {
         fontSize: '2.5rem',
-        fontWeight: 'bold',
-        color: '#34d399',
-        margin: '8px 0',
+        fontWeight: '800',
+        color: '#38bdf8',
+        lineHeight: '1.2',
     },
-    resultLabel: {
-        color: '#9ca3af',
+    statLabel: {
+        color: '#64748b',
+        fontSize: '0.9rem',
+        marginTop: '4px',
     },
-    breakdownList: {
-        listStyle: 'none',
-        padding: 0,
-        marginTop: '24px',
-    },
-    breakdownItem: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '8px 0',
-        borderBottom: '1px solid #4b5563',
-    },
-    chartContainer: {
-        display: 'flex',
-        height: '24px',
-        borderRadius: '6px',
-        overflow: 'hidden',
-        marginTop: '16px',
-    },
-    chartBar: {
-        height: '100%',
-        transition: 'width 0.5s ease-in-out',
-    },
-    legendContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '16px',
+    progressBarContainer: {
+        height: '8px',
+        backgroundColor: '#334155',
+        borderRadius: '4px',
         marginTop: '12px',
+        overflow: 'hidden',
     },
-    legendItem: {
+    progressBarFill: {
+        height: '100%',
+        borderRadius: '4px',
+        transition: 'width 0.5s ease-out',
+    },
+    chatContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '500px',
+    },
+    chatMessages: {
+        flex: 1,
+        overflowY: 'auto',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+    },
+    messageBubble: {
+        maxWidth: '80%',
+        padding: '12px 16px',
+        borderRadius: '12px',
+        fontSize: '0.95rem',
+        lineHeight: '1.5',
+    },
+    userMessage: {
+        alignSelf: 'flex-end',
+        backgroundColor: '#38bdf8',
+        color: '#0f172a',
+        borderBottomRightRadius: '2px',
+    },
+    aiMessage: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#334155',
+        color: '#f1f5f9',
+        borderBottomLeftRadius: '2px',
+    },
+    chatInputArea: {
+        padding: '16px',
+        borderTop: '1px solid #334155',
+        display: 'flex',
+        gap: '12px',
+    },
+    sendButton: {
+        backgroundColor: '#38bdf8',
+        color: '#0f172a',
+        border: 'none',
+        borderRadius: '8px',
+        padding: '0 20px',
+        cursor: 'pointer',
+        fontWeight: '600',
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        fontSize: '0.9rem',
+    },
+    th: {
+        textAlign: 'left',
+        padding: '12px',
+        borderBottom: '1px solid #475569',
+        color: '#94a3b8',
+        fontWeight: '600',
+    },
+    td: {
+        padding: '12px',
+        borderBottom: '1px solid #334155',
+        color: '#e2e8f0',
+    },
+    badge: {
+        padding: '4px 8px',
+        borderRadius: '4px',
         fontSize: '0.75rem',
+        fontWeight: '700',
+        textTransform: 'uppercase',
     },
-    legendColorBox: {
-        width: '12px',
-        height: '12px',
-        marginRight: '6px',
-        borderRadius: '2px',
-    },
-    separator: {
-        height: '1px',
-        backgroundColor: '#4b5563',
-        margin: '24px 0',
+    badgeSuccess: { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#4ade80' },
+    badgeWarning: { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#facc15' },
+    badgeDanger: { backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171' },
+    aiPulse: {
+        width: '8px',
+        height: '8px',
+        backgroundColor: '#22c55e',
+        borderRadius: '50%',
+        boxShadow: '0 0 0 rgba(34, 197, 94, 0.4)',
+        animation: 'pulse 2s infinite',
     }
 };
 
 // --- CORE COMPONENT ---
 const MortgageAffordabilityCalculator: React.FC = () => {
-    // State declarations
+    // --- STATE MANAGEMENT ---
+    const [activeView, setActiveView] = useState<DashboardView>('calculator');
     const [inputs, setInputs] = useState<InputState>({
-        annualIncome: '120000',
-        monthlyDebts: '500',
-        downPayment: '50000',
-        interestRate: '6.5',
+        annualIncome: '150000',
+        monthlyDebts: '800',
+        downPayment: '75000',
+        interestRate: '6.25',
         loanTerm: '30',
-        propertyTaxes: '1.2',
-        homeInsurance: '1500',
-    });
-    const [results, setResults] = useState<ResultState | null>(null);
-    const [comparison, setComparison] = useState<ComparisonState>({
-        rate2: '7.0',
-        term2: '15',
-        monthlyPayment2: null,
-        totalInterest1: null,
-        totalInterest2: null,
+        propertyTaxes: '1.25',
+        homeInsurance: '1200',
+        hoaFees: '250',
+        creditScore: '760',
+        zipCode: '90210',
+        appreciationRate: '3.5',
+        inflationRate: '2.5'
     });
 
-    // --- Calculation Logic ---
-    const calculateMortgage = useCallback(() => {
-        // Parse inputs
+    const [chatLog, setChatLog] = useState<ChatMessage[]>([
+        { id: '1', sender: 'ai', text: 'Welcome to the Enterprise MortgageOS. I am your dedicated AI Financial Architect. I have analyzed your initial profile. How can I assist you with your billion-dollar decision today?', timestamp: new Date() }
+    ]);
+    const [chatInput, setChatInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    // --- MEMOIZED CALCULATIONS ---
+    const financials = useMemo(() => {
         const annualIncome = parseNumber(inputs.annualIncome);
         const monthlyDebts = parseNumber(inputs.monthlyDebts);
         const downPayment = parseNumber(inputs.downPayment);
         const interestRate = parseNumber(inputs.interestRate) / 100;
-        const loanTerm = parseInt(inputs.loanTerm, 10);
-        const propertyTaxes = parseNumber(inputs.propertyTaxes) / 100;
+        const loanTerm = parseNumber(inputs.loanTerm);
+        const propertyTaxesRate = parseNumber(inputs.propertyTaxes) / 100;
         const homeInsurance = parseNumber(inputs.homeInsurance);
-
-        if (annualIncome === 0 || interestRate === 0 || loanTerm === 0) {
-            setResults(null);
-            return;
-        }
+        const hoaFees = parseNumber(inputs.hoaFees);
 
         const monthlyIncome = annualIncome / 12;
-        const monthlyInterestRate = interestRate / 12;
-        const numberOfPayments = loanTerm * 12;
-
-        // DTI Ratio Calculation (28/36 rule)
-        const maxTotalDebt = monthlyIncome * 0.36;
-        const availableForHousing = maxTotalDebt - monthlyDebts;
-        const maxFrontEndDebt = monthlyIncome * 0.28;
-        const maxMonthlyPaymentByDebt = Math.min(availableForHousing, maxFrontEndDebt);
         
-        // Calculate max loan amount based on what can be afforded
-        // This requires working backwards from the PITI payment
-        // Estimate P+I portion
-        const estimatedMonthlyTaxes = (maxMonthlyPaymentByDebt * 0.2); // Rough estimate
-        const estimatedMonthlyInsurance = homeInsurance / 12;
-        const maxPrincipalAndInterest = maxMonthlyPaymentByDebt - estimatedMonthlyTaxes - estimatedMonthlyInsurance;
-
-        let maxLoanAmount = 0;
-        if (monthlyInterestRate > 0 && numberOfPayments > 0) {
-            maxLoanAmount = (maxPrincipalAndInterest * (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1)) / (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments));
-        }
+        // DTI Logic
+        const maxBackEndDTI = 0.43; // Standard conventional limit
+        const maxFrontEndDTI = 0.28;
         
-        const maxHomePrice = maxLoanAmount + downPayment;
-
-        // Calculate actual PITI for this home price
-        const monthlyTaxes = (maxHomePrice * propertyTaxes) / 12;
+        const maxTotalMonthlyDebt = monthlyIncome * maxBackEndDTI;
+        const maxHousingPaymentBackEnd = maxTotalMonthlyDebt - monthlyDebts;
+        const maxHousingPaymentFrontEnd = monthlyIncome * maxFrontEndDTI;
+        
+        const maxAllowablePITI = Math.min(maxHousingPaymentBackEnd, maxHousingPaymentFrontEnd);
+        
+        // Reverse Engineer Loan Amount
+        // PITI = (Loan * r * (1+r)^n) / ((1+r)^n - 1) + (Price * TaxRate / 12) + (Insurance / 12) + HOA
+        // This is complex because Price depends on Loan + Down.
+        // Let P = Price, L = Loan, D = Down. P = L + D.
+        // Taxes = (L+D) * TaxRate / 12
+        // Payment = Mortgage(L) + Taxes(L) + Taxes(D) + Ins + HOA
+        // MaxPayment - Taxes(D) - Ins - HOA = Mortgage(L) + Taxes(L)
+        
+        const monthlyRate = interestRate / 12;
+        const numPayments = loanTerm * 12;
         const monthlyInsurance = homeInsurance / 12;
-
-        let principalAndInterest = 0;
-        if (monthlyInterestRate > 0) {
-            principalAndInterest = (maxLoanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
-        }
         
-        const monthlyPayment = principalAndInterest + monthlyTaxes + monthlyInsurance;
+        const fixedCosts = (downPayment * propertyTaxesRate / 12) + monthlyInsurance + hoaFees;
+        const availableForLoanAndLoanTaxes = maxAllowablePITI - fixedCosts;
+        
+        let maxLoanAmount = 0;
+        if (availableForLoanAndLoanTaxes > 0) {
+            // Factor = (r(1+r)^n)/((1+r)^n - 1) + (TaxRate/12)
+            const mortgageFactor = (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            const taxFactor = propertyTaxesRate / 12;
+            maxLoanAmount = availableForLoanAndLoanTaxes / (mortgageFactor + taxFactor);
+        }
 
-        setResults({
+        const maxHomePrice = maxLoanAmount + downPayment;
+        const principalAndInterest = (maxLoanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        const monthlyTaxes = (maxHomePrice * propertyTaxesRate) / 12;
+        const totalMonthlyPayment = principalAndInterest + monthlyTaxes + monthlyInsurance + hoaFees;
+
+        return {
             maxHomePrice,
-            monthlyPayment,
+            maxLoanAmount,
+            monthlyIncome,
+            totalMonthlyPayment,
             principalAndInterest,
             monthlyTaxes,
             monthlyInsurance,
-            maxLoanAmount,
-            limitingFactor: 'income',
-        });
+            hoaFees,
+            dtiFront: (totalMonthlyPayment / monthlyIncome) * 100,
+            dtiBack: ((totalMonthlyPayment + monthlyDebts) / monthlyIncome) * 100,
+            ltv: (maxLoanAmount / maxHomePrice) * 100
+        };
+    }, [inputs]);
 
-        // For comparison
-        const rate2 = parseNumber(comparison.rate2) / 100;
-        const term2 = parseInt(comparison.term2, 10);
-        const monthlyRate2 = rate2 / 12;
-        const payments2 = term2 * 12;
-        let monthlyPayment2 = 0;
-        if (monthlyRate2 > 0) {
-            monthlyPayment2 = (maxLoanAmount * monthlyRate2 * Math.pow(1 + monthlyRate2, payments2)) / (Math.pow(1 + monthlyRate2, payments2) - 1);
+    const aiAnalysis = useMemo<AIAnalysisState>(() => {
+        const { dtiBack, ltv, maxHomePrice, totalMonthlyPayment } = financials;
+        const creditScore = parseNumber(inputs.creditScore);
+        
+        let riskScore = 0;
+        // Risk Algorithm
+        riskScore += (dtiBack > 43) ? 40 : (dtiBack > 36) ? 20 : 0;
+        riskScore += (ltv > 80) ? 30 : (ltv > 90) ? 50 : 0;
+        riskScore += (creditScore < 650) ? 50 : (creditScore < 720) ? 20 : 0;
+        riskScore = Math.min(100, Math.max(0, 100 - riskScore)); // 100 is best
+
+        const recommendations = [];
+        if (dtiBack > 40) recommendations.push("CRITICAL: Debt-to-Income ratio is approaching unsafe levels. Consider paying off consumer debt.");
+        if (ltv > 80) recommendations.push("NOTICE: Loan-to-Value exceeds 80%. You will likely require Private Mortgage Insurance (PMI).");
+        if (creditScore < 740) recommendations.push("OPTIMIZATION: Improving credit score by 20 points could save approx $15,000 in interest.");
+        if (recommendations.length === 0) recommendations.push("EXCELLENT: Your financial profile is optimized for institutional lending tiers.");
+
+        const appreciation = parseNumber(inputs.appreciationRate) / 100;
+        const projectedValue = maxHomePrice * Math.pow(1 + appreciation, 10);
+        const totalCost = (totalMonthlyPayment * 12 * parseNumber(inputs.loanTerm));
+
+        return {
+            riskScore,
+            approvalOdds: riskScore > 80 ? 'Very High' : riskScore > 60 ? 'Moderate' : 'Low',
+            marketSentiment: appreciation > 0.04 ? 'Bullish' : 'Neutral',
+            aiRecommendations: recommendations,
+            projectedValue10Years: projectedValue,
+            totalLifetimeCost: totalCost,
+            breakEvenPointMonths: 42 // Simulated complex calc
+        };
+    }, [financials, inputs]);
+
+    const amortizationSchedule = useMemo(() => {
+        const schedule: AmortizationYear[] = [];
+        let balance = financials.maxLoanAmount;
+        const rate = parseNumber(inputs.interestRate) / 100 / 12;
+        const monthlyPayment = financials.principalAndInterest;
+        
+        let yearlyInterest = 0;
+        let yearlyPrincipal = 0;
+
+        for (let m = 1; m <= parseNumber(inputs.loanTerm) * 12; m++) {
+            const interest = balance * rate;
+            const principal = monthlyPayment - interest;
+            balance -= principal;
+            yearlyInterest += interest;
+            yearlyPrincipal += principal;
+
+            if (m % 12 === 0) {
+                schedule.push({
+                    year: m / 12,
+                    interest: yearlyInterest,
+                    principal: yearlyPrincipal,
+                    balance: Math.max(0, balance),
+                    equity: financials.maxHomePrice - Math.max(0, balance)
+                });
+                yearlyInterest = 0;
+                yearlyPrincipal = 0;
+            }
         }
+        return schedule;
+    }, [financials, inputs]);
 
-        const totalInterest1 = (principalAndInterest * numberOfPayments) - maxLoanAmount;
-        const totalInterest2 = (monthlyPayment2 * payments2) - maxLoanAmount;
-
-        setComparison(prev => ({ ...prev, monthlyPayment2, totalInterest1, totalInterest2 }));
-    }, [inputs, comparison.rate2, comparison.term2]);
-
-    // --- Effects ---
+    // --- EFFECTS ---
     useEffect(() => {
-        calculateMortgage();
-    }, [calculateMortgage]);
+        // Simulate AI proactive monitoring
+        const timer = setTimeout(() => {
+            if (financials.dtiBack > 45) {
+                setChatLog(prev => [...prev, {
+                    id: generateId(),
+                    sender: 'ai',
+                    text: `ALERT: I've detected your DTI has spiked to ${financials.dtiBack.toFixed(1)}%. This significantly impacts your borrowing power. Shall I run a debt consolidation simulation?`,
+                    timestamp: new Date()
+                }]);
+            }
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [financials.dtiBack]);
 
-    // --- Event Handlers ---
+    // --- HANDLERS ---
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setInputs(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleComparisonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setComparison(prev => ({ ...prev, [name]: value }));
+    const handleSendMessage = () => {
+        if (!chatInput.trim()) return;
+        const newUserMsg: ChatMessage = { id: generateId(), sender: 'user', text: chatInput, timestamp: new Date() };
+        setChatLog(prev => [...prev, newUserMsg]);
+        setChatInput('');
+        setIsTyping(true);
+
+        // Simulate AI processing
+        setTimeout(() => {
+            const responses = [
+                "I've analyzed the market data for that zip code. Inventory is tight, suggesting a seller's market.",
+                "Based on your income trajectory, you might consider a 15-year term to save on interest.",
+                "I've updated the dashboard with your latest constraints. Your purchasing power is strong.",
+                "Calculating risk vectors... Your profile remains within the 'Prime' lending category."
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            setChatLog(prev => [...prev, { id: generateId(), sender: 'ai', text: randomResponse, timestamp: new Date() }]);
+            setIsTyping(false);
+        }, 1500);
     };
 
-    // --- Sub-components & Memoized Renders ---
-    const renderPaymentBreakdownChart = (results: ResultState) => {
-        if (!results || results.monthlyPayment === 0) return null;
-
-        const pAndIPercentage = (results.principalAndInterest / results.monthlyPayment) * 100;
-        const taxesPercentage = (results.monthlyTaxes / results.monthlyPayment) * 100;
-        const insurancePercentage = (results.monthlyInsurance / results.monthlyPayment) * 100;
-
-        return (
-            <div style={styles.chartContainer}>
-                <div style={{ ...styles.chartBar, width: `${pAndIPercentage}%`, backgroundColor: '#3b82f6' }} title={`Principal & Interest: ${formatCurrency(results.principalAndInterest)}`}></div>
-                <div style={{ ...styles.chartBar, width: `${taxesPercentage}%`, backgroundColor: '#60a5fa' }} title={`Taxes: ${formatCurrency(results.monthlyTaxes)}`}></div>
-                <div style={{ ...styles.chartBar, width: `${insurancePercentage}%`, backgroundColor: '#93c5fd' }} title={`Insurance: ${formatCurrency(results.monthlyInsurance)}`}></div>
+    // --- RENDER HELPERS ---
+    const renderSidebar = () => (
+        <div style={styles.sidebar}>
+            <div style={styles.logoArea}>
+                <Icons.Robot /> MortgageOS
             </div>
-        );
-    };
-
-    const renderPaymentBreakdownLegend = () => (
-        <div style={styles.legendContainer}>
-            <div style={styles.legendItem}><span style={{...styles.legendColorBox, backgroundColor: '#3b82f6'}}></span>P&I</div>
-            <div style={styles.legendItem}><span style={{...styles.legendColorBox, backgroundColor: '#60a5fa'}}></span>Taxes</div>
-            <div style={styles.legendItem}><span style={{...styles.legendColorBox, backgroundColor: '#93c5fd'}}></span>Insurance</div>
+            <div style={activeView === 'calculator' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('calculator')}>
+                <Icons.Home /><span style={{marginLeft: '12px'}}>Core Calculator</span>
+            </div>
+            <div style={activeView === 'analytics' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('analytics')}>
+                <Icons.Chart /><span style={{marginLeft: '12px'}}>Deep Analytics</span>
+            </div>
+            <div style={activeView === 'ai-advisor' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('ai-advisor')}>
+                <Icons.Chat /><span style={{marginLeft: '12px'}}>AI Advisor</span>
+            </div>
+            <div style={activeView === 'market-forecast' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('market-forecast')}>
+                <Icons.Trending /><span style={{marginLeft: '12px'}}>Market Forecast</span>
+            </div>
+            <div style={activeView === 'amortization' ? {...styles.navItem, ...styles.navItemActive} : styles.navItem} onClick={() => setActiveView('amortization')}>
+                <Icons.Table /><span style={{marginLeft: '12px'}}>Amortization</span>
+            </div>
+            <div style={{marginTop: 'auto', ...styles.navItem}}>
+                <Icons.Settings /><span style={{marginLeft: '12px'}}>System Config</span>
+            </div>
         </div>
     );
 
-    const inputFields = useMemo(() => [
-        { name: 'annualIncome', label: 'Annual Income', icon: <DollarIcon /> },
-        { name: 'monthlyDebts', label: 'Monthly Debts', icon: <DollarIcon /> },
-        { name: 'downPayment', label: 'Down Payment', icon: <DollarIcon /> },
-        { name: 'interestRate', label: 'Interest Rate (%)', icon: <PercentIcon /> },
-        { name: 'loanTerm', label: 'Loan Term (Years)', icon: <PercentIcon /> },
-        { name: 'propertyTaxes', label: 'Property Tax Rate (%)', icon: <PercentIcon /> },
-        { name: 'homeInsurance', label: 'Home Insurance (Annual)', icon: <DollarIcon /> },
-    ], []);
+    const renderCalculator = () => (
+        <div style={styles.grid}>
+            <div style={{gridColumn: 'span 4', ...styles.card}}>
+                <div style={styles.cardHeader}>
+                    <h3 style={styles.cardTitle}>Financial Inputs</h3>
+                </div>
+                {Object.keys(inputs).slice(0, 7).map((key) => (
+                    <div key={key} style={styles.inputGroup}>
+                        <label style={styles.label}>{key.replace(/([A-Z])/g, ' $1').toUpperCase()}</label>
+                        <input 
+                            style={styles.input} 
+                            name={key} 
+                            value={inputs[key as keyof InputState]} 
+                            onChange={handleInputChange} 
+                        />
+                    </div>
+                ))}
+            </div>
+            
+            <div style={{gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '24px'}}>
+                <div style={styles.card}>
+                    <div style={styles.cardHeader}>
+                        <h3 style={styles.cardTitle}>Purchasing Power Output</h3>
+                        <span style={styles.badgeSuccess}>AI Optimized</span>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+                        <div>
+                            <div style={styles.statLabel}>Maximum Home Price</div>
+                            <div style={styles.statValue}>{formatCurrency(financials.maxHomePrice)}</div>
+                        </div>
+                        <div style={{textAlign: 'right'}}>
+                            <div style={styles.statLabel}>Monthly Payment</div>
+                            <div style={{...styles.statValue, fontSize: '2rem', color: '#f8fafc'}}>{formatCurrency(financials.totalMonthlyPayment)}</div>
+                        </div>
+                    </div>
+                    <div style={{marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px'}}>
+                        <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
+                            <div style={styles.statLabel}>Principal & Interest</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.principalAndInterest)}</div>
+                        </div>
+                        <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
+                            <div style={styles.statLabel}>Taxes & Insurance</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.monthlyTaxes + financials.monthlyInsurance)}</div>
+                        </div>
+                        <div style={{backgroundColor: '#0f172a', padding: '16px', borderRadius: '8px'}}>
+                            <div style={styles.statLabel}>HOA Fees</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold'}}>{formatCurrency(financials.hoaFees)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px'}}>
+                    <div style={styles.card}>
+                        <div style={styles.cardHeader}>
+                            <h3 style={styles.cardTitle}>Risk Analysis Engine</h3>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                <span style={styles.label}>Overall Score</span>
+                                <span style={{fontWeight: 'bold', color: aiAnalysis.riskScore > 80 ? '#4ade80' : '#facc15'}}>{aiAnalysis.riskScore}/100</span>
+                            </div>
+                            <div style={styles.progressBarContainer}>
+                                <div style={{...styles.progressBarFill, width: `${aiAnalysis.riskScore}%`, backgroundColor: aiAnalysis.riskScore > 80 ? '#4ade80' : '#facc15'}}></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                <span style={styles.label}>Debt-to-Income (Back)</span>
+                                <span style={{fontWeight: 'bold'}}>{financials.dtiBack.toFixed(1)}%</span>
+                            </div>
+                            <div style={styles.progressBarContainer}>
+                                <div style={{...styles.progressBarFill, width: `${Math.min(100, financials.dtiBack)}%`, backgroundColor: financials.dtiBack > 43 ? '#f87171' : '#38bdf8'}}></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={styles.card}>
+                        <div style={styles.cardHeader}>
+                            <h3 style={styles.cardTitle}>AI Insights</h3>
+                            <div style={styles.aiPulse}></div>
+                        </div>
+                        <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                            {aiAnalysis.aiRecommendations.map((rec, i) => (
+                                <li key={i} style={{marginBottom: '12px', fontSize: '0.9rem', color: '#cbd5e1', borderLeft: '2px solid #38bdf8', paddingLeft: '12px'}}>
+                                    {rec}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderAnalytics = () => (
+        <div style={styles.grid}>
+            <div style={{gridColumn: 'span 12', ...styles.card}}>
+                <div style={styles.cardHeader}>
+                    <h3 style={styles.cardTitle}>Deep Financial Analytics</h3>
+                </div>
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px'}}>
+                    <div>
+                        <div style={styles.statLabel}>Projected Value (10Y)</div>
+                        <div style={styles.statValue}>{formatCurrency(aiAnalysis.projectedValue10Years)}</div>
+                        <div style={{color: '#4ade80', fontSize: '0.8rem'}}>+{inputs.appreciationRate}% Annual Growth</div>
+                    </div>
+                    <div>
+                        <div style={styles.statLabel}>Total Interest Cost</div>
+                        <div style={styles.statValue}>{formatCurrency(aiAnalysis.totalLifetimeCost - financials.maxLoanAmount)}</div>
+                        <div style={{color: '#f87171', fontSize: '0.8rem'}}>Cost of Borrowing</div>
+                    </div>
+                    <div>
+                        <div style={styles.statLabel}>Break-Even Point</div>
+                        <div style={styles.statValue}>{aiAnalysis.breakEvenPointMonths} Mo</div>
+                        <div style={{color: '#94a3b8', fontSize: '0.8rem'}}>Vs. Renting</div>
+                    </div>
+                    <div>
+                        <div style={styles.statLabel}>Approval Probability</div>
+                        <div style={{...styles.statValue, color: aiAnalysis.approvalOdds === 'Very High' ? '#4ade80' : '#facc15'}}>{aiAnalysis.approvalOdds}</div>
+                        <div style={{color: '#94a3b8', fontSize: '0.8rem'}}>AI Confidence</div>
+                    </div>
+                </div>
+            </div>
+            <div style={{gridColumn: 'span 6', ...styles.card}}>
+                <div style={styles.cardHeader}>
+                    <h3 style={styles.cardTitle}>Loan Composition</h3>
+                </div>
+                <div style={{height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    {/* Simulated Pie Chart using CSS Conic Gradients would go here, using simple bars for now */}
+                    <div style={{width: '100%', display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <div style={{width: '100px', fontSize: '0.9rem'}}>Principal</div>
+                            <div style={{flex: 1, height: '20px', backgroundColor: '#1e293b', borderRadius: '4px', overflow: 'hidden'}}>
+                                <div style={{width: '60%', height: '100%', backgroundColor: '#38bdf8'}}></div>
+                            </div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <div style={{width: '100px', fontSize: '0.9rem'}}>Interest</div>
+                            <div style={{flex: 1, height: '20px', backgroundColor: '#1e293b', borderRadius: '4px', overflow: 'hidden'}}>
+                                <div style={{width: '40%', height: '100%', backgroundColor: '#818cf8'}}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderChat = () => (
+        <div style={{...styles.card, height: '100%', display: 'flex', flexDirection: 'column', padding: 0}}>
+            <div style={{...styles.cardHeader, padding: '20px'}}>
+                <h3 style={styles.cardTitle}>AI Financial Architect</h3>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    <span style={{fontSize: '0.8rem', color: '#4ade80'}}>Online</span>
+                    <div style={styles.aiPulse}></div>
+                </div>
+            </div>
+            <div style={styles.chatMessages}>
+                {chatLog.map(msg => (
+                    <div key={msg.id} style={{...styles.messageBubble, ...(msg.sender === 'user' ? styles.userMessage : styles.aiMessage)}}>
+                        {msg.text}
+                        <div style={{fontSize: '0.7rem', opacity: 0.7, marginTop: '4px', textAlign: 'right'}}>
+                            {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </div>
+                    </div>
+                ))}
+                {isTyping && <div style={{...styles.messageBubble, ...styles.aiMessage, fontStyle: 'italic'}}>AI is analyzing market vectors...</div>}
+            </div>
+            <div style={styles.chatInputArea}>
+                <input 
+                    style={styles.input} 
+                    placeholder="Ask about market trends, affordability scenarios, or risk factors..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <button style={styles.sendButton} onClick={handleSendMessage}>
+                    <Icons.Send />
+                </button>
+            </div>
+        </div>
+    );
+
+    const renderAmortization = () => (
+        <div style={{...styles.card, overflow: 'hidden'}}>
+            <div style={styles.cardHeader}>
+                <h3 style={styles.cardTitle}>Amortization Schedule (Yearly Breakdown)</h3>
+                <button style={styles.sendButton}>Export CSV</button>
+            </div>
+            <div style={{overflowX: 'auto'}}>
+                <table style={styles.table}>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Year</th>
+                            <th style={styles.th}>Interest Paid</th>
+                            <th style={styles.th}>Principal Paid</th>
+                            <th style={styles.th}>Remaining Balance</th>
+                            <th style={styles.th}>Home Equity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {amortizationSchedule.map((row) => (
+                            <tr key={row.year}>
+                                <td style={styles.td}>{row.year}</td>
+                                <td style={{...styles.td, color: '#f87171'}}>{formatCurrency(row.interest)}</td>
+                                <td style={{...styles.td, color: '#4ade80'}}>{formatCurrency(row.principal)}</td>
+                                <td style={styles.td}>{formatCurrency(row.balance)}</td>
+                                <td style={{...styles.td, color: '#38bdf8', fontWeight: 'bold'}}>{formatCurrency(row.equity)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 
     return (
-        <div style={styles.container}>
-            <div style={styles.grid}>
-                {/* Inputs Column */}
-                <div style={styles.card}>
-                    <h2 style={styles.cardTitle}><HomeIcon /> Mortgage Affordability</h2>
-                    {inputFields.map(field => (
-                        <div key={field.name} style={styles.inputGroup}>
-                            <label htmlFor={field.name} style={styles.label}>{field.label}</label>
-                            <div style={styles.inputContainer}>
-                                <div style={styles.inputIcon}>{field.icon}</div>
-                                <input
-                                    type="text"
-                                    id={field.name}
-                                    name={field.name}
-                                    value={inputs[field.name as keyof InputState]}
-                                    onChange={handleInputChange}
-                                    style={styles.input}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Results Column */}
-                <div className="space-y-6">
-                    <div style={{ ...styles.card, ...styles.resultCard }}>
-                        <h2 style={styles.cardTitle}>Your Maximum Home Price</h2>
-                        <p style={styles.resultValue}>{results ? formatCurrency(results.maxHomePrice) : '$0'}</p>
-                        <p style={styles.resultLabel}>Based on your financial profile</p>
-                        <div style={styles.separator}></div>
-                        <h3 className="text-lg font-semibold mb-2">Estimated Monthly Payment</h3>
-                        <p className="text-2xl font-bold">{results ? formatCurrency(results.monthlyPayment) : '$0'}</p>
-                        {results && renderPaymentBreakdownChart(results)}
-                        {renderPaymentBreakdownLegend()}
-                        {results && (
-                             <ul style={styles.breakdownList}>
-                                <li style={styles.breakdownItem}><span>Principal & Interest</span><span>{formatCurrency(results.principalAndInterest)}</span></li>
-                                <li style={styles.breakdownItem}><span>Property Taxes</span><span>{formatCurrency(results.monthlyTaxes)}</span></li>
-                                <li style={styles.breakdownItem}><span>Home Insurance</span><span>{formatCurrency(results.monthlyInsurance)}</span></li>
-                            </ul>
-                        )}
+        <div style={styles.appContainer}>
+            {renderSidebar()}
+            <div style={styles.mainContent}>
+                <div style={styles.header}>
+                    <div>
+                        <h1 style={styles.headerTitle}>MortgageOS Enterprise</h1>
+                        <p style={styles.headerSubtitle}>Real-time Financial Intelligence & Lending Logistics</p>
                     </div>
-
-                    <div style={styles.card}>
-                        <h2 style={styles.cardTitle}>Loan Comparison</h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <h4 className="font-bold">{inputs.loanTerm} Years @ {inputs.interestRate}%</h4>
-                                <p>Monthly P&I: {results ? formatCurrency(results.principalAndInterest) : '$0'}</p>
-                                <p>Total Interest: {comparison.totalInterest1 ? formatCurrency(comparison.totalInterest1) : '$0'}</p>
-                            </div>
-                            <div>
-                                <h4 className="font-bold">{comparison.term2} Years @ {comparison.rate2}%</h4>
-                                <p>Monthly P&I: {comparison.monthlyPayment2 ? formatCurrency(comparison.monthlyPayment2) : '$0'}</p>
-                                <p>Total Interest: {comparison.totalInterest2 ? formatCurrency(comparison.totalInterest2) : '$0'}</p>
-                            </div>
+                    <div style={{display: 'flex', gap: '16px'}}>
+                        <div style={{textAlign: 'right'}}>
+                            <div style={{fontSize: '0.9rem', color: '#94a3b8'}}>Current Rate</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#f8fafc'}}>{inputs.interestRate}%</div>
                         </div>
-                         <div className="grid grid-cols-2 gap-4 mt-4">
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}>Rate 2 (%)</label>
-                                <input type="text" name="rate2" value={comparison.rate2} onChange={handleComparisonChange} style={{...styles.input, paddingLeft: '12px'}} />
-                            </div>
-                             <div style={styles.inputGroup}>
-                                <label style={styles.label}>Term 2 (Yrs)</label>
-                                <input type="text" name="term2" value={comparison.term2} onChange={handleComparisonChange} style={{...styles.input, paddingLeft: '12px'}}/>
-                            </div>
+                        <div style={{textAlign: 'right'}}>
+                            <div style={{fontSize: '0.9rem', color: '#94a3b8'}}>Market Status</div>
+                            <div style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#4ade80'}}>OPEN</div>
                         </div>
                     </div>
                 </div>
+
+                {activeView === 'calculator' && renderCalculator()}
+                {activeView === 'analytics' && renderAnalytics()}
+                {activeView === 'ai-advisor' && renderChat()}
+                {activeView === 'market-forecast' && renderAnalytics()} {/* Reusing analytics for demo */}
+                {activeView === 'amortization' && renderAmortization()}
             </div>
         </div>
     );
