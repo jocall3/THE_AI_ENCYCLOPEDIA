@@ -1,5 +1,6 @@
 ---
 ---
+---
 # Simple Wealth Timeline Component
 
 This component, designated `WealthTimeline.tsx`, is a straightforward visualization tool. It displays historical financial data, aiming to provide a basic overview of capital changes over time. It's designed for general use in financial applications.
