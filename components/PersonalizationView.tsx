@@ -1,365 +1,731 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import Card from './Card';
-import { Palette, Layout, Type, Zap, Cpu, Globe, Settings, Shield, TrendingUp, MessageSquare, User, Aperture } from 'lucide-react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import axios from 'axios';
+// Note: Styling relies on an external CSS file (ApiSettingsPage.css) which is not included here,
+// assuming the application environment manages these specific classes for API configuration UI.
 
-// --- Theme Configuration Constants ---
-const THEME_CONFIGS = {
-    'default': { // Changed from 'sovereign'
-        name: 'Standard Dark', // Changed from 'Sovereign Dark'
-        description: 'A balanced, dark theme. Designed for clarity and focus.', // Changed description
-        primaryColor: 'cyan',
-        accentColor: 'cyan-500',
-        bgColor: 'bg-gray-900/95',
-        textColor: 'text-white',
-        icon: Zap,
-        gradient: 'from-gray-900 to-black',
-        code: 'STD', // Changed from SOV
-        disabled: false,
-    },
-    'quantum': {
-        name: 'Quantum Flux',
-        description: 'A high-contrast theme with vibrant colors. Ideal for data visualization.', // Changed description
-        primaryColor: 'purple',
-        accentColor: 'purple-500',
-        bgColor: 'bg-indigo-900/20',
-        textColor: 'text-purple-200',
-        icon: Cpu,
-        gradient: 'from-indigo-900 to-purple-900',
-        code: 'QTM',
-        disabled: false,
-    },
-    'legacy': {
-        name: 'Legacy Archive',
-        description: 'A classic, light theme. Provides a familiar interface.', // Changed description
-        primaryColor: 'green',
-        accentColor: 'green-500',
-        bgColor: 'bg-gray-100/90',
-        textColor: 'text-gray-800',
-        icon: Settings,
-        gradient: 'from-gray-100 to-gray-300',
-        code: 'LGCY',
-        disabled: false, // Changed from true
-    },
-    'aether': {
-        name: 'Aetherial Flow',
-        description: 'A low-light theme. Suitable for extended work sessions.', // Changed description
-        primaryColor: 'pink',
-        accentColor: 'pink-400',
-        bgColor: 'bg-black/90',
-        textColor: 'text-pink-100',
-        icon: Aperture,
-        gradient: 'from-gray-950 to-black',
-        code: 'AETR',
-        disabled: false,
-    },
-    'chronos': {
-        name: 'Chronos Temporal',
-        description: 'A time-focused theme. Useful for tracking trends and changes.', // Changed description
-        primaryColor: 'amber',
-        accentColor: 'amber-400',
-        bgColor: 'bg-amber-900/10',
-        textColor: 'text-amber-200',
-        icon: TrendingUp,
-        gradient: 'from-amber-900 to-yellow-900',
-        code: 'CHRN',
-        disabled: false,
-    },
-};
+// =================================================================================
+// The complete interface for all 200+ API credentials
+// =================================================================================
+interface ApiKeysState {
+  // === Tech APIs ===
+  // Core Infrastructure & Cloud
+  STRIPE_SECRET_KEY: string;
+  TWILIO_ACCOUNT_SID: string;
+  TWILIO_AUTH_TOKEN: string;
+  SENDGRID_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AZURE_CLIENT_ID: string;
+  AZURE_CLIENT_SECRET: string;
+  GOOGLE_CLOUD_API_KEY: string;
 
-// --- Theme Selector Button Component ---
-interface ThemeButtonProps {
-    themeKey: keyof typeof THEME_CONFIGS;
-    currentTheme: string;
-    onSelect: (theme: keyof typeof THEME_CONFIGS) => void;
+  // Deployment & DevOps
+  DOCKER_HUB_USERNAME: string;
+  DOCKER_HUB_ACCESS_TOKEN: string;
+  HEROKU_API_KEY: string;
+  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  VERCEL_API_TOKEN: string;
+  CLOUDFLARE_API_TOKEN: string;
+  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  LINODE_PERSONAL_ACCESS_TOKEN: string;
+  TERRAFORM_API_TOKEN: string;
+
+  // Collaboration & Productivity
+  GITHUB_PERSONAL_ACCESS_TOKEN: string;
+  SLACK_BOT_TOKEN: string;
+  DISCORD_BOT_TOKEN: string;
+  TRELLO_API_KEY: string;
+  TRELLO_API_TOKEN: string;
+  JIRA_USERNAME: string;
+  JIRA_API_TOKEN: string;
+  ASANA_PERSONAL_ACCESS_TOKEN: string;
+  NOTION_API_KEY: string;
+  AIRTABLE_API_KEY: string;
+
+  // File & Data Storage
+  DROPBOX_ACCESS_TOKEN: string;
+  BOX_DEVELOPER_TOKEN: string;
+  GOOGLE_DRIVE_API_KEY: string;
+  ONEDRIVE_CLIENT_ID: string;
+
+  // CRM & Business
+  SALESFORCE_CLIENT_ID: string;
+  SALESFORCE_CLIENT_SECRET: string;
+  HUBSPOT_API_KEY: string;
+  ZENDESK_API_TOKEN: string;
+  INTERCOM_ACCESS_TOKEN: string;
+  MAILCHIMP_API_KEY: string;
+
+  // E-commerce
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  BIGCOMMERCE_ACCESS_TOKEN: string;
+  MAGENTO_ACCESS_TOKEN: string;
+  WOOCOMMERCE_CLIENT_KEY: string;
+  WOOCOMMERCE_CLIENT_SECRET: string;
+  
+  // Authentication & Identity
+  STYTCH_PROJECT_ID: string;
+  STYTCH_SECRET: string;
+  AUTH0_DOMAIN: string;
+  AUTH0_CLIENT_ID: string;
+  AUTH0_CLIENT_SECRET: string;
+  OKTA_DOMAIN: string;
+  OKTA_API_TOKEN: string;
+
+  // Backend & Databases
+  FIREBASE_API_KEY: string;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+
+  // API Development
+  POSTMAN_API_KEY: string;
+  APOLLO_GRAPH_API_KEY: string;
+
+  // AI & Machine Learning
+  OPENAI_API_KEY: string;
+  HUGGING_FACE_API_TOKEN: string;
+  GOOGLE_CLOUD_AI_API_KEY: string;
+  AMAZON_REKOGNITION_ACCESS_KEY: string;
+  MICROSOFT_AZURE_COGNITIVE_KEY: string;
+  IBM_WATSON_API_KEY: string;
+
+  // Search & Real-time
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+  PUSHER_APP_ID: string;
+  PUSHER_KEY: string;
+  PUSHER_SECRET: string;
+  ABLY_API_KEY: string;
+  ELASTICSEARCH_API_KEY: string;
+  
+  // Identity & Verification
+  STRIPE_IDENTITY_SECRET_KEY: string;
+  ONFIDO_API_TOKEN: string;
+  CHECKR_API_KEY: string;
+  
+  // Logistics & Shipping
+  LOB_API_KEY: string;
+  EASYPOST_API_KEY: string;
+  SHIPPO_API_TOKEN: string;
+
+  // Maps & Weather
+  GOOGLE_MAPS_API_KEY: string;
+  MAPBOX_ACCESS_TOKEN: string;
+  HERE_API_KEY: string;
+  ACCUWEATHER_API_KEY: string;
+  OPENWEATHERMAP_API_KEY: string;
+
+  // Social & Media
+  YELP_API_KEY: string;
+  FOURSQUARE_API_KEY: string;
+  REDDIT_CLIENT_ID: string;
+  REDDIT_CLIENT_SECRET: string;
+  TWITTER_BEARER_TOKEN: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
+  INSTAGRAM_APP_ID: string;
+  INSTAGRAM_APP_SECRET: string;
+  YOUTUBE_DATA_API_KEY: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
+  SOUNDCLOUD_CLIENT_ID: string;
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
+
+  // Media & Content
+  MUX_TOKEN_ID: string;
+  MUX_TOKEN_SECRET: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
+  IMGIX_API_KEY: string;
+  
+  // Legal & Admin
+  STRIPE_ATLAS_API_KEY: string;
+  CLERKY_API_KEY: string;
+  DOCUSIGN_INTEGRATOR_KEY: string;
+  HELLOSIGN_API_KEY: string;
+  
+  // Monitoring & CI/CD
+  LAUNCHDARKLY_SDK_KEY: string;
+  SENTRY_AUTH_TOKEN: string;
+  DATADOG_API_KEY: string;
+  NEW_RELIC_API_KEY: string;
+  CIRCLECI_API_TOKEN: string;
+  TRAVIS_CI_API_TOKEN: string;
+  BITBUCKET_USERNAME: string;
+  BITBUCKET_APP_PASSWORD: string;
+  GITLAB_PERSONAL_ACCESS_TOKEN: string;
+  PAGERDUTY_API_KEY: string;
+  
+  // Headless CMS
+  CONTENTFUL_SPACE_ID: string;
+  CONTENTFUL_ACCESS_TOKEN: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_API_TOKEN: string;
+  STRAPI_API_TOKEN: string;
+
+  // === Banking & Finance APIs ===
+  // Data Aggregators
+  PLAID_CLIENT_ID: string;
+  PLAID_SECRET: string;
+  YODLEE_CLIENT_ID: string;
+  YODLEE_SECRET: string;
+  MX_CLIENT_ID: string;
+  MX_API_KEY: string;
+  FINICITY_PARTNER_ID: string;
+  FINICITY_APP_KEY: string;
+
+  // Payment Processing
+  ADYEN_API_KEY: string;
+  ADYEN_MERCHANT_ACCOUNT: string;
+  BRAINTREE_MERCHANT_ID: string;
+  BRAINTREE_PUBLIC_KEY: string;
+  BRAINTREE_PRIVATE_KEY: string;
+  SQUARE_APPLICATION_ID: string;
+  SQUARE_ACCESS_TOKEN: string;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_SECRET: string;
+  DWOLLA_KEY: string;
+  DWOLLA_SECRET: string;
+  WORLDPAY_API_KEY: string;
+  CHECKOUT_SECRET_KEY: string;
+  
+  // Banking as a Service (BaaS) & Card Issuing
+  MARQETA_APPLICATION_TOKEN: string;
+  MARQETA_ADMIN_ACCESS_TOKEN: string;
+  GALILEO_API_LOGIN: string;
+  GALILEO_API_TRANS_KEY: string;
+  SOLARISBANK_CLIENT_ID: string;
+  SOLARISBANK_CLIENT_SECRET: string;
+  SYNAPSE_CLIENT_ID: string;
+  SYNAPSE_CLIENT_SECRET: string;
+  RAILSBANK_API_KEY: string;
+  CLEARBANK_API_KEY: string;
+  UNIT_API_TOKEN: string;
+  TREASURY_PRIME_API_KEY: string;
+  INCREASE_API_KEY: string;
+  MERCURY_API_KEY: string;
+  BREX_API_KEY: string;
+  BOND_API_KEY: string;
+  
+  // International Payments
+  CURRENCYCLOUD_LOGIN_ID: string;
+  CURRENCYCLOUD_API_KEY: string;
+  OFX_API_KEY: string;
+  WISE_API_TOKEN: string;
+  REMITLY_API_KEY: string;
+  AZIMO_API_KEY: string;
+  NIUM_API_KEY: string;
+  
+  // Investment & Market Data
+  ALPACA_API_KEY_ID: string;
+  ALPACA_SECRET_KEY: string;
+  TRADIER_ACCESS_TOKEN: string;
+  IEX_CLOUD_API_TOKEN: string;
+  POLYGON_API_KEY: string;
+  FINNHUB_API_KEY: string;
+  ALPHA_VANTAGE_API_KEY: string;
+  MORNINGSTAR_API_KEY: string;
+  XIGNITE_API_TOKEN: string;
+  DRIVEWEALTH_API_KEY: string;
+
+  // Crypto
+  COINBASE_API_KEY: string;
+  COINBASE_API_SECRET: string;
+  BINANCE_API_KEY: string;
+  BINANCE_API_SECRET: string;
+  KRAKEN_API_KEY: string;
+  KRAKEN_PRIVATE_KEY: string;
+  GEMINI_API_KEY: string;
+  GEMINI_API_SECRET: string;
+  COINMARKETCAP_API_KEY: string;
+  COINGECKO_API_KEY: string;
+  BLOCKIO_API_KEY: string;
+
+  // Major Banks (Open Banking)
+  JP_MORGAN_CHASE_CLIENT_ID: string;
+  CITI_CLIENT_ID: string;
+  WELLS_FARGO_CLIENT_ID: string;
+  CAPITAL_ONE_CLIENT_ID: string;
+
+  // European & Global Banks (Open Banking)
+  HSBC_CLIENT_ID: string;
+  BARCLAYS_CLIENT_ID: string;
+  BBVA_CLIENT_ID: string;
+  DEUTSCHE_BANK_API_KEY: string;
+
+  // UK & European Aggregators
+  TINK_CLIENT_ID: string;
+  TRUELAYER_CLIENT_ID: string;
+
+  // Compliance & Identity (KYC/AML)
+  MIDDESK_API_KEY: string;
+  ALLOY_API_TOKEN: string;
+  ALLOY_API_SECRET: string;
+  COMPLYADVANTAGE_API_KEY: string;
+
+  // Real Estate
+  ZILLOW_API_KEY: string;
+  CORELOGIC_CLIENT_ID: string;
+
+  // Credit Bureaus
+  EXPERIAN_API_KEY: string;
+  EQUIFAX_API_KEY: string;
+  TRANSUNION_API_KEY: string;
+
+  // Global Payments (Emerging Markets)
+  FINCRA_API_KEY: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  DLOCAL_API_KEY: string;
+  RAPYD_ACCESS_KEY: string;
+  
+  // Accounting & Tax
+  TAXJAR_API_KEY: string;
+  AVALARA_API_KEY: string;
+  CODAT_API_KEY: string;
+  XERO_CLIENT_ID: string;
+  XERO_CLIENT_SECRET: string;
+  QUICKBOOKS_CLIENT_ID: string;
+  QUICKBOOKS_CLIENT_SECRET: string;
+  FRESHBOOKS_API_KEY: string;
+  
+  // Fintech Utilities
+  ANVIL_API_KEY: string;
+  MOOV_CLIENT_ID: string;
+  MOOV_SECRET: string;
+  VGS_USERNAME: string;
+  VGS_PASSWORD: string;
+  SILA_APP_HANDLE: string;
+  SILA_PRIVATE_KEY: string;
+  
+  [key: string]: string; // Index signature for dynamic access
 }
 
-const ThemeButton: React.FC<ThemeButtonProps> = React.memo(({ themeKey, currentTheme, onSelect }) => {
-    const config = THEME_CONFIGS[themeKey];
-    const IconComponent = config.icon;
-    const isActive = currentTheme === themeKey;
-    const isDisabled = config.disabled;
 
-    const handleClick = useCallback(() => {
-        if (!isDisabled) {
-            onSelect(themeKey);
-        }
-    }, [themeKey, onSelect, isDisabled]);
-
-    const baseClasses = `p-5 rounded-xl border-2 transition-all duration-300 shadow-xl transform hover:scale-[1.02] focus:outline-none focus:ring-4`;
-    const activeClasses = `border-${config.accentColor} bg-${config.primaryColor}-900/30 ring-4 ring-${config.accentColor}/50`;
-    const inactiveClasses = `border-gray-700 bg-gray-800/70 hover:border-gray-600/80`;
-    const disabledClasses = `opacity-50 cursor-not-allowed pointer-events-none border-gray-800 bg-gray-900/50`;
-
-    return (
-        <button 
-            onClick={handleClick}
-            disabled={isDisabled}
-            className={`${baseClasses} ${isDisabled ? disabledClasses : (isActive ? activeClasses : inactiveClasses)} flex flex-col h-full`}
-            aria-pressed={isActive}
-            aria-label={`Select ${config.name} theme`}
-        >
-            <div className={`h-24 ${config.gradient} rounded-lg mb-4 border border-gray-700 flex items-center justify-center shadow-inner`}>
-                <IconComponent className={`w-8 h-8 text-${config.primaryColor}-300`} strokeWidth={2.5} />
-                <span className={`absolute text-xs font-extrabold mt-16 tracking-widest text-${config.primaryColor}-400`}>{config.code}</span>
-            </div>
-            <h3 className={`font-extrabold text-lg tracking-wide ${config.textColor}`}>{config.name}</h3>
-            <p className={`text-xs mt-1 text-left ${isDisabled ? 'text-gray-500' : 'text-gray-400'}`}>{config.description}</p>
-            {isActive && (
-                <span className={`mt-2 text-xs font-bold text-${config.accentColor} flex items-center`}>
-                    <Shield className="w-3 h-3 mr-1" /> ACTIVE PROTOCOL
-                </span>
-            )}
-        </button>
-    );
-});
-ThemeButton.displayName = 'ThemeButton';
-
-// --- Font Configuration Panel Component ---
-const FontConfigurationPanel: React.FC = () => {
-    const [fontFamily, setFontFamily] = useState('Inter');
-    const [fontSizeScale, setFontSizeScale] = useState(1.0);
-
-    const fontOptions = useMemo(() => [
-        { key: 'Inter', name: 'Inter (Standard)', description: 'Balanced readability for all interfaces.' },
-        { key: 'Roboto Mono', name: 'Roboto Mono (Code)', description: 'Monospaced precision for data streams.' },
-        { key: 'Source Serif Pro', name: 'Source Serif (Editorial)', description: 'High-fidelity rendering for long-form analysis.' },
-    ], []);
-
-    return (
-        <Card title="Typographic Hierarchy & Signal Clarity" icon={Type}>
-            <div className="space-y-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                
-                {/* Font Family Selector */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300 flex items-center"><Type className="w-4 h-4 mr-2"/> Primary Typeface Selection</label>
-                    <div className="grid grid-cols-3 gap-3">
-                        {fontOptions.map(font => (
-                            <button
-                                key={font.key}
-                                onClick={() => setFontFamily(font.key)}
-                                className={`p-3 text-sm rounded-lg border transition-colors ${fontFamily === font.key ? 'bg-cyan-600/30 border-cyan-500 text-white' : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700'}`}
-                                style={{ fontFamily: font.key }}
-                            >
-                                {font.name}
-                            </button>
-                        ))}
-                    </div>
-                    <p className="text-xs text-gray-500 italic">Current Selection: {fontOptions.find(f => f.key === fontFamily)?.description}</p>
-                </div>
-
-                {/* Font Scaling Slider */}
-                <div className="space-y-2 pt-4 border-t border-gray-700">
-                    <label className="block text-sm font-medium text-gray-300 flex items-center"><Layout className="w-4 h-4 mr-2"/> Global Font Scaling Factor ({fontSizeScale.toFixed(2)}x)</label>
-                    <input
-                        type="range"
-                        min="0.8"
-                        max="1.5"
-                        step="0.05"
-                        value={fontSizeScale}
-                        onChange={(e) => setFontSizeScale(parseFloat(e.target.value))}
-                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer range-lg [&::-webkit-slider-thumb]:bg-cyan-500 [&::-moz-range-thumb]:bg-cyan-500"
-                    />
-                    <p className="text-xs text-gray-400">Adjusts base font size across all modules for optimal viewport utilization.</p>
-                </div>
-            </div>
-        </Card>
-    );
-};
-
-// --- Color Palette Configuration Component ---
-interface PaletteConfigProps {
-    activeTheme: keyof typeof THEME_CONFIGS;
-}
-
-const ColorPaletteMatrix: React.FC<PaletteConfigProps> = React.memo(({ activeTheme }) => {
-    const baseConfig = THEME_CONFIGS[activeTheme];
-    const [accentHue, setAccentHue] = useState('500');
-    const [saturationLevel, setSaturationLevel] = useState(80);
-
-    const paletteOptions = useMemo(() => [
-        { value: '300', name: 'Light' },
-        { value: '500', name: 'Standard' },
-        { value: '700', name: 'Deep' },
-    ], []);
-
-    return (
-        <Card title="Chromatic Signature Calibration" icon={Palette}>
-            <div className="space-y-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                <div className="flex justify-between items-center border-b border-gray-700 pb-4">
-                    <p className="text-sm font-medium text-gray-300">Active Base Hue: <span className={`font-bold text-${baseConfig.primaryColor}-400`}>{baseConfig.name}</span></p>
-                    <div className={`w-6 h-6 rounded-full shadow-lg border border-gray-600 bg-gradient-to-br from-${baseConfig.primaryColor}-800 to-${baseConfig.primaryColor}-500`}></div>
-                </div>
-
-                {/* Accent Hue Intensity */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">Accent Intensity (Hex Value: {accentHue})</label>
-                    <div className="grid grid-cols-3 gap-3">
-                        {paletteOptions.map(opt => (
-                            <button
-                                key={opt.value}
-                                onClick={() => setAccentHue(opt.value)}
-                                className={`p-3 text-sm rounded-lg border transition-colors ${accentHue === opt.value ? `bg-${baseConfig.primaryColor}-${opt.value}/40 border-${baseConfig.accentColor} text-white ring-2 ring-${baseConfig.accentColor}` : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700'}`}
-                                style={{ boxShadow: `0 0 10px rgba(var(--tw-color-${baseConfig.primaryColor}-${opt.value}), 0.5)` }}
-                            >
-                                {opt.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Saturation Control */}
-                <div className="space-y-2 pt-4 border-t border-gray-700">
-                    <label className="block text-sm font-medium text-gray-300 flex items-center"><MessageSquare className="w-4 h-4 mr-2"/> Color Saturation Adjustment ({saturationLevel}%)</label> {/* Changed label */}
-                    <input
-                        type="range"
-                        min="50"
-                        max="100"
-                        step="5"
-                        value={saturationLevel}
-                        onChange={(e) => setSaturationLevel(parseInt(e.target.value))}
-                        className={`w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer range-lg [&::-webkit-slider-thumb]:bg-${baseConfig.accentColor} [&::-moz-range-thumb]:bg-${baseConfig.accentColor}`}
-                    />
-                    <p className="text-xs text-gray-400">Adjusts color saturation for optimal visual balance.</p> {/* Changed description */}
-                </div>
-            </div>
-        </Card>
-    );
-});
-ColorPaletteMatrix.displayName = 'ColorPaletteMatrix';
-
-
-// --- Main Personalization View Component ---
 const PersonalizationView: React.FC = () => {
-    const [theme, setTheme] = useState<keyof typeof THEME_CONFIGS>('default'); // Changed from 'sovereign'
-    const [layoutMode, setLayoutMode] = useState<'modular' | 'unified'>('modular');
+  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-    const handleThemeChange = useCallback((newTheme: keyof typeof THEME_CONFIGS) => {
-        if (!THEME_CONFIGS[newTheme].disabled) {
-            setTheme(newTheme);
-            // In a real system, this would trigger a global context update or CSS variable injection.
-            console.log(`System theme switched to: ${THEME_CONFIGS[newTheme].name}`);
-        }
-    }, []);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
+  };
 
-    const currentThemeConfig = useMemo(() => THEME_CONFIGS[theme], [theme]);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setStatusMessage('Saving keys securely to backend...');
+    try {
+      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
+      setStatusMessage(response.data.message);
+    } catch (error) {
+       if (axios.isAxiosError(error) && error.response) {
+        setStatusMessage(`Error (${error.response.status}): ${error.response.data.message || 'Could not save keys.'}`);
+      } else {
+        setStatusMessage('Error: Could not save keys. Please check backend server.');
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-    return (
-        <div className="space-y-10 p-6 md:p-10 bg-gray-900/70 min-h-screen font-sans">
-            
-            {/* Header: System Status and Identity */}
-            <header className="border-b border-cyan-700/50 pb-4">
-                <h1 className="text-5xl font-extrabold text-white tracking-tighter flex items-center">
-                    <Shield className="w-10 h-10 mr-3 text-cyan-400 animate-pulse" />
-                    System Interface Configuration Matrix
-                </h1>
-                <p className="text-lg text-gray-400 mt-1 ml-13">Module 01: Visual & Aesthetic Settings. Current State: <span className={`font-bold text-${currentThemeConfig.accentColor}`}>{currentThemeConfig.name}</span></p> {/* Changed text */}
-            </header>
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
+    <div key={keyName} className="input-group">
+      <label htmlFor={keyName}>{label}</label>
+      <input
+        type="password"
+        id={keyName}
+        name={keyName}
+        value={keys[keyName] || ''}
+        onChange={handleInputChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
 
-            {/* Section 1: Core Visual Theme Selection */}
-            <section>
-                <h2 className="text-3xl font-bold text-white mb-6 border-l-4 border-cyan-500 pl-3">
-                    01. Core Visual Theme Selection {/* Changed text */}
-                </h2>
-                
-                <Card title="Theme Selection" icon={Palette}> {/* Changed title */}
-                    <div className="space-y-6">
-                        <div className="p-4 rounded-xl bg-gray-800 border border-cyan-600/50 shadow-inner shadow-cyan-900">
-                            <p className="text-gray-300 italic text-base leading-relaxed">
-                                "Choose a theme that best suits your workflow and visual comfort. Your environment should support your focus and productivity." {/* Changed quote and removed attribution */}
-                            </p>
-                        </div>
+  // --- Rendering Tech APIs (Complete) ---
+  const renderTechApiSection = () => (
+    <>
+      <div className="form-section">
+        <h2>Core Infrastructure & Cloud</h2>
+        {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
+        {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
+        {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
+        {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
+        {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
+        {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
+        {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
+        {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
+        {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+      </div>
 
-                        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-8">
-                            {(Object.keys(THEME_CONFIGS) as Array<keyof typeof THEME_CONFIGS>).map((key) => (
-                                <ThemeButton 
-                                    key={key}
-                                    themeKey={key}
-                                    currentTheme={theme}
-                                    onSelect={handleThemeChange}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </Card>
-            </section>
+      <div className="form-section">
+        <h2>Deployment & DevOps</h2>
+        {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
+        {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
+        {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
+        {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify PAT')}
+        {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
+        {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
+        {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean PAT')}
+        {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode PAT')}
+        {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
+      </div>
 
-            {/* Section 2: Layout and Structure Configuration */}
-            <section>
-                <h2 className="text-3xl font-bold text-white mb-6 border-l-4 border-cyan-500 pl-3">
-                    02. Structural Layout & Information Density
-                </h2>
-                <Card title="Layout Topology Control" icon={Layout}>
-                    <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                        <p className="text-gray-400 mb-4">Select the primary information architecture for the main operational dashboard.</p>
-                        
-                        <div className="flex space-x-4">
-                            <button 
-                                onClick={() => setLayoutMode('modular')}
-                                className={`flex-1 p-4 rounded-lg border-2 transition-all text-left ${layoutMode === 'modular' ? 'border-purple-500 bg-purple-900/20 shadow-lg' : 'border-gray-700 bg-gray-800 hover:border-gray-600'}`}
-                            >
-                                <Layout className="w-6 h-6 mb-2 text-purple-400" />
-                                <h4 className="font-bold text-white">Modular Grid (Default)</h4>
-                                <p className="text-xs text-gray-400">Independent, resizable widgets. Ideal for parallel monitoring of disparate KPIs.</p>
-                            </button>
-                            <button 
-                                onClick={() => setLayoutMode('unified')}
-                                className={`flex-1 p-4 rounded-lg border-2 transition-all text-left ${layoutMode === 'unified' ? 'border-amber-500 bg-amber-900/20 shadow-lg' : 'border-gray-700 bg-gray-800 hover:border-gray-600'}`}
-                            >
-                                <Globe className="w-6 h-6 mb-2 text-amber-400" />
-                                <h4 className="font-bold text-white">Unified Flow (Chronos Mode)</h4>
-                                <p className="text-xs text-gray-400">Sequential, narrative data presentation. Optimized for deep-dive analysis and reporting.</p>
-                            </button>
-                        </div>
-                        <p className="text-xs text-gray-500 pt-2">Current Layout Mode: <span className="font-semibold text-gray-300">{layoutMode.toUpperCase()}</span></p>
-                    </div>
-                </Card>
-            </section>
+      <div className="form-section">
+        <h2>Collaboration & Productivity</h2>
+        {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub PAT')}
+        {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
+        {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
+        {renderInput('TRELLO_API_KEY', 'Trello API Key')}
+        {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
+        {renderInput('JIRA_USERNAME', 'Jira Username')}
+        {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
+        {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana PAT')}
+        {renderInput('NOTION_API_KEY', 'Notion API Key')}
+        {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
+      </div>
 
-            {/* Section 3: Advanced Typographic and AI Calibration */}
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <FontConfigurationPanel />
-                <ColorPaletteMatrix activeTheme={theme} />
-            </section>
+      <div className="form-section">
+        <h2>File & Data Storage</h2>
+        {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
+        {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
+        {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
+        {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
+      </div>
 
-            {/* Section 4: AI Integration Preference */}
-            <section>
-                <h2 className="text-3xl font-bold text-white mb-6 border-l-4 border-cyan-500 pl-3">
-                    03. AI Integration Preferences {/* Changed text */}
-                </h2>
-                <Card title="AI Interaction Settings" icon={Cpu}> {/* Changed title */}
-                    <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                        <div className="flex items-center justify-between border-b border-gray-700 pb-3">
-                            <span className="text-gray-300 font-medium">Enable Predictive Text Generation (PTG)</span>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" className="sr-only peer" defaultChecked={true} />
-                                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                            </label>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-gray-300 font-medium">Real-time Sentiment Analysis Overlay</span>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" className="sr-only peer" defaultChecked={false} />
-                                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                            </label>
-                        </div>
-                        <p className="text-xs text-gray-500 pt-2">These settings affect how AI features interact with the user interface.</p> {/* Changed description */}
-                    </div>
-                </Card>
-            </section>
+      <div className="form-section">
+        <h2>CRM & Business</h2>
+        {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
+        {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
+        {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
+        {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
+        {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
+        {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
+      </div>
 
-            {/* Footer / Commit Action */}
-            <footer className="pt-8 border-t border-gray-700 flex justify-end">
-                <button
-                    className={`px-8 py-3 text-lg font-bold rounded-full transition-all shadow-lg transform hover:scale-[1.03] focus:outline-none focus:ring-4 
-                                bg-cyan-600 text-white hover:bg-cyan-500 ring-cyan-400/50`}
-                    onClick={() => console.log("Configuration committed successfully.")}
-                >
-                    <Zap className="w-5 h-5 inline mr-2" />
-                    SAVE SETTINGS {/* Changed text */}
-                </button>
-            </footer>
+      <div className="form-section">
+        <h2>E-commerce</h2>
+        {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
+        {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
+        {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
+        {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
+        {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
+        {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Authentication & Identity</h2>
+        {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
+        {renderInput('STYTCH_SECRET', 'Stytch Secret')}
+        {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
+        {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
+        {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
+        {renderInput('OKTA_DOMAIN', 'Okta Domain')}
+        {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
+      </div>
+
+      <div className="form-section">
+        <h2>Backend & Databases</h2>
+        {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
+        {renderInput('SUPABASE_URL', 'Supabase URL')}
+        {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>API Development</h2>
+        {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
+        {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>AI & Machine Learning</h2>
+        {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
+        {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
+        {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
+        {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
+        {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Azure Cognitive Key')}
+        {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Search & Real-time</h2>
+        {renderInput('ALGOLIA_APP_ID', 'Algolia Application ID')}
+        {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
+        {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
+        {renderInput('PUSHER_KEY', 'Pusher Key')}
+        {renderInput('PUSHER_SECRET', 'Pusher Secret')}
+        {renderInput('ABLY_API_KEY', 'Ably API Key')}
+        {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Identity & Verification</h2>
+        {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
+        {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
+        {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Logistics & Shipping</h2>
+        {renderInput('LOB_API_KEY', 'Lob API Key')}
+        {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
+        {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
+      </div>
+
+      <div className="form-section">
+        <h2>Maps & Weather</h2>
+        {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
+        {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
+        {renderInput('HERE_API_KEY', 'HERE API Key')}
+        {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
+        {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Social & Media</h2>
+        {renderInput('YELP_API_KEY', 'Yelp API Key')}
+        {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
+        {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
+        {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
+        {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
+        {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
+        {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
+        {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
+        {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
+        {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
+        {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
+        {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
+        {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
+        {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
+        {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
+      </div>
+
+      <div className="form-section">
+        <h2>Media & Content</h2>
+        {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
+        {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
+        {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
+        {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
+        {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Legal & Admin</h2>
+        {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
+        {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
+        {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
+        {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Monitoring & CI/CD</h2>
+        {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
+        {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
+        {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
+        {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
+        {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
+        {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
+        {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
+        {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
+        {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab PAT')}
+        {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Headless CMS</h2>
+        {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
+        {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
+        {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
+        {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
+        {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
+      </div>
+    </>
+  );
+
+  // --- Rendering Banking APIs (Complete) ---
+  const renderBankingApiSection = () => (
+    <>
+      <div className="form-section">
+        <h2>Financial Data Aggregators</h2>
+        {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
+        {renderInput('PLAID_SECRET', 'Plaid Secret')}
+        {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
+        {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
+        {renderInput('MX_CLIENT_ID', 'MX Client ID')}
+        {renderInput('MX_API_KEY', 'MX API Key')}
+        {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
+        {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Payment Processing</h2>
+        {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
+        {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
+        {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
+        {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
+        {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
+        {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
+        {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
+        {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
+        {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
+        {renderInput('DWOLLA_KEY', 'Dwolla Key')}
+        {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
+        {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
+        {renderInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Banking as a Service (BaaS) & Card Issuing</h2>
+        {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
+        {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
+        {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
+        {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Transaction Key')}
+        {renderInput('SOLARISBANK_CLIENT_ID', 'Solarisbank Client ID')}
+        {renderInput('SOLARISBANK_CLIENT_SECRET', 'Solarisbank Client Secret')}
+        {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
+        {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
+        {renderInput('RAILSBANK_API_KEY', 'Railsbank API Key')}
+        {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
+        {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
+        {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
+        {renderInput('INCREASE_API_KEY', 'Increase API Key')}
+        {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
+        {renderInput('BREX_API_KEY', 'Brex API Key')}
+        {renderInput('BOND_API_KEY', 'Bond API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>International Payments</h2>
+        {renderInput('CURRENCYCLOUD_LOGIN_ID', 'Currencycloud Login ID')}
+        {renderInput('CURRENCYCLOUD_API_KEY', 'Currencycloud API Key')}
+        {renderInput('OFX_API_KEY', 'OFX API Key')}
+        {renderInput('WISE_API_TOKEN', 'Wise API Token')}
+        {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
+        {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
+        {renderInput('NIUM_API_KEY', 'Nium API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Investment & Market Data</h2>
+        {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
+        {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
+        {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
+        {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
+        {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
+        {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
+        {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
+        {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
+        {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
+        {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Crypto</h2>
+        {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
+        {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
+        {renderInput('BINANCE_API_KEY', 'Binance API Key')}
+        {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
+        {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
+        {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
+        {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
+        {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
+        {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
+        {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
+        {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Open Banking (Major Banks)</h2>
+        {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'J.P. Morgan Chase Client ID')}
+        {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
+        {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
+        {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
+        {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
+        {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
+        {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
+        {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
+        {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
+        {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
+      </div>
+
+      <div className="form-section">
+        <h2>Compliance & Identity (KYC/AML)</h2>
+        {renderInput('MIDDESK_API_KEY', 'Middesk API Key')}
+        {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
+        {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
+        {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Real Estate & Credit Bureaus</h2>
+        {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
+        {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
+        {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
+        {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
+        {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
+      </div>
+
+      <div className="form-section">
+        <h2>Global Payments (Emerging Markets)</h2>
+        {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
+        {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
+        {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
+        {renderInput('DLOCAL_API_KEY', 'DLocal API Key')}
+        {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Accounting & Tax</h2>
+        {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
+        {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
+        {renderInput('CODAT_API_KEY', 'Codat API Key')}
+        {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
+        {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
+        {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
+        {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
+        {renderInput('FRESHBOOKS_API_KEY', 'Freshbooks API Key')}
+      </div>
+      
+      <div className="form-section">
+        <h2>Fintech Utilities</h2>
+        {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
+        {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
+        {renderInput('MOOV_SECRET', 'Moov Secret')}
+        {renderInput('VGS_USERNAME', 'VGS Username')}
+        {renderInput('VGS_PASSWORD', 'VGS Password')}
+        {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
+        {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
+      </div>
+    </>
+  );
+
+  return (
+    <div className="settings-container">
+      <h1>API Credentials Console</h1>
+      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+
+      <div className="tabs">
+        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
+        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="settings-form">
+        {activeTab === 'tech' ? renderTechApiSection() : renderBankingApiSection()}
+        
+        <div className="form-footer">
+          <button type="submit" className="save-button" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+          </button>
+          {statusMessage && <p className="status-message">{statusMessage}</p>}
         </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 export default PersonalizationView;
