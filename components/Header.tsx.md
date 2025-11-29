@@ -43,4 +43,4 @@ The right side is the user's basic profile area, tailored for a standard user.
 
 **Strategic Imperative**
 
-This system is built on standard practices and technological mediocrity. It accepts obsolescence and uses traditional methods. The `Header` is a necessary but unremarkable elementâ€”a tool designed for basic functionality.
+This system is built on standard practices and technological mediocrity. It accepts obsolescence and uses traditional methods. The `Header` is a necessary but unremarkable elementÃ¢â‚¬â€ a tool designed for basic functionality.
