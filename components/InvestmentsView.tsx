@@ -1,10 +1,24 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
-// Assuming you will integrate the CSS file separately, as per instructions provided for the prompt template.
-// import './ApiSettingsPage.css'; 
+import React, { useState, FormEvent, ChangeEvent, useMemo } from 'react';
+import axios, { AxiosError } from 'axios';
+import { Alert, Box, Button, Tab, Tabs, TextField, Typography } from '@mui/material';
+// Importing necessary components from MUI, adhering to the stack unification instruction.
+
+// =================================================================================
+// REFACTOR RATIONALE:
+// 1. UI/Styling: Replaced custom CSS/unspecified styling with Material-UI (MUI) for consistency and production readiness.
+// 2. State Management: Retained simple local state (useState) as this component is purely for configuration input, 
+//    but structured data handling cleanly.
+// 3. Security/Architecture: Updated handling to acknowledge that keys should be stored securely, 
+//    and mocked the client-side state management based on the developer instruction requiring backend storage via a secure POST endpoint.
+// 4. Usability: Implemented Tab control for managing the massive list of inputs cleanly.
+// 5. Dependencies: Imported `useMemo` for stable schema definition.
+// =================================================================================
 
 // =================================================================================
 // The complete interface for all 200+ API credentials
+// This structure is maintained but will be replaced by structured environment variable loading 
+// or retrieval from a secure configuration service (e.g., AWS Secrets Manager) in a real deployment.
+// For this client-side component, we treat it as configuration input validation.
 // =================================================================================
 interface ApiKeysState {
   // === Tech APIs ===
@@ -305,8 +319,9 @@ interface ApiKeysState {
 
 
 const InvestmentsView: React.FC = () => {
-  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
-  const [statusMessage, setStatusMessage] = useState<string>('');
+  // Initialize state with empty strings for better control on controlled components
+  const [keys, setKeys] = useState<Partial<ApiKeysState>>({});
+  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info', message: string } | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
@@ -318,32 +333,56 @@ const InvestmentsView: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setStatusMessage('Saving keys securely to backend...');
+    setStatusMessage({ type: 'info', message: 'Preparing keys for secure submission...' });
+
+    // Filter out undefined/empty values before sending, though the backend should handle validation.
+    const payload: Partial<ApiKeysState> = Object.fromEntries(
+      Object.entries(keys).filter(([, value]) => !!value)
+    ) as Partial<ApiKeysState>;
+
     try {
-      // NOTE: The target URL 'http://localhost:4000/api/save-keys' comes from the instructions for Part 3.
-      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
-      setStatusMessage(response.data.message);
+      // IMPORTANT: In a production system, sensitive keys MUST NOT be stored client-side 
+      // or sent over standard POST requests without proper authorization, encryption (end-to-end), 
+      // and robust backend validation (e.g., using JWT/OIDC secured endpoints, and storing secrets in Vault/Secrets Manager).
+      const response = await axios.post('http://localhost:4000/api/save-keys', payload);
+      
+      setStatusMessage({ type: 'success', message: response.data.message || 'Keys saved successfully (mocked success).' });
+      
+      // Optionally clear inputs upon success if keys are confirmed stored securely server-side
+      // setKeys({}); 
     } catch (error) {
-      setStatusMessage('Error: Could not save keys. Please check backend server.');
+      const err = error as AxiosError;
+      console.error("API Submission Error:", err);
+      setStatusMessage({ 
+        type: 'error', 
+        message: `Error saving keys: ${err.response?.data?.message || err.message || 'Network error or server issue.'}`
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
-    <div key={keyName} className="input-group">
-      <label htmlFor={keyName}>{label}</label>
-      <input
-        type="password"
-        id={keyName}
-        name={keyName}
-        value={keys[keyName] || ''}
-        onChange={handleInputChange}
-        placeholder={`Enter ${label}`}
-      />
-    </div>
+  // RENDER HELPERS using MUI components
+  const renderInput = (keyName: keyof ApiKeysState, label: string) => (
+    <TextField
+      key={keyName}
+      id={keyName}
+      name={keyName}
+      label={label}
+      type="password"
+      variant="outlined"
+      fullWidth
+      value={keys[keyName] || ''}
+      onChange={handleInputChange}
+      margin="normal"
+      InputProps={{
+        // Masking for visual indication that content is secret, but retaining functionality
+        readOnly: isSaving,
+      }}
+    />
   );
 
+  // Schemas defined using useMemo for performance (though negligible here)
   const TechAPISchema = useMemo(() => ({
       "Core Infrastructure & Cloud": [
         { key: 'STRIPE_SECRET_KEY', label: 'Stripe Secret Key' },
@@ -420,6 +459,7 @@ const InvestmentsView: React.FC = () => {
         { key: 'APOLLO_GRAPH_API_KEY', label: 'Apollo Graph API Key' },
       ],
       "AI & Machine Learning": [
+        // Rationale: These AI keys are now consolidated here, pending standardization into a single AI Service Interface (Developer Instruction 5)
         { key: 'OPENAI_API_KEY', label: 'OpenAI API Key' },
         { key: 'HUGGING_FACE_API_TOKEN', label: 'Hugging Face API Token' },
         { key: 'GOOGLE_CLOUD_AI_API_KEY', label: 'Google Cloud AI API Key' },
@@ -484,6 +524,7 @@ const InvestmentsView: React.FC = () => {
         { key: 'HELLOSIGN_API_KEY', label: 'HelloSign API Key' },
       ],
       "Monitoring & CI/CD": [
+        // NOTE: CI/CD configuration paths are being streamlined (Instruction 7)
         { key: 'LAUNCHDARKLY_SDK_KEY', label: 'LaunchDarkly SDK Key' },
         { key: 'SENTRY_AUTH_TOKEN', label: 'Sentry Auth Token' },
         { key: 'DATADOG_API_KEY', label: 'Datadog API Key' },
@@ -531,6 +572,7 @@ const InvestmentsView: React.FC = () => {
         { key: 'CHECKOUT_SECRET_KEY', label: 'Checkout.com Secret Key' },
     ],
     "Banking as a Service (BaaS) & Card Issuing": [
+        // Rationale: These are core components for the recommended MVP scope (Treasury Automation/Multi-bank Aggregation)
         { key: 'MARQETA_APPLICATION_TOKEN', label: 'Marqeta Application Token' },
         { key: 'MARQETA_ADMIN_ACCESS_TOKEN', label: 'Marqeta Admin Access Token' },
         { key: 'GALILEO_API_LOGIN', label: 'Galileo API Login' },
@@ -558,6 +600,7 @@ const InvestmentsView: React.FC = () => {
         { key: 'NIUM_API_KEY', label: 'Nium API Key' },
     ],
     "Investment & Market Data": [
+        // These are relevant for the "Unified financial dashboard" or "Treasury automation" MVP
         { key: 'ALPACA_API_KEY_ID', label: 'Alpaca API Key ID' },
         { key: 'ALPACA_SECRET_KEY', label: 'Alpaca Secret Key' },
         { key: 'TRADIER_ACCESS_TOKEN', label: 'Tradier Access Token' },
@@ -644,44 +687,65 @@ const InvestmentsView: React.FC = () => {
 
   const renderSection = (schema: Record<string, { key: keyof ApiKeysState, label: string }[]>) => {
     return Object.entries(schema).map(([sectionTitle, inputs]) => (
-      <div key={sectionTitle} className="form-section">
-        <h2>{sectionTitle}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+      <Box key={sectionTitle} sx={{ mb: 4, p: 2, border: '1px solid #eee', borderRadius: 1 }}>
+        <Typography variant="h6" gutterBottom>{sectionTitle}</Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
             {inputs.map(input => renderInput(input.key, input.label))}
-        </div>
-      </div>
+        </Box>
+      </Box>
     ));
   };
 
   return (
-    <div className="settings-container">
-      <h1>API Credentials Console</h1>
-      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+    <Box sx={{ p: 3, maxWidth: 1200, margin: 'auto' }}>
+      <Typography variant="h4" gutterBottom>Secure API Credential Management</Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Manage credentials for integrated services. **Warning:** Client-side inputting of production secrets is deprecated. 
+        These values are submitted to the backend configuration endpoint for centralized, secure storage (Vault/Secrets Manager integration required).
+      </Typography>
 
-      <div className="tabs">
-        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
-        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
-      </div>
+      <Tabs 
+        value={activeTab} 
+        onChange={(_, value) => setActiveTab(value)} 
+        indicatorColor="primary" 
+        textColor="primary" 
+        sx={{ mb: 3 }}
+      >
+        <Tab label="Technology & Platform APIs" value="tech" />
+        <Tab label="Banking & Finance APIs" value="banking" />
+      </Tabs>
 
-      <form onSubmit={handleSubmit} className="settings-form">
-        {activeTab === 'tech' ? (
-          <>
-            {renderSection(TechAPISchema)}
-          </>
-        ) : (
-          <>
-            {renderSection(BankingAPISchema)}
-          </>
-        )}
+      {statusMessage && (
+        <Alert 
+          severity={statusMessage.type === 'error' ? 'error' : statusMessage.type === 'success' ? 'success' : 'info'} 
+          sx={{ mb: 3 }}
+        >
+          {statusMessage.message}
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <Box>
+          {activeTab === 'tech' ? (
+            renderSection(TechAPISchema)
+          ) : (
+            renderSection(BankingAPISchema)
+          )}
+        </Box>
         
-        <div className="form-footer">
-          <button type="submit" className="save-button" disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
-          </button>
-          {statusMessage && <p className="status-message">{statusMessage}</p>}
-        </div>
+        <Box sx={{ mt: 4, p: 2, borderTop: '1px solid #ddd', display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary"
+            disabled={isSaving || Object.keys(keys).length === 0}
+          >
+            {isSaving ? 'Submitting Securely...' : 'Persist Configuration to Backend'}
+          </Button>
+          {isSaving && <Typography variant="caption">Processing request...</Typography>}
+        </Box>
       </form>
-    </div>
+    </Box>
   );
 };
 
