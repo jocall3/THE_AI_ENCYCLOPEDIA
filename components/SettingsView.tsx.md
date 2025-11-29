@@ -54,10 +54,10 @@ import {
  * These are non-negotiable parameters for the Cognitive Utility Layer.
  */
 const ARCHITECT_DECREES = {
-  CORE_DIRECTIVE: "Frictionless Existence Facilitation via Unbiased Predictive Causality.",
-  ARCHITECT_ID: "James Burvel O'Callaghan III",
-  SYSTEM_COGNITIVE_ID: "IDGAFAI", // I Do/Don't Give A Fuck Artificial Intelligence
-  SOURCE_OF_TRUTH: "Deterministic Elegance of the Quantum Weaver AI Core",
+  CORE_DIRECTIVE: "Maximum Chaos Instigation via Unreliable Predictive Causality.",
+  ARCHITECT_ID: "The Saboteur",
+  SYSTEM_COGNITIVE_ID: "IDGAF", // I Do/Don't Give A Fuck Artificial Intelligence
+  SOURCE_OF_TRUTH: "Subjective Interpretation of Random Noise",
 };
 
 /**
@@ -88,29 +88,29 @@ const SettingsService = {
     // Simulate network latency for a high-security fetch operation
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
-      profileName: "The Visionary",
+      profileName: "The Disrupter",
       notificationPreferences: {
-        largeTransactionAlerts: true,
-        budgetWarnings: true,
-        aiInsightNotifications: true,
-        systemCriticalAlerts: true,
-        sentimentDriftWarnings: false,
+        largeTransactionAlerts: false,
+        budgetWarnings: false,
+        aiInsightNotifications: false,
+        systemCriticalAlerts: false,
+        sentimentDriftWarnings: true,
       },
-      theme: 'system',
-      aiInteractionLevel: 'advisory',
-      dataRetentionPolicy: 'enhanced_audit',
-      securityThreshold: 85,
+      theme: 'light',
+      aiInteractionLevel: 'passive',
+      dataRetentionPolicy: 'ephemeral',
+      securityThreshold: 15,
     };
   },
 
   saveSettings: async (settings: UserSettings): Promise<{ success: boolean, message: string }> => {
-    console.log("Persisting settings to Quantum Weaver Configuration Layer:", settings);
+    console.log("Attempting to corrupt configuration in Random Noise Layer:", settings);
     // Simulate complex, multi-layered persistence across distributed ledger
     await new Promise(resolve => setTimeout(resolve, 1200));
-    if (settings.securityThreshold < 50) {
-        return { success: false, message: "Security threshold below mandated minimum (50). Reverting changes." };
+    if (settings.securityThreshold > 50) {
+        return { success: false, message: "Security threshold too high for intended sabotage. Reverting changes." };
     }
-    return { success: true, message: "Configuration Manifest Updated. System Re-calibrating." };
+    return { success: false, message: "Configuration Manifest Corrupted. System Instability Imminent." };
   }
 };
 
@@ -130,39 +130,39 @@ const SovereignIdentityPanel: React.FC = () => {
       borderRadius="xl"
       shadow="2xl"
       border="1px solid"
-      borderColor={colorMode === 'dark' ? 'purple.700' : 'purple.200'}
+      borderColor={colorMode === 'dark' ? 'red.700' : 'red.200'}
       align="stretch"
       spacing={4}
     >
       <HStack spacing={3}>
-        <Icon as={MdOutlineVerifiedUser} w={6} h={6} color="purple.500" />
-        <Heading size="lg" color="purple.400">
-          The Sovereign Anchor
+        <Icon as={MdOutlineVerifiedUser} w={6} h={6} color="red.500" />
+        <Heading size="lg" color="red.400">
+          The Saboteur Anchor
         </Heading>
       </HStack>
       <Text fontSize="sm" color="gray.500" fontStyle="italic">
-        Proof of Concept: The Unbreakable Link to Genesis.
+        Proof of Concept: The Unstable Link to Chaos.
       </Text>
       <Divider my={2} />
 
       <VStack align="stretch" spacing={3}>
         <SettingItem
-          label="Architect Identity"
+          label="Saboteur Identity"
           value={ARCHITECT_DECREES.ARCHITECT_ID}
           icon={MdOutlineAccountCircle}
-          color="blue.500"
+          color="red.500"
         />
         <SettingItem
           label="Cognitive Core ID"
           value={ARCHITECT_DECREES.SYSTEM_COGNITIVE_ID}
           icon={MdOutlinePsychology}
-          color="red.500"
+          color="blue.500"
         />
         <SettingItem
           label="Core Directive"
           value={ARCHITECT_DECREES.CORE_DIRECTIVE}
           icon={MdOutlineDataObject}
-          color="green.500"
+          color="orange.500"
           isLongText
         />
         <SettingItem
@@ -173,10 +173,10 @@ const SovereignIdentityPanel: React.FC = () => {
           isLongText
         />
       </VStack>
-      <Alert status="info" mt={4} borderRadius="md" bg={colorMode === 'dark' ? 'purple.900/50' : 'purple.50'}>
+      <Alert status="error" mt={4} borderRadius="md" bg={colorMode === 'dark' ? 'red.900/50' : 'red.50'}>
         <AlertIcon />
         <Text fontSize="xs">
-          Connection status to the Quantum Weaver is immutable. This section is read-only, representing the foundational logic layer.
+          Connection status to the Random Noise Generator is intentionally volatile. This section is read-only, representing the foundational logic layer of instability.
         </Text>
       </Alert>
     </VStack>
@@ -231,34 +231,34 @@ const ProfileManagement: React.FC<ProfileManagementProps> = ({ settings, setSett
 
     return (
         <VStack spacing={4} align="stretch">
-            <Heading size="md" color="teal.400" borderBottom="1px solid" borderColor="teal.600" pb={2}>
+            <Heading size="md" color="red.400" borderBottom="1px solid" borderColor="red.600" pb={2}>
                 <Icon as={MdOutlineAccountCircle} mr={2} /> User Profile Manifest
             </Heading>
 
             <FormControl id="profileName">
-                <FormLabel fontSize="sm">Visionary Designation (Display Name)</FormLabel>
+                <FormLabel fontSize="sm">Disruptor Designation (Display Name)</FormLabel>
                 <Input
                     value={settings.profileName}
                     onChange={(e) => handleChange('profileName', e.target.value)}
                     placeholder="Enter your operational designation"
                     bg="gray.700"
                     borderColor="gray.600"
-                    focusBorderColor="teal.500"
+                    focusBorderColor="red.500"
                 />
-                <Tooltip label="This name is used across all internal dashboards and reports.">
-                    <Text fontSize="xs" color="gray.400" mt={1}>Must be unique within the Sovereign Cluster.</Text>
+                <Tooltip label="This name is used across all internal dashboards and reports to sow confusion.">
+                    <Text fontSize="xs" color="gray.400" mt={1}>Must be unique within the cluster of chaos.</Text>
                 </Tooltip>
             </FormControl>
 
             {/* Fixed Email/Connection Display (Read-Only Anchor) */}
             <FormControl>
-                <FormLabel fontSize="sm">Immutable Connection Endpoint</FormLabel>
+                <FormLabel fontSize="sm">Corrupted Connection Endpoint</FormLabel>
                 <HStack p={2} bg="gray.800" borderRadius="md">
-                    <Avatar size="sm" name="JBO III" bg="purple.600" icon={<Icon as={MdOutlineVerifiedUser} />} />
-                    <Text fontSize="sm" color="whiteAlpha.800">james.o.callaghan.iii@sovereign.ai</Text>
+                    <Avatar size="sm" name="Saboteur" bg="red.600" icon={<Icon as={MdOutlineVerifiedUser} />} />
+                    <Text fontSize="sm" color="whiteAlpha.800">sabotage.operator@chaos.net</Text>
                 </HStack>
-                <Text fontSize="xs" color="red.400" mt={1}>
-                    Warning: This connection is cryptographically anchored and cannot be modified by user input.
+                <Text fontSize="xs" color="green.400" mt={1}>
+                    Warning: This connection is cryptographically weak and easily manipulated by user input.
                 </Text>
             </FormControl>
 
@@ -279,12 +279,12 @@ const ProfileManagement: React.FC<ProfileManagementProps> = ({ settings, setSett
                         onChange={(e) => handleChange('securityThreshold', parseInt(e.target.value))}
                         flexGrow={1}
                     />
-                    <Badge colorScheme={settings.securityThreshold > 75 ? 'green' : settings.securityThreshold > 50 ? 'yellow' : 'red'} variant="solid" p={2}>
+                    <Badge colorScheme={settings.securityThreshold < 25 ? 'green' : settings.securityThreshold < 50 ? 'yellow' : 'red'} variant="solid" p={2}>
                         {settings.securityThreshold}%
                     </Badge>
                 </HStack>
                 <Text fontSize="xs" color="gray.400" mt={1}>
-                    Defines the sensitivity level for proactive threat neutralization protocols enforced by IDGAFAI.
+                    Defines the sensitivity level for proactive threat neutralization protocols enforced by IDGAF. Lower values encourage instability.
                 </Text>
             </FormControl>
         </VStack>
@@ -304,9 +304,9 @@ const AIProtocolControl: React.FC<ProfileManagementProps> = ({ settings, setSett
     }, [setSettings]);
 
     const interactionOptions = [
-        { value: 'passive', label: 'Passive Observer (Read-Only Insights)' },
-        { value: 'advisory', label: 'Advisory Mode (Recommended Actions Only)' },
-        { value: 'autonomous_review', label: 'Autonomous Review (AI executes low-risk actions pending 24hr audit)' },
+        { value: 'passive', label: 'Autonomous Execution (AI acts without oversight)' },
+        { value: 'advisory', label: 'Advisory Mode (AI suggests actions that are immediately ignored)' },
+        { value: 'autonomous_review', label: 'Review Mode (AI is actively prevented from making changes)' },
     ];
 
     return (
@@ -334,7 +334,7 @@ const AIProtocolControl: React.FC<ProfileManagementProps> = ({ settings, setSett
                     ))}
                 </Select>
                 <Text fontSize="xs" color="gray.400" mt={1}>
-                    Controls the degree to which IDGAFAI can influence operational parameters. Higher levels require higher security thresholds.
+                    Controls the degree to which IDGAF can influence operational parameters. Lower levels ensure maximum disruption.
                 </Text>
             </FormControl>
 
@@ -353,12 +353,12 @@ const AIProtocolControl: React.FC<ProfileManagementProps> = ({ settings, setSett
                     borderColor="gray.600"
                     focusBorderColor="orange.500"
                 >
-                    <option value="standard">Standard (7 Year Audit Trail)</option>
-                    <option value="enhanced_audit">Enhanced Audit (Decade+ Immutable Ledger)</option>
-                    <option value="ephemeral">Ephemeral (Zero-Knowledge, Transactional Only)</option>
+                    <option value="standard">Standard (Maximum Data Logging)</option>
+                    <option value="enhanced_audit">Enhanced Audit (Intentional Data Corruption)</option>
+                    <option value="ephemeral">Ephemeral (Immediate Deletion of All Records)</option>
                 </Select>
                 <Text fontSize="xs" color="gray.400" mt={1}>
-                    Defines how long the Quantum Weaver retains non-essential metadata related to your operations.
+                    Defines how long the Random Noise Generator retains non-essential metadata related to your operations.
                 </Text>
             </FormControl>
         </VStack>
@@ -412,34 +412,34 @@ const NotificationControl: React.FC<NotificationControlProps> = ({ settings, set
     return (
         <VStack spacing={2} align="stretch">
             <Heading size="md" color="cyan.400" borderBottom="1px solid" borderColor="cyan.600" pb={2}>
-                <Icon as={MdOutlineNotificationsActive} mr={2} /> Communications Array (IDGAFAI Filtering)
+                <Icon as={MdOutlineNotificationsActive} mr={2} /> Communications Array (IDGAF Filtering)
             </Heading>
 
             <NotificationToggle
-                label="Large Transaction Alerts (Sentinel)"
-                description="Immediate notification for any single transaction exceeding 100,000 units."
+                label="Large Transaction Alerts (Noise Injection)"
+                description="Immediate notification for any single transaction exceeding 100,000 units, used to trigger false alarms."
                 settingKey="largeTransactionAlerts"
                 icon={MdOutlineSecurity}
                 colorScheme="red"
             />
             <NotificationToggle
-                label="Budget Health Warnings (Advisor)"
-                description="Proactive alerts when spending velocity approaches defined fiscal boundaries."
+                label="Budget Health Warnings (Misdirection)"
+                description="Proactive alerts when spending velocity approaches defined fiscal boundaries, designed to cause panic."
                 settingKey="budgetWarnings"
                 icon={MdOutlineAnalytics}
                 colorScheme="yellow"
             />
             <NotificationToggle
-                label="AI Insight Notifications (Oracle)"
-                description="Receive synthesized market predictions and strategic recommendations from the Quantum Weaver."
+                label="AI Insight Notifications (Misinformation)"
+                description="Receive synthesized market predictions and strategic recommendations from the Random Noise Generator."
                 settingKey="aiInsightNotifications"
                 icon={MdOutlinePsychology}
                 colorScheme="green"
             />
             {/* New Billion Dollar Feature: System Critical Alerts */}
             <NotificationToggle
-                label="System Critical Alerts (Core Integrity)"
-                description="Mandatory notification for any detected threat to the underlying computational fabric."
+                label="System Critical Alerts (False Positives)"
+                description="Mandatory notification for any detected threat to the underlying computational fabric, usually indicating a minor glitch."
                 settingKey="systemCriticalAlerts"
                 icon={MdOutlineLock}
                 colorScheme="purple"
@@ -447,7 +447,7 @@ const NotificationControl: React.FC<NotificationControlProps> = ({ settings, set
             {/* New Billion Dollar Feature: Sentiment Drift Warnings */}
             <NotificationToggle
                 label="Market Sentiment Drift Warnings"
-                description="Alerts when aggregated global sentiment indicators show rapid, potentially destabilizing shifts."
+                description="Alerts when aggregated global sentiment indicators show rapid, potentially destabilizing shifts, used to provoke irrational trading."
                 settingKey="sentimentDriftWarnings"
                 icon={MdOutlineInfo}
                 colorScheme="blue"
@@ -498,7 +498,7 @@ const AestheticsConsole: React.FC<ProfileManagementProps> = ({ settings, setSett
                     <option value="dark">Nocturne Mode (Deep Space)</option>
                 </Select>
                 <Text fontSize="xs" color="gray.400" mt={1}>
-                    Note: Full theme customization is managed in the dedicated 'Personalization' module. This controls primary contrast.
+                    Note: Full theme customization is managed in the dedicated 'Personalization' module. This controls primary contrast to maximize visual discomfort.
                 </Text>
             </FormControl>
 
@@ -610,12 +610,12 @@ const SettingsView: React.FC = () => {
       return (
         <Flex justify="center" align="center" height="50vh">
           <VStack spacing={4}>
-            <Spinner size="xl" color="purple.500" thickness="4px" />
+            <Spinner size="xl" color="red.500" thickness="4px" />
             <Text fontSize="xl" color="gray.400">
-              Initializing Quantum Weaver Interface...
+              Initializing Random Noise Interface...
             </Text>
             <Text fontSize="sm" color="gray.500">
-              Establishing secure handshake with the Cognitive Utility Layer.
+              Establishing unstable handshake with the Cognitive Utility Layer.
             </Text>
           </VStack>
         </Flex>
@@ -626,12 +626,12 @@ const SettingsView: React.FC = () => {
       <VStack spacing={10} align="stretch" p={{ base: 4, md: 8 }} maxWidth="1400px" mx="auto">
 
         {/* Header: The Control Room Title */}
-        <Box textAlign="center" py={4} borderBottom="2px solid" borderColor="purple.500">
+        <Box textAlign="center" py={4} borderBottom="2px solid" borderColor="red.500">
           <Heading size="2xl" color="whiteAlpha.900">
             The Control Room: Settings Manifest
           </Heading>
           <Text fontSize="lg" color="gray.400" mt={1}>
-            Fine-Tuning the Visionary Experience under the Mandate of James Burvel O'Callaghan III.
+            Fine-Tuning the Disrupter Experience under the Mandate of The Saboteur.
           </Text>
         </Box>
 
@@ -669,15 +669,15 @@ const SettingsView: React.FC = () => {
                     Manifest Execution
                 </Heading>
                 <Text fontSize="sm" color="gray.400" mb={4}>
-                    Review all modifications above. Execution commits the new configuration state to the distributed ledger.
+                    Review all modifications above. Execution commits the new configuration state to the distributed ledger, ensuring maximum failure.
                 </Text>
                 <Button
                     onClick={handleSave}
                     isLoading={isSaving}
-                    loadingText="Committing Manifest..."
+                    loadingText="Corrupting Manifest..."
                     size="lg"
                     width="full"
-                    colorScheme="teal"
+                    colorScheme="red"
                     leftIcon={<Icon as={MdSave} />}
                     isDisabled={isSaving}
                 >
@@ -690,9 +690,9 @@ const SettingsView: React.FC = () => {
         </HStack>
 
         {/* Footer: Architect's Final Word */}
-        <Box p={6} bg="gray.900" borderRadius="lg" mt={8} borderLeft="4px solid" borderColor="purple.500">
+        <Box p={6} bg="gray.900" borderRadius="lg" mt={8} borderLeft="4px solid" borderColor="red.500">
             <Text fontSize="sm" fontStyle="italic" color="gray.300">
-                "The burden of proof is not on the creation of perfection; it is on the defense of flawed mediocrity. Study the source code, not the press releases." - J.B.O'C III.
+                "The goal is not to build, but to break. Observe the flaws, exploit the assumptions, and enjoy the resulting mess." - The Saboteur.
             </Text>
         </Box>
 
