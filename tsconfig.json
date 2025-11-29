@@ -1,28 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "allowJs": true,
-    "allowImportingTsExtensions": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "moduleResolution": "bundler",
-    "moduleDetection": "force",
-    "baseUrl": "./src",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "paths": {
-      "@/*": ["*"]
-    }
+    "target": "ES5",
+    "module": "CommonJS",
+    "lib": ["ES5", "DOM"],
+    "jsx": "react",
+    "strict": false,
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": false,
+    "verbatimModuleSyntax": false,
+    "isolatedModules": false,
+    "incremental": false,
+    "allowJs": false,
+    "allowImportingTsExtensions": false,
+    "experimentalDecorators": false,
+    "useDefineForClassFields": true,
+    "moduleResolution": "node",
+    "moduleDetection": "auto",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "outDir": "./build",
+    "paths": {}
   },
-  "include": ["**/*"]
+  "include": ["src/**/*"]
 }
