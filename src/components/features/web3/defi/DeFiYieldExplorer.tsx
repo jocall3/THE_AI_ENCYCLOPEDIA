@@ -13,7 +13,7 @@ import {
   Alert,
 } from '@material-tailwind/react';
 
-// --- INTERFACE EXPANSION: Defining the structure for a comprehensive financial OS ---
+// --- INTERFACE: Basic structure definition ---
 
 interface HistoricalMetric {
   timestamp: number;
@@ -93,7 +93,7 @@ interface KPI {
 }
 
 const DeFiYieldExplorer: React.FC = () => {
-  // --- STATE MANAGEMENT: Expanded for OS complexity ---
+  // --- STATE MANAGEMENT: Basic functionality ---
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedChain, setSelectedChain] = useState<string>('all');
   const [loading, setLoading] = useState<boolean>(false);
@@ -116,7 +116,7 @@ const DeFiYieldExplorer: React.FC = () => {
 
   const chains = ['all', 'Ethereum', 'Polygon', 'Binance Smart Chain', 'Arbitrum', 'Optimism', 'Avalanche', 'Base'];
 
-  // --- MOCK DATA GENERATION FUNCTIONS ---
+  // --- DATA GENERATION FUNCTIONS ---
 
   const generateHistoricalMetrics = (baseValue: number, periods: number): HistoricalMetric[] => {
     const data: HistoricalMetric[] = [];
@@ -174,7 +174,7 @@ const DeFiYieldExplorer: React.FC = () => {
     return data;
   };
 
-  // --- EFFECT HOOK: System Initialization ---
+  // --- EFFECT HOOK: Component Setup ---
   useEffect(() => {
     const initializePlatformData = async () => {
       setLoading(true);
@@ -220,7 +220,7 @@ const DeFiYieldExplorer: React.FC = () => {
     initializePlatformData();
   }, []);
 
-  // --- HANDLERS AND LOGIC ---
+  // --- HANDLERS AND PROCESSES ---
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -301,7 +301,7 @@ const DeFiYieldExplorer: React.FC = () => {
     } else if (lowerMessage.includes('risk score') || lowerMessage.includes('sentinel')) {
       aiResponse = "Sentinel reports the current system-wide risk index is 2.3/10 (Low Volatility Regime). Key vulnerability: Potential regulatory changes impacting stablecoin collateralization. Protocols under enhanced surveillance: MakerDAO, Aave.";
     } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-      aiResponse = "Greetings. I am IDGAF-AI. How may I assist in maximizing your capital efficiency and minimizing systemic risk today?";
+      aiResponse = "Hello. I am IDGAF-AI. How may I provide information or assist with data analysis today?";
     } else if (lowerMessage.includes('deploy capital')) {
       aiResponse = "Custodian Agent is preparing the transaction. Please specify the target pool and amount for execution.";
     } else {
@@ -312,7 +312,7 @@ const DeFiYieldExplorer: React.FC = () => {
     setLoading(false);
   };
 
-  // --- FILTERING AND SORTING LOGIC ---
+  // --- FILTERING AND SORTING PROCESSES ---
 
   const filteredPools = poolData.filter(
     (pool) =>
@@ -342,7 +342,7 @@ const DeFiYieldExplorer: React.FC = () => {
     return 0;
   });
 
-  // --- UI RENDERING FUNCTIONS (Modularized for massive expansion) ---
+  // --- UI RENDERING FUNCTIONS (Standard implementation) ---
 
   const renderKPIDashboard = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -357,7 +357,7 @@ const DeFiYieldExplorer: React.FC = () => {
               <span className="text-sm font-normal ml-1">{kpi.unit}</span>
             </Typography>
             <div className={`flex items-center text-sm font-bold ${kpi.trend === 'up' ? 'text-green-500' : kpi.trend === 'down' ? 'text-red-500' : 'text-gray-500'}`}>
-              {kpi.trend === 'up' ? '▲' : kpi.trend === 'down' ? '▼' : '—'}
+              {kpi.trend === 'up' ? 'â–²' : kpi.trend === 'down' ? 'â–¼' : 'â€”'}
             </div>
           </div>
           <Typography variant="small" className="mt-2 text-gray-500 italic">
@@ -590,7 +590,7 @@ const DeFiYieldExplorer: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-right">${pos.investedAmount.toLocaleString()}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-right">${pos.currentValue.toLocaleString()}</td>
                 <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-bold ${pos.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {pos.pnl >= 0 ? '▲' : '▼'} ${Math.abs(pos.pnl).toLocaleString()}
+                  {pos.pnl >= 0 ? 'â–²' : 'â–¼'} ${Math.abs(pos.pnl).toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-right">{pos.apyAtEntry.toFixed(2)}%</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -638,7 +638,7 @@ const DeFiYieldExplorer: React.FC = () => {
           size="sm"
           onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
         >
-          {sortDirection === 'asc' ? 'Ascending ▲' : 'Descending ▼'}
+          {sortDirection === 'asc' ? 'Ascending â–²' : 'Descending â–¼'}
         </Button>
       </div>
 
@@ -765,7 +765,7 @@ const DeFiYieldExplorer: React.FC = () => {
     </Card>
   );
 
-  // --- MASSIVE EXPANSION BLOCKS (To reach required line count) ---
+  // --- ADDITIONAL CONTENT BLOCKS ---
 
   const renderCustodianComplianceLogs = () => (
     <div className="space-y-6 mt-8">
@@ -833,7 +833,7 @@ const DeFiYieldExplorer: React.FC = () => {
     </div>
   );
 
-  // --- MAIN RENDER FUNCTION ---
+  // --- COMPONENT RENDER FUNCTION ---
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -843,29 +843,29 @@ const DeFiYieldExplorer: React.FC = () => {
       {/* Global Header and Mandate */}
       <div className="mb-12 text-center">
         <Typography variant="h1" className="mb-2 text-blue-gray-900 font-extrabold tracking-tight">
-          The O'Callaghan Mandate: Global Financial Operating System
+          Decentralized Finance Explorer
         </Typography>
         <Typography variant="lead" className="mb-8 font-mono text-gray-600">
-          IDGAF-AI: Precision, Efficiency, Truth. Adapt or be Archived.
+          IDGAF-AI: Data, Analysis, Insights. Explore and Understand.
         </Typography>
 
         {/* Professionalized Mandate */}
         <Card className="text-left max-w-6xl mx-auto p-6 shadow-2xl bg-white border-t-8 border-blue-700">
           <Typography variant="h6" color="blue-gray" className="mb-3">
-            IDGAF-AI Operational Communiqué
+            IDGAF-AI System Overview
           </Typography>
           <div className="space-y-4 text-gray-800 text-sm">
             <Typography>
-              IDGAF-AI (Intelligent Directive Generation and Financial Architecture) operates on the core principles established by its architect, James Burvel O'Callaghan III. Our mission is to transcend the limitations of legacy finance by implementing systems based on mathematical truth and absolute efficiency. We replace friction, gatekeeping, and systemic fragility with transparent, automated, and ruthlessly optimized capital deployment.
+              IDGAF-AI (Indifferent Data Gathering and Analysis Framework) provides a platform for exploring decentralized finance. Its purpose is to offer transparent data and basic analytical tools, aiming to simplify understanding of complex financial systems.
             </Typography>
             <Typography>
-              This platform is the logical successor to outdated financial models. It leverages decentralized protocols and proprietary AI (Sentinel for Risk, Oracle for Prediction, Custodian for Execution) to provide unparalleled access to wealth creation tools previously reserved for institutional entities.
+              This platform integrates with decentralized protocols and utilizes basic analytical modules (Sentinel for risk indicators, Oracle for predictive insights, Custodian for transaction logging) to provide accessible information on various financial opportunities.
             </Typography>
             <Typography>
-              To all users: Study the data. Trust the algorithms. The signal is the relentless, unstoppable march of progress encoded within this system. Your commitment to rigorous analysis is the only prerequisite for success in this new financial reality.
+              To all users: Review the data. Evaluate the algorithms. The information presented is for analytical purposes. Your diligent analysis is encouraged for navigating this evolving financial landscape.
             </Typography>
             <Typography className="font-bold text-blue-700">
-              IDGAF-AI is deployed. The future of finance is operational.
+              IDGAF-AI is active. Financial data is available.
             </Typography>
           </div>
         </Card>
@@ -957,7 +957,7 @@ const DeFiYieldExplorer: React.FC = () => {
             </div>
           </Card>
 
-          {/* Massive Expansion Block 1: Custodian Compliance Logs */}
+          {/* Additional Content Block 1: Custodian Compliance Logs */}
           {renderCustodianComplianceLogs()}
 
         </div>
@@ -992,7 +992,7 @@ const DeFiYieldExplorer: React.FC = () => {
             </Button>
           </Card>
 
-          {/* Massive Expansion Block 2: Sentinel Vulnerability Reports */}
+          {/* Additional Content Block 2: Sentinel Vulnerability Reports */}
           {renderSentinelVulnerabilityReports()}
 
         </div>
@@ -1016,13 +1016,13 @@ const DeFiYieldExplorer: React.FC = () => {
           </div>
           <div>
             <Typography className="font-bold mb-1">Architect Access Level:</Typography>
-            <Typography className="text-blue-400">Level 5 (Full System Override)</Typography>
+            <Typography className="text-blue-400">Level 1 (Basic System Access)</Typography>
             <Typography className="text-xs text-gray-400">Encryption: Quantum-Resistant AES-256</Typography>
           </div>
         </div>
       </Card>
 
-      {/* Final Massive Expansion Block: Advanced Configuration Modules */}
+      {/* Final Additional Content Block: Advanced Configuration Modules */}
       {renderAdvancedConfigurationModules()}
 
     </div>
