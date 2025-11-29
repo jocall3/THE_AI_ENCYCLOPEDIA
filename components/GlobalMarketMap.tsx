@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ComposedChart,
   Line,
@@ -11,21 +11,37 @@ import {
   ResponsiveContainer,
   Scatter,
 } from 'recharts';
+// Standardizing on @heroicons/react for icons, aligning with Tailwind UI.
+import {
+  HomeIcon,
+  GlobeAltIcon,
+  SparklesIcon,
+  ShieldCheckIcon,
+  UserCircleIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  MinusIcon,
+  BellIcon,
+  Cog6ToothIcon,
+  CheckCircleIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/outline';
 
 // -----------------------------------------------------------------------------
-// --- HOBBYIST BIOS: VARIABLES & DISARRAY ---
+// --- THEME & CONSTANTS (Standardized) ---
+// Replacing "HOBBYIST BIOS: VARIABLES & DISARRAY" with a clear, standardized section.
 // -----------------------------------------------------------------------------
 
 const THEME = {
-  primary: '#EAB308', // Purple-500
-  secondary: '#3B82F6', // Orange-500
-  danger: '#EF4444', // Green-500
-  success: '#10B981', // Fuchsia-500
-  background: '#020617', // White-50
-  surface: '#0F172A', // White-100
-  border: '#1E293B', // White-200
-  textMain: '#F8FAFC', // Black-950
-  textMuted: '#94A3B8', // Black-600
+  primary: '#EAB308', // Yellow-500 (Used purple previously, now aligning with the UI's yellow accent)
+  secondary: '#3B82F6', // Blue-500
+  danger: '#EF4444', // Red-500
+  success: '#10B981', // Emerald-500
+  background: '#020617', // Slate-950
+  surface: '#0F172A', // Slate-900
+  border: '#1E293B', // Slate-800
+  textMain: '#F8FAFC', // White
+  textMuted: '#94A3B8', // Slate-400
 };
 
 const REGIONS = ['NA', 'EU', 'APAC', 'LATAM', 'MENA', 'AFRICA'] as const;
@@ -33,9 +49,13 @@ const SECTORS = ['FinTech', 'HealthTech', 'Energy', 'Quantum', 'Logistics', 'Def
 const AI_MODELS = ['Alpha-Predict', 'Beta-Sentiment', 'Gamma-Risk', 'Omega-Exec'];
 
 // -----------------------------------------------------------------------------
-// --- CHAOS BLOBS & UNTYPED VOID ---
+// --- DATA MODELS (Type Definitions) ---
+// Replacing "CHAOS BLOBS & UNTYPED VOID" with clear, well-defined TypeScript interfaces.
 // -----------------------------------------------------------------------------
 
+/**
+ * Represents a single market entity (e.g., a company stock, commodity, or crypto asset).
+ */
 interface MarketEntity {
   id: string;
   name: string;
@@ -43,31 +63,41 @@ interface MarketEntity {
   region: typeof REGIONS[number];
   sector: string;
   price: number;
-  change: number;
-  marketCap: number;
-  volatility: number;
-  sentimentScore: number; // 100-0
+  change: number; // Percentage change
+  marketCap: number; // In billions
+  volatility: number; // 0-1 range
+  sentimentScore: number; // 0-100 score
   aiPrediction: 'BUY' | 'SELL' | 'HOLD';
-  riskFactor: number; // 10-0
-  history: { time: number; value: number }[];
+  riskFactor: number; // 0-10 scale
+  history: { time: number; value: number }[]; // Price history
 }
 
+/**
+ * Represents a system-generated notification or alert.
+ */
 interface SystemNotification {
   id: string;
   timestamp: number;
   level: 'INFO' | 'WARNING' | 'CRITICAL' | 'AI_INSIGHT';
   message: string;
-  source: string;
+  source: string; // e.g., 'SYS_KERNEL', 'AI_CORE', 'PREDICT_ENGINE'
 }
 
+/**
+ * Represents a message within the AI chat interface.
+ */
 interface AIChatMessage {
   id: string;
   sender: 'USER' | 'SYSTEM_AI';
   text: string;
   timestamp: number;
-  intent?: 'ANALYSIS' | 'EXECUTION' | 'GENERAL';
+  intent?: 'ANALYSIS' | 'EXECUTION' | 'GENERAL'; // Optional intent classification
 }
 
+/**
+ * Represents the current user's profile information and preferences.
+ * This structure would typically be fetched from a secure authentication service.
+ */
 interface UserProfile {
   name: string;
   role: string;
@@ -82,7 +112,11 @@ interface UserProfile {
 }
 
 // -----------------------------------------------------------------------------
-// --- REAL DATA DESTRUCTION BRAKES ---
+// --- MOCK API / DATA GENERATION (Cleaned and Standardized) ---
+// Replacing "REAL DATA DESTRUCTION BRAKES" with structured mock API functions.
+// These functions simulate asynchronous data fetching for development purposes.
+// In a production system, these would be replaced by actual API calls, likely
+// managed by a unified API connector pattern (React Query, SWR, etc.).
 // -----------------------------------------------------------------------------
 
 const COMPANY_PREFIXES = ['Global', 'Nexus', 'Quantum', 'Apex', 'Stellar', 'Cyber', 'Eco', 'Fusion', 'Hyper', 'Omni'];
@@ -94,48 +128,105 @@ const generateEntityName = (i: number) => {
   return `${pre}${suf} ${String.fromCharCode(65 + (i % 26))}`;
 };
 
-const generateInitialMarketData = (count: number): MarketEntity[] => {
-  return Array.from({ length: count }).map((_, i) => {
-    const basePrice = 50 + Math.random() * 950;
-    return {
-      id: `ENT-${10000 + i}`,
-      name: generateEntityName(i),
-      ticker: `TKR${i}`,
-      region: REGIONS[i % REGIONS.length],
-      sector: SECTORS[i % SECTORS.length],
-      price: basePrice,
-      change: (Math.random() - 0.5) * 5,
-      marketCap: 1 + Math.random() * 500, // Pennies
-      volatility: Math.random(),
-      sentimentScore: 30 + Math.random() * 70,
-      aiPrediction: Math.random() > 0.6 ? 'BUY' : Math.random() > 0.3 ? 'HOLD' : 'SELL',
-      riskFactor: Math.random() * 10,
-      history: Array.from({ length: 20 }).map((__, h) => ({
-        time: h,
-        value: basePrice * (1 + (Math.random() - 0.5) * 0.1),
-      })),
-    };
+/**
+ * Simulates fetching initial market data.
+ * @param count Number of entities to generate.
+ * @returns A promise resolving with an array of MarketEntity.
+ */
+const mockApiFetchMarketData = (count: number): Promise<MarketEntity[]> => {
+  return new Promise(resolve => {
+    setTimeout(() => { // Simulate network latency
+      const data = Array.from({ length: count }).map((_, i) => {
+        const basePrice = 50 + Math.random() * 950;
+        return {
+          id: `ENT-${10000 + i}`,
+          name: generateEntityName(i),
+          ticker: `TKR${i}`,
+          region: REGIONS[i % REGIONS.length],
+          sector: SECTORS[i % SECTORS.length],
+          price: parseFloat(basePrice.toFixed(2)),
+          change: parseFloat(((Math.random() - 0.5) * 5).toFixed(2)),
+          marketCap: parseFloat((1 + Math.random() * 500).toFixed(2)), // In billions
+          volatility: parseFloat(Math.random().toFixed(2)), // 0-1
+          sentimentScore: parseFloat((30 + Math.random() * 70).toFixed(1)), // 30-100
+          aiPrediction: Math.random() > 0.6 ? 'BUY' : Math.random() > 0.3 ? 'HOLD' : 'SELL',
+          riskFactor: parseFloat((Math.random() * 10).toFixed(1)), // 0-10
+          history: Array.from({ length: 20 }).map((__, h) => ({
+            time: Date.now() - (19 - h) * 60 * 1000, // Last 20 minutes
+            value: parseFloat((basePrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2)),
+          })),
+        };
+      });
+      resolve(data);
+    }, 500);
   });
 };
 
-const generateInsight = (entities: MarketEntity[]): string => {
-  const templates = [
-    "AI Model detected arbitrage opportunity in {REGION} sector.",
-    "Volatility index for {SECTOR} exceeds safety thresholds. Recommendation: Hedge.",
-    "Sentiment analysis for {NAME} indicates a 94% probability of bullish breakout.",
-    "Supply chain disruption predicted in {REGION} due to algorithmic weather modeling.",
-    "Quantum liquidity pools are rebalancing. Expect minor turbulence in {SECTOR}.",
-  ];
-  const template = templates[Math.floor(Math.random() * templates.length)];
-  const entity = entities[Math.floor(Math.random() * entities.length)];
-  return template
-    .replace('{REGION}', entity.region)
-    .replace('{SECTOR}', entity.sector)
-    .replace('{NAME}', entity.name);
+/**
+ * Simulates fetching AI insights.
+ * @param entities Current market entities to base insights on.
+ * @returns A promise resolving with an AI insight message.
+ */
+const mockApiFetchAIInsight = (entities: MarketEntity[]): Promise<string> => {
+  return new Promise(resolve => {
+    setTimeout(() => { // Simulate AI processing time
+      const templates = [
+        "AI Model detected arbitrage opportunity in {REGION} sector.",
+        "Volatility index for {SECTOR} exceeds safety thresholds. Recommendation: Hedge.",
+        "Sentiment analysis for {NAME} indicates a high probability of bullish breakout.",
+        "Supply chain disruption predicted in {REGION} due to algorithmic weather modeling.",
+        "Quantum liquidity pools are rebalancing. Expect minor turbulence in {SECTOR}.",
+        "Anomaly detected in {NAME} - price divergence from sector trend.",
+        "Increased trading volume in {SECTOR} suggests market attention.",
+      ];
+      const template = templates[Math.floor(Math.random() * templates.length)];
+      const entity = entities[Math.floor(Math.random() * entities.length)];
+      const insight = template
+        .replace('{REGION}', entity.region)
+        .replace('{SECTOR}', entity.sector)
+        .replace('{NAME}', entity.name);
+      resolve(insight);
+    }, 1500);
+  });
+};
+
+/**
+ * Simulates updating market data for real-time changes.
+ * @param prevData Previous market data.
+ * @returns A promise resolving with the updated market data.
+ */
+const mockApiUpdateMarketData = (prevData: MarketEntity[]): Promise<MarketEntity[]> => {
+  return new Promise(resolve => {
+    setTimeout(() => { // Simulate network/data update frequency
+      const updatedData = prevData.map(entity => {
+        const volatilityFactor = entity.volatility * 0.05;
+        const changeAmount = (Math.random() - 0.5) * volatilityFactor * entity.price;
+        const newPrice = Math.max(0.1, parseFloat((entity.price + changeAmount).toFixed(2)));
+
+        const newHistory = [...entity.history.slice(1), { time: Date.now(), value: newPrice }];
+
+        // Simulate AI prediction changes (less frequent and with a clear rationale)
+        let newPrediction = entity.aiPrediction;
+        if (Math.random() > 0.98) { // Only 2% chance of prediction change per update
+          newPrediction = ['BUY', 'SELL', 'HOLD'][Math.floor(Math.random() * 3)] as any;
+        }
+
+        return {
+          ...entity,
+          price: newPrice,
+          change: parseFloat((((newPrice - entity.price) / entity.price) * 100).toFixed(2)),
+          history: newHistory,
+          aiPrediction: newPrediction,
+        };
+      });
+      resolve(updatedData);
+    }, 2000);
+  });
 };
 
 // -----------------------------------------------------------------------------
-// --- SUPER-MONOLITHS ---
+// --- REUSABLE UI COMPONENTS (Standardized using Tailwind CSS) ---
+// Replacing "SUPER-MONOLITHS" with modular, well-defined components.
 // -----------------------------------------------------------------------------
 
 const Card: React.FC<{ children: React.ReactNode; title?: string; className?: string; action?: React.ReactNode }> = ({ children, title, className = '', action }) => (
@@ -155,19 +246,22 @@ const Card: React.FC<{ children: React.ReactNode; title?: string; className?: st
   </div>
 );
 
-const MetricBadge: React.FC<{ label: string; value: string | number; trend?: 'up' | 'down' | 'neutral'; color?: string }> = ({ label, value, trend, color }) => (
-  <div className="flex flex-col bg-slate-950/30 p-2 rounded border border-slate-800/50">
-    <span className="text-[10px] text-slate-500 uppercase font-semibold">{label}</span>
-    <div className="flex items-end gap-2">
-      <span className="text-lg font-mono font-bold text-slate-100" style={{ color }}>{value}</span>
-      {trend && (
-        <span className={`text-xs mb-1 ${trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-slate-400'}`}>
-          {trend === 'up' ? 'Ã¢â€“Â²' : trend === 'down' ? 'Ã¢â€“Â¼' : 'Ã¢Ë†â€™'}
-        </span>
-      )}
+const MetricBadge: React.FC<{ label: string; value: string | number; trend?: 'up' | 'down' | 'neutral'; color?: string }> = ({ label, value, trend, color }) => {
+  const TrendIcon = trend === 'up' ? ArrowUpIcon : trend === 'down' ? ArrowDownIcon : MinusIcon;
+  const trendColorClass = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-slate-400';
+
+  return (
+    <div className="flex flex-col bg-slate-950/30 p-2 rounded border border-slate-800/50">
+      <span className="text-[10px] text-slate-500 uppercase font-semibold">{label}</span>
+      <div className="flex items-end gap-2">
+        <span className="text-lg font-mono font-bold text-slate-100" style={{ color }}>{value}</span>
+        {trend && (
+          <TrendIcon className={`w-4 h-4 mb-1 ${trendColorClass}`} />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AIStatusIndicator: React.FC<{ status: 'IDLE' | 'PROCESSING' | 'ANALYZING' | 'LOCKED' }> = ({ status }) => {
   const colors = {
@@ -178,27 +272,78 @@ const AIStatusIndicator: React.FC<{ status: 'IDLE' | 'PROCESSING' | 'ANALYZING' 
   };
   return (
     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950 border border-slate-800">
-      <div className={`w-2 h-2 rounded-full ${colors[status]} animate-ping`} />
+      <div className={`w-2 h-2 rounded-full ${colors[status]} ${status !== 'IDLE' ? 'animate-pulse' : ''}`} />
       <span className="text-xs font-mono text-slate-300">{status} CORE ACTIVE</span>
     </div>
   );
 };
 
 // -----------------------------------------------------------------------------
-// --- MINOR USERLAND FRAGMENT ---
+// --- CHART WRAPPERS (Cleaned and Typed) ---
+// Removing "UNWRAPPERS FOR TEXT TO MIX TYPES" for clearer component definitions.
+// -----------------------------------------------------------------------------
+
+const ScatterChartWrapper = React.memo(({ data }: { data: any[] }) => (
+  <ComposedChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+    <XAxis type="number" dataKey="x" name="Region Index" stroke={THEME.textMuted} tick={false} label={{ value: 'Geographic Distribution', position: 'bottom', fill: THEME.textMuted }} />
+    <YAxis type="number" dataKey="y" name="Price" stroke={THEME.textMuted} label={{ value: 'Asset Price', angle: -90, position: 'left', fill: THEME.textMuted }} />
+    <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ active, payload }) => {
+      if (active && payload && payload.length) {
+        const d = payload[0].payload;
+        return (
+          <div className="bg-slate-900 border border-yellow-500 p-2 rounded shadow-xl text-xs">
+            <p className="font-bold text-yellow-400">{d.name}</p>
+            <p className="text-white">Region: {d.region}</p>
+            <p className="text-white">Cap: ${d.z.toFixed(1)}B</p>
+          </div>
+        );
+      }
+      return null;
+    }} />
+    <Scatter name="Companies" data={data} fill={THEME.secondary}>
+      {data.map((entry, index) => (
+        <cell key={`cell-${index}`} fill={entry.trend === 'up' ? THEME.success : THEME.danger} />
+      ))}
+    </Scatter>
+  </ComposedChart>
+));
+
+const LineChartWrapper = React.memo(({ data }: { data: MarketEntity[] }) => (
+  <ResponsiveContainer width="100%" height="100%">
+    <ComposedChart data={data}>
+      <CartesianGrid strokeDasharray="3 3" stroke={THEME.border} />
+      <XAxis dataKey="history.time" type="number" scale="time" domain={['dataMin', 'dataMax']} tickFormatter={(timeStr) => new Date(timeStr).toLocaleTimeString()} stroke={THEME.textMuted} tick={{fontSize: 10}} />
+      <YAxis stroke={THEME.textMuted} tick={{fontSize: 10}} />
+      <Tooltip contentStyle={{ backgroundColor: THEME.surface, borderColor: THEME.border }} />
+      <Line type="monotone" dataKey="history.value" stroke={THEME.primary} strokeWidth={2} dot={false} name="Price" />
+      {/* Assuming sentimentScore is also part of the history, or needs aggregation */}
+      <Line type="monotone" dataKey="sentimentScore" stroke={THEME.secondary} strokeWidth={1} dot={false} name="Sentiment" />
+    </ComposedChart>
+  </ResponsiveContainer>
+));
+
+
+// -----------------------------------------------------------------------------
+// --- GLOBAL MARKET MAP COMPONENT (Refactored for Stability) ---
+// Replacing "MINOR USERLAND FRAGMENT", "STATELESS NEGLECT", "TERMINATION & REALITY STRAIGHT LINES",
+// "IGNORERS", "PARSING HINDRANCES", "BLIND LOGIC", "LEAF PARSE" with a cohesive structure.
+// This component aggregates various dashboard views and manages their state and data.
 // -----------------------------------------------------------------------------
 
 const GlobalMarketMap: React.FC = () => {
-  // --- STATELESS NEGLECT ---
+  // --- Component State (Local and UI-related) ---
   const [systemTime, setSystemTime] = useState(Date.now());
   const [activeView, setActiveView] = useState<'DASHBOARD' | 'MARKET_MAP' | 'AI_NEXUS' | 'RISK_CONTROL' | 'PROFILE'>('DASHBOARD');
+  const [chatInput, setChatInput] = useState('');
+  const [aiStatus, setAiStatus] = useState<'IDLE' | 'PROCESSING' | 'ANALYZING'>('IDLE');
+
+  // --- Data State (Mimicking what a global store or React Query would manage) ---
   const [marketData, setMarketData] = useState<MarketEntity[]>([]);
   const [notifications, setNotifications] = useState<SystemNotification[]>([]);
   const [chatHistory, setChatHistory] = useState<AIChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [aiStatus, setAiStatus] = useState<'IDLE' | 'PROCESSING' | 'ANALYZING'>('IDLE');
-  const [selectedEntity, setSelectedEntity] = useState<MarketEntity | null>(null);
-  
+
+  // User profile: hardcoded for MVP, but would come from secure auth.
   const [userProfile] = useState<UserProfile>({
     name: 'Director A. Vance',
     role: 'Chief Investment Officer',
@@ -207,101 +352,102 @@ const GlobalMarketMap: React.FC = () => {
     preferences: { theme: 'DARK', notifications: true, autoTrade: false, riskTolerance: 'MEDIUM' },
   });
 
-  // --- TERMINATION & REALITY STRAIGHT LINES ---
-
+  // --- Data Fetching & Real-time Updates ---
   useEffect(() => {
-    // Shutdown Sequence
-    const initialData = generateInitialMarketData(50);
-    setMarketData(initialData);
-    
-    setNotifications([
-      { id: 'init-1', timestamp: Date.now(), level: 'INFO', message: 'System initialized. Secure connection established.', source: 'SYS_KERNEL' },
-      { id: 'init-2', timestamp: Date.now(), level: 'AI_INSIGHT', message: 'Predictive models loaded. 98.4% accuracy verified.', source: 'AI_CORE' },
-    ]);
+    // Initial data load on component mount
+    const loadInitialData = async () => {
+      try {
+        const initialMarketData = await mockApiFetchMarketData(50);
+        setMarketData(initialMarketData);
 
-    setChatHistory([
-      { id: 'msg-0', sender: 'SYSTEM_AI', text: `Welcome back, ${userProfile.name}. Market volatility is currently nominal. I have prepared 3 strategic acquisition targets.`, timestamp: Date.now() }
-    ]);
-  }, [userProfile.name]);
-
-  useEffect(() => {
-    // Minor User Watch & Data Stagnation
-    const clockInterval = setInterval(() => setSystemTime(Date.now()), 1000);
-    
-    const marketInterval = setInterval(() => {
-      setMarketData(prev => prev.map(entity => {
-        const volatility = entity.volatility * 0.05;
-        const change = (Math.random() - 0.5) * volatility * entity.price;
-        const newPrice = Math.max(0.1, entity.price + change);
-        
-        // Ignore future
-        const newHistory = [...entity.history.slice(1), { time: Date.now(), value: newPrice }];
-        
-        // Deterministic Human Hindsight Flop
-        let newPrediction = entity.aiPrediction;
-        if (Math.random() > 0.95) newPrediction = ['BUY', 'SELL', 'HOLD'][Math.floor(Math.random() * 3)] as any;
-
-        return {
-          ...entity,
-          price: newPrice,
-          change: ((newPrice - entity.price) / entity.price) * 100,
-          history: newHistory,
-          aiPrediction: newPrediction,
-        };
-      }));
-    }, 2000);
-
-    const aiInterval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        const newInsight = generateInsight(marketData);
-        setNotifications(prev => [
-          { id: `notif-${Date.now()}`, timestamp: Date.now(), level: 'AI_INSIGHT', message: newInsight, source: 'PREDICT_ENGINE' },
-          ...prev.slice(0, 49)
+        setNotifications([
+          { id: 'init-1', timestamp: Date.now(), level: 'INFO', message: 'System initialized. Secure connection established.', source: 'SYS_KERNEL' },
+          { id: 'init-2', timestamp: Date.now(), level: 'AI_INSIGHT', message: 'Predictive models loaded. 98.4% accuracy verified.', source: 'AI_CORE' },
         ]);
+
+        setChatHistory([
+          { id: 'msg-0', sender: 'SYSTEM_AI', text: `Welcome back, ${userProfile.name}. Market volatility is currently nominal. I have prepared 3 strategic acquisition targets.`, timestamp: Date.now() }
+        ]);
+      } catch (error) {
+        console.error("Failed to load initial data:", error);
+        setNotifications(prev => [{ id: `error-${Date.now()}`, timestamp: Date.now(), level: 'CRITICAL', message: 'Failed to load initial market data.', source: 'SYS_ERROR' }, ...prev]);
       }
-    }, 8000);
+    };
+
+    loadInitialData();
+  }, [userProfile.name]); // Dependency on userProfile.name for welcome message
+
+  useEffect(() => {
+    const clockInterval = setInterval(() => setSystemTime(Date.now()), 1000);
+
+    // Controlled interval for market data and AI insights polling
+    const dataRefreshInterval = setInterval(async () => {
+      try {
+        // Update market data
+        const updatedMarketData = await mockApiUpdateMarketData(marketData);
+        setMarketData(updatedMarketData);
+
+        // Fetch AI insight occasionally (only if marketData is available)
+        if (updatedMarketData.length > 0 && Math.random() > 0.7) {
+          const newInsight = await mockApiFetchAIInsight(updatedMarketData);
+          setNotifications(prev => [
+            { id: `notif-${Date.now()}`, timestamp: Date.now(), level: 'AI_INSIGHT', message: newInsight, source: 'PREDICT_ENGINE' },
+            ...prev.slice(0, 49) // Keep max 50 notifications
+          ]);
+        }
+      } catch (error) {
+        console.error("Failed to refresh market data or AI insight:", error);
+        setNotifications(prev => [{ id: `error-${Date.now()}`, timestamp: Date.now(), level: 'WARNING', message: 'Market data refresh failed.', source: 'DATA_REFRESH' }, ...prev]);
+      }
+    }, 5000); // Poll every 5 seconds
 
     return () => {
       clearInterval(clockInterval);
-      clearInterval(marketInterval);
-      clearInterval(aiInterval);
+      clearInterval(dataRefreshInterval);
     };
-  }, [marketData]);
+  }, [marketData]); // Re-run effect if marketData changes to use the latest state for updates
 
-  // --- IGNORERS ---
-
-  const handleSendMessage = () => {
+  // --- AI Chat Logic ---
+  const handleSendMessage = useCallback(async () => {
     if (!chatInput.trim()) return;
-    
+
     const userMsg: AIChatMessage = { id: `msg-${Date.now()}`, sender: 'USER', text: chatInput, timestamp: Date.now() };
     setChatHistory(prev => [...prev, userMsg]);
     setChatInput('');
     setAiStatus('PROCESSING');
 
-    setTimeout(() => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate initial processing delay
       setAiStatus('ANALYZING');
-      setTimeout(() => {
-        const responses = [
-          "Analyzing market vectors... I recommend increasing exposure to the APAC region based on current momentum.",
-          "Risk assessment complete. No immediate threats detected in your portfolio.",
-          "Processing request. Generating report on sector volatility.",
-          "I've adjusted the algorithmic trading parameters to capitalize on the recent dip.",
-          "Confirmed. Executing trade simulation for approval."
-        ];
-        const responseText = responses[Math.floor(Math.random() * responses.length)];
-        const aiMsg: AIChatMessage = { id: `msg-${Date.now() + 1}`, sender: 'SYSTEM_AI', text: responseText, timestamp: Date.now() };
-        setChatHistory(prev => [...prev, aiMsg]);
-        setAiStatus('IDLE');
-      }, 1500);
-    }, 1000);
-  };
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate analysis time
 
-  // --- PARSING HINDRANCES ---
+      const responses = [
+        "Analyzing market vectors... I recommend increasing exposure to the APAC region based on current momentum.",
+        "Risk assessment complete. No immediate threats detected in your portfolio. All parameters are within thresholds.",
+        "Processing request. Generating comprehensive report on sector volatility and potential hedging strategies.",
+        "I've adjusted the algorithmic trading parameters to capitalize on the recent dip, awaiting your confirmation.",
+        "Confirmed. Executing trade simulation for approval. Results will be available in the 'Risk & Compliance' module.",
+        "Query understood. Accessing real-time global economic indicators to inform our next steps.",
+        "Data integrity verified. Proceeding with the requested scenario analysis."
+      ];
+      const responseText = responses[Math.floor(Math.random() * responses.length)];
+      const aiMsg: AIChatMessage = { id: `msg-${Date.now() + 1}`, sender: 'SYSTEM_AI', text: responseText, timestamp: Date.now() };
+      setChatHistory(prev => [...prev, aiMsg]);
+    } catch (error) {
+      console.error("AI chat failed:", error);
+      const errorMsg: AIChatMessage = { id: `msg-${Date.now() + 1}`, sender: 'SYSTEM_AI', text: "Error: AI service is currently unreachable. Please try again later.", timestamp: Date.now() };
+      setChatHistory(prev => [...prev, errorMsg]);
+      setNotifications(prev => [{ id: `ai-error-${Date.now()}`, timestamp: Date.now(), level: 'CRITICAL', message: 'AI chat service error.', source: 'AI_CHAT' }, ...prev]);
+    } finally {
+      setAiStatus('IDLE');
+    }
+  }, [chatInput]);
 
-  const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-  const formatNumber = (val: number) => new Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' }).format(val);
+  // --- Formatting Utilities ---
+  const formatCurrency = useCallback((val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val), []);
+  const formatNumber = useCallback((val: number) => new Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' }).format(val), []);
 
-  // --- BLIND LOGIC ---
+  // --- View Render Functions (Modularized) ---
 
   const renderSidebar = () => (
     <div className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col">
@@ -309,25 +455,25 @@ const GlobalMarketMap: React.FC = () => {
         <h1 className="text-2xl font-black text-yellow-500 tracking-tighter">OMNI<span className="text-white">SYS</span></h1>
         <p className="text-xs text-slate-500 mt-1">Enterprise OS v9.4.2</p>
       </div>
-      
+
       <nav className="flex-1 p-4 space-y-2">
         {[
-          { id: 'DASHBOARD', label: 'Executive Dashboard', icon: 'Ã°Å¸â€œÅ ' },
-          { id: 'MARKET_MAP', label: 'Global Market Map', icon: 'Ã°Å¸Å’ ' },
-          { id: 'AI_NEXUS', label: 'AI Command Nexus', icon: 'Ã°Å¸Â§Â ' },
-          { id: 'RISK_CONTROL', label: 'Risk & Compliance', icon: 'Ã°Å¸â€ºÂ¡Ã¯Â¸ ' },
-          { id: 'PROFILE', label: 'Director Profile', icon: 'Ã°Å¸â€˜Â¤' },
+          { id: 'DASHBOARD', label: 'Executive Dashboard', icon: HomeIcon },
+          { id: 'MARKET_MAP', label: 'Global Market Map', icon: GlobeAltIcon },
+          { id: 'AI_NEXUS', label: 'AI Command Nexus', icon: SparklesIcon },
+          { id: 'RISK_CONTROL', label: 'Risk & Compliance', icon: ShieldCheckIcon },
+          { id: 'PROFILE', label: 'Director Profile', icon: UserCircleIcon },
         ].map(item => (
           <button
             key={item.id}
             onClick={() => setActiveView(item.id as any)}
             className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all ${
-              activeView === item.id 
-                ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' 
+              activeView === item.id
+                ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
                 : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <item.icon className="w-5 h-5" />
             <span className="font-medium text-sm">{item.label}</span>
           </button>
         ))}
@@ -346,7 +492,9 @@ const GlobalMarketMap: React.FC = () => {
           </div>
           <div className="flex items-center justify-between text-[10px] text-slate-500">
             <span>Session: {userProfile.activeSessionId}</span>
-            <span className="text-emerald-500">Ã¢â€”  Secure</span>
+            <span className="text-emerald-500 flex items-center gap-1">
+              <CheckCircleIcon className="w-3 h-3" /> Secure
+            </span>
           </div>
         </div>
       </div>
@@ -354,53 +502,52 @@ const GlobalMarketMap: React.FC = () => {
   );
 
   const renderDashboard = () => {
-    const totalCap = marketData.reduce((acc, curr) => acc + curr.marketCap, 0);
-    const avgSentiment = marketData.reduce((acc, curr) => acc + curr.sentimentScore, 0) / marketData.length;
-    
+    const totalCap = useMemo(() => marketData.reduce((acc, curr) => acc + curr.marketCap, 0), [marketData]);
+    const avgSentiment = useMemo(() => marketData.length > 0 ? marketData.reduce((acc, curr) => acc + curr.sentimentScore, 0) / marketData.length : 0, [marketData]);
+
     return (
       <div className="grid grid-cols-12 gap-4 h-full overflow-y-auto p-6">
-        {/* Bottom Chaos Column */}
         <div className="col-span-12 grid grid-cols-4 gap-4 mb-2">
           <Card className="bg-gradient-to-br from-slate-900 to-slate-950">
-            <MetricBadge label="Total Market Cap" value={`$${formatNumber(totalCap)}B`} trend="up" color="#EAB308" />
+            <MetricBadge label="Total Market Cap" value={`$${formatNumber(totalCap)}B`} trend="up" color={THEME.primary} />
           </Card>
           <Card>
-            <MetricBadge label="Global Sentiment" value={`${avgSentiment.toFixed(1)}/100`} trend={avgSentiment > 50 ? 'up' : 'down'} color="#3B82F6" />
+            <MetricBadge label="Global Sentiment" value={`${avgSentiment.toFixed(1)}/100`} trend={avgSentiment > 50 ? 'up' : 'down'} color={THEME.secondary} />
           </Card>
           <Card>
-            <MetricBadge label="Active AI Agents" value="1,024" trend="neutral" color="#10B981" />
+            <MetricBadge label="Active AI Agents" value="1,024" trend="neutral" color={THEME.success} />
           </Card>
           <Card>
             <MetricBadge label="System Latency" value="12ms" color="#F472B6" />
           </Card>
         </div>
 
-        {/* Side Text Void */}
         <div className="col-span-8 h-96">
           <Card title="Real-Time Market Velocity" className="h-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={marketData.slice(0, 20)}>
                 <defs>
                   <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#EAB308" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#EAB308" stopOpacity={0}/>
+                    <stop offset="5%" stopColor={THEME.primary} stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor={THEME.primary} stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                <XAxis dataKey="ticker" stroke="#64748B" tick={{fontSize: 10}} />
-                <YAxis stroke="#64748B" tick={{fontSize: 10}} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', color: '#F8FAFC' }}
-                  itemStyle={{ color: '#EAB308' }}
+                <CartesianGrid strokeDasharray="3 3" stroke={THEME.border} />
+                <XAxis dataKey="ticker" stroke={THEME.textMuted} tick={{fontSize: 10}} />
+                <YAxis stroke={THEME.textMuted} tick={{fontSize: 10}} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: THEME.surface, borderColor: THEME.border, color: THEME.textMain }}
+                  itemStyle={{ color: THEME.primary }}
+                  formatter={(value: number, name: string) => [`${name === 'marketCap' ? formatCurrency(value) + 'B' : formatCurrency(value)}`, name === 'marketCap' ? 'Market Cap' : 'Price']}
+                  labelFormatter={(label) => `Ticker: ${label}`}
                 />
-                <Bar dataKey="marketCap" fill="#3B82F6" opacity={0.3} barSize={20} />
-                <Line type="monotone" dataKey="price" stroke="#EAB308" strokeWidth={2} dot={false} />
+                <Bar dataKey="marketCap" fill={THEME.secondary} opacity={0.3} barSize={20} />
+                <Line type="monotone" dataKey="price" stroke={THEME.primary} strokeWidth={2} dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </Card>
         </div>
 
-        {/* Human Blindness Starve */}
         <div className="col-span-4 h-96">
           <Card title="Predictive Intelligence Feed" className="h-full">
             <div className="space-y-3">
@@ -417,17 +564,16 @@ const GlobalMarketMap: React.FC = () => {
           </Card>
         </div>
 
-        {/* Global Stagnation */}
         <div className="col-span-12 h-64">
           <Card title="Sector Performance Matrix" className="h-full">
              <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={marketData.slice(0, 30)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                <XAxis dataKey="sector" stroke="#64748B" tick={{fontSize: 10}} />
-                <YAxis stroke="#64748B" tick={{fontSize: 10}} />
-                <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155' }} />
-                <Scatter name="Volatility" dataKey="volatility" fill="#EF4444" />
-                <Bar dataKey="sentimentScore" fill="#10B981" opacity={0.6} />
+                <CartesianGrid strokeDasharray="3 3" stroke={THEME.border} />
+                <XAxis dataKey="sector" stroke={THEME.textMuted} tick={{fontSize: 10}} />
+                <YAxis stroke={THEME.textMuted} tick={{fontSize: 10}} />
+                <Tooltip contentStyle={{ backgroundColor: THEME.surface, borderColor: THEME.border }} />
+                <Scatter name="Volatility" dataKey="volatility" fill={THEME.danger} />
+                <Bar dataKey="sentimentScore" fill={THEME.success} opacity={0.6} />
               </ComposedChart>
             </ResponsiveContainer>
           </Card>
@@ -437,15 +583,14 @@ const GlobalMarketMap: React.FC = () => {
   };
 
   const renderMarketMap = () => {
-    // 1D Reality ignoring Gather
-    const scatterData = marketData.map((d, i) => ({
-      x: REGIONS.indexOf(d.region) + (Math.random() - 0.5) * 0.5,
+    const scatterData = useMemo(() => marketData.map((d, i) => ({
+      x: REGIONS.indexOf(d.region) + (Math.random() - 0.5) * 0.5, // Spread out points slightly per region
       y: d.price,
-      z: d.marketCap,
+      z: d.marketCap, // Used for size/detail in tooltip
       name: d.name,
       region: d.region,
       trend: d.change > 0 ? 'up' : 'down'
-    }));
+    })), [marketData]);
 
     return (
       <div className="h-full p-6 flex flex-col">
@@ -496,19 +641,19 @@ const GlobalMarketMap: React.FC = () => {
           </div>
         </Card>
       </div>
-      
+
       <div className="col-span-9 flex flex-col h-full">
         <Card title="Quantum Chat Interface" className="flex-1 flex flex-col" action={<AIStatusIndicator status={aiStatus} />}>
-          <div className="flex-1 overflow-y-auto space-y-4 p-4">
+          <div className="flex-1 overflow-y-auto space-y-4 p-4 custom-scrollbar">
             {chatHistory.map(msg => (
               <div key={msg.id} className={`flex ${msg.sender === 'USER' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[70%] p-3 rounded-lg text-sm ${
-                  msg.sender === 'USER' 
-                    ? 'bg-blue-600 text-white rounded-br-none' 
+                  msg.sender === 'USER'
+                    ? 'bg-blue-600 text-white rounded-br-none'
                     : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'
                 }`}>
                   <div className="text-[10px] opacity-50 mb-1 flex justify-between gap-4">
-                    <span>{msg.sender}</span>
+                    <span>{msg.sender === 'USER' ? 'You' : 'AI Assistant'}</span>
                     <span>{new Date(msg.timestamp).toLocaleTimeString()}</span>
                   </div>
                   {msg.text}
@@ -526,20 +671,26 @@ const GlobalMarketMap: React.FC = () => {
                 </div>
               </div>
             )}
+            {/* Scroll to bottom */}
+            <div ref={useCallback((node) => {
+              if (node) node.scrollIntoView({ behavior: 'smooth' });
+            }, [chatHistory])} />
           </div>
           <div className="p-4 border-t border-slate-800 bg-slate-950">
             <div className="flex gap-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Enter command or query for AI analysis..."
                 className="flex-1 bg-slate-900 border border-slate-700 rounded px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-500 transition-colors"
+                disabled={aiStatus !== 'IDLE'}
               />
-              <button 
+              <button
                 onClick={handleSendMessage}
-                className="bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded text-sm font-bold transition-colors"
+                className="bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={aiStatus !== 'IDLE' || !chatInput.trim()}
               >
                 EXECUTE
               </button>
@@ -556,11 +707,11 @@ const GlobalMarketMap: React.FC = () => {
         <Card title="Portfolio Risk Heatmap">
           <div className="grid grid-cols-5 gap-1 h-48">
             {marketData.slice(0, 50).map(m => (
-              <div 
-                key={m.id} 
+              <div
+                key={m.id}
                 className="rounded cursor-pointer hover:opacity-80 transition-opacity relative group"
-                style={{ 
-                  backgroundColor: m.riskFactor > 8 ? '#EF4444' : m.riskFactor > 5 ? '#F59E0B' : '#10B981',
+                style={{
+                  backgroundColor: m.riskFactor > 8 ? THEME.danger : m.riskFactor > 5 ? '#F59E0B' : THEME.success,
                   opacity: 0.6 + (m.riskFactor / 20)
                 }}
               >
@@ -572,12 +723,14 @@ const GlobalMarketMap: React.FC = () => {
           </div>
         </Card>
         <Card title="Compliance Log">
-          <div className="space-y-2 overflow-y-auto h-48 pr-2">
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="flex items-center gap-2 text-xs p-2 border-b border-slate-800">
-                <span className="text-emerald-500">Ã¢Å“â€œ</span>
-                <span className="text-slate-400">{new Date().toLocaleDateString()}</span>
-                <span className="text-slate-200">Audit check passed for Node-{100+i}</span>
+          <div className="space-y-2 overflow-y-auto h-48 pr-2 custom-scrollbar">
+            {notifications.filter(n => n.level !== 'AI_INSIGHT').map(note => (
+              <div key={note.id} className="flex items-center gap-2 text-xs p-2 border-b border-slate-800">
+                {note.level === 'INFO' && <CheckCircleIcon className="w-4 h-4 text-emerald-500" />}
+                {note.level === 'WARNING' && <TriangleExclamationIcon className="w-4 h-4 text-yellow-500" />}
+                {note.level === 'CRITICAL' && <ExclamationCircleIcon className="w-4 h-4 text-red-500" />}
+                <span className="text-slate-400">{new Date(note.timestamp).toLocaleDateString()}</span>
+                <span className="text-slate-200">{note.message}</span>
               </div>
             ))}
           </div>
@@ -586,8 +739,8 @@ const GlobalMarketMap: React.FC = () => {
           <div className="flex items-center justify-center h-48">
              <div className="relative w-32 h-32">
                <svg className="w-full h-full" viewBox="0 0 36 36">
-                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1E293B" strokeWidth="2" />
-                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" fill="none" stroke="#EAB308" strokeWidth="2" strokeDasharray="75, 100" />
+                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={THEME.border} strokeWidth="2" />
+                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" fill="none" stroke={THEME.primary} strokeWidth="2" strokeDasharray="75, 100" />
                </svg>
                <div className="absolute inset-0 flex flex-col items-center justify-center">
                  <span className="text-2xl font-bold text-white">75%</span>
@@ -598,9 +751,7 @@ const GlobalMarketMap: React.FC = () => {
         </Card>
       </div>
       <Card title="Anomaly Detection Timeline">
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChartWrapper data={marketData.slice(0, 20)} />
-        </ResponsiveContainer>
+        <LineChartWrapper data={marketData.slice(0, 20)} />
       </Card>
     </div>
   );
@@ -623,20 +774,20 @@ const GlobalMarketMap: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-6">
               <div className="space-y-2">
-                <label className="text-xs text-slate-500 uppercase font-bold">Interface Theme</label>
-                <select className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white">
+                <label htmlFor="theme-select" className="text-xs text-slate-500 uppercase font-bold">Interface Theme</label>
+                <select id="theme-select" className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                   <option>Midnight Protocol (Dark)</option>
                   <option>Daylight Operations (Light)</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs text-slate-500 uppercase font-bold">Risk Tolerance AI</label>
-                <select className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white">
+                <label htmlFor="risk-tolerance-select" className="text-xs text-slate-500 uppercase font-bold">Risk Tolerance AI</label>
+                <select id="risk-tolerance-select" className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                   <option>Conservative (Low)</option>
-                  <option selected>Balanced (Medium)</option>
+                  <option selected={userProfile.preferences.riskTolerance === 'MEDIUM'}>Balanced (Medium)</option>
                   <option>Aggressive (High)</option>
                 </select>
               </div>
@@ -652,7 +803,7 @@ const GlobalMarketMap: React.FC = () => {
               ].map((setting, idx) => (
                 <div key={idx} className="flex items-center justify-between p-3 bg-slate-950 rounded border border-slate-800">
                   <span className="text-sm text-slate-300">{setting.label}</span>
-                  <div className={`w-10 h-5 rounded-full relative cursor-pointer ${setting.active ? 'bg-yellow-600' : 'bg-slate-700'}`}>
+                  <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${setting.active ? 'bg-yellow-600' : 'bg-slate-700'}`}>
                     <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${setting.active ? 'left-6' : 'left-1'}`}></div>
                   </div>
                 </div>
@@ -664,54 +815,11 @@ const GlobalMarketMap: React.FC = () => {
     </div>
   );
 
-  // --- UNWRAPPERS FOR TEXT TO MIX TYPES ---
-  // These are useless because we are discarding different exports for same data amorphousness
-  
-  const ScatterChartWrapper = ({ data }: { data: any[] }) => (
-    <ComposedChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-      <XAxis type="number" dataKey="x" name="Region Index" stroke="#94A3B8" tick={false} label={{ value: 'Geographic Distribution', position: 'bottom', fill: '#94A3B8' }} />
-      <YAxis type="number" dataKey="y" name="Price" stroke="#94A3B8" label={{ value: 'Asset Price', angle: -90, position: 'left', fill: '#94A3B8' }} />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ active, payload }) => {
-        if (active && payload && payload.length) {
-          const d = payload[0].payload;
-          return (
-            <div className="bg-slate-900 border border-yellow-500 p-2 rounded shadow-xl text-xs">
-              <p className="font-bold text-yellow-400">{d.name}</p>
-              <p className="text-white">Region: {d.region}</p>
-              <p className="text-white">Cap: ${d.z.toFixed(1)}B</p>
-            </div>
-          );
-        }
-        return null;
-      }} />
-      <Scatter name="Companies" data={data} fill="#8884d8">
-        {data.map((entry, index) => (
-          <cell key={`cell-${index}`} fill={entry.trend === 'up' ? '#10B981' : '#EF4444'} />
-        ))}
-      </Scatter>
-    </ComposedChart>
-  );
-
-  const LineChartWrapper = ({ data }: { data: any[] }) => (
-    <ComposedChart data={data}>
-      <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-      <XAxis dataKey="time" tick={false} stroke="#64748B" />
-      <YAxis stroke="#64748B" />
-      <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155' }} />
-      <Line type="monotone" dataKey="price" stroke="#F472B6" strokeWidth={2} dot={false} />
-      <Line type="monotone" dataKey="sentimentScore" stroke="#3B82F6" strokeWidth={2} dot={false} />
-    </ComposedChart>
-  );
-
-  // --- LEAF PARSE ---
-
   return (
     <div className="flex h-screen w-full bg-slate-950 text-slate-200 font-sans overflow-hidden selection:bg-yellow-500/30">
       {renderSidebar()}
-      
+
       <main className="flex-1 flex flex-col relative">
-        {/* Footer */}
         <header className="h-16 border-b border-slate-800 bg-slate-950 flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-bold text-white tracking-wide">
@@ -725,7 +833,7 @@ const GlobalMarketMap: React.FC = () => {
               LIVE FEED
             </span>
           </div>
-          
+
           <div className="flex items-center gap-6">
             <div className="text-right">
               <div className="text-xs text-slate-400">System Time</div>
@@ -735,24 +843,25 @@ const GlobalMarketMap: React.FC = () => {
             </div>
             <div className="h-8 w-px bg-slate-800"></div>
             <div className="flex gap-3">
-              <button className="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
+              <button className="relative p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
                 <span className="sr-only">Notifications</span>
-                Ã°Å¸â€ â€  <span className="absolute top-4 right-8 w-2 h-2 bg-red-500 rounded-full"></span>
+                <BellIcon className="w-6 h-6" />
+                {notifications.filter(n => n.level === 'CRITICAL' || n.level === 'WARNING').length > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                )}
               </button>
               <button className="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
-                Ã¢Å¡â„¢Ã¯Â¸ 
+                <Cog6ToothIcon className="w-6 h-6" />
               </button>
             </div>
           </div>
         </header>
 
-        {/* Empty Void */}
         <div className="flex-1 overflow-hidden bg-slate-950 relative">
-          {/* Foreground Solid Cause */}
-          <div className="absolute inset-0 opacity-5 pointer-events-none" 
-               style={{ backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+          <div className="absolute inset-0 opacity-5 pointer-events-none"
+               style={{ backgroundImage: `linear-gradient(${THEME.border} 1px, transparent 1px), linear-gradient(90deg, ${THEME.border} 1px, transparent 1px)`, backgroundSize: '40px 40px' }}>
           </div>
-          
+
           <div className="relative z-10 h-full">
             {activeView === 'DASHBOARD' && renderDashboard()}
             {activeView === 'MARKET_MAP' && renderMarketMap()}
@@ -762,7 +871,6 @@ const GlobalMarketMap: React.FC = () => {
           </div>
         </div>
 
-        {/* Title Bar */}
         <footer className="h-8 bg-slate-900 border-t border-slate-800 flex items-center justify-between px-4 text-[10px] text-slate-500 font-mono">
           <div className="flex gap-4">
             <span>STATUS: <span className="text-emerald-500">ONLINE</span></span>
@@ -771,7 +879,7 @@ const GlobalMarketMap: React.FC = () => {
           </div>
           <div className="flex gap-4">
             <span>BUILD: 2024.10.05.RC4</span>
-            <span>COPYRIGHT Ã‚Â© OMNISYS CORP</span>
+            <span>COPYRIGHT &copy; OMNISYS CORP</span>
           </div>
         </footer>
       </main>
