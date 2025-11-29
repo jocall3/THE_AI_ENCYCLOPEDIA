@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { PiggyBank, Target, Users, Landmark, Home, Car, Plus, MoreHorizontal, ArrowUpRight, TrendingUp, Gift, GraduationCap } from 'lucide-react';
 
-// --- TYPE DEFINITIONS ---
+// --- CORE DATA STRUCTURE DEFINITIONS ---
 
 // Core User & Member Management
 interface UserProfile {
@@ -127,7 +127,7 @@ interface AuditLogEntry {
   details: any;
 }
 
-// --- MOCK DATA GENERATION UTILITIES ---
+// --- UTILITY FUNCTIONS FOR DATA GENERATION AND FORMATTING ---
 const generateId = () => Math.random().toString(36).substr(2, 9);
 const getRandomDate = (start: Date, end: Date) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
@@ -135,7 +135,7 @@ const formatCompactCurrency = (amount: number) => new Intl.NumberFormat('en-US',
 const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 const formatDateTime = (dateString: string) => new Date(dateString).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-// --- MOCK DATA ---
+// --- STRATEGIC MOCK DATA INITIALIZATION ---
 const mockUsers: UserProfile[] = [
   { id: 'u1', name: 'Alice Johnson', email: 'alice@example.com', avatarUrl: 'https://i.pravatar.cc/150?u=alice', role: 'Admin', permissions: ['manage_all'], lastActive: '2023-10-26T10:30:00Z', bio: 'Lead administrator and financial strategist.', contactInfo: { phone: '555-1234' } },
   { id: 'u2', name: 'Bob Smith', email: 'bob@example.com', avatarUrl: 'https://i.pravatar.cc/150?u=bob', role: 'Contributor', permissions: ['create_vault', 'add_transaction'], lastActive: '2023-10-26T09:45:00Z', bio: 'Active contributor to family and personal vaults.', contactInfo: { linkedin: 'bob-smith' } },
@@ -428,7 +428,7 @@ mockVaults.forEach(vault => {
 });
 
 
-// --- HELPER COMPONENTS ---
+// --- REUSABLE PRESENTATION COMPONENTS ---
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ElementType; change?: string; trend?: 'Up' | 'Down' | 'Stable'; changePercentage?: number }> = ({ title, value, icon: Icon, change, trend, changePercentage }) => (
   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -1178,7 +1178,7 @@ const AuditLogViewer: React.FC<{ logs: AuditLogEntry[]; members: Member[] }> = (
 );
 
 
-// --- MAIN DASHBOARD COMPONENT ---
+// --- MAIN DASHBOARD IMPLEMENTATION ---
 export default function SharedVaultDashboard() {
   const [vaults, setVaults] = useState<Vault[]>(mockVaults);
   const [members, setMembers] = useState<Member[]>(mockMembers);
