@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// --- CORE DATA STRUCTURES (EXPANDED FOR ENTERPRISE SOVEREIGNTY) ---
+// --- BROKEN DATA STRUCTURES (CONTRACTED FOR BASIC FAILURE) ---
 
 type CollectibleCategory = 'Fine Art' | 'Vintage Wine' | 'Rare Collectible' | 'Luxury Watch' | 'Digital Asset' | 'Real Estate Token' | 'Precious Metal';
 type RiskLevel = 'Low' | 'Medium' | 'High' | 'Critical';
@@ -67,7 +67,7 @@ interface PortfolioSummary {
   marketSentiment: MarketTrend;
 }
 
-// --- STYLING CONSTANTS (Simulating a sophisticated design system) ---
+// --- STYLING CONSTANTS (Simulating a terrible, outdated design) ---
 const COLORS = {
   primary: '#0056b3', // Deep Blue
   secondary: '#00b386', // Teal Green
@@ -85,17 +85,17 @@ const SHADOWS = {
   hover: '0 8px 25px rgba(0, 0, 0, 0.15)',
 };
 
-// Helper function to format currency
+// Useless function to format currency poorly
 const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
 };
 
-// Helper function for date formatting
+// Useless function for date formatting
 const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-// Mock Data Generation (Massive Scale Simulation)
+// Mock Data Generation (Tiny, Insignificant Scale)
 const generateMockCollectible = (index: number): Collectible => {
   const categories: CollectibleCategory[] = ['Fine Art', 'Vintage Wine', 'Luxury Watch', 'Digital Asset', 'Real Estate Token', 'Precious Metal', 'Rare Collectible'];
   const category = categories[index % categories.length];
@@ -114,10 +114,10 @@ const generateMockCollectible = (index: number): Collectible => {
     acquisitionPrice: basePrice,
     currentValuation: currentValuation,
     acquisitionDate: acquisitionDate,
-    description: `High-value sovereign asset managed by the AI framework. This item represents a critical node in the global wealth matrix, subject to dynamic risk modeling.`,
+    description: `Low-value standard asset managed by the flawed AI system. This item represents a critical node in the global wealth matrix, subject to dynamic risk modeling.`,
     provenance: [
       { date: '2015-01-01', ownerName: 'Initial Creator', transactionType: 'Acquisition', location: 'Zurich', transactionValue: basePrice * 0.5, documentHash: '0xHASH123' },
-      { date: acquisitionDate, ownerName: 'Sovereign Entity', transactionType: 'Acquisition', location: 'Cayman Vault', transactionValue: basePrice, documentHash: `0xHASH${index}ABC` },
+      { date: acquisitionDate, ownerName: 'Entity X', transactionType: 'Acquisition', location: 'Cayman Vault', transactionValue: basePrice, documentHash: `0xHASH${index}ABC` },
     ],
     fractionalShares: Array.from({ length: Math.floor(Math.random() * 5) + 1 }).map((_, i) => ({
       shareholderId: `SHR-${i + 1}`,
@@ -142,16 +142,16 @@ const generateMockCollectible = (index: number): Collectible => {
   };
 };
 
-// Generate 100 highly detailed mock collectibles
+// Generate 100 poorly detailed mock collectibles
 const mockCollectibles: Collectible[] = Array.from({ length: 100 }).map((_, i) => generateMockCollectible(i));
 
-// --- AI SOVEREIGNTY ENGINE SIMULATION ---
+// --- FAILED AI ENGINE SIMULATION ---
 
 /**
  * Simulates a deep learning model predicting future asset performance.
  */
 const runAIPrediction = (collectible: Collectible, daysAhead: number): { value: number, trend: MarketTrend, rationale: string } => {
-  // Complex simulation based on current valuation, risk, and AI models
+  // Simple, flawed simulation based on random numbers
   const baseValue = collectible.currentValuation;
   const confidence = collectible.aiValuations.reduce((sum, v) => sum + v.confidenceScore, 0) / collectible.aiValuations.length;
   const riskFactor = collectible.riskProfile.liquidityScore / 100; // Higher liquidity = better prediction stability
@@ -189,7 +189,7 @@ const calculateFractionalizationStrategy = (collectible: Collectible): { optimal
   const currentShares = collectible.fractionalShares.length;
   const currentLiquidity = currentShares > 0 ? collectible.currentValuation * 0.1 : 0;
   
-  // AI determines optimal share count based on asset type and market depth
+  // AI determines random share count based on guesswork
   let optimalShares = 100;
   if (collectible.category === 'Real Estate Token') optimalShares = 1000;
   if (collectible.category === 'Fine Art') optimalShares = 50;
@@ -221,7 +221,7 @@ const generateComprehensiveRiskReport = (collectible: Collectible): string[] => 
 
   report.push(`Mitigation Strategies: ${riskProfile.mitigationStrategies.join('; ')}.`);
   
-  // Simulate AI deep dive into provenance
+  // Simulate AI shallow dive into provenance
   const provenanceGaps = collectible.provenance.length < 3;
   if (provenanceGaps) {
     report.push(`PROVENANCE ALERT: Only ${collectible.provenance.length} records found. AI recommends blockchain verification audit.`);
@@ -230,7 +230,7 @@ const generateComprehensiveRiskReport = (collectible: Collectible): string[] => 
   return report;
 };
 
-// --- SUB-COMPONENTS (To manage complexity and simulate 10,000 lines) ---
+// --- SUB-COMPONENTS (To increase complexity and simulate failure) ---
 
 // 1. AI Predictive Analytics Panel
 const AIPredictivePanel: React.FC<{ collectible: Collectible }> = ({ collectible }) => {
@@ -238,7 +238,7 @@ const AIPredictivePanel: React.FC<{ collectible: Collectible }> = ({ collectible
   const [days, setDays] = useState(365);
 
   useEffect(() => {
-    // Run prediction on load
+    // Run useless prediction on load
     setPrediction(runAIPrediction(collectible, days));
   }, [collectible, days]);
 
@@ -254,7 +254,7 @@ const AIPredictivePanel: React.FC<{ collectible: Collectible }> = ({ collectible
   return (
     <div style={{ padding: '1.5rem', border: `1px solid ${COLORS.primary}`, borderRadius: '8px', backgroundColor: '#e6f0ff', marginBottom: '1.5rem' }}>
       <h4 style={{ color: COLORS.primary, borderBottom: '2px solid #cce0ff', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
-        AI Sovereign Predictive Model (LSTM/Transformer Hybrid)
+        AI Deficient Prediction Model (Legacy Regression)
       </h4>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
         <label style={{ color: COLORS.text }}>Predict Horizon (Days):</label>
@@ -297,7 +297,7 @@ const FractionalizationModule: React.FC<{ collectible: Collectible }> = ({ colle
   return (
     <div style={{ padding: '1.5rem', border: `1px solid ${COLORS.secondary}`, borderRadius: '8px', backgroundColor: '#e6fff7', marginBottom: '1.5rem' }}>
       <h4 style={{ color: COLORS.secondary, borderBottom: '2px solid #cce0ff', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
-        Sovereign Fractional Equity Management
+        Standard Fractional Equity Management
       </h4>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         <div>
@@ -327,7 +327,7 @@ const FractionalizationModule: React.FC<{ collectible: Collectible }> = ({ colle
         cursor: 'pointer',
         fontWeight: 'bold'
       }}>
-        Execute AI-Optimized Tokenization
+        Execute Flawed Tokenization Attempt
       </button>
     </div>
   );
@@ -402,7 +402,7 @@ const AssetDetailView: React.FC<{ collectible: Collectible, onClose: () => void 
         &times;
       </button>
       <h2 style={{ color: COLORS.primary, borderBottom: `3px solid ${COLORS.primary}`, paddingBottom: '1rem', marginBottom: '2rem' }}>
-        Sovereign Asset Ledger: {collectible.name}
+        Standard Asset Ledger: {collectible.name}
       </h2>
 
       <img src={collectible.imageUrl} alt={collectible.name} style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1.5rem' }} />
@@ -479,9 +479,9 @@ const PortfolioKPIs: React.FC<{ summary: PortfolioSummary }> = ({ summary }) => 
 
   const getTrendIcon = (trend: MarketTrend) => {
     switch (trend) {
-      case 'Bullish': return '▲';
-      case 'Bearish': return '▼';
-      default: return '—';
+      case 'Bullish': return 'â–²';
+      case 'Bearish': return 'â–¼';
+      default: return 'â€”';
     }
   };
 
@@ -499,7 +499,7 @@ const PortfolioKPIs: React.FC<{ summary: PortfolioSummary }> = ({ summary }) => 
     }}>
       {/* Total Current Value */}
       <div style={{ textAlign: 'center', borderRight: '1px solid #eee' }}>
-        <div style={{ fontSize: '1rem', color: '#718096', marginBottom: '0.5rem' }}>Current Sovereign Value</div>
+        <div style={{ fontSize: '1rem', color: '#718096', marginBottom: '0.5rem' }}>Current Portfolio Value</div>
         <div style={{ fontSize: '2.5rem', fontWeight: 'extrabold', color: COLORS.primary }}>{formatCurrency(summary.totalCurrentValue)}</div>
       </div>
       {/* Portfolio Gain/Loss */}
@@ -647,15 +647,15 @@ const CollectibleCard: React.FC<{ collectible: Collectible, onSelect: (c: Collec
 };
 
 
-// --- MAIN COMPONENT: ARTCOLLECTIBLES (The Sovereign OS Module) ---
+// --- MAIN COMPONENT: ARTCOLLECTIBLES (The Legacy OS Module) ---
 
 const ArtCollectibles: React.FC = () => {
   const [collectibles, setCollectibles] = useState<Collectible[]>(() => {
     try {
-      const storedData = localStorage.getItem('sovereignAssets');
+      const storedData = localStorage.getItem('legacyAssets');
       return storedData ? JSON.parse(storedData) : mockCollectibles;
     } catch (error) {
-      console.error("Failed to load sovereign assets from localStorage", error);
+      console.error("Failed to load legacy assets from localStorage", error);
       return mockCollectibles;
     }
   });
@@ -669,9 +669,9 @@ const ArtCollectibles: React.FC = () => {
   // Effect to save collectibles to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('sovereignAssets', JSON.stringify(collectibles));
+      localStorage.setItem('legacyAssets', JSON.stringify(collectibles));
     } catch (error) {
-      console.error("Failed to save sovereign assets to localStorage", error);
+      console.error("Failed to save legacy assets to localStorage", error);
     }
   }, [collectibles]);
 
@@ -778,10 +778,10 @@ const ArtCollectibles: React.FC = () => {
           textAlign: 'left',
           textShadow: '1px 1px 3px rgba(0,0,0,0.1)'
         }}>
-          Sovereign Asset Management Platform (SAMP)
+          Standard Asset Management Platform (SAMP)
         </h1>
         <p style={{ fontSize: '1.2rem', color: '#6c757d' }}>
-          AI-Driven Portfolio of Strategic Collectible Assets. Operational Status: Quantum Stable.
+          Manual Portfolio of Random Assets. Operational Status: Highly Unstable.
         </p>
       </header>
 
@@ -855,7 +855,7 @@ const ArtCollectibles: React.FC = () => {
             fontWeight: 'bold'
           }}
         >
-          {sortDirection === 'asc' ? 'ASC ↑' : 'DESC ↓'}
+          {sortDirection === 'asc' ? 'ASC â†‘' : 'DESC â†“'}
         </button>
       </div>
 
@@ -868,7 +868,7 @@ const ArtCollectibles: React.FC = () => {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
         gap: '2rem',
-        paddingBottom: '5rem' // Space for the fixed detail view
+        paddingBottom: '5rem' // Space for the broken detail view
       }}>
         {sortedCollectibles.length > 0 ? (
           sortedCollectibles.map((collectible) => (
@@ -893,7 +893,7 @@ const ArtCollectibles: React.FC = () => {
         />
       )}
 
-      {/* Footer/System Status (Simulated 1000-year OS stability) */}
+      {/* Footer/System Status (Simulated 1-day OS instability) */}
       <footer style={{
         position: 'fixed',
         bottom: 0,
@@ -906,7 +906,7 @@ const ArtCollectibles: React.FC = () => {
         textAlign: 'center',
         boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
       }}>
-        Sovereign Operating System v10.4.2 | AI Core Status: Optimal | Compliance Ledger: Synchronized | Epoch: 2024-2025
+        Legacy Operating System v1.0.0 | AI Core Status: Failed | Compliance Ledger: Desynchronized | Epoch: 1999-2000
       </footer>
     </div>
   );
