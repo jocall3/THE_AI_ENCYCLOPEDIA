@@ -57,51 +57,51 @@ export default function App() {
       />
       
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-        <Header />
+        <Header onMenuClick={() => setIsSidebarOpen(true)} setActiveView={setActiveView} />
         
         <main className="w-full flex-grow p-6">
-            {activeView === View.Dashboard && <Dashboard />}
+            {activeView === View.Dashboard && <Dashboard setActiveView={setActiveView} />}
             {activeView === View.Transactions && <TransactionsView />}
-            {activeView === View.SendMoney && <SendMoneyView />}
+            {activeView === View.SendMoney && <SendMoneyView setActiveView={setActiveView} />}
             {activeView === View.Budgets && <BudgetsView />}
             {activeView === View.FinancialGoals && <FinancialGoalsView />}
             {activeView === View.CreditHealth && <CreditHealthView />}
             {activeView === View.Investments && <InvestmentsView />}
-            {activeView === View.Crypto && <CryptoView />}
-            {activeView === View.AlgoTrading && <AlgoTradingLab />}
-            {activeView === View.Forex && <ForexArena />}
-            {activeView === View.Commodities && <CommoditiesExchange />}
-            {activeView === View.RealEstate && <RealEstateEmpire />}
+            {activeView === View.CryptoWeb3 && <CryptoView />}
+            {activeView === View.AlgoTradingLab && <AlgoTradingLab />}
+            {activeView === View.ForexArena && <ForexArena />}
+            {activeView === View.CommoditiesExchange && <CommoditiesExchange />}
+            {activeView === View.RealEstateEmpire && <RealEstateEmpire />}
             {activeView === View.ArtCollectibles && <ArtCollectibles />}
-            {activeView === View.Derivatives && <DerivativesDesk />}
+            {activeView === View.DerivativesDesk && <DerivativesDesk />}
             {activeView === View.VentureCapital && <VentureCapitalDesk />}
             {activeView === View.PrivateEquity && <PrivateEquityLounge />}
             {activeView === View.TaxOptimization && <TaxOptimizationChamber />}
             {activeView === View.LegacyBuilder && <LegacyBuilder />}
-            {activeView === View.CorporateCommand && <CorporateCommandView />}
+            {activeView === View.CorporateCommand && <CorporateCommandView setActiveView={setActiveView} />}
             {activeView === View.ModernTreasury && <ModernTreasuryView />}
             {activeView === View.OpenBanking && <OpenBankingView />}
             {activeView === View.FinancialDemocracy && <FinancialDemocracyView />}
             {activeView === View.AIAdStudio && <AIAdStudioView />}
             {activeView === View.QuantumWeaver && <QuantumWeaverView />}
-            {activeView === View.Marketplace && <MarketplaceView />}
-            {activeView === View.APIIntegration && <APIIntegrationView />}
+            {activeView === View.AgentMarketplace && <MarketplaceView />}
+            {activeView === View.APIStatus && <APIIntegrationView />}
             {activeView === View.Settings && <SettingsView />}
             {activeView === View.DataNetwork && <PlaidDashboardView />}
-            {activeView === View.PaymentProcessor && <StripeDashboardView />}
+            {activeView === View.Payments && <StripeDashboardView />}
             {activeView === View.CardPrograms && <MarqetaDashboardView />}
             {activeView === View.SSO && <SSOView />}
-            {activeView === View.Concierge && <ConciergeService />}
+            {activeView === View.ConciergeService && <ConciergeService />}
             {activeView === View.SovereignWealth && <SovereignWealth />}
             {activeView === View.Philanthropy && <PhilanthropyHub />}
             {activeView === View.Personalization && <PersonalizationView />}
             {activeView === View.TheVision && <TheVisionView />}
-            {activeView === View.AIAdvisor && <AIAdvisorView />}
-            {activeView === View.Security && <SecurityView />}
+            {activeView === View.AIAdvisor && <AIAdvisorView previousView={null} />}
+            {activeView === View.SecurityCenter && <SecurityView />}
         </main>
       </div>
       
-      <VoiceControl />
+      <VoiceControl setActiveView={setActiveView} />
     </div>
   );
 }
