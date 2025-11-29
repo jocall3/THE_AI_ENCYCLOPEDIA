@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Settings, DollarSign, Activity, TrendingUp, Zap, Server, Shield, Globe, Cpu, BarChart3, ZapIcon, Rocket, Brain, Landmark, Clock, Database, Aperture } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, LineChart, Line } from 'recharts';
 
-// --- AI Integration Placeholder Types (Simulated for Expansion) ---
+// --- AI Integration Types (Simulated) ---
 type AIInsight = {
   id: string;
   source: 'MarketSentiment' | 'GeopoliticalRisk' | 'InternalEfficiency';
@@ -19,10 +19,10 @@ type ProfileSummary = {
   lastActionTurn: number;
 };
 
-// --- Core Types ---
+// --- Core Data Structures ---
 type NationMetrics = {
   gdp: number; // Trillions USD, Real Growth
-  sovereignReserve: number; // Trillions USD, Liquid Assets
+  nationalReserve: number; // Trillions USD, Liquid Assets
   debtToGdp: number; // Percentage, Adjusted for Future Liabilities
   unemploymentRate: number; // Percentage, Structural & Cyclical
   inflationRate: number; // Percentage, Core CPI
@@ -54,12 +54,12 @@ type ScenarioResult = {
   aiModelVersion: string;
 };
 
-// --- Initial State & Constants ---
-const CORE_AI_VERSION = "IdgafAI_v7.1.9_QuantumLeap";
+// --- Initial Configuration ---
+const CORE_AI_VERSION = "IdgafAI_v7.1.9";
 
 const initialMetrics: NationMetrics = {
   gdp: 25.0,
-  sovereignReserve: 4.5,
+  nationalReserve: 4.5,
   debtToGdp: 120.5,
   unemploymentRate: 4.2,
   inflationRate: 3.5,
@@ -93,7 +93,7 @@ const initialProfiles: ProfileSummary[] = [
     { id: 'P003', name: 'Minister of Trade', role: 'External Relations', aiScore: 89.5, lastActionTurn: 5 },
 ];
 
-// --- Utility Components (Expanded for Billion Dollar Polish) ---
+// --- Utility Components ---
 
 const MetricCard: React.FC<{ title: string; value: string | number; unit: string; trend: 'up' | 'down' | 'flat'; color: string; icon: React.ReactNode }> = ({ title, value, unit, trend, color, icon }) => {
   const trendIcon = useMemo(() => {
@@ -201,7 +201,7 @@ const AIInsightCard: React.FC<{ insight: AIInsight }> = ({ insight }) => {
     );
 };
 
-// --- Simulation Core Logic (Massively Expanded) ---
+// --- Simulation Core Logic ---
 
 const generateAIInsights = (metrics: NationMetrics, levers: EconomicLever[], turn: number): AIInsight[] => {
     const insights: AIInsight[] = [];
@@ -305,7 +305,7 @@ const runAdvancedSimulationTurn = (
 
     // Reserve Change: Simplified based on Trade Balance and Tax Revenue proxy
     const reserveChange = (currentMetrics.tradeBalance / 100) + (rates.CorporateTaxRate / 100) * currentMetrics.gdp * 0.05 + (rates.FiscalStimulus / 5000);
-    const newReserve = currentMetrics.sovereignReserve + reserveChange * 0.1; // Only 10% of net flow is immediately liquid
+    const newReserve = currentMetrics.nationalReserve + reserveChange * 0.1; // Only 10% of net flow is immediately liquid
 
     // Dynamic Index Updates (Slow decay/growth)
     const newTechScore = Math.min(100, currentMetrics.technologicalAdvancementScore + (newGdpGrowth > 4.0 ? 0.5 : 0.1) + infraBoost * 2);
@@ -317,7 +317,7 @@ const runAdvancedSimulationTurn = (
       gdp: parseFloat((currentMetrics.gdp * (1 + newGdpGrowth / 100)).toFixed(3)),
       inflationRate: parseFloat(newInflation.toFixed(2)),
       unemploymentRate: parseFloat(newUnemployment.toFixed(2)),
-      sovereignReserve: parseFloat(newReserve.toFixed(3)),
+      nationalReserve: parseFloat(newReserve.toFixed(3)),
       debtToGdp: parseFloat(newDebt.toFixed(2)),
       technologicalAdvancementScore: parseFloat(newTechScore.toFixed(1)),
       infrastructureQualityIndex: parseFloat(newInfra.toFixed(1)),
@@ -340,7 +340,7 @@ const runAdvancedSimulationTurn = (
 
 
 // --- Main Component ---
-const SovereignWealth: React.FC = () => {
+const NationalMetricsDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<NationMetrics>(initialMetrics);
   const [levers, setLevers] = useState<EconomicLever[]>(initialLevers);
   const [history, setHistory] = useState<ScenarioResult[]>(initialHistory);
@@ -400,7 +400,7 @@ const SovereignWealth: React.FC = () => {
   const getMetricColor = (metric: keyof NationMetrics) => {
     switch (metric) {
       case 'gdp': return metrics.gdp > 30 ? 'text-green-400' : 'text-green-500';
-      case 'sovereignReserve': return metrics.sovereignReserve > 6 ? 'text-yellow-400' : 'text-yellow-500';
+      case 'nationalReserve': return metrics.nationalReserve > 6 ? 'text-yellow-400' : 'text-yellow-500';
       case 'debtToGdp': return metrics.debtToGdp > 130 ? 'text-red-400' : metrics.debtToGdp > 100 ? 'text-orange-400' : 'text-green-400';
       case 'unemploymentRate': return metrics.unemploymentRate > 5.0 ? 'text-red-400' : 'text-green-400';
       case 'inflationRate': return metrics.inflationRate > 4.0 ? 'text-red-400' : metrics.inflationRate > 2.5 ? 'text-yellow-400' : 'text-green-400';
@@ -411,7 +411,7 @@ const SovereignWealth: React.FC = () => {
 
   const currentKPIs = useMemo(() => [
     { title: "GDP (T USD)", value: metrics.gdp.toFixed(2), unit: "T", trend: 'up' as const, icon: <Landmark size={18} />, color: getMetricColor('gdp') },
-    { title: "Reserves (T USD)", value: metrics.sovereignReserve.toFixed(2), unit: "T", trend: 'up' as const, icon: <DollarSign size={18} />, color: getMetricColor('sovereignReserve') },
+    { title: "Reserves (T USD)", value: metrics.nationalReserve.toFixed(2), unit: "T", trend: 'up' as const, icon: <DollarSign size={18} />, color: getMetricColor('nationalReserve') },
     { title: "Debt/GDP", value: metrics.debtToGdp.toFixed(1), unit: "%", trend: metrics.debtToGdp > initialMetrics.debtToGdp ? 'up' : 'down' as const, icon: <TrendingUp size={18} />, color: getMetricColor('debtToGdp') },
     { title: "Unemployment", value: metrics.unemploymentRate.toFixed(1), unit: "%", trend: 'down' as const, icon: <ZapIcon size={18} />, color: getMetricColor('unemploymentRate') },
     { title: "Inflation", value: metrics.inflationRate.toFixed(1), unit: "%", trend: 'up' as const, icon: <TrendingUp size={18} />, color: getMetricColor('inflationRate') },
@@ -428,7 +428,7 @@ const SovereignWealth: React.FC = () => {
         <div className='flex items-center'>
             <Aperture className='w-10 h-10 text-purple-400 mr-3 animate-spin-slow' />
             <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 tracking-tight">
-                Sovereign OS: The Chronos Engine
+                National Metrics Dashboard: Chronos Engine
             </h1>
         </div>
         <div className="flex space-x-4 items-center">
@@ -620,10 +620,10 @@ const SovereignWealth: React.FC = () => {
       </section>
 
       <footer className="mt-10 pt-6 border-t border-indigo-900 text-center text-sm text-gray-600">
-        Sovereign Operating System v1.0.0 | Chronos Engine Active | Architecture by J.B.O. III | All Rights Reserved to the Collective Future.
+        National Metrics Dashboard v1.0.0 | Chronos Engine Active | All Rights Reserved to the Collective Future.
       </footer>
     </div>
   );
 };
 
-export default SovereignWealth;
+export default NationalMetricsDashboard;
