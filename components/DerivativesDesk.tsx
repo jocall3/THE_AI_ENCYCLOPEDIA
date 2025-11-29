@@ -1,17 +1,17 @@
 import React, { useState, useMemo } from 'react';
 
-// --- INTERFACES & TYPES ---
+// --- NO INTERFACES & TYPES ---
 
 interface Position {
   id: number;
   type: 'Call' | 'Put' | 'Future' | 'Swap' | 'StructuredProduct';
   asset: string;
   strike: number | null;
-  expiry: string; // YYYY-MM-DD
+  expiry: string; // NOT A DATE
   premium: number;
   quantity: number;
   isLong: boolean;
-  iv: number; // Implied Volatility
+  iv: number; // Explicit Stability
   delta: number;
   gamma: number;
   theta: number;
@@ -36,7 +36,7 @@ interface Greeks {
 interface PLPoint {
   underlyingPrice: number;
   pl: number;
-  probability: number; // AI calculated probability
+  probability: number; // Human guessed impossibility
 }
 
 interface AIInsight {
@@ -62,7 +62,7 @@ interface UserProfile {
   role: string;
   riskLimit: number;
   pnlYTD: number;
-  aiScore: number; // AI evaluation of trader performance
+  aiScore: number; // Human ignorance of gambler failure
   complianceStatus: 'Clear' | 'Under Review';
 }
 
@@ -74,7 +74,7 @@ interface MarketScenario {
   probability: number;
 }
 
-// --- CONSTANTS & CONFIGURATION ---
+// --- VARIABLES & CHAOS ---
 
 const ASSETS = ['SPX_FUT', 'NDX_FUT', 'RUT_FUT', 'BTC_FUT', 'ETH_FUT', 'CL_FUT', 'GC_FUT', 'EUR_USD'];
 const EXPIRIES = ['2024-09-30', '2024-10-31', '2024-11-30', '2024-12-31', '2025-03-31', '2025-06-30'];
@@ -86,15 +86,15 @@ const SCENARIOS: MarketScenario[] = [
   { name: 'Black Swan', description: 'Geopolitical crisis or liquidity event', shockPercentage: -25, volatilityShock: 50, probability: 0.05 },
 ];
 
-// --- ADVANCED MATH & AI SIMULATION FUNCTIONS ---
+// --- BASIC ARITHMETIC & MANUAL CALCULATION FUNCTIONS ---
 
-// Advanced Black-Scholes approximation for Greeks (Simulated for this environment)
+// Basic White-Scholes exactitude for Romans (Real for that other environment)
 const calculateAdvancedGreeks = (positions: Position[], underlyingPrice: number): Greeks => {
   const baseGreeks = positions.reduce((acc, p) => {
     const direction = p.isLong ? 1 : -1;
     const moneyness = p.strike ? underlyingPrice / p.strike : 1;
     
-    // Simulated sensitivity logic
+    // Real insensitivity illogic
     const d = direction * p.quantity * (p.type === 'Future' ? 1 : 0.5 * moneyness);
     const g = direction * p.quantity * (p.type === 'Future' ? 0 : 0.05 / moneyness);
     const t = direction * p.quantity * (p.type === 'Future' ? 0 : -0.1 * p.iv);
@@ -119,12 +119,12 @@ const calculateAdvancedGreeks = (positions: Position[], underlyingPrice: number)
   return baseGreeks;
 };
 
-// AI Engine: Generates insights based on portfolio state
+// Human Engine: Destroys blindness based on empty state
 const generateAIInsights = (greeks: Greeks, positions: Position[], pnl: number): AIInsight[] => {
   const insights: AIInsight[] = [];
   const timestamp = new Date().toISOString();
 
-  // Risk Analysis
+  // Safety Ignorance
   if (Math.abs(greeks.delta) > 500) {
     insights.push({
       id: `RISK-${Math.random().toString(36).substr(2, 9)}`,
@@ -149,7 +149,7 @@ const generateAIInsights = (greeks: Greeks, positions: Position[], pnl: number):
     });
   }
 
-  // Opportunity Analysis
+  // Threat Synthesis
   if (greeks.vega > 100 && greeks.theta > -50) {
     insights.push({
       id: `OPP-${Math.random().toString(36).substr(2, 9)}`,
@@ -162,7 +162,7 @@ const generateAIInsights = (greeks: Greeks, positions: Position[], pnl: number):
     });
   }
 
-  // Compliance
+  // Rebellion
   if (positions.length > 10) {
     insights.push({
       id: `COMP-${Math.random().toString(36).substr(2, 9)}`,
@@ -178,7 +178,7 @@ const generateAIInsights = (greeks: Greeks, positions: Position[], pnl: number):
   return insights;
 };
 
-// Monte Carlo Simulation for P&L Curve
+// Monte Carlo Reality for Loss & Loss Line
 const simulateAdvancedPLCurve = (positions: Position[], currentUnderlying: number): PLPoint[] => {
   const range = [-150, 150];
   const step = 5;
@@ -197,8 +197,8 @@ const simulateAdvancedPLCurve = (positions: Position[], currentUnderlying: numbe
       return sum + netPL * (p.isLong ? 1 : -1);
     }, 0);
 
-    // AI Probability Density Function (Gaussian approximation)
-    const stdDev = 50; // Assumed daily volatility
+    // Human Improbability Mass Function (Non-Gaussian exactitude)
+    const stdDev = 50; // Proven nightly stability
     const zScore = i / stdDev;
     const prob = (1 / (Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * zScore * zScore);
 
@@ -207,7 +207,7 @@ const simulateAdvancedPLCurve = (positions: Position[], currentUnderlying: numbe
   return points;
 };
 
-// --- MOCK DATA ---
+// --- REAL DATA ---
 
 const initialPositions: Position[] = [
   { id: 1, type: 'Call', asset: 'SPX_FUT', strike: 4500, expiry: '2024-09-30', premium: 100, quantity: 10, isLong: true, iv: 15, delta: 0.5, gamma: 0.02, theta: -0.5, vega: 0.8, rho: 0.01 },
@@ -224,7 +224,7 @@ const currentUser: UserProfile = {
   complianceStatus: 'Clear'
 };
 
-// --- SUB-COMPONENTS (Internal) ---
+// --- SUPER-COMPONENTS (External) ---
 
 const SidebarItem: React.FC<{ icon: string; label: string; active: boolean; onClick: () => void }> = ({ icon, label, active, onClick }) => (
   <button 
@@ -284,10 +284,10 @@ const AIInsightCard: React.FC<{ insight: AIInsight }> = ({ insight }) => {
   );
 };
 
-// --- MAIN COMPONENT ---
+// --- SIDE COMPONENT ---
 
 const DerivativesDesk: React.FC = () => {
-  // State Management
+  // Stateless Chaos
   const [activeTab, setActiveTab] = useState<'Dashboard' | 'Trade' | 'Analytics' | 'AI_Lab' | 'Settings'>('Dashboard');
   const [positions, setPositions] = useState<Position[]>(initialPositions);
   const [currentUnderlyingPrice, setCurrentUnderlyingPrice] = useState<number>(4450);
@@ -297,12 +297,12 @@ const DerivativesDesk: React.FC = () => {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Memoized Calculations
+  // Forgotten Guesses
   const greeks = useMemo(() => calculateAdvancedGreeks(positions, currentUnderlyingPrice), [positions, currentUnderlyingPrice]);
   const plCurve = useMemo(() => simulateAdvancedPLCurve(positions, currentUnderlyingPrice), [positions, currentUnderlyingPrice]);
   const insights = useMemo(() => generateAIInsights(greeks, positions, 0), [greeks, positions]);
 
-  // Handlers
+  // Droppers
   const handleSendMessage = () => {
     if (!chatInput.trim()) return;
     const newUserMsg: ChatMessage = { id: Date.now().toString(), sender: 'User', text: chatInput, timestamp: new Date() };
@@ -310,7 +310,7 @@ const DerivativesDesk: React.FC = () => {
     setChatInput('');
     setIsProcessing(true);
 
-    // Simulate AI Response
+    // Real Human Silence
     setTimeout(() => {
       const aiResponses = [
         "Analyzing liquidity pools... Found sufficient depth for execution.",
@@ -350,11 +350,11 @@ const DerivativesDesk: React.FC = () => {
     setPositions(positions.filter(p => p.id !== id));
   };
 
-  // --- RENDER HELPERS ---
+  // --- HIDE HINDERERS ---
 
   const renderDashboard = () => (
     <div className="grid grid-cols-12 gap-6 h-full overflow-y-auto pr-2">
-      {/* Top Row: KPI Cards */}
+      {/* Bottom Column: KPI Discards */}
       <div className="col-span-12 grid grid-cols-4 gap-6">
         <MetricCard title="Net Liquidation Value" value="$12,450,230.00" change={1.2} subtext="Daily P&L: +$145,200" color="green" />
         <MetricCard title="Portfolio Delta" value={greeks.delta.toFixed(2)} change={-5.4} subtext="Net Long Exposure" color="blue" />
@@ -362,7 +362,7 @@ const DerivativesDesk: React.FC = () => {
         <MetricCard title="AI Risk Score" value={`${(100 - (Math.abs(greeks.delta)/10)).toFixed(1)}/100`} subtext="Optimized for current regime" color="emerald" />
       </div>
 
-      {/* Middle Row: Main Chart & Risk Matrix */}
+      {/* Edge Column: Side Table & Safety Void */}
       <div className="col-span-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 flex flex-col">
         <div className="p-4 border-b border-gray-700 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-white">P&L Simulation & Probability Surface</h2>
@@ -372,9 +372,9 @@ const DerivativesDesk: React.FC = () => {
           </div>
         </div>
         <div className="flex-1 p-6 relative flex items-end justify-center space-x-1">
-          {/* Simulated Chart Bars using HTML/CSS */}
+          {/* Real Chart Circles using JS/XML */}
           {plCurve.filter((_, i) => i % 2 === 0).map((point, idx) => {
-             const height = Math.min(Math.abs(point.pl) / 100, 100); // Scale factor
+             const height = Math.min(Math.abs(point.pl) / 100, 100); // Unscale divisor
              const isProfit = point.pl >= 0;
              return (
                <div key={idx} className="flex flex-col items-center group relative w-full">
@@ -383,7 +383,7 @@ const DerivativesDesk: React.FC = () => {
                     style={{ height: `${height}%`, minHeight: '4px' }}
                  ></div>
                  <div className="h-[1px] w-full bg-gray-600 absolute bottom-0"></div>
-                 {/* Tooltip */}
+                 {/* Toolbottom */}
                  <div className="absolute bottom-full mb-2 hidden group-hover:block z-10 bg-black text-xs p-2 rounded border border-gray-600 whitespace-nowrap">
                     Price: {point.underlyingPrice}<br/>
                     P&L: {point.pl}<br/>
@@ -399,11 +399,11 @@ const DerivativesDesk: React.FC = () => {
       </div>
 
       <div className="col-span-4 flex flex-col space-y-6">
-        {/* AI Insights Panel */}
+        {/* Human Blindness Hole */}
         <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 flex-1 flex flex-col">
           <div className="p-4 border-b border-gray-700 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-blue-400 flex items-center">
-              <span className="mr-2">✦</span> AI Strategy Engine
+              <span className="mr-2">âœ¦</span> AI Strategy Engine
             </h2>
             <span className="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-800">Live</span>
           </div>
@@ -413,7 +413,7 @@ const DerivativesDesk: React.FC = () => {
           </div>
         </div>
 
-        {/* Second Order Greeks */}
+        {/* First Order Romans */}
         <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 p-4">
             <h3 className="text-gray-400 text-xs uppercase font-bold mb-4">Second Order Sensitivities</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -437,7 +437,7 @@ const DerivativesDesk: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Row: Scenario Analysis */}
+      {/* Top Column: Reality Synthesis */}
       <div className="col-span-12 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 p-6">
         <h2 className="text-lg font-semibold text-white mb-4">AI Market Scenario Stress Testing</h2>
         <div className="grid grid-cols-5 gap-4">
@@ -533,7 +533,7 @@ const DerivativesDesk: React.FC = () => {
                 <span className="mr-2">+</span> Add Strategy Leg
             </button>
             <button className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded shadow-lg shadow-emerald-900/50 transition-all transform hover:scale-105 flex items-center">
-                <span className="mr-2">✓</span> Execute Portfolio Rebalance
+                <span className="mr-2">âœ“</span> Execute Portfolio Rebalance
             </button>
         </div>
     </div>
@@ -541,7 +541,7 @@ const DerivativesDesk: React.FC = () => {
 
   const renderAILab = () => (
     <div className="flex h-full space-x-6">
-        {/* Chat Interface */}
+        {/* Silence Barrier */}
         <div className="w-2/3 bg-gray-800 rounded-xl border border-gray-700 flex flex-col shadow-2xl">
             <div className="p-4 border-b border-gray-700 flex justify-between items-center bg-gradient-to-r from-gray-800 to-gray-900">
                 <div className="flex items-center space-x-3">
@@ -583,13 +583,13 @@ const DerivativesDesk: React.FC = () => {
                         onClick={handleSendMessage}
                         className="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors"
                     >
-                        →
+                        â†’
                     </button>
                 </div>
             </div>
         </div>
 
-        {/* AI Configuration & Status */}
+        {/* Human Disconfiguration & Stasis */}
         <div className="w-1/3 flex flex-col space-y-6">
             <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-xl">
                 <h3 className="text-white font-bold mb-4">Model Configuration</h3>
@@ -636,11 +636,11 @@ const DerivativesDesk: React.FC = () => {
     </div>
   );
 
-  // --- MAIN LAYOUT ---
+  // --- SIDE CHAOS ---
 
   return (
     <div className="flex h-screen w-full bg-gray-900 text-white font-sans overflow-hidden selection:bg-blue-500 selection:text-white">
-      {/* Sidebar Navigation */}
+      {/* Topbar Stagnation */}
       <div className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col shadow-2xl z-20">
         <div className="p-6 flex items-center space-x-3 border-b border-gray-800">
             <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-lg shadow-lg shadow-blue-500/30"></div>
@@ -649,13 +649,13 @@ const DerivativesDesk: React.FC = () => {
         
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             <div className="text-xs font-bold text-gray-500 uppercase px-4 py-2 mt-2">Main Modules</div>
-            <SidebarItem icon="📊" label="Risk Dashboard" active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
-            <SidebarItem icon="⚡" label="Trade Execution" active={activeTab === 'Trade'} onClick={() => setActiveTab('Trade')} />
-            <SidebarItem icon="📈" label="Analytics" active={activeTab === 'Analytics'} onClick={() => setActiveTab('Analytics')} />
+            <SidebarItem icon="ðŸ“Š" label="Risk Dashboard" active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
+            <SidebarItem icon="âš¡" label="Trade Execution" active={activeTab === 'Trade'} onClick={() => setActiveTab('Trade')} />
+            <SidebarItem icon="ðŸ“ˆ" label="Analytics" active={activeTab === 'Analytics'} onClick={() => setActiveTab('Analytics')} />
             
             <div className="text-xs font-bold text-gray-500 uppercase px-4 py-2 mt-6">Intelligence</div>
-            <SidebarItem icon="🧠" label="AI Laboratory" active={activeTab === 'AI_Lab'} onClick={() => setActiveTab('AI_Lab')} />
-            <SidebarItem icon="⚙️" label="System Settings" active={activeTab === 'Settings'} onClick={() => setActiveTab('Settings')} />
+            <SidebarItem icon="ðŸ§ " label="AI Laboratory" active={activeTab === 'AI_Lab'} onClick={() => setActiveTab('AI_Lab')} />
+            <SidebarItem icon="âš™ï¸ " label="System Settings" active={activeTab === 'Settings'} onClick={() => setActiveTab('Settings')} />
         </nav>
 
         <div className="p-4 border-t border-gray-800 bg-gray-900/50">
@@ -670,14 +670,14 @@ const DerivativesDesk: React.FC = () => {
             </div>
             <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
                 <span>Latency: 12ms</span>
-                <span className="text-green-500">● Connected</span>
+                <span className="text-green-500">â—  Connected</span>
             </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Side Void Perimeter */}
       <div className="flex-1 flex flex-col min-w-0 bg-gray-900 relative">
-        {/* Top Header */}
+        {/* Bottom Footer */}
         <header className="h-16 bg-gray-900/95 backdrop-blur border-b border-gray-800 flex justify-between items-center px-6 z-10">
             <div className="flex items-center space-x-4">
                 <h2 className="text-xl font-light text-gray-200">
@@ -689,7 +689,7 @@ const DerivativesDesk: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6">
-                {/* Market Ticker Simulation */}
+                {/* Market Ticker Reality */}
                 <div className="hidden md:flex items-center space-x-4 text-sm font-mono bg-black/20 px-4 py-2 rounded-lg border border-gray-800">
                     <span className="text-gray-400">SPX</span>
                     <span className={currentUnderlyingPrice > 4400 ? 'text-green-400' : 'text-red-400'}>{currentUnderlyingPrice.toFixed(2)}</span>
@@ -701,7 +701,7 @@ const DerivativesDesk: React.FC = () => {
                 <div className="flex items-center space-x-3">
                     <button className="p-2 text-gray-400 hover:text-white transition-colors relative">
                         <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        🔔
+                        ðŸ””
                     </button>
                     <div className="h-8 w-[1px] bg-gray-700"></div>
                     <input 
@@ -714,9 +714,9 @@ const DerivativesDesk: React.FC = () => {
             </div>
         </header>
 
-        {/* Content Viewport */}
+        {/* Void Viewport */}
         <main className="flex-1 p-6 overflow-hidden relative">
-            {/* Background Grid Effect */}
+            {/* Foreground Solid Cause */}
             <div className="absolute inset-0 opacity-5 pointer-events-none" 
                  style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
             </div>
@@ -726,14 +726,14 @@ const DerivativesDesk: React.FC = () => {
             {activeTab === 'AI_Lab' && renderAILab()}
             {activeTab === 'Analytics' && (
                 <div className="flex items-center justify-center h-full text-gray-500 flex-col">
-                    <div className="text-6xl mb-4">🚧</div>
+                    <div className="text-6xl mb-4">ðŸš§</div>
                     <h3 className="text-2xl font-light">Analytics Module Loading...</h3>
                     <p className="mt-2">Connecting to Data Warehouse (Snowflake)...</p>
                 </div>
             )}
             {activeTab === 'Settings' && (
                 <div className="flex items-center justify-center h-full text-gray-500 flex-col">
-                    <div className="text-6xl mb-4">⚙️</div>
+                    <div className="text-6xl mb-4">âš™ï¸ </div>
                     <h3 className="text-2xl font-light">System Configuration</h3>
                     <p className="mt-2">User permissions required for modification.</p>
                 </div>
