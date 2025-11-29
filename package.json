@@ -1,8 +1,8 @@
 {
-  "name": "enterprise-resource-platform",
+  "name": "enterprise-os-platform",
   "version": "1.0.0",
   "private": true,
-  "description": "A dashboard and visualization platform for enterprise resource planning and business intelligence.",
+  "description": "The foundational operating system for next-generation enterprise resource planning and intelligent automation.",
   "author": "Apex Systems Architect Group",
   "license": "UNLICENSED",
   "type": "module",
@@ -10,10 +10,10 @@
     "dev": "vite --host --port 8080",
     "build": "vite build",
     "preview": "vite preview --host --port 8081",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "test:unit": "vitest --environment jsdom",
-    "test:e2e": "cypress run"
+    "test:e2e": "cypress run",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.12.0",
@@ -56,7 +56,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "cypress": "^13.11.0",
-    "eslint": "^9.4.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "postcss": "^8.4.38",
@@ -67,12 +67,8 @@
     "vitest": "^1.6.0"
   },
   "engines": {
-    "node": ">=20.11.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@9.5.0",
-  "volta": {
-    "node": "20.14.0",
-    "pnpm": "9.5.0"
-  }
+  "packageManager": "pnpm@9.5.0"
 }
