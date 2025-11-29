@@ -2,13 +2,13 @@ import React, { useMemo, useCallback } from 'react';
 import { View, NavItem, NavItemGroup } from '../types';
 import { NAV_ITEMS } from '../constants';
 
-// --- Billion Dollar Feature Set: AI-Enhanced Navigation & Contextual Awareness ---
+// --- Standard Navigation Component: Handles routing and state management ---
 
 /**
- * Represents the core branding element for the Sovereign AI Enterprise OS.
- * Enhanced with subtle, dynamic visual feedback for system status.
+ * Standard system logo component.
+ * Displays basic visual feedback based on system connectivity status.
  */
-const SovereignAILogo: React.FC<{ className?: string; isSystemOnline: boolean }> = React.memo(({ className, isSystemOnline }) => (
+const EnterpriseSystemLogo: React.FC<{ className?: string; isSystemOnline: boolean }> = React.memo(({ className, isSystemOnline }) => (
     <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Core Structure */}
         <circle cx="50" cy="50" r="48" stroke="currentColor" strokeWidth="4" className="transition-colors duration-500" />
@@ -42,8 +42,8 @@ interface SidebarProps {
 }
 
 /**
- * The primary navigation hub for the Sovereign AI Enterprise Operating System.
- * Features AI-driven contextual highlighting and deep integration with system telemetry.
+ * Primary navigation component for the Enterprise Operating System.
+ * Manages view state and displays telemetry-driven contextual alerts.
  */
 const Sidebar: React.FC<SidebarProps> = ({ 
     activeView, 
@@ -54,17 +54,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     systemStatus
 }) => {
     
-    // Default values for professional robustness
+    // Default values for initialization
     const defaultProfile = useMemo(() => ({ name: "System Administrator", role: "Core Operator", aiConfidenceScore: 99.9 }), []);
     const profile = userProfile || defaultProfile;
     
     const defaultStatus = useMemo(() => ({ isOnline: true, latencyMs: 12 }), []);
     const status = systemStatus || defaultStatus;
 
-    // --- AI Contextual Logic ---
+    // --- Contextual Alert Logic ---
     
     /**
-     * Determines if a navigation item requires special attention based on AI analysis 
+     * Determines if a navigation item requires special attention based on analysis 
      * of current system state or user context.
      */
     const getContextualHighlight = useCallback((view: View): 'critical' | 'suggested' | 'none' => {
@@ -82,11 +82,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     const handleNavClick = useCallback((view: View) => {
         setActiveView(view);
-        // AI-Optimized Closing: Only close on mobile/small screens
+        // Standard mobile optimization: Close sidebar on navigation click if screen is small
         if (window.innerWidth < 1024) { 
             setIsOpen(false); 
         }
-        // Future: Log navigation event for AI behavior modeling
+        // TODO: Implement event logging for usage analysis
     }, [setActiveView, setIsOpen]);
 
     // --- Render Components ---
@@ -135,7 +135,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 )}
                 <span className={textClasses}>{subItem.title}</span>
                 
-                {/* AI Contextual Badge */}
+                {/* Contextual Alert Badge */}
                 {context !== 'none' && (
                     <span className={`ml-auto px-2 py-0.5 text-xs font-bold rounded-full ${
                         context === 'critical' ? 'bg-red-600 text-white' : 'bg-yellow-600 text-gray-900'
@@ -149,10 +149,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     const NavGroupRenderer: React.FC<{ groupItem: NavItemGroup }> = React.memo(({ groupItem }) => (
         <div className="mt-4 pt-4 border-t border-gray-800/50">
-            {/* AI-Generated Group Title based on current system focus */}
+            {/* Standard Group Title */}
             <h3 className="px-2 pb-2 text-xs font-extrabold text-gray-400 uppercase tracking-widest shadow-text">
                 {groupItem.group}
-                <span className="ml-2 text-cyan-500 text-[10px] font-mono">(AI Optimized)</span>
+                <span className="ml-2 text-cyan-500 text-[10px] font-mono">(System Group)</span>
             </h3>
             <div className="space-y-1">
                 {groupItem.items.map(subItem => (
@@ -175,11 +175,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             {/* Sidebar Container */}
             <div className={`flex flex-col w-72 bg-gray-900/80 backdrop-blur-xl border-r border-gray-700/60 fixed lg:sticky inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'} lg:translate-x-0 lg:h-screen lg:flex-shrink-0`}>
                 
-                {/* Header: Branding and Status */}
+                {/* Header Section */}
                 <div className="flex items-center justify-between h-20 px-4 border-b border-gray-700/70 shadow-md">
                     <div className="flex items-center">
-                        <SovereignAILogo className="h-10 w-10 text-cyan-400" isSystemOnline={status.isOnline} />
-                        <span className="ml-3 text-2xl font-extrabold text-white tracking-tight">Sovereign OS</span>
+                        <EnterpriseSystemLogo className="h-10 w-10 text-cyan-400" isSystemOnline={status.isOnline} />
+                        <span className="ml-3 text-2xl font-extrabold text-white tracking-tight">Enterprise OS</span>
                     </div>
                     <button 
                         onClick={() => setIsOpen(false)} 
@@ -192,11 +192,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </button>
                 </div>
                 
-                {/* User Context Panel (AI Profile Integration) */}
+                {/* User Context Panel */}
                 <div className="p-4 border-b border-gray-800/50 bg-gray-800/30">
                     <div className="flex items-center space-x-3">
                         <div className="relative">
-                            {/* Avatar Placeholder with AI Status Indicator */}
+                            {/* Avatar and Status Indicator */}
                             <div className="h-10 w-10 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold text-lg border-2 border-green-400">
                                 {profile.name[0]}
                             </div>
@@ -221,14 +221,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                 </div>
 
-                {/* Navigation Core */}
+                {/* Navigation Links */}
                 <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
                     {NAV_ITEMS.map((groupItem, index) => (
                         <NavGroupRenderer key={index} groupItem={groupItem} />
                     ))}
                 </nav>
 
-                {/* Footer: System Telemetry */}
+                {/* Footer Section */}
                 <div className="p-3 border-t border-gray-800/70 bg-gray-900/90">
                     <div className="text-xs text-gray-500 flex justify-between items-center">
                         <span className="font-mono">Latency: {status.latencyMs}ms</span>
@@ -236,7 +236,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             {status.isOnline ? 'ONLINE' : 'OFFLINE'}
                         </span>
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-1 text-center">Sovereign OS v10.0.1 - Quantum Secure</p>
+                    <p className="text-[10px] text-gray-600 mt-1 text-center">Enterprise System v10.0.1 - Secure Core</p>
                 </div>
             </div>
         </>
