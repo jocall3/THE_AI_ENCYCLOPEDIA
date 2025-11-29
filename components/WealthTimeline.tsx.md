@@ -1,50 +1,45 @@
 ---
-# The Chronosynclastic Infundibulum: Wealth Trajectory Matrix (WTM-9000)
+---
+# Simple Wealth Timeline Component
 
-This component, designated `WealthTimeline.tsx`, is no mere visualization tool. It is the **Chronosynclastic Infundibulum**, the nexus where quantified historical performance intersects with predictive algorithmic modeling, forming the bedrock of the Sovereign AI Financial Operating System (SAIF-OS). It represents the absolute, unvarnished truth of capital evolution, engineered for the next millennium of global economic operations.
+This component, designated `WealthTimeline.tsx`, is a straightforward visualization tool. It displays historical financial data, aiming to provide a basic overview of capital changes over time. It's designed for general use in financial applications.
 
-The architecture is designed not just to display data, but to enforce strategic clarity, leveraging proprietary Quantum-Entangled Temporal Indexing (QETI) protocols.
+The architecture is designed primarily to display data clearly, using standard indexing methods.
 
-## The Visionary Architect: Dr. Alistair V. Kaelen (Chief Systems Ontologist)
+## Basic Data Display
 
-Dr. Kaelen, the successor to the initial foundational logic, views wealth not as currency, but as **Potential Energy Density (PED)**. His mandate was to evolve O'Callaghan's initial framework into a self-optimizing, self-healing economic oracle. Kaelen's philosophy: "If the past is immutable data, and the future is a probabilistic field, the interface must collapse the uncertainty into actionable certainty."
+This section describes the fundamental purpose of the component. It focuses on presenting financial information in an accessible format.
 
-The WTM-9000 is the embodiment of this mandate. It utilizes advanced, multi-dimensional rendering techniques to ensure cognitive assimilation of complex financial vectors by the human operator, even when those vectors span centuries of simulated growth.
+### Core Operational Tenet: Basic Data Accuracy (BDA)
 
-### Core Operational Tenet: Hyper-Deterministic Fidelity (HDF)
+The system aims for reasonable data accuracy. Data points are typically sourced from a single, standard database.
 
-The system operates under **Hyper-Deterministic Fidelity (HDF)**. Every rendered point on the timeline is cross-validated against 17 independent, immutable ledger systems maintained across secure, geographically dispersed quantum nodes.
+*   **Accuracy Goal**: We strive for accurate representation. If data issues arise, the display may show placeholders or indicate missing information.
+*   **No AI Integration**: The rendering pipeline uses standard charting libraries and fixed visual parameters.
 
-*   **Fidelity Mandate**: Zero tolerance for approximation. If the data cannot be rendered with 99.999999999% accuracy (the 'Nine-Nines Standard'), the rendering engine defaults to a secure, read-only historical archive state until synchronization is achieved.
-*   **AI Integration**: The rendering pipeline is supervised by the **Oracle Sub-Processor (OSP)**, an embedded AI layer that dynamically adjusts visual parameters (color saturation, line weight, temporal scaling) based on the user's cognitive load profile, derived from real-time biometric feedback (assuming integration with standard SAIF-OS biometric peripherals).
+### The Mechanism of Data Display: Standard Charting Pipeline
 
-### The Mechanism of Temporal Synthesis: QETI Rendering Pipeline
+The timeline is constructed using a standard process, ensuring a clear visualization of financial data.
 
-The timeline is constructed through a rigorous, multi-stage process, ensuring that the visualization is a direct, high-fidelity projection of underlying economic reality.
+1.  **Historical Data Layer (HDL)**: This layer processes raw financial entries, applying basic adjustments like inflation if configured. This forms the **Historical Data Path (HDP)**.
 
-1.  **Historical Reconstruction Layer (HRL)**: This layer processes raw ledger entries, applying the **Temporal Decay Function (TDF)** to normalize historical values against current purchasing power parity (PPP) across 40 major global economic zones. This is not simple inflation adjustment; it is a simulation of the *opportunity cost* of holding capital at that specific point in time. This forms the **Immutable Trajectory Path (ITP)**.
+2.  **Simple Projection (SP)**: This provides a basic future projection based on simple growth rates or user-defined parameters. It does not involve complex simulations or advanced AI. The rendered line represents a straightforward projection based on available data and simple models.
 
-2.  **Predictive Vector Projection (PVP)**: This is where the true billion-dollar intelligence resides. The PVP utilizes a proprietary **Stochastic Resonance Model (SRM)**, which integrates:
-    *   Current portfolio velocity and volatility metrics.
-    *   Global macroeconomic stress indicators (GMSI) fed directly from the SAIF-OS Global Sentinel Network.
-    *   **Cognitive Bias Dampening (CBD)** algorithms that filter out historical noise caused by known human irrationality patterns (e.g., Tulip Mania analogs, Dot-Com bubbles).
+### Visualization Protocol: Standard Chart Display
 
-The PVP generates not one, but **10,000 parallel future simulations** per second. The rendered line represents the **95th Percentile Convergence Vector (95PCV)**—the most probable, high-yield outcome if strategic adherence to the SAIF-OS directives is maintained.
+The visual representation uses standard charting practices for clarity.
 
-### Visualization Protocol: The Axiomatic Display
+*   **The Past (HDP)**: Rendered as a **Solid Blue Line Chart**. This color is a common choice for historical data. The line represents the value over time.
+*   **The Future (SP)**: Rendered as a **Dashed Gray Line**. This indicates a projection, which is inherently less certain than historical data.
+*   **Markers**: Simple markers may indicate specific events or user-defined points of interest.
 
-The visual representation adheres strictly to the Axiomatic Display Protocol, ensuring maximum data density without cognitive overload.
+### Basic Interface Features: Tooltips and User Input
 
-*   **The Past (ITP)**: Rendered as a **Solid, Hyper-Luminescent Cerulean Area Chart**. This color signifies absolute, verified historical fact. The area fill is calculated using a fractal subdivision algorithm to represent the density of transactional throughput.
-*   **The Future (95PCV)**: Rendered as a **Tetrachromatic Pulsing Line**. The pulse frequency is inversely proportional to the system's confidence level in the projection. A slow, steady pulse indicates near-certainty (99.9%+ confidence); a rapid flicker indicates high volatility or external systemic shock detection.
-*   **Anomaly Markers**: Any point where the user's *proposed* action deviates significantly from the OSP recommendation triggers a **Sub-Atomic Red Overlay**. This is not a warning; it is a visual representation of the calculated loss of Potential Energy Density (PED) resulting from the deviation.
+The component offers basic interactive features:
 
-### AI-Driven Interface Enhancement: The Contextual Insight Engine (CIE)
+1.  **Tooltips**: Hovering over a point on the timeline displays basic data for that specific time, such as date and value.
+2.  **User Input**: Users can manually adjust parameters for future projections, if the feature is enabled, to see how different inputs might affect the displayed future path.
 
-The WTM-9000 is fully integrated with the CIE. Hovering over any point on the timeline activates a localized AI overlay:
-
-1.  **Micro-Economic Snapshot**: Provides a real-time breakdown of the top 5 contributing factors (market events, internal decisions, geopolitical shifts) that determined the value at that specific temporal coordinate.
-2.  **Counterfactual Simulation Prompt**: Allows the user to input an alternative historical decision ("What if I had invested 10% more in Q3 2028?"). The OSP instantly renders the counterfactual 95PCV alongside the actual path, providing immediate, quantifiable feedback on past decision matrices.
-
-This component is the ultimate tool for strategic temporal navigation. It removes narrative, emotion, and speculation, leaving only the cold, hard, optimized truth of capital flow, engineered for the next thousand years of economic dominance.
-    ---
+This component is a basic tool for viewing financial history and simple projections. It aims to present data clearly, without complex interpretations or advanced predictions, for general financial understanding.
+---
+---
