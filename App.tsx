@@ -17,6 +17,10 @@ import DerivativesDesk from './components/DerivativesDesk';
 import FinancialDemocracyView from './components/FinancialDemocracyView';
 import { DataContext, DataProvider } from './context/DataContext';
 import { View } from './types';
+import ApiSettingsPage from './src/pages/ApiSettingsPage';
+import SendMoneyView from './components/SendMoneyView';
+import TransactionsView from './components/TransactionsView';
+import InvestmentsView from './components/InvestmentsView';
 
 function AppLayout() {
   const context = useContext(DataContext);
@@ -29,37 +33,34 @@ function AppLayout() {
     switch (activeView) {
       case View.Dashboard: return <Dashboard setActiveView={setActiveView} />;
       case View.AIAdStudio: return <AIAdStudioView />;
-      case View.AIAdvisor: return <AIAdvisorView previousView={null} />;
+      case View.AIAdvisor: return <AIAdvisorView />;
       case View.AlgoTradingLab: return <AlgoTradingLab />;
       case View.APIIntegration: return <APIIntegrationView />;
+      case View.ApiSettings: return <ApiSettingsPage />;
       case View.ArtCollectibles: return <ArtCollectibles />;
       case View.Budgets: return <BudgetsView />;
       case View.CommoditiesExchange: return <CommoditiesExchange />;
       case View.ConciergeService: return <ConciergeService />;
-      case View.CorporateCommand: return <CorporateCommandView setActiveView={setActiveView} />;
+      case View.CorporateCommand: return <CorporateCommandView />;
       case View.CreditHealth: return <CreditHealthView />;
       case View.Crypto: return <CryptoView />;
       case View.DerivativesDesk: return <DerivativesDesk />;
       case View.FinancialDemocracy: return <FinancialDemocracyView />;
+      case View.SendMoney: return <SendMoneyView />;
+      case View.Transactions: return <TransactionsView />;
+      case View.Investments: return <InvestmentsView />;
+      // Add other views as they are created
       default: return <Dashboard setActiveView={setActiveView} />;
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white overflow-hidden font-sans">
-      <Sidebar 
-        activeView={activeView} 
-        setActiveView={setActiveView} 
-        isOpen={isSidebarOpen} 
-        setIsOpen={setIsSidebarOpen} 
-      />
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-        <Header 
-          onMenuClick={() => setIsSidebarOpen(true)} 
-          setActiveView={setActiveView} 
-        />
-        <main className="w-full flex-grow p-6 relative z-10">
-          <div className="max-w-8xl mx-auto h-full">
+    <div className="flex h-screen bg-gray-900 text-white">
+      <Sidebar activeView={activeView} setActiveView={setActiveView} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header onMenuClick={() => setIsSidebarOpen(true)} setActiveView={setActiveView} />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900">
+          <div className="container mx-auto px-6 py-8">
             {renderActiveSubsystem()}
           </div>
         </main>
@@ -68,10 +69,12 @@ function AppLayout() {
   );
 }
 
-export default function App() {
+const App: React.FC = () => {
   return (
     <DataProvider>
       <AppLayout />
     </DataProvider>
   );
-}
+};
+
+export default App;
