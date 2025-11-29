@@ -308,7 +308,11 @@ const FinancialOperationsDashboard: React.FC<{ modernTreasuryApiKey: string | nu
                 <div className="p-6 text-center text-gray-400 space-y-4">
                     <p className="text-lg">Modern Treasury API is not configured.</p>
                     <p>Please configure your Modern Treasury API Key and Organization ID to access advanced financial operations, real-time cash management, and AI-powered fraud detection.</p>
-                    <button className="py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg">Configure Now</button>
+                    <button 
+                        onClick={() => alert("Navigate to API Credentials Console (System -> Core System & API Status Overview -> Modern Treasury Settings Icon) to configure Modern Treasury.")} 
+                        className="py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg">
+                        Configure Now
+                    </button>
                 </div>
             </Card>
         );
@@ -441,7 +445,7 @@ const FinancialOperationsDashboard: React.FC<{ modernTreasuryApiKey: string | nu
                                 </ResponsiveContainer>
                             </div>
                             <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                                <h4 className="text-lg font-semibold text-white">AI Payment Optimization</h4>
+                                <h4 className="text-lg font-semibold text-white}>AI Payment Optimization</h4>
                                 <p className="text-gray-400 text-sm">
                                     Leverage AI to analyze payment routes, identify cost savings, and optimize settlement times.
                                 </p>
@@ -478,7 +482,7 @@ const FinancialOperationsDashboard: React.FC<{ modernTreasuryApiKey: string | nu
                             </ResponsiveContainer>
                         </div>
                         <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                            <h4 className="text-lg font-semibold text-white">AI Forecast Summary</h4>
+                            <h4 className="text-lg font-semibold text-white}>AI Forecast Summary</h4>
                             <p className="text-gray-400 text-sm">
                                 Our AI model predicts a strong financial outlook for the next 12 months, with consistent growth in revenue streams.
                                 Key factors include: increased customer retention, successful product launches, and optimized operational costs.
@@ -699,7 +703,7 @@ const BusinessIntelligenceDashboard: React.FC<{ geminiApiKey: string | null }> =
                             </ResponsiveContainer>
                         </div>
                         <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                            <h4 className="text-lg font-semibold text-white">AI Operational Insights</h4>
+                            <h4 className="text-lg font-semibold text-white}>AI Operational Insights</h4>
                             <p className="text-gray-400 text-sm">
                                 AI identifies a 25% potential for further automation in customer support workflows, leading to significant cost savings and improved response times.
                             </p>
@@ -966,32 +970,25 @@ const UserProfileManagement: React.FC<{ geminiApiKey: string | null }> = ({ gemi
 const APIIntegrationView: React.FC = () => {
     const context = useContext(DataContext);
     if (!context) throw new Error("APIIntegrationView must be within a DataProvider.");
+    // Update destructuring: We rely on the DataContext to load keys from the backend 
+    // configured via the new centralized API settings page.
     const {
         apiStatus,
-        geminiApiKey, setGeminiApiKey,
-        modernTreasuryApiKey, setModernTreasuryApiKey,
-        modernTreasuryOrganizationId, setModernTreasuryOrganizationId
+        geminiApiKey, // Key values needed for child components
+        modernTreasuryApiKey,
+        modernTreasuryOrganizationId
+        // setGeminiApiKey and Modern Treasury setters removed as key configuration is centralized
     } = context;
-
-    const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
-    const [geminiApiKeyInput, setGeminiApiKeyInput] = useState(geminiApiKey || '');
-
-    const [isMtModalOpen, setIsMtModalOpen] = useState(false);
-    const [mtApiKeyInput, setMtApiKeyInput] = useState(modernTreasuryApiKey || '');
-    const [mtOrgIdInput, setMtOrgIdInput] = useState(modernTreasuryOrganizationId || '');
 
     const [activeMainTab, setActiveMainTab] = useState<'system' | 'finance' | 'bi' | 'automation' | 'profile' | 'chat'>('system');
 
-    const handleSaveGeminiKey = () => {
-        setGeminiApiKey(geminiApiKeyInput);
-        setIsGeminiModalOpen(false);
+    // Handler to redirect user to the conceptual central settings page
+    const handleGoToCentralSettings = (apiName: string) => {
+        console.log(`Navigating to central API configuration for ${apiName}.`);
+        alert(`Key configuration for ${apiName} is now handled in the centralized API Credentials Console.`);
     };
 
-    const handleSaveMtKey = () => {
-        setModernTreasuryApiKey(mtApiKeyInput);
-        setModernTreasuryOrganizationId(mtOrgIdInput);
-        setIsMtModalOpen(false);
-    };
+    // Removed handleSaveGeminiKey and handleSaveMtKey functions
 
     const renderMainContent = () => {
         switch (activeMainTab) {
@@ -1006,13 +1003,14 @@ const APIIntegrationView: React.FC = () => {
                                         <div className="flex items-center gap-4">
                                             <p className="text-sm text-gray-400 font-mono">{api.responseTime}ms</p>
                                             <StatusIndicator status={api.status} />
+                                            {/* Buttons now redirect to centralized settings */}
                                             {api.provider === 'Google Gemini' && (
-                                                <button onClick={() => { setGeminiApiKeyInput(geminiApiKey || ''); setIsGeminiModalOpen(true); }} className="text-gray-400 hover:text-white">
+                                                <button onClick={() => handleGoToCentralSettings(api.provider)} className="text-gray-400 hover:text-white">
                                                     <SettingsIcon className="h-5 w-5"/>
                                                 </button>
                                             )}
                                             {api.provider === 'Modern Treasury' && (
-                                                <button onClick={() => { setMtApiKeyInput(modernTreasuryApiKey || ''); setMtOrgIdInput(modernTreasuryOrganizationId || ''); setIsMtModalOpen(true); }} className="text-gray-400 hover:text-white">
+                                                <button onClick={() => handleGoToCentralSettings(api.provider)} className="text-gray-400 hover:text-white">
                                                     <SettingsIcon className="h-5 w-5"/>
                                                 </button>
                                             )}
@@ -1052,53 +1050,7 @@ const APIIntegrationView: React.FC = () => {
 
     return (
         <>
-            {isGeminiModalOpen && (
-                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm" onClick={() => setIsGeminiModalOpen(false)}>
-                    <div className="bg-gray-800 rounded-lg shadow-2xl max-w-md w-full border border-gray-700" onClick={e => e.stopPropagation()}>
-                        <div className="p-4 border-b border-gray-700">
-                            <h3 className="text-lg font-semibold text-white">Configure Google Gemini API Key</h3>
-                        </div>
-                        <div className="p-6 space-y-4">
-                            <p className="text-sm text-gray-400">Enter your API key to enable all AI features. Your key is stored locally in your browser and is not sent to our servers.</p>
-                            <input
-                                type="password"
-                                value={geminiApiKeyInput}
-                                onChange={(e) => setGeminiApiKeyInput(e.target.value)}
-                                placeholder="Enter your Gemini API Key"
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                            />
-                            <button onClick={handleSaveGeminiKey} className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg">Save Key</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-             {isMtModalOpen && (
-                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm" onClick={() => setIsMtModalOpen(false)}>
-                    <div className="bg-gray-800 rounded-lg shadow-2xl max-w-md w-full border border-gray-700" onClick={e => e.stopPropagation()}>
-                        <div className="p-4 border-b border-gray-700">
-                            <h3 className="text-lg font-semibold text-white">Configure Modern Treasury API</h3>
-                        </div>
-                        <div className="p-6 space-y-4">
-                            <p className="text-sm text-gray-400">Enter your API key and Organization ID to enable payment operations. Your credentials are stored locally.</p>
-                            <input
-                                type="password"
-                                value={mtApiKeyInput}
-                                onChange={(e) => setMtApiKeyInput(e.target.value)}
-                                placeholder="Enter your Modern Treasury API Key"
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                            />
-                             <input
-                                type="text"
-                                value={mtOrgIdInput}
-                                onChange={(e) => setMtOrgIdInput(e.target.value)}
-                                placeholder="Enter your Organization ID"
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                            />
-                            <button onClick={handleSaveMtKey} className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg">Save Credentials</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Removed Modal JSX blocks (isGeminiModalOpen and isMtModalOpen) */}
             <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-white tracking-wider">Enterprise Operating System Dashboard</h2>
 
