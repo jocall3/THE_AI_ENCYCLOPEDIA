@@ -2,26 +2,26 @@ import React, { useState, useEffect, useReducer, useCallback, useMemo, FC, Chang
 import Card from './Card';
 
 //================================================================================================
-// CORE SYSTEM ARCHITECTURE DEFINITIONS: QUANTUM LEAP AI MARKETPLACE V1000.0
-// This section defines the foundational data structures for the next millennium of decentralized AI asset management.
+// BASIC SYSTEM STRUCTURES: SIMPLE AI MARKETPLACE V1.0
+// This section outlines the basic data types for managing AI assets.
 //================================================================================================
 
 /**
- * Represents the author of an AI agent, now integrated with decentralized identity verification (DID).
+ * Represents an agent's creator, with a basic ID.
  */
 export interface AgentAuthor {
-    id: string; // Unique Decentralized Identifier (DID)
-    name: string; // Corporate or Sovereign Entity Name
-    avatarUrl: string; // Secure Content Delivery Network (CDN) link for profile image
-    profileUrl: string; // Link to the author's verified governance portal
-    verified: boolean; // Status verified by the Global AI Trust Consortium (GATC)
-    bio: string; // A comprehensive mission statement and technological philosophy
-    agentsPublished: number; // Total volume of deployed, audited agents
-    governanceScore: number; // A metric reflecting community trust and compliance (0-100)
+    id: string; // Unique Identifier
+    name: string; // Company or Individual Name
+    avatarUrl: string; // Link to profile image
+    profileUrl: string; // Link to author's page
+    verified: boolean; // Verification status
+    bio: string; // A short description
+    agentsPublished: number; // Number of agents released
+    governanceScore: number; // A score (0-100)
 }
 
 /**
- * Represents a user review for an AI agent, now incorporating sentiment analysis scores.
+ * Represents a user review for an agent.
  */
 export interface AgentReview {
     id: string;
@@ -34,15 +34,15 @@ export interface AgentReview {
     comment: string;
     createdAt: Date;
     helpfulVotes: number;
-    sentimentScore: number; // AI-derived sentiment analysis (-1.0 to 1.0)
+    sentimentScore: number; // Sentiment score (-1.0 to 1.0)
 }
 
 /**
- * Represents the pricing model for an AI agent, now supporting dynamic resource allocation contracts.
+ * Represents an agent's pricing.
  */
 export interface AgentPricing {
     type: 'one-time' | 'subscription' | 'free' | 'utility-based';
-    amount: number; // Base cost in Universal Credit Units (UCU)
+    amount: number; // Base cost
     subscriptionInterval?: 'monthly' | 'yearly' | 'quarterly';
     resourceAllocationModel?: {
         computeUnitsPerTx: number;
@@ -52,7 +52,7 @@ export interface AgentPricing {
 }
 
 /**
- * Technical specifications for the agent, now including quantum resistance and model lineage.
+ * Agent technical details.
  */
 export interface AgentSpecs {
     version: string;
@@ -61,17 +61,17 @@ export interface AgentSpecs {
     dependencies: string[];
     supportedLanguages: string[];
     computeRequirements: {
-        cpu: string; // Virtual CPU cores required
+        cpu: string; // CPU cores required
         ram: string; // Memory allocation in GB
-        gpu?: string; // Specific accelerator requirement (e.g., TensorCore Cluster ID)
+        gpu?: string; // GPU requirement
         quantumResistanceLevel: 'Low' | 'Medium' | 'High' | 'Post-Quantum';
     };
     modelArchitecture: string; // e.g., Transformer-X, Diffusion-V3, Custom-NN
-    trainingDataProvenance: string; // Link to the audited data manifest
+    trainingDataProvenance: string; // Link to data manifest
 }
 
 /**
- * Represents a single version in the agent's immutable changelog ledger.
+ * Represents an agent's version history.
  */
 export interface AgentChangelogEntry {
     version: string;
@@ -82,43 +82,43 @@ export interface AgentChangelogEntry {
 }
 
 /**
- * Core interface for an AI Agent in the marketplace, now a fully auditable Digital Asset.
+ * Basic interface for an AI Agent.
  */
 export interface Agent {
     id: string;
     name: string;
     author: AgentAuthor;
-    category: string; // Primary domain classification
-    tags: string[]; // Semantic indexing keywords
-    shortDescription: string; // Concise value proposition (max 150 chars)
-    longDescription: string; // Detailed technical and functional overview
-    imageUrl: string; // High-resolution marketing asset link
-    rating: number; // Weighted average rating (1-5)
+    category: string; // Primary classification
+    tags: string[]; // Keywords
+    shortDescription: string; // Short description (max 150 chars)
+    longDescription: string; // Long description
+    imageUrl: string; // Image link
+    rating: number; // Average rating (1-5)
     reviewCount: number;
     reviews: AgentReview[];
     pricing: AgentPricing;
     specs: AgentSpecs;
     changelog: AgentChangelogEntry[];
-    downloads: number; // Total deployment instances
+    downloads: number; // Total deployments
     createdAt: Date;
     updatedAt: Date;
-    featured: boolean; // Curated by the GATC Oversight Committee
+    featured: boolean; // Is featured
     documentationUrl: string;
     demoUrl?: string;
-    aiCapabilitiesSummary: string; // AI-generated summary of core functions
+    aiCapabilitiesSummary: string; // Summary of functions
 }
 
 //================================================================================================
-// MOCK DATA GENERATION: SIMULATING THE GLOBAL AI REGISTRY (GAR)
-// This section generates extensive, high-fidelity mock data to stress-test the platform architecture.
+// MOCK DATA: SIMULATING AGENT LIST
+// This section creates sample data for testing.
 //================================================================================================
 
 const MOCK_AUTHORS: AgentAuthor[] = [
-    { id: 'did:btc:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', name: 'SynthCore Labs // Division Alpha', avatarUrl: 'https://i.pravatar.cc/40?u=synthcore', profileUrl: '#', verified: true, bio: 'Pioneering AI for predictive financial modeling and systemic risk mitigation. Our agents operate on proprietary, quantum-resistant algorithms ensuring data integrity across all temporal vectors.', agentsPublished: 5, governanceScore: 98.5 },
-    { id: 'did:eth:0xDataWeaverInc', name: 'DataWeaver Inc. - Enterprise Solutions', avatarUrl: 'https://i.pravatar.cc/40?u=dataweaver', profileUrl: '#', verified: true, bio: 'Weaving intelligence from raw, unstructured data streams into actionable, high-frequency insights. Specializing in cross-domain correlation analysis.', agentsPublished: 8, governanceScore: 92.1 },
-    { id: 'did:sol:LogicForgeAI', name: 'LogicForge AI - Automation Nexus', avatarUrl: 'https://i.pravatar.cc/40?u=logicforge', profileUrl: '#', verified: false, bio: 'Crafting bespoke, self-optimizing AI solutions for complex business process automation (BPA) and supply chain orchestration. Currently seeking Platinum SLA partners.', agentsPublished: 3, governanceScore: 78.9 },
-    { id: 'did:web:QuantumLeapAI', name: 'QuantumLeap AI Dynamics', avatarUrl: 'https://i.pravatar.cc/40?u=quantumleap', profileUrl: '#', verified: true, bio: 'Next-generation AI for complex problem solving, leveraging neuromorphic computing principles. We build agents that learn faster than the environment changes.', agentsPublished: 12, governanceScore: 99.9 },
-    { id: 'did:key:EvaNeuroResearch', name: 'Eva Neuro - Independent NLP Architect', avatarUrl: 'https://i.pravatar.cc/40?u=eva', profileUrl: '#', verified: false, bio: 'Independent researcher focusing on advanced Natural Language Processing (NLP) agents, specializing in semantic coherence and ethical bias mitigation in large language models.', agentsPublished: 2, governanceScore: 85.0 },
+    { id: 'did:btc:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', name: 'SynthCore Labs // Division Alpha', avatarUrl: 'https://i.pravatar.cc/40?u=synthcore', profileUrl: '#', verified: true, bio: 'AI for financial modeling and risk mitigation. Our agents use proprietary algorithms for data integrity.', agentsPublished: 5, governanceScore: 98.5 },
+    { id: 'did:eth:0xDataWeaverInc', name: 'DataWeaver Inc. - Enterprise Solutions', avatarUrl: 'https://i.pravatar.cc/40?u=dataweaver', profileUrl: '#', verified: true, bio: 'Extracting insights from data streams. Specializing in correlation analysis.', agentsPublished: 8, governanceScore: 92.1 },
+    { id: 'did:sol:LogicForgeAI', name: 'LogicForge AI - Automation Nexus', avatarUrl: 'https://i.pravatar.cc/40?u=logicforge', profileUrl: '#', verified: false, bio: 'Creating AI solutions for business process automation (BPA) and supply chain orchestration.', agentsPublished: 3, governanceScore: 78.9 },
+    { id: 'did:web:QuantumLeapAI', name: 'QuantumLeap AI Dynamics', avatarUrl: 'https://i.pravatar.cc/40?u=quantumleap', profileUrl: '#', verified: true, bio: 'AI for problem solving, using neuromorphic computing. Agents learn quickly.', agentsPublished: 12, governanceScore: 99.9 },
+    { id: 'did:key:EvaNeuroResearch', name: 'Eva Neuro - Independent NLP Architect', avatarUrl: 'https://i.pravatar.cc/40?u=eva', profileUrl: '#', verified: false, bio: 'Researcher focusing on Natural Language Processing (NLP) agents, specializing in semantic coherence and bias mitigation.', agentsPublished: 2, governanceScore: 85.0 },
 ];
 
 const MOCK_CATEGORIES = ['Financial Forecasting', 'Hyper-Automation', 'Regulatory Compliance', 'Customer Experience (CX)', 'Generative Content Synthesis', 'Code & Infrastructure Management', 'Personalized Intelligence'];
@@ -126,20 +126,20 @@ const MOCK_CATEGORIES = ['Financial Forecasting', 'Hyper-Automation', 'Regulator
 const MOCK_TAGS = ['forecasting', 'compliance', 'LLM', 'RPA', 'API-Gateway', 'real-time', 'risk-assessment', 'SEO-optimization', 'Python-Native', 'Kubernetes', 'summarization', 'predictive-maintenance', 'decentralized-ledger'];
 
 const MOCK_COMMENTS = [
-    "This agent has achieved a 40% reduction in false positive alerts across our Q3 compliance audits. A monumental achievement.",
-    "The initial setup required deep integration knowledge, but the resulting throughput increase justifies the effort tenfold.",
-    "Exceptional performance in high-volatility markets. The predictive accuracy exceeds our internal benchmarks by 12 basis points.",
-    "Documentation is sparse, but the author provided direct access to a senior engineer for onboarding. Five stars for support.",
-    "The utility-based pricing model is fair, though we are pushing the limits of the Bronze SLA tier.",
-    "Reliability is absolute. Zero downtime reported over 90 operational cycles.",
-    "We encountered a transient error during batch processing; the agent self-corrected within 300ms. Impressive resilience.",
-    "The gold standard for automated financial reporting. Unquestionably worth the investment.",
-    "Simple deployment via containerization. Immediate value extraction.",
-    "The subscription cost is high, but the ROI calculation confirms profitability within the first fiscal quarter.",
+    "This agent reduced false positive alerts by 40%. Good.",
+    "Setup was complex, but the throughput increase was worth it.",
+    "Performance in volatile markets is good. Accuracy exceeds benchmarks.",
+    "Documentation is poor, but support was helpful.",
+    "The utility-based pricing is fair, but we're pushing the limits.",
+    "Reliability is good. No downtime reported.",
+    "Encountered an error; the agent self-corrected quickly. Impressive.",
+    "Good for automated financial reporting. Worth the cost.",
+    "Easy deployment. Immediate value.",
+    "The subscription cost is high, but ROI is confirmed.",
 ];
 
 /**
- * A utility function to generate a large set of mock agents with high complexity.
+ * A function to generate sample agents.
  * @param count The number of agents to generate.
  * @returns An array of mock `Agent` objects.
  */
@@ -185,12 +185,12 @@ export const generateMockAgents = (count: number): Agent[] => {
         const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
         
         const changelog: AgentChangelogEntry[] = [
-            { version: '2.0.1-Quantum', releaseDate: new Date(), changes: ['Implemented post-quantum cryptographic module.', 'Optimized inference pipeline for 30% latency reduction.'], securityPatchesApplied: 2, performanceDeltaPercent: -30 },
-            { version: '1.9.0-Stability', releaseDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), changes: ['Major refactoring of data ingestion layer.', 'Enhanced error handling for network partitions.'], securityPatchesApplied: 1, performanceDeltaPercent: 15 },
-            { version: '1.0.0-Initial', releaseDate: new Date(createdAt.getTime() + 1000), changes: ['Initial public release under GATC framework.'], securityPatchesApplied: 0, performanceDeltaPercent: 0 },
+            { version: '2.0.1-Quantum', releaseDate: new Date(), changes: ['Implemented cryptographic module.', 'Optimized inference pipeline for latency reduction.'], securityPatchesApplied: 2, performanceDeltaPercent: -30 },
+            { version: '1.9.0-Stability', releaseDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), changes: ['Refactored data ingestion layer.', 'Enhanced error handling.'], securityPatchesApplied: 1, performanceDeltaPercent: 15 },
+            { version: '1.0.0-Initial', releaseDate: new Date(createdAt.getTime() + 1000), changes: ['Initial public release.'], securityPatchesApplied: 0, performanceDeltaPercent: 0 },
         ];
         
-        const aiSummary = `This ${category} agent utilizes a ${pricing.resourceAllocationModel?.slaTier || 'Standard'} SLA tier to deliver ${Math.round(avgRating * 10)}/10 performance in ${agent.tags[0] || 'core tasks'}.`;
+        const aiSummary = `This ${category} agent uses a ${pricing.resourceAllocationModel?.slaTier || 'Standard'} SLA tier to deliver ${Math.round(avgRating * 10)}/10 performance in ${MOCK_TAGS[0] || 'core tasks'}.`;
 
         agents.push({
             id: `agent-${i}-${Date.now()}`,
@@ -198,8 +198,8 @@ export const generateMockAgents = (count: number): Agent[] => {
             author,
             category,
             tags: [...new Set(Array.from({ length: Math.floor(Math.random() * 5) + 3 }, () => MOCK_TAGS[Math.floor(Math.random() * MOCK_TAGS.length)]))],
-            shortDescription: `Autonomous, high-throughput agent for mission-critical ${category.toLowerCase()} operations. Engineered for resilience and precision.`,
-            longDescription: `This is the definitive deployment package for the ${category.toUpperCase()} Sentinel ${i}. It represents the culmination of ${author.name}'s research into self-governing computational entities. The agent employs a proprietary ${AgentSpecs.name} architecture, capable of processing ${pricing.resourceAllocationModel?.computeUnitsPerTx || 4} compute units per transaction cycle. It is designed to interface seamlessly with legacy systems via our universal adapter layer, while maintaining strict adherence to the latest GATC security protocols. Configuration involves defining operational parameters within the ${pricing.resourceAllocationModel?.slaTier} Service Level Agreement, ensuring predictable resource consumption and guaranteed uptime. This agent is not merely a tool; it is a dedicated, intelligent subsystem ready for immediate integration into your enterprise backbone.`,
+            shortDescription: `Autonomous agent for ${category.toLowerCase()} operations. Designed for resilience and precision.`,
+            longDescription: `This is the deployment package for the ${category.toUpperCase()} Sentinel ${i}. It represents the culmination of ${author.name}'s research into computational entities. The agent employs a proprietary ${AgentSpecs.name} architecture, capable of processing ${pricing.resourceAllocationModel?.computeUnitsPerTx || 4} compute units per transaction cycle. It is designed to interface with legacy systems via our universal adapter layer, while maintaining adherence to security protocols. Configuration involves defining operational parameters within the ${pricing.resourceAllocationModel?.slaTier} Service Level Agreement, ensuring predictable resource consumption and guaranteed uptime. This agent is a dedicated, intelligent subsystem ready for immediate integration into your enterprise backbone.`,
             imageUrl: `https://picsum.photos/seed/A${i + 100}/600/400`,
             rating: parseFloat(avgRating.toFixed(2)),
             reviewCount: reviews.length,
@@ -209,7 +209,7 @@ export const generateMockAgents = (count: number): Agent[] => {
                 version: '2.0.1-Quantum',
                 releaseDate: new Date(),
                 requiredApiVersion: `v${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 10)}`,
-                dependencies: ['CoreOS v3.1+', 'Python 3.11+', 'ZeroMQ Library', 'GATC SDK v4.2'],
+                dependencies: ['CoreOS v3.1+', 'Python 3.11+', 'ZeroMQ Library', 'SDK v4.2'],
                 supportedLanguages: ['English', 'Mandarin', 'German', 'Japanese'],
                 computeRequirements: {
                     cpu: `${Math.floor(Math.random() * 8) + 4} vCPUs`,
@@ -234,7 +234,7 @@ export const generateMockAgents = (count: number): Agent[] => {
 };
 
 //================================================================================================
-// STATE MANAGEMENT (useReducer): ADVANCED FILTERING MATRIX
+// STATE MANAGEMENT (useReducer): FILTERING
 //================================================================================================
 
 export type FilterState = {
@@ -263,7 +263,7 @@ export const initialFilterState: FilterState = {
     searchQuery: '',
     categories: new Set(),
     minRating: 0,
-    maxPrice: 1000, // Increased max price for utility models
+    maxPrice: 1000, // Max price
     pricingTypes: new Set(),
     tags: new Set(),
     verifiedAuthor: false,
@@ -317,7 +317,7 @@ export function filterReducer(state: FilterState, action: FilterAction): FilterS
 }
 
 //================================================================================================
-// HELPER & UTILITY COMPONENTS: INFRASTRUCTURE LAYER
+// HELPER COMPONENTS
 //================================================================================================
 
 const Star: FC<{ filled?: boolean; half?: boolean }> = ({ filled, half }) => {
@@ -339,12 +339,12 @@ const Star: FC<{ filled?: boolean; half?: boolean }> = ({ filled, half }) => {
 };
 
 /**
- * A reusable component for rendering star ratings, now displaying weighted average.
+ * A component for star ratings.
  */
 export const StarRating: FC<{ rating: number; className?: string }> = ({ rating, className = '' }) => {
     const clampedRating = Math.min(5, Math.max(0, rating));
     const fullStars = Math.floor(clampedRating);
-    const halfStar = clampedRating % 1 >= 0.45; // Adjusted threshold for better visual representation
+    const halfStar = clampedRating % 1 >= 0.45; // Threshold for visual representation
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
     return (
@@ -357,7 +357,7 @@ export const StarRating: FC<{ rating: number; className?: string }> = ({ rating,
 };
 
 /**
- * A simple loading spinner component, now branded for high-performance computing visualization.
+ * A simple loading spinner.
  */
 export const LoadingSpinner: FC = () => (
     <div className="flex justify-center items-center p-8">
@@ -369,16 +369,16 @@ export const LoadingSpinner: FC = () => (
 );
 
 /**
- * A component to display when no results are found, optimized for user feedback loop initiation.
+ * Component for when no results are found.
  */
 export const NoResults: FC<{ onReset: () => void }> = ({ onReset }) => (
     <div className="text-center py-16 px-6 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl">
         <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <h3 className="mt-4 text-xl font-bold text-white">Zero Matching Computational Assets</h3>
+        <h3 className="mt-4 text-xl font-bold text-white">No Matching Assets</h3>
         <p className="mt-2 text-md text-gray-400">
-            The current query parameters yield an empty set. Adjust the complexity of your constraints or initiate a full registry scan by resetting filters.
+            No items match your filters. Try changing them or resetting.
         </p>
         <div className="mt-8">
             <button
@@ -386,14 +386,14 @@ export const NoResults: FC<{ onReset: () => void }> = ({ onReset }) => (
                 onClick={onReset}
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-500 transition duration-150"
             >
-                Execute Full Filter Reset
+                Reset Filters
             </button>
         </div>
     </div>
 );
 
 /**
- * A generic modal component, now utilizing advanced transition logic for enterprise UI standards.
+ * A generic modal component.
  */
 export const Modal: FC<{ isOpen: boolean; onClose: () => void; title: string; children: ReactNode }> = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
@@ -407,7 +407,7 @@ export const Modal: FC<{ isOpen: boolean; onClose: () => void; title: string; ch
                         {title}
                     </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-red-400 transition">
-                        <span className="sr-only">Close Transaction Window</span>
+                        <span className="sr-only">Close</span>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -422,7 +422,7 @@ export const Modal: FC<{ isOpen: boolean; onClose: () => void; title: string; ch
 };
 
 /**
- * Custom hook for managing high-volume pagination, optimized for large datasets.
+ * Hook for pagination.
  */
 export const usePagination = <T,>(items: T[], itemsPerPage: number) => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -449,7 +449,7 @@ export const usePagination = <T,>(items: T[], itemsPerPage: number) => {
     }, [maxPage]);
     
     useEffect(() => {
-        // Ensure current page is valid after filtering changes the total item count
+        // Adjust page if item count changes
         if (currentPage > maxPage && maxPage > 0) {
             setCurrentPage(maxPage);
         } else if (items.length > 0 && currentPage < 1) {
@@ -462,11 +462,11 @@ export const usePagination = <T,>(items: T[], itemsPerPage: number) => {
 
 
 //================================================================================================
-// UI SUB-COMPONENTS: PRESENTATION LAYER
+// UI COMPONENTS
 //================================================================================================
 
 /**
- * The search bar component, now featuring predictive text integration (simulated).
+ * The search bar component.
  */
 export const SearchBar: FC<{ query: string; onSearch: (query: string) => void }> = ({ query, onSearch }) => (
     <div className="relative w-full max-w-4xl mx-auto">
@@ -479,13 +479,13 @@ export const SearchBar: FC<{ query: string; onSearch: (query: string) => void }>
             type="text"
             value={query}
             onChange={(e: ChangeEvent<HTMLInputElement>) => onSearch(e.target.value)}
-            placeholder="Initiate Semantic Search: Agent Name, Capability Vector, or DID..."
+            placeholder="Search: Agent Name, Category, or Tag..."
             className="block w-full bg-gray-700 border-2 border-gray-600 rounded-xl py-3 pl-12 pr-4 text-lg placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-inner"
         />
         {query.length > 2 && (
             <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-cyan-600 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                {/* Simulated AI Suggestions */}
-                <div className="p-2 text-xs text-gray-500 border-b border-gray-700">AI Suggestions:</div>
+                {/* Suggestions */}
+                <div className="p-2 text-xs text-gray-500 border-b border-gray-700">Suggestions:</div>
                 {['Financial Forecasting', 'Risk Assessment', 'Compliance'].filter(s => s.toLowerCase().includes(query.toLowerCase())).map(suggestion => (
                     <div 
                         key={suggestion} 
@@ -502,7 +502,7 @@ export const SearchBar: FC<{ query: string; onSearch: (query: string) => void }>
 
 
 /**
- * The sidebar containing all advanced filtering options, now highly granular.
+ * The sidebar with filtering options.
  */
 export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<FilterAction> }> = ({ state, dispatch }) => {
     
@@ -521,18 +521,18 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
     return (
         <aside className="w-full p-6 bg-gray-800 rounded-xl shadow-inner border border-gray-700 h-full lg:sticky lg:top-6">
             <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
-                <h3 className="text-xl font-bold text-cyan-400">Asset Filtering Matrix</h3>
+                <h3 className="text-xl font-bold text-cyan-400">Filters</h3>
                 <button
                     onClick={() => dispatch({ type: 'RESET_FILTERS' })}
                     className="text-sm font-medium text-red-400 hover:text-red-300 transition duration-150 border border-red-400/50 px-3 py-1 rounded hover:bg-red-900/30"
                 >
-                    Hard Reset
+                    Reset
                 </button>
             </div>
 
             {/* Category Filter */}
             <div className="mb-6 p-3 bg-gray-700/30 rounded-lg">
-                <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Domain Classification</h4>
+                <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Category</h4>
                 <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
                     {MOCK_CATEGORIES.map(category => (
                         <div key={category} className="flex items-center">
@@ -551,7 +551,7 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
 
             {/* Rating Filter */}
             <div className="mb-6 p-3 bg-gray-700/30 rounded-lg">
-                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Minimum Quality Rating ({state.minRating.toFixed(1)} / 5.0)</h4>
+                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Minimum Rating ({state.minRating.toFixed(1)} / 5.0)</h4>
                 <div className="flex items-center space-x-3">
                     <StarRating rating={state.minRating} className="flex-shrink-0" />
                     <input
@@ -568,7 +568,7 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
             
             {/* Governance Score Filter */}
             <div className="mb-6 p-3 bg-gray-700/30 rounded-lg">
-                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Minimum Governance Score ({state.minGovernanceScore} / 100)</h4>
+                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Minimum Score ({state.minGovernanceScore} / 100)</h4>
                 <div className="flex items-center space-x-3">
                     <span className="text-sm text-gray-300 w-10 text-right">{state.minGovernanceScore}</span>
                     <input
@@ -586,7 +586,7 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
 
             {/* Price Filter */}
             <div className="mb-6 p-3 bg-gray-700/30 rounded-lg">
-                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Max Acquisition Cost (UCU)</h4>
+                <h4 className="font-bold text-gray-200 mb-2 uppercase tracking-wider">Max Price</h4>
                 <div className="flex items-center space-x-2 mb-3">
                      <input
                         type="range"
@@ -617,7 +617,7 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
             
             {/* Author Filter */}
             <div className="mb-6 p-3 bg-gray-700/30 rounded-lg">
-                 <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Author Provenance</h4>
+                 <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Author</h4>
                  <div className="flex items-center">
                      <input
                          id="verified-author"
@@ -626,13 +626,13 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
                          onChange={() => dispatch({ type: 'TOGGLE_VERIFIED_AUTHOR' })}
                          className="h-4 w-4 rounded border-gray-500 text-cyan-500 bg-gray-600 focus:ring-cyan-500"
                      />
-                     <label htmlFor="verified-author" className="ml-3 text-sm text-gray-300">GATC Certified Authors Only</label>
+                     <label htmlFor="verified-author" className="ml-3 text-sm text-gray-300">Verified Authors Only</label>
                  </div>
             </div>
 
             {/* Tag Filter */}
             <div className="p-3 bg-gray-700/30 rounded-lg">
-                 <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Semantic Indexing Keywords</h4>
+                 <h4 className="font-bold text-gray-200 mb-3 uppercase tracking-wider">Tags</h4>
                  <div className="flex flex-wrap gap-2">
                      {MOCK_TAGS.map(tag => (
                          <button
@@ -652,7 +652,7 @@ export const FilterSidebar: FC<{ state: FilterState; dispatch: React.Dispatch<Fi
 };
 
 /**
- * A card representing a single agent in the grid view, optimized for information density.
+ * A card for an agent.
  */
 export const AgentCard: FC<{ agent: Agent; onSelect: (agent: Agent) => void }> = ({ agent, onSelect }) => {
     
@@ -707,7 +707,7 @@ export const AgentCard: FC<{ agent: Agent; onSelect: (agent: Agent) => void }> =
                             <StarRating rating={agent.rating} className="text-sm" />
                             <span className="text-xs text-gray-500 ml-2">({agent.reviewCount})</span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">G-Score: {agent.author.governanceScore.toFixed(1)}</p>
+                        <p className="text-xs text-gray-500 mt-1">Score: {agent.author.governanceScore.toFixed(1)}</p>
                     </div>
                     <div className="flex flex-col items-end">
                         <div className="flex items-center text-sm font-semibold text-cyan-400">
@@ -725,7 +725,7 @@ export const AgentCard: FC<{ agent: Agent; onSelect: (agent: Agent) => void }> =
 };
 
 /**
- * The pagination controls for the agent grid, featuring advanced page skipping.
+ * Pagination controls.
  */
 export const Pagination: FC<{ currentPage: number; maxPage: number; onJump: (page: number) => void }> = ({ currentPage, maxPage, onJump }) => {
     if (maxPage <= 1) return null;
@@ -768,7 +768,7 @@ export const Pagination: FC<{ currentPage: number; maxPage: number; onJump: (pag
         <nav className="flex items-center justify-between py-6 text-white border-t border-gray-700 mt-6" aria-label="Pagination">
             <div className="hidden sm:block">
                 <p className="text-sm text-gray-400">
-                    Registry Page: <span className="font-bold text-cyan-400">{currentPage}</span> / Total Pages: <span className="font-bold text-cyan-400">{maxPage}</span>
+                    Page: <span className="font-bold text-cyan-400">{currentPage}</span> / Total Pages: <span className="font-bold text-cyan-400">{maxPage}</span>
                 </p>
             </div>
             <div className="flex-1 flex justify-center sm:justify-end space-x-2">
@@ -777,7 +777,7 @@ export const Pagination: FC<{ currentPage: number; maxPage: number; onJump: (pag
                     disabled={currentPage === 1}
                     className="relative inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-lg text-gray-300 bg-gray-800 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150"
                 >
-                    &larr; Previous Block
+                    &larr; Previous
                 </button>
                 <div className="flex items-center mx-2">
                     {pageNumbers.map((page, index) =>
@@ -799,7 +799,7 @@ export const Pagination: FC<{ currentPage: number; maxPage: number; onJump: (pag
                     disabled={currentPage === maxPage}
                     className="ml-2 relative inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-lg text-gray-300 bg-gray-800 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150"
                 >
-                    Next Block &rarr;
+                    Next &rarr;
                 </button>
             </div>
         </nav>
@@ -807,7 +807,7 @@ export const Pagination: FC<{ currentPage: number; maxPage: number; onJump: (pag
 };
 
 /**
- * A detailed view of a single agent, utilizing a multi-tabbed interface for comprehensive data presentation.
+ * Detailed agent view.
  */
 export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> = ({ agent, onClose }) => {
     const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'reviews' | 'changelog' | 'deployment'>('overview');
@@ -818,23 +818,23 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
         switch(activeTab) {
             case 'specs': return (
                 <div className="space-y-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                    <h4 className="text-xl font-bold text-white border-b border-cyan-600 pb-2">System Architecture & Provenance</h4>
+                    <h4 className="text-xl font-bold text-white border-b border-cyan-600 pb-2">Architecture</h4>
                     
                     <div className="grid grid-cols-2 gap-4">
-                        <DetailBox title="Model Lineage" value={agent.specs.modelArchitecture} />
-                        <DetailBox title="API Contract Version" value={agent.specs.requiredApiVersion} />
-                        <DetailBox title="Quantum Security Level" value={agent.specs.specs.quantumResistanceLevel} color={agent.specs.specs.quantumResistanceLevel === 'Post-Quantum' ? 'text-green-400' : 'text-yellow-400'} />
-                        <DetailBox title="Data Manifest Link" value={agent.specs.trainingDataProvenance.substring(0, 20) + '...'} />
+                        <DetailBox title="Model" value={agent.specs.modelArchitecture} />
+                        <DetailBox title="API Version" value={agent.specs.requiredApiVersion} />
+                        <DetailBox title="Security Level" value={agent.specs.specs.quantumResistanceLevel} color={agent.specs.specs.quantumResistanceLevel === 'Post-Quantum' ? 'text-green-400' : 'text-yellow-400'} />
+                        <DetailBox title="Data Link" value={agent.specs.trainingDataProvenance.substring(0, 20) + '...'} />
                     </div>
 
-                    <h5 className="text-lg font-semibold text-cyan-400 mt-6">Resource Allocation Profile</h5>
+                    <h5 className="text-lg font-semibold text-cyan-400 mt-6">Resources</h5>
                      <div className="grid grid-cols-3 gap-4">
-                        <DetailBox title="CPU Allocation" value={agent.specs.computeRequirements.cpu} />
-                        <DetailBox title="RAM Allocation" value={agent.specs.computeRequirements.ram} />
-                        <DetailBox title="GPU/Accelerator" value={agent.specs.computeRequirements.gpu || 'None Specified'} />
+                        <DetailBox title="CPU" value={agent.specs.computeRequirements.cpu} />
+                        <DetailBox title="RAM" value={agent.specs.computeRequirements.ram} />
+                        <DetailBox title="GPU" value={agent.specs.computeRequirements.gpu || 'None Specified'} />
                     </div>
                     
-                    <h5 className="text-lg font-semibold text-cyan-400 mt-6">Dependencies & Environment</h5>
+                    <h5 className="text-lg font-semibold text-cyan-400 mt-6">Dependencies</h5>
                      <ul className="list-disc list-inside text-gray-300 ml-4 space-y-1">
                         {agent.specs.dependencies.map((dep, index) => <li key={index} className="text-sm">{dep}</li>)}
                     </ul>
@@ -842,7 +842,7 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
             );
             case 'reviews': return (
                 <div>
-                     <h4 className="text-xl font-bold text-white mb-4 border-b border-cyan-600 pb-2">Audited User Feedback ({agent.reviewCount} Entries)</h4>
+                     <h4 className="text-xl font-bold text-white mb-4 border-b border-cyan-600 pb-2">User Feedback ({agent.reviewCount} Entries)</h4>
                      <div className="space-y-8">
                         {agent.reviews.map(review => (
                             <div key={review.id} className="border border-gray-700 p-4 rounded-lg bg-gray-800/50">
@@ -850,7 +850,7 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
                                     <img src={review.author.avatarUrl} alt={review.author.name} className="h-10 w-10 rounded-full mr-3 border-2 border-cyan-500" />
                                     <div>
                                         <p className="font-bold text-white">{review.author.name}</p>
-                                        <p className="text-xs text-gray-500">Deployed: {review.createdAt.toLocaleDateString()}</p>
+                                        <p className="text-xs text-gray-500">Date: {review.createdAt.toLocaleDateString()}</p>
                                     </div>
                                     <div className="ml-auto flex items-center space-x-3">
                                         <div className="flex flex-col items-end">
@@ -862,7 +862,7 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
                                     </div>
                                 </div>
                                 <p className="text-gray-300 italic mt-2 border-l-2 border-gray-600 pl-3">"{review.comment}"</p>
-                                <p className="text-xs text-gray-500 mt-2">Helpfulness Index: {review.helpfulVotes}</p>
+                                <p className="text-xs text-gray-500 mt-2">Helpful Votes: {review.helpfulVotes}</p>
                             </div>
                         ))}
                      </div>
@@ -870,7 +870,7 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
             );
             case 'changelog': return (
                 <div>
-                    <h4 className="text-xl font-bold text-white mb-4 border-b border-cyan-600 pb-2">Immutable Version Ledger</h4>
+                    <h4 className="text-xl font-bold text-white mb-4 border-b border-cyan-600 pb-2">Version History</h4>
                     <div className="space-y-8">
                         {agent.changelog.map(entry => (
                             <div key={entry.version} className="border-l-4 border-purple-500 pl-4 bg-gray-800/50 p-3 rounded-r-lg">
@@ -895,7 +895,7 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
                  return (
                     <div className="space-y-6">
                         <div className="bg-gray-800 p-6 rounded-lg border border-cyan-600/50">
-                            <h4 className="text-xl font-bold text-cyan-400 mb-2">Core Value Proposition</h4>
+                            <h4 className="text-xl font-bold text-cyan-400 mb-2">Description</h4>
                             <p className="text-gray-300 whitespace-pre-wrap text-lg leading-relaxed">{agent.longDescription}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -965,16 +965,16 @@ export const AgentDetailModal: FC<{ agent: Agent | null; onClose: () => void }> 
 };
 
 /**
- * Component for displaying acquisition/deployment options.
+ * Component for deployment options.
  */
-const AcquisitionPanel: FC<{ agent: Agent }> = ({ agent }) => {
+const DeploymentPanel: FC<{ agent: Agent }> = ({ agent }) => {
     const [selectedTier, setSelectedTier] = useState<'Bronze' | 'Silver' | 'Gold' | 'Platinum'>('Bronze');
     
     const pricing = agent.pricing;
     const resourceModel = pricing.resourceAllocationModel;
 
     const handlePurchase = () => {
-        alert(`Initiating deployment sequence for ${agent.name} at SLA Tier: ${selectedTier}. Check console for transaction hash.`);
+        alert(`Initiating deployment for ${agent.name} at SLA Tier: ${selectedTier}. Check console for transaction hash.`);
         console.log(`Transaction initiated for Agent ID: ${agent.id}. Selected Tier: ${selectedTier}.`);
     };
 
@@ -1003,7 +1003,7 @@ const AcquisitionPanel: FC<{ agent: Agent }> = ({ agent }) => {
             <h4 className="text-2xl font-extrabold text-white mb-3 border-b border-gray-700 pb-2">Deployment Contract</h4>
             
             <div className="mb-4">
-                <p className="text-sm text-gray-400 mb-1">Compute Units Required Per Transaction:</p>
+                <p className="text-sm text-gray-400 mb-1">Compute Units Per Transaction:</p>
                 <p className="text-xl font-mono text-yellow-400">{resourceModel.computeUnitsPerTx}</p>
             </div>
             
@@ -1046,7 +1046,7 @@ const AcquisitionPanel: FC<{ agent: Agent }> = ({ agent }) => {
 }
 
 /**
- * Small widget showing author summary.
+ * Author summary widget.
  */
 const AuthorProfileWidget: FC<{ author: AgentAuthor }> = ({ author }) => (
     <div className="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
@@ -1063,13 +1063,13 @@ const AuthorProfileWidget: FC<{ author: AgentAuthor }> = ({ author }) => (
             <span className="text-gray-300">Trust Score:</span>
             <span className={`font-bold ${author.governanceScore > 90 ? 'text-green-400' : 'text-yellow-400'}`}>{author.governanceScore.toFixed(1)}</span>
         </div>
-        <a href={author.profileUrl} className="mt-2 block text-center text-sm text-cyan-400 hover:underline">Access Governance Portal &rarr;</a>
+        <a href={author.profileUrl} className="mt-2 block text-center text-sm text-cyan-400 hover:underline">Access Portal &rarr;</a>
     </div>
 );
 
 
 //================================================================================================
-// MAIN VIEW COMPONENT: THE MARKETPLACE HUB
+// MAIN MARKETPLACE COMPONENT
 //================================================================================================
 
 const AgentMarketplaceView: React.FC = () => {
@@ -1081,66 +1081,66 @@ const AgentMarketplaceView: React.FC = () => {
 
     const [sortBy, setSortBy] = useState<'rating' | 'newest' | 'downloads' | 'featured' | 'governance'>('featured');
 
-    // Simulate fetching data from an API (Initialization Phase)
+    // Load sample data
     useEffect(() => {
         setIsLoading(true);
         setError(null);
         const timer = setTimeout(() => {
             try {
-                // Generate 200 high-fidelity agents
+                // Generate 200 agents
                 const generatedAgents = generateMockAgents(200);
                 setAllAgents(generatedAgents);
             } catch (e) {
-                setError("CRITICAL ERROR: Data serialization failure during registry load.");
+                setError("Error loading data.");
                 console.error(e);
             } finally {
                 setIsLoading(false);
             }
-        }, 2000); // Increased delay for dramatic effect
+        }, 2000); // Simulated delay
 
         return () => clearTimeout(timer);
     }, []);
     
-    // Filtering and Sorting Logic (Memoized for performance)
+    // Filtering and Sorting Logic
     const filteredAndSortedAgents = useMemo(() => {
         let processedAgents = allAgents.filter(agent => {
             const searchLower = filterState.searchQuery.toLowerCase();
             
-            // 1. Semantic Search Check
+            // 1. Search Check
             const searchMatch = searchLower.length === 0 || 
                 agent.name.toLowerCase().includes(searchLower) ||
                 agent.shortDescription.toLowerCase().includes(searchLower) ||
                 agent.aiCapabilitiesSummary.toLowerCase().includes(searchLower) ||
                 agent.tags.some(t => t.toLowerCase().includes(searchLower));
             
-            // 2. Category Constraint
+            // 2. Category Filter
             const categoryMatch = filterState.categories.size === 0 || filterState.categories.has(agent.category);
             
-            // 3. Quality Constraints
+            // 3. Rating Filter
             const ratingMatch = agent.rating >= filterState.minRating;
             const governanceMatch = agent.author.governanceScore >= filterState.minGovernanceScore;
             
-            // 4. Pricing Constraints
+            // 4. Price Filter
             const priceMatch = (agent.pricing.type === 'free' && filterState.maxPrice >= 0) || 
                                (agent.pricing.type !== 'free' && agent.pricing.amount <= filterState.maxPrice);
             const pricingTypeMatch = filterState.pricingTypes.size === 0 || filterState.pricingTypes.has(agent.pricing.type);
             
-            // 5. Tag Constraint
+            // 5. Tag Filter
             const tagFilterMatch = filterState.tags.size === 0 || agent.tags.some(t => filterState.tags.has(t));
             
-            // 6. Author Constraint
+            // 6. Author Filter
             const authorMatch = !filterState.verifiedAuthor || agent.author.verified;
             
             return searchMatch && categoryMatch && ratingMatch && priceMatch && pricingTypeMatch && tagFilterMatch && authorMatch && governanceMatch;
         });
 
-        // Sorting Implementation
+        // Sorting
         processedAgents.sort((a, b) => {
             switch (sortBy) {
                 case 'featured':
                     if (a.featured && !b.featured) return -1;
                     if (!a.featured && b.featured) return 1;
-                    return b.rating - a.rating; // Secondary sort by rating if both/neither are featured
+                    return b.rating - a.rating; // Secondary sort
                 case 'rating':
                     return b.rating - a.rating;
                 case 'governance':
@@ -1157,7 +1157,7 @@ const AgentMarketplaceView: React.FC = () => {
         return processedAgents;
     }, [allAgents, filterState, sortBy]);
 
-    const { currentData, currentPage, maxPage, jump } = usePagination(filteredAndSortedAgents, 15); // Increased page size to 15
+    const { currentData, currentPage, maxPage, jump } = usePagination(filteredAndSortedAgents, 15); // Page size
 
     const handleSearch = useCallback((query: string) => {
         dispatch({ type: 'SET_SEARCH_QUERY', payload: query });
@@ -1171,10 +1171,10 @@ const AgentMarketplaceView: React.FC = () => {
 
     return (
         <div className="space-y-8 p-4 md:p-8">
-            <Card title="Quantum Registry: AI Asset Marketplace" padding="none">
+            <Card title="AI Asset Marketplace" padding="none">
                 <div className="p-8 bg-gray-900/70 border-b border-gray-700">
-                     <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">The Global AI Asset Exchange</h1>
-                     <p className="text-gray-400 mb-6 max-w-3xl">Access the vetted, high-assurance computational agents powering the next generation of enterprise operations. All assets are subject to mandatory GATC security and performance audits.</p>
+                     <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">The AI Asset List</h1>
+                     <p className="text-gray-400 mb-6 max-w-3xl">View available AI agents. All assets are listed as-is.</p>
                      <SearchBar query={filterState.searchQuery} onSearch={handleSearch} />
                 </div>
                 <div className="flex flex-col lg:flex-row gap-6 p-6">
@@ -1187,7 +1187,7 @@ const AgentMarketplaceView: React.FC = () => {
                     <main className="lg:w-3/4 xl:w-4/5">
                         <div className="flex justify-between items-center mb-6 flex-wrap gap-4 border-b border-gray-700 pb-4">
                             <p className="text-lg font-medium text-gray-300">
-                                Displaying <span className="text-cyan-400 font-bold">{currentData.length}</span> of <span className="text-cyan-400 font-bold">{filteredAndSortedAgents.length}</span> Assets
+                                Showing <span className="text-cyan-400 font-bold">{currentData.length}</span> of <span className="text-cyan-400 font-bold">{filteredAndSortedAgents.length}</span> Assets
                             </p>
                             <div className="flex items-center space-x-3">
                                 <span className="text-sm text-gray-300 hidden sm:inline">Sort Order:</span>
@@ -1196,11 +1196,11 @@ const AgentMarketplaceView: React.FC = () => {
                                     onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                                     className="bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 shadow-inner"
                                 >
-                                    <option value="featured">Featured (GATC Priority)</option>
-                                    <option value="governance">Highest Governance Score</option>
-                                    <option value="rating">Highest User Rating</option>
-                                    <option value="newest">Recently Deployed</option>
-                                    <option value="downloads">Most Deployed Instances</option>
+                                    <option value="featured">Featured</option>
+                                    <option value="governance">Highest Score</option>
+                                    <option value="rating">Highest Rating</option>
+                                    <option value="newest">Newest</option>
+                                    <option value="downloads">Most Downloads</option>
                                 </select>
                             </div>
                         </div>
