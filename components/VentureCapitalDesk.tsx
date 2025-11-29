@@ -457,7 +457,7 @@ const VentureCapitalDesk: React.FC = () => {
           <p className="text-base italic border-l-4 border-red-500 pl-3">
             "The market is not a democracy; it is a meritocracy governed by predictive accuracy. We eliminate the noise of human bias, fear, and legacy thinking. Capital flows where the data dictates maximum entropy reduction and exponential value creation. Compliance is automated. Due diligence is instantaneous. Failure to adapt is obsolescence."
           </p>
-          <p className="text-sm text-gray-500">â€” Core Directive 001, Deployed by the Architect.</p>
+          <p className="text-sm text-gray-500">Ã¢â‚¬â€  Core Directive 001, Deployed by the Architect.</p>
         </CardContent>
       </Card>
 
