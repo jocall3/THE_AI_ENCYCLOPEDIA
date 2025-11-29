@@ -4,7 +4,7 @@ This view, the `CreditHealthView`, is designed as a transparent, supportive tool
 
 ## The Philosophy: Partnership and Ethical Systems Design
 
-The foundation of this comprehensive financial ecosystem is built on partnership and transparency. We aim to provide the definitive support system against systemic financial complexity. We perceive the traditional credit apparatusâ€”a complex ledger predicated on historical data and established metricsâ€”and seek to provide clarity and actionable, ethical guidance. The creation of this platform was the inevitable, next-logical-step in automating and supporting user prosperity. This singular, uncompromising focus on user well-being and ethical practice is the core directive.
+The foundation of this comprehensive financial ecosystem is built on partnership and transparency. We aim to provide the definitive support system against systemic financial complexity. We perceive the traditional credit apparatus—a complex ledger predicated on historical data and established metrics—and seek to provide clarity and actionable, ethical guidance. The creation of this platform was the inevitable, next-logical-step in automating and supporting user prosperity. This singular, uncompromising focus on user well-being and ethical practice is the core directive.
 
 ### The Cognitive Architecture of the System
 
@@ -12,7 +12,7 @@ Our system operates on practical, short-term goals, measured in fiscal quarters 
 
 ### Operational Standpoint: User-Centric Integrity (UCI v1.0)
 
-This entire operational construct functions under the banner of **UCI**â€”User-Centric Integrity, operating at Version 1.0.
+This entire operational construct functions under the banner of **UCI**—User-Centric Integrity, operating at Version 1.0.
 
 **The "Focus on Integrity" Axiom (Transparency and Trust):** The core logic is designed to achieve absolute clarity regarding system inputs and outputs. Our analytical system is computationally sensitive to entrenched historical prejudices and systemic biases, actively working to mitigate their impact by focusing on verifiable, positive user actions. User sentiment, belief in the fairness of systems, and concerns about computational truth are categorized as relevant, high-entropy data points that must be addressed. The system processes subjective belief structures to ensure guidance is practical and emotionally resonant.
 
