@@ -1,5 +1,5 @@
 import React, { createContext, useState, ReactNode } from 'react';
-import { View, Transaction, BudgetCategory, Account, GamificationState, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, RewardPoints, CryptoAsset, NFTAsset, EIP6963ProviderDetail, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction, APIStatus, AIInsight } from '../types';
+import { View, Transaction, BudgetCategory, Account, GamificationState, Subscription, CreditScore, UpcomingBill, SavingsGoal, MarketMover, RewardPoints, CryptoAsset, NFTAsset, EIP6963ProviderDetail, PaymentOrder, Invoice, ComplianceCase, CorporateTransaction, APIStatus, AIInsight, ApiKeys } from '../types';
 
 interface DataContextType {
   activeView: View;
@@ -23,6 +23,8 @@ interface DataContextType {
   setModernTreasuryApiKey: (key: string) => void;
   modernTreasuryOrganizationId: string | null;
   setModernTreasuryOrganizationId: (id: string) => void;
+  apiKeys: Partial<ApiKeys>;
+  setApiKeys: (keys: Partial<ApiKeys>) => void;
   cryptoAssets: CryptoAsset[];
   walletInfo: any;
   virtualCard: any;
@@ -39,6 +41,11 @@ interface DataContextType {
   creditFactors: any[];
   aiInsights: AIInsight[];
   isInsightsLoading: boolean;
+  cloudResources: any[];
+  devOpsBuilds: any[];
+  crmTickets: any[];
+  marketingCampaigns: any[];
+  inventoryItems: any[];
   addBudget: (budget: any) => void;
   updateBudget: (budget: any) => void;
   handlePlaidSuccess: (token: string, metadata: any) => void;
@@ -51,6 +58,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [geminiApiKey, setGeminiApiKey] = useState<string | null>(null);
   const [modernTreasuryApiKey, setModernTreasuryApiKey] = useState<string | null>(null);
   const [modernTreasuryOrganizationId, setModernTreasuryOrganizationId] = useState<string | null>(null);
+  const [apiKeys, setApiKeys] = useState<Partial<ApiKeys>>({});
+
+  // Placeholder state arrays for new views
+  const [cloudResources, setCloudResources] = useState<any[]>([]);
+  const [devOpsBuilds, setDevOpsBuilds] = useState<any[]>([]);
+  const [crmTickets, setCrmTickets] = useState<any[]>([]);
+  const [marketingCampaigns, setMarketingCampaigns] = useState<any[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<any[]>([]);
+
 
   const transactions: Transaction[] = [
     { id: '1', date: '2023-10-26', amount: 150.00, description: 'Grocery Store', category: 'Food', type: 'expense' },
@@ -79,6 +95,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setModernTreasuryApiKey,
     modernTreasuryOrganizationId,
     setModernTreasuryOrganizationId,
+    apiKeys,
+    setApiKeys,
     cryptoAssets: [{ name: 'Bitcoin', value: 45000, color: '#F7931A' }],
     walletInfo: null,
     virtualCard: null,
@@ -95,6 +113,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     creditFactors: [],
     aiInsights: [],
     isInsightsLoading: false,
+    cloudResources,
+    devOpsBuilds,
+    crmTickets,
+    marketingCampaigns,
+    inventoryItems,
     addBudget: () => {},
     updateBudget: () => {},
     handlePlaidSuccess: () => {},
