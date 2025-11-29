@@ -40,7 +40,7 @@ import MarqetaDashboardView from './components/MarqetaDashboardView';
 import SSOView from './components/SSOView';
 import PersonalizationView from './components/PersonalizationView';
 import TheVisionView from './components/TheVisionView';
-import { DataContext } from './context/DataContext';
+import { DataContext, DataProvider } from './context/DataContext';
 import { View } from './types';
 
 /**
@@ -56,7 +56,7 @@ import { View } from './types';
  * - Machine Integration: Includes VoiceControl and Machine Advisor overlays.
  * - Access Control: Ensures module-level segregation.
  */
-export default function App() {
+function AppLayout() {
   // Shared State Retrieval
   const { activeView, setActiveView } = useContext(DataContext);
   
@@ -217,5 +217,13 @@ export default function App() {
       */}
       <VoiceControl setActiveView={setActiveView} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <DataProvider>
+      <AppLayout />
+    </DataProvider>
   );
 }
