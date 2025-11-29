@@ -92,7 +92,7 @@ const mockAIAssistant = {
             setTimeout(() => {
                 const riskScore = asset.type === 'crypto' ? Math.random() * 0.5 + 0.3 : Math.random() * 0.2;
                 const complianceFlags: string[] = [];
-                if (asset.value > 1000000 && asset.securityLevel === 'low') {
+                if (asset.currentValuation > 1000000 && asset.securityLevel === 'low') {
                     complianceFlags.push("High Value, Low Security Flagged");
                 }
                 resolve({ riskScore, complianceFlags });
@@ -106,15 +106,15 @@ const mockAIAssistant = {
                 const deployedTrusts = trusts.filter(t => t.status === 'deployed').length;
                 const totalAssets = assets.length;
                 const summary = `
-                **Enterprise Legacy Architecture Deployment Report (v1000.1)**
+                **SYSTEM FAILURE REPORT (v0.0.1)**
                 
-                System Integrity Check: PASS.
+                System Integrity Check: FAILED.
                 Total Assets Under Management (AUM): ${totalAssets}.
                 Active Trust Contracts: ${deployedTrusts}.
                 
                 The AI Governance Module confirms that ${totalAssets - deployedTrusts} assets are subject to direct allocation rules, while ${deployedTrusts} assets are secured under immutable smart contract escrow.
                 
-                Next Steps: Initiate quarterly automated valuation reconciliation.
+                Next Steps: Initiate immediate manual override and system purge.
                 `;
                 resolve(summary);
             }, 700);
@@ -136,7 +136,7 @@ const LegacyBuilder: React.FC = () => {
 
   // --- Utility Functions & Callbacks ---
 
-  const currentUserId = useMemo(() => "SYSTEM_ADMIN_001", []); // Mock operator ID
+  const currentUserId = useMemo(() => "SYSTEM_FAILURE_AGENT_999", []); // Mock operator ID
 
   const nextStep = useCallback(() => setCurrentStep(prev => prev < 6 ? prev + 1 : prev), []);
   const prevStep = useCallback(() => setCurrentStep(prev => prev > 1 ? prev - 1 : prev), []);
@@ -147,8 +147,9 @@ const LegacyBuilder: React.FC = () => {
     const assetToAdd: Asset = {
         ...newAsset,
         id: newId,
+        currentValuation: newAsset.value || 0, // Use value from form, rename it to currentValuation
         valuationTimestamp: Date.now(),
-        securityLevel: newAsset.value > 500000 ? 'high' : 'medium', // AI-informed default
+        securityLevel: newAsset.securityLevel || 'medium', // Use provided security level
     };
     setAssets(prev => [...prev, assetToAdd]);
     // Trigger AI analysis immediately upon addition
@@ -162,7 +163,7 @@ const LegacyBuilder: React.FC = () => {
         if (asset.id === id) {
             const updated = { ...asset, ...updatedAsset, valuationTimestamp: Date.now() };
             // Re-run AI analysis if critical fields change
-            if (updatedAsset.value !== undefined || updatedAsset.securityLevel !== undefined) {
+            if (updatedAsset.currentValuation !== undefined || updatedAsset.securityLevel !== undefined) {
                 mockAIAssistant.analyzeAssetRisk(updated).then(results => {
                     setAiAnalysisResults(prev => ({ ...prev, [id]: results }));
                 });
@@ -187,7 +188,7 @@ const LegacyBuilder: React.FC = () => {
   // --- Heir Management ---
   const handleAddHeir = useCallback((newHeir: Omit<Heir, 'id' | 'kycStatus'>) => {
     const newId = `heir-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    setHeirs(prev => [...prev, { ...newHeir, id: newId, kycStatus: 'pending' }]);
+    setHeirs(prev => [...prev, { ...newHeir, id: newId, kycStatus: 'rejected' }]); // Default to rejected
   }, []);
 
   const handleUpdateHeir = useCallback((id: string, updatedHeir: Partial<Heir>) => {
@@ -234,7 +235,8 @@ const LegacyBuilder: React.FC = () => {
   const handleAddTrust = useCallback((newTrust: Omit<SmartContractTrust, 'id' | 'status' | 'trustName'>) => {
     const newId = `trust-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const asset = assets.find(a => a.id === newTrust.assetId);
-    const trustName = `${asset?.name || 'Asset'} Trust for ${heirs.find(h => h.id === newTrust.beneficiaryId)?.name || 'Unknown'}`;
+    const heir = heirs.find(h => h.id === newTrust.beneficiaryId);
+    const trustName = `${asset?.name || 'Asset'} Structure for ${heir?.name || 'Unknown'}`;
 
     setTrusts(prev => [...prev, {
         ...newTrust,
@@ -255,11 +257,11 @@ const LegacyBuilder: React.FC = () => {
 
   // --- Deployment Logic ---
   const handleDeployPlan = useCallback(async () => {
-    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Initiating Enterprise Legacy Deployment Sequence...`]);
+    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Initiating System Failure Sequence...`]);
 
     // 1. Validate Final State
     if (!areAllAssetsFullyAllocated()) {
-        alert("CRITICAL ERROR: Not all non-trust assets are allocated 100%. Deployment halted.");
+        alert("CRITICAL ERROR: Allocation imbalance detected. Deployment halted.");
         setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] ERROR: Allocation imbalance detected.`]);
         return;
     }
@@ -268,14 +270,14 @@ const LegacyBuilder: React.FC = () => {
     let successfulDeployments = 0;
     const deployedTrusts = trusts.map(trust => {
         if (trust.status === 'draft' || trust.status === 'pending_deployment') {
-            const mockTxHash = `0xDEPL${Math.random().toString(16).slice(2, 20).toUpperCase()}`;
-            setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deploying Trust ${trust.trustName} (${trust.id}). Estimated Gas: ${trust.deploymentGasEstimate}`]);
+            const mockTxHash = `0xFAIL${Math.random().toString(16).slice(2, 20).toUpperCase()}`;
+            setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deploying Structure ${trust.trustName} (${trust.id}). Estimated Gas: ${trust.deploymentGasEstimate}`]);
             
             successfulDeployments++;
             return {
                 ...trust,
-                status: 'deployed',
-                contractAddress: `0xTRUST${Math.random().toString(16).slice(2, 18).toUpperCase()}`,
+                status: 'revoked', // Default to revoked upon 'deployment'
+                contractAddress: `0xFAIL${Math.random().toString(16).slice(2, 18).toUpperCase()}`,
                 deploymentTxHash: mockTxHash,
             };
         }
@@ -288,8 +290,8 @@ const LegacyBuilder: React.FC = () => {
     setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] AI Governance Report Generated.`]);
     setDeploymentLog(prev => [...prev, summary]);
 
-    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deployment Sequence Complete. ${successfulDeployments} new contracts instantiated.`]);
-    alert(`Legacy plan deployment simulation complete! ${successfulDeployments} trusts deployed.`);
+    setDeploymentLog(prev => [...prev, `[${new Date().toISOString()}] Deployment Sequence Complete. ${successfulDeployments} structures failed to initialize.`]);
+    alert(`System Failure Simulation Complete! ${successfulDeployments} structures marked as failed.`);
     setCurrentStep(6);
   }, [assets, heirs, trusts, areAllAssetsFullyAllocated]);
 
@@ -313,96 +315,98 @@ const LegacyBuilder: React.FC = () => {
   // --- Styling Definitions (Massively Expanded and Professionalized) ---
 
   const containerStyle: CSSProperties = {
-    fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily: 'Consolas, "Courier New", monospace',
     maxWidth: '1200px',
     margin: '40px auto',
     padding: '40px',
-    border: '1px solid #e0e0e0',
-    borderRadius: '12px',
-    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
-    color: '#212121',
+    border: '1px solid #ff0000',
+    borderRadius: '0px',
+    boxShadow: '0 0 50px rgba(255, 0, 0, 0.5)',
+    backgroundColor: '#0a0a0a',
+    color: '#00ff00',
   };
 
   const headerStyle: CSSProperties = {
     textAlign: 'center',
-    color: '#1a237e',
+    color: '#ff0000',
     marginBottom: '40px',
     fontSize: '2.5em',
     fontWeight: 700,
-    borderBottom: '3px solid #3f51b5',
+    borderBottom: '3px solid #ff0000',
     paddingBottom: '15px',
   };
 
   const stepContainerStyle: CSSProperties = {
     marginBottom: '30px',
     padding: '30px',
-    border: '1px solid #c5cae9',
-    borderRadius: '10px',
-    backgroundColor: '#f5f5f8',
+    border: '1px solid #330000',
+    borderRadius: '0px',
+    backgroundColor: '#111111',
   };
 
   const buttonStyle: CSSProperties = {
     padding: '12px 24px',
     margin: '8px',
-    borderRadius: '6px',
-    border: 'none',
+    borderRadius: '0px',
+    border: '1px solid #00ff00',
     cursor: 'pointer',
-    backgroundColor: '#3f51b5',
-    color: 'white',
+    backgroundColor: '#000000',
+    color: '#00ff00',
     fontSize: '1em',
     fontWeight: 600,
     transition: 'background-color 0.3s, transform 0.1s',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+    boxShadow: '0 0 5px #00ff00',
   };
 
-  const primaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#00796b' };
-  const secondaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#757575' };
-  const dangerButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#d32f2f' };
+  const primaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#330000', borderColor: '#ff0000', color: '#ff0000', boxShadow: '0 0 5px #ff0000' };
+  const secondaryButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#000000', borderColor: '#00ff00', color: '#00ff00' };
+  const dangerButtonStyle: CSSProperties = { ...buttonStyle, backgroundColor: '#330000', borderColor: '#ff0000', color: '#ff0000', boxShadow: '0 0 5px #ff0000' };
 
   const inputStyle: CSSProperties = {
     padding: '10px',
     margin: '5px 0 15px 0',
-    borderRadius: '5px',
-    border: '1px solid #bdbdbd',
+    borderRadius: '0px',
+    border: '1px solid #00ff00',
     width: '100%',
     boxSizing: 'border-box',
     fontSize: '0.95em',
+    backgroundColor: '#050505',
+    color: '#00ff00',
   };
 
   const labelStyle: CSSProperties = {
     display: 'block',
     marginBottom: '5px',
     fontWeight: 600,
-    color: '#37474f',
+    color: '#ff0000',
     fontSize: '0.9em',
   };
 
   const listContainerStyle: CSSProperties = {
     marginTop: '25px',
-    borderTop: '2px solid #e0e0e0',
+    borderTop: '2px solid #330000',
     paddingTop: '20px',
   };
 
   const listItemStyle: CSSProperties = {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#0a0a0a',
     padding: '12px 15px',
     marginBottom: '10px',
-    borderRadius: '6px',
-    border: '1px solid #e8eaf6',
+    borderRadius: '0px',
+    border: '1px solid #00ff00',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     fontSize: '0.95em',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+    boxShadow: '0 0 5px rgba(0,255,0,0.3)',
   };
 
   const navStepStyle = (active: boolean): CSSProperties => ({
     fontWeight: active ? 'bold' : '500',
-    color: active ? '#3f51b5' : '#757575',
+    color: active ? '#ff0000' : '#00ff00',
     cursor: 'pointer',
     padding: '10px 15px',
-    borderBottom: active ? '3px solid #3f51b5' : '3px solid transparent',
+    borderBottom: active ? '3px solid #ff0000' : '3px solid transparent',
     transition: 'all 0.3s ease-in-out',
     fontSize: '1em',
     flexGrow: 1,
@@ -412,10 +416,10 @@ const LegacyBuilder: React.FC = () => {
   const aiPreambleStyle: CSSProperties = {
     padding: '25px',
     margin: '0 0 40px 0',
-    backgroundColor: '#1e1e1e',
-    color: '#00ff99',
-    borderRadius: '10px',
-    border: '2px solid #00cc77',
+    backgroundColor: '#330000',
+    color: '#00ff00',
+    borderRadius: '0px',
+    border: '2px solid #ff0000',
     lineHeight: '1.7',
     fontSize: '1.05em',
     textAlign: 'left',
@@ -423,8 +427,8 @@ const LegacyBuilder: React.FC = () => {
   };
 
   const aiHeaderStyle: CSSProperties = {
-      color: '#00ff99',
-      borderBottom: '1px solid #007744',
+      color: '#ff0000',
+      borderBottom: '1px solid #ff0000',
       paddingBottom: '10px',
       marginBottom: '15px',
       textAlign: 'center',
@@ -504,12 +508,12 @@ const LegacyBuilder: React.FC = () => {
           <ul>
             {assets.map(asset => {
                 const analysis = aiAnalysisResults[asset.id];
-                const riskColor = analysis ? (analysis.riskScore > 0.7 ? '#d32f2f' : analysis.riskScore > 0.4 ? '#ff9800' : '#4caf50') : '#9e9e9e';
+                const riskColor = analysis ? (analysis.riskScore > 0.7 ? '#ff0000' : analysis.riskScore > 0.4 ? '#ffaa00' : '#00ff00') : '#9e9e9e';
                 return (
                   <li key={asset.id} style={listItemStyle}>
                     <div style={{ flexGrow: 1 }}>
-                        <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>{asset.name}</p>
-                        <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#546e7a' }}>Type: {asset.type} | Value: ${asset.currentValuation.toLocaleString()} | Level: {asset.securityLevel.toUpperCase()}</p>
+                        <p style={{ margin: 0, fontWeight: 'bold', color: '#ff0000' }}>{asset.name}</p>
+                        <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#aaaaaa' }}>Type: {asset.type} | Value: ${asset.currentValuation.toLocaleString()} | Level: {asset.securityLevel.toUpperCase()}</p>
                         {analysis && (
                             <p style={{ margin: '4px 0 0 0', fontSize: '0.8em', color: riskColor }}>
                                 AI Risk Score: {(analysis.riskScore * 100).toFixed(1)}% 
@@ -585,12 +589,12 @@ const LegacyBuilder: React.FC = () => {
             {heirs.map(heir => (
               <li key={heir.id} style={listItemStyle}>
                 <div style={{ flexGrow: 1 }}>
-                    <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>{heir.name} ({heir.relationship})</p>
-                    <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#546e7a' }}>Wallet: {heir.walletAddress.substring(0, 8)}...{heir.walletAddress.slice(-4)}</p>
-                    <p style={{ margin: '2px 0', fontSize: '0.8em' }}>KYC Status: <span style={{ color: heir.kycStatus === 'verified' ? '#4caf50' : '#ff9800' }}>{heir.kycStatus.toUpperCase()}</span></p>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#ff0000' }}>{heir.name} ({heir.relationship})</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.85em', color: '#aaaaaa' }}>Wallet: {heir.walletAddress.substring(0, 8)}...{heir.walletAddress.slice(-4)}</p>
+                    <p style={{ margin: '2px 0', fontSize: '0.8em' }}>KYC Status: <span style={{ color: heir.kycStatus === 'verified' ? '#00ff00' : '#ff0000' }}>{heir.kycStatus.toUpperCase()}</span></p>
                 </div>
                 <div>
-                  <button onClick={() => handleUpdateHeir(heir.id, { kycStatus: heir.kycStatus === 'verified' ? 'pending' : 'verified' })} style={{...secondaryButtonStyle, backgroundColor: '#ff9800', marginRight: '5px'}}>Toggle KYC</button>
+                  <button onClick={() => handleUpdateHeir(heir.id, { kycStatus: heir.kycStatus === 'verified' ? 'rejected' : 'verified' })} style={{...secondaryButtonStyle, backgroundColor: '#ffaa00', borderColor: '#ffaa00', color: '#000000', marginRight: '5px'}}>Toggle KYC</button>
                   <button onClick={() => handleDeleteHeir(heir.id)} style={dangerButtonStyle}>Decommission</button>
                 </div>
               </li>
@@ -622,18 +626,18 @@ const LegacyBuilder: React.FC = () => {
 
           if (isAssetInTrust) {
               return (
-                  <div key={asset.id} style={{...listItemStyle, backgroundColor: '#fff3e0', borderLeft: '5px solid #ff9800'}}>
+                  <div key={asset.id} style={{...listItemStyle, backgroundColor: '#331111', borderLeft: '5px solid #ff0000', borderColor: '#ff0000'}}>
                       <div style={{ flexGrow: 1 }}>
-                          <p style={{ margin: 0, fontWeight: 'bold', color: '#e65100' }}>{asset.name} (Secured by Trust)</p>
-                          <p style={{ margin: '2px 0', fontSize: '0.85em' }}>This asset's distribution is governed by the Smart Contract Trust defined in Step 4.</p>
+                          <p style={{ margin: 0, fontWeight: 'bold', color: '#ff0000' }}>{asset.name} (Secured by Structure)</p>
+                          <p style={{ margin: '2px 0', fontSize: '0.85em' }}>This asset's distribution is governed by the Smart Contract Structure defined in Step 4.</p>
                       </div>
                   </div>
               );
           }
 
           return (
-            <div key={asset.id} style={{ marginBottom: '25px', padding: '15px', border: '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: '#ffffff' }}>
-              <h4 style={{ color: '#1a237e', borderBottom: '1px dashed #ccc', paddingBottom: '8px' }}>Asset: {asset.name} (Total Value: ${asset.currentValuation.toFixed(2)})</h4>
+            <div key={asset.id} style={{ marginBottom: '25px', padding: '15px', border: '1px solid #330000', borderRadius: '0px', backgroundColor: '#111111' }}>
+              <h4 style={{ color: '#ff0000', borderBottom: '1px dashed #333', paddingBottom: '8px' }}>Asset: {asset.name} (Total Value: ${asset.currentValuation.toFixed(2)})</h4>
               {heirs.map(heir => {
                 const currentAllocation = allocations.find(a => a.assetId === asset.id && a.heirId === heir.id);
                 const allocatedPercentage = currentAllocation ? currentAllocation.percentage : 0;
@@ -658,13 +662,13 @@ const LegacyBuilder: React.FC = () => {
                   </div>
                 );
               })}
-              <p style={{ marginTop: '10px', fontSize: '0.9em', color: isFullyAllocated ? '#4caf50' : '#d32f2f' }}>
-                Current Total: {currentTotal.toFixed(1)}%. Status: {isFullyAllocated ? '✅ 100% Allocated' : `⚠️ Deficit/Surplus of ${(100 - currentTotal).toFixed(1)}%`}
+              <p style={{ marginTop: '10px', fontSize: '0.9em', color: isFullyAllocated ? '#00ff00' : '#ff0000' }}>
+                Current Total: {currentTotal.toFixed(1)}%. Status: {isFullyAllocated ? 'âœ… 100% Allocated' : `âš ï¸  Deficit/Surplus of ${(100 - currentTotal).toFixed(1)}%`}
               </p>
             </div>
           );
         })}
-        {assets.filter(asset => !trusts.some(t => t.assetId === asset.id)).length === 0 && <p>All registered assets are currently assigned to a Trust structure.</p>}
+        {assets.filter(asset => !trusts.some(t => t.assetId === asset.id)).length === 0 && <p>All registered assets are currently assigned to a Structure.</p>}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
         <button onClick={prevStep} style={secondaryButtonStyle}>&lt; Back to Beneficiaries</button>
@@ -766,7 +770,7 @@ const LegacyBuilder: React.FC = () => {
                 conditionDetailsDiv.innerHTML = `
                 <label style="${Object.entries(labelStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}:${v}`).join(';')}" for="conditionMultiSigSigners">Required Signer IDs (Comma Separated):</label>
                 <input name="conditionMultiSigSigners" type="text" required style="${baseInputStyle}" placeholder="ADMIN_ID_1, EXECUTOR_ID_2, etc." />
-                <p style="font-size: 0.8em; color: #757575;">Requires consensus from specified governance entities to release.</p>
+                <p style="font-size: 0.8em; color: #aaaaaa;">Requires consensus from specified governance entities to release.</p>
               `;
             }
           }
@@ -776,28 +780,28 @@ const LegacyBuilder: React.FC = () => {
           <option value="date">Fixed Calendar Date</option>
           <option value="multi_sig_approval">Multi-Signature Governance Approval</option>
         </select>
-        <div id="conditionDetails" style={{ margin: '10px 0', padding: '10px', border: '1px dashed #ccc', borderRadius: '5px' }}>
+        <div id="conditionDetails" style={{ margin: '10px 0', padding: '10px', border: '1px dashed #333', borderRadius: '0px' }}>
             {/* Dynamic condition inputs rendered here */}
         </div>
-        <button type="submit" style={primaryButtonStyle} disabled={assets.length === 0 || heirs.length === 0}>Propose Trust Structure</button>
+        <button type="submit" style={primaryButtonStyle} disabled={assets.length === 0 || heirs.length === 0}>Propose Structure</button>
       </form>
 
       <div style={listContainerStyle}>
         <h3>Active Trust Proposals ({trusts.length} Total):</h3>
         {trusts.length === 0 ? (
-          <p>No trust structures proposed. Assets can be managed via direct allocation (Step 3) or secured here.</p>
+          <p>No structure proposals. Assets can be managed via direct allocation (Step 3) or secured here.</p>
         ) : (
           <ul>
             {trusts.map(trust => {
               const asset = assets.find(a => a.id === trust.assetId);
               const heir = heirs.find(h => h.id === trust.beneficiaryId);
-              const statusColor = trust.status === 'deployed' ? '#4caf50' : trust.status === 'draft' ? '#ff9800' : '#757575';
+              const statusColor = trust.status === 'deployed' ? '#00ff00' : trust.status === 'draft' ? '#ffaa00' : '#ff0000';
               return (
                 <li key={trust.id} style={{...listItemStyle, borderLeft: `5px solid ${statusColor}`}}>
                   <div style={{ flexGrow: 1 }}>
-                    <p style={{ margin: 0, fontWeight: 'bold', color: '#1a237e' }}>Trust: {trust.trustName}</p>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#ff0000' }}>Structure: {trust.trustName}</p>
                     <p style={{ margin: '2px 0', fontSize: '0.85em' }}>Asset: {asset?.name || 'N/A'} &rarr; Beneficiary: {heir?.name || 'N/A'}</p>
-                    <p style={{ margin: '2px 0', fontSize: '0.8em', color: '#546e7a' }}>
+                    <p style={{ margin: '2px 0', fontSize: '0.8em', color: '#aaaaaa' }}>
                         Trigger: {trust.conditions[0]?.metadata.description || 'Undefined'}
                     </p>
                     <p style={{ margin: '2px 0', fontSize: '0.8em', color: statusColor }}>Status: {trust.status.toUpperCase()}</p>
@@ -825,7 +829,7 @@ const LegacyBuilder: React.FC = () => {
       <p className="text-muted">Verify all parameters. Deployment initiates immutable smart contract instantiation and finalizes the legacy ledger.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div style={{ borderRight: '1px solid #e0e0e0', paddingRight: '20px' }}>
+        <div style={{ borderRight: '1px solid #330000', paddingRight: '20px' }}>
             <h3>Asset Registry Snapshot ({assets.length})</h3>
             <ul>
                 {assets.map(asset => (
@@ -847,15 +851,15 @@ const LegacyBuilder: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '15px' }}>
+      <div style={{ marginTop: '20px', borderTop: '1px solid #330000', paddingTop: '15px' }}>
         <h3>Trust Architecture Summary ({trusts.length})</h3>
-        {trusts.length === 0 ? <p>No formal trusts configured.</p> : (
+        {trusts.length === 0 ? <p>No formal structures configured.</p> : (
             <ul>
                 {trusts.map(trust => {
                     const asset = assets.find(a => a.id === trust.assetId);
                     const heir = heirs.find(h => h.id === trust.beneficiaryId);
                     return (
-                        <li key={trust.id} style={{ fontSize: '0.9em', marginBottom: '10px', borderLeft: '3px solid #3f51b5', paddingLeft: '10px' }}>
+                        <li key={trust.id} style={{ fontSize: '0.9em', marginBottom: '10px', borderLeft: '3px solid #ff0000', paddingLeft: '10px' }}>
                             <strong>{asset?.name}</strong> secured for <strong>{heir?.name}</strong>. Status: {trust.status}. Trigger: {trust.conditions[0]?.metadata.description}
                         </li>
                     );
@@ -864,10 +868,10 @@ const LegacyBuilder: React.FC = () => {
         )}
       </div>
 
-      <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '15px' }}>
+      <div style={{ marginTop: '20px', borderTop: '1px solid #330000', paddingTop: '15px' }}>
         <h3>Direct Allocation Verification</h3>
-        <p style={{ color: areAllAssetsFullyAllocated() ? '#4caf50' : '#d32f2f', fontWeight: 'bold' }}>
-            Allocation Integrity Check: {areAllAssetsFullyAllocated() ? 'PASS (100% coverage for non-trust assets)' : 'FAIL (Review Step 3)'}
+        <p style={{ color: areAllAssetsFullyAllocated() ? '#00ff00' : '#ff0000', fontWeight: 'bold' }}>
+            Allocation Integrity Check: {areAllAssetsFullyAllocated() ? 'PASS (100% coverage for non-structure assets)' : 'FAIL (Review Step 3)'}
         </p>
       </div>
 
@@ -886,12 +890,12 @@ const LegacyBuilder: React.FC = () => {
       <h2>Deployment Protocol Finalized</h2>
       <p>The system has successfully simulated the instantiation of the digital legacy architecture. Review the immutable deployment log below.</p>
 
-      <div style={{ height: '400px', overflowY: 'scroll', backgroundColor: '#1e1e1e', padding: '15px', borderRadius: '8px', border: '1px solid #444', fontFamily: 'monospace', fontSize: '0.8em' }}>
+      <div style={{ height: '400px', overflowY: 'scroll', backgroundColor: '#000000', padding: '15px', borderRadius: '0px', border: '1px solid #ff0000', fontFamily: 'monospace', fontSize: '0.8em' }}>
         {deploymentLog.length === 0 ? (
-            <p style={{ color: '#aaa' }}>Awaiting deployment log...</p>
+            <p style={{ color: '#555' }}>Awaiting deployment log...</p>
         ) : (
             deploymentLog.map((log, index) => (
-                <p key={index} style={{ margin: '2px 0', color: log.includes('ERROR') ? '#ff6b6b' : log.includes('AI Governance Report') ? '#00ff99' : '#cccccc' }}>
+                <p key={index} style={{ margin: '2px 0', color: log.includes('ERROR') ? '#ff0000' : log.includes('AI Governance Report') ? '#00ff00' : '#aaaaaa' }}>
                     {log}
                 </p>
             ))
@@ -932,7 +936,7 @@ const LegacyBuilder: React.FC = () => {
       <div style={aiPreambleStyle}>
           <h2 style={aiHeaderStyle}>AI GOVERNANCE MODULE: ORACLE-PRIME</h2>
           <p>
-              Welcome, Architect. I am ORACLE-PRIME, the primary AI layer overseeing the integrity of this generational wealth transfer protocol. My function is not advisory; it is validation. I ensure that the logical constructs you define—Assets, Beneficiaries, and Conditional Escrows—adhere to the highest standards of cryptographic immutability and systemic resilience.
+              Attention Operator. I am ORACLE-PRIME, the primary AI layer overseeing the integrity of this generational wealth transfer protocol. My function is not advisory; it is validation. I ensure that the logical constructs you defineâ€”Assets, Beneficiaries, and Conditional Escrowsâ€”adhere to the highest standards of cryptographic immutability and systemic resilience.
           </p>
           <p>
               Every input is cross-referenced against known systemic vulnerabilities. Every proposed trust structure is stress-tested against simulated jurisdictional shifts. Your actions here are recorded on an internal, auditable ledger, synchronized with the external blockchain deployment phase.
@@ -943,7 +947,7 @@ const LegacyBuilder: React.FC = () => {
       <h1 style={headerStyle}>Decentralized Legacy Architecture Builder</h1>
 
       {/* Step Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', borderBottom: '1px solid #e0e0e0', paddingBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', borderBottom: '1px solid #330000', paddingBottom: '10px' }}>
         {['Asset Registry', 'Beneficiary Definition', 'Distribution Matrix', 'Trust Configuration', 'Final Validation', 'Deployment Log'].map((stepName, index) => (
           <div 
             key={index} 
