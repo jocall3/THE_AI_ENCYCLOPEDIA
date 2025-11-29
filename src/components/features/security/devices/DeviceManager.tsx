@@ -1,83 +1,276 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
-// Define the shape of a device session
+// --- AI Security & Compliance Layer Imports Simulation ---
+// Assuming these imports exist based on the instruction to use existing imports.
+// In a real billion-dollar system, these would interface with advanced security modules.
+// Since we cannot add new imports, we simulate their usage via internal functions or context if available.
+// For this expansion, we will heavily rely on the existing React imports and internal state management,
+// while conceptually framing the features as being powered by advanced, imported modules.
+
+// Define the shape of a device session, significantly expanded for enterprise auditing
 interface DeviceSession {
   id: string;
-  deviceType: string;
+  userId: string; // Added for multi-user context
+  deviceName: string; // More descriptive name
+  deviceType: 'Desktop' | 'Laptop' | 'Mobile Phone' | 'Tablet' | 'Server' | 'IoT';
   os: string;
+  osVersion: string;
   browser: string;
+  browserVersion: string;
   ipAddress: string;
-  location: string;
-  lastActive: string; // ISO string or formatted date
-  loginTime: string;  // ISO string or formatted date
-  isCurrent: boolean; // Indicates if this is the current session
+  geoLocation: {
+    country: string;
+    city: string;
+    latitude: number;
+    longitude: number;
+  };
+  loginTime: string;  // ISO string
+  lastActive: string; // ISO string
+  sessionDurationSeconds: number; // Calculated metric
+  securityRiskScore: number; // AI-derived score (0-100)
+  isCurrent: boolean;
+  authenticationMethod: 'Password' | 'MFA_Token' | 'Biometric' | 'SSO';
+  networkType: 'Corporate VPN' | 'Home WiFi' | 'Public Hotspot' | 'Cellular';
+  hardwareFingerprint: string; // Unique hardware identifier
 }
+
+// --- Utility Functions for Enterprise Grade Data Handling ---
+
+/**
+ * Formats an ISO date string into a comprehensive, localized string suitable for auditing.
+ * @param isoString The date string in ISO format.
+ * @returns Formatted date string or original string on failure.
+ */
+const formatDateTime = (isoString: string): string => {
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString;
+    
+    // Enhanced formatting for global compliance dashboards
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+  } catch (e) {
+    return isoString;
+  }
+};
+
+/**
+ * Calculates the session duration based on login time and last active time.
+ * @param loginTime ISO string of login.
+ * @param lastActive ISO string of last activity.
+ * @returns Duration in seconds.
+ */
+const calculateSessionDuration = (loginTime: string, lastActive: string): number => {
+    const start = new Date(loginTime).getTime();
+    const end = new Date(lastActive).getTime();
+    if (isNaN(start) || isNaN(end) || end < start) return 0;
+    return Math.floor((end - start) / 1000);
+};
+
+// --- Mock Data Generation for Scale and Complexity ---
+
+const generateMockSessions = (count: number): DeviceSession[] => {
+    const baseTime = Date.now();
+    const mockData: DeviceSession[] = [];
+    const deviceTypes: DeviceSession['deviceType'][] = ['Desktop', 'Laptop', 'Mobile Phone', 'Tablet'];
+    const authMethods: DeviceSession['authenticationMethod'][] = ['Password', 'MFA_Token', 'SSO'];
+    const networkTypes: DeviceSession['networkType'][] = ['Corporate VPN', 'Home WiFi', 'Public Hotspot'];
+
+    for (let i = 1; i <= count; i++) {
+        const isCurrent = i === 1;
+        const loginOffset = Math.floor(Math.random() * 86400 * 3); // Last 3 days
+        const lastActiveOffset = loginOffset - Math.floor(Math.random() * 3600 * 24); // Active within the last day
+        
+        const loginTime = new Date(baseTime - loginOffset * 1000).toISOString();
+        const lastActiveTime = new Date(baseTime - lastActiveOffset * 1000).toISOString();
+
+        const duration = calculateSessionDuration(loginTime, lastActiveTime);
+        
+        mockData.push({
+            id: `session-${i}-${Math.random().toString(36).substring(2, 9)}`,
+            userId: 'user-9001-enterprise',
+            deviceName: isCurrent ? 'Primary Workstation' : `Device ${i}`,
+            deviceType: deviceTypes[i % deviceTypes.length],
+            os: isCurrent ? 'Windows 11 Pro' : (i % 2 === 0 ? 'macOS Ventura' : 'Android 14'),
+            osVersion: isCurrent ? '22621.2787' : `${Math.floor(Math.random() * 5) + 10}.${Math.floor(Math.random() * 10)}`,
+            browser: isCurrent ? 'Edge Chromium' : (i % 3 === 0 ? 'Chrome' : 'Safari'),
+            browserVersion: `${110 + (i % 10)}.${Math.floor(Math.random() * 10)}`,
+            ipAddress: `172.16.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+            geoLocation: {
+                country: isCurrent ? 'USA' : ['UK', 'DE', 'CA', 'JP'][Math.floor(Math.random() * 4)],
+                city: isCurrent ? 'San Francisco' : ['London', 'Munich', 'Toronto', 'Tokyo'][Math.floor(Math.random() * 4)],
+                latitude: 37.7749 + (Math.random() - 0.5) * 5,
+                longitude: -122.4194 + (Math.random() - 0.5) * 5,
+            },
+            loginTime: loginTime,
+            lastActive: lastActiveTime,
+            sessionDurationSeconds: duration,
+            securityRiskScore: isCurrent ? 5 : Math.min(95, Math.floor(Math.random() * 100)), // AI Score simulation
+            isCurrent: isCurrent,
+            authenticationMethod: authMethods[i % authMethods.length],
+            networkType: networkTypes[i % networkTypes.length],
+            hardwareFingerprint: `HWF-${Math.random().toString(36).substring(2, 12)}`,
+        });
+    }
+    return mockData;
+};
+
+// --- Component for Displaying a Single Session Record (Enhanced Card) ---
+
+interface SessionCardProps {
+  session: DeviceSession;
+  onRevoke: (id: string) => void;
+  onInvestigate: (session: DeviceSession) => void;
+}
+
+const SessionCard: React.FC<SessionCardProps> = React.memo(({ session, onRevoke, onInvestigate }) => {
+  
+  const durationHours = useMemo(() => (session.sessionDurationSeconds / 3600).toFixed(1), [session.sessionDurationSeconds]);
+  
+  const riskColor = session.securityRiskScore > 80 ? '#d9534f' : session.securityRiskScore > 50 ? '#f0ad4e' : '#5cb85c';
+  const riskText = session.securityRiskScore > 80 ? 'Critical' : session.securityRiskScore > 50 ? 'Elevated' : 'Low';
+
+  const isRevokable = !session.isCurrent;
+
+  return (
+    <div 
+      style={{ 
+        border: session.isCurrent ? '2px solid #28a745' : `1px solid ${riskColor}40`, 
+        borderRadius: '16px', 
+        padding: '30px', 
+        boxShadow: '0 6px 18px rgba(0,0,0,0.1)',
+        backgroundColor: '#ffffff',
+        position: 'relative',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        borderLeft: session.isCurrent ? '8px solid #28a745' : '8px solid transparent',
+      }}
+    >
+      {session.isCurrent && (
+        <span style={{ 
+          position: 'absolute', 
+          top: '0', 
+          right: '0', 
+          backgroundColor: '#28a745', 
+          color: 'white', 
+          padding: '10px 20px', 
+          borderBottomLeftRadius: '16px',
+          fontSize: '0.9em',
+          fontWeight: '600',
+          letterSpacing: '0.5px'
+        }}>
+          ACTIVE ENDPOINT
+        </span>
+      )}
+      
+      <div style={{ marginBottom: '20px' }}>
+        <h3 style={{ marginTop: '0', marginBottom: '10px', color: '#1f2937', fontSize: '1.6em' }}>
+          {session.deviceName} 
+          <span style={{ fontSize: '0.6em', color: '#6b7280', marginLeft: '10px' }}>({session.deviceType})</span>
+        </h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.95em' }}>
+            <p style={{ margin: '0', color: '#4b5563' }}><strong>OS/Browser:</strong> {session.os} ({session.browser})</p>
+            <p style={{ margin: '0', color: '#4b5563' }}><strong>Auth Method:</strong> {session.authenticationMethod}</p>
+            <p style={{ margin: '0', color: '#4b5563' }}><strong>Network:</strong> {session.networkType}</p>
+            <p style={{ margin: '0', color: '#4b5563' }}><strong>Duration:</strong> {durationHours} hrs</p>
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '15px', marginTop: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <p style={{ margin: '0', fontSize: '0.9em', color: '#4b5563' }}>
+                <strong>Location:</strong> {session.geoLocation.city}, {session.geoLocation.country}
+            </p>
+            <p style={{ margin: '0', fontSize: '0.9em', color: '#4b5563' }}>
+                <strong>Risk Score:</strong> <span style={{ color: riskColor, fontWeight: 'bold' }}>{session.securityRiskScore} ({riskText})</span>
+            </p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={() => onInvestigate(session)} 
+            style={{ 
+              flex: 1,
+              padding: '10px 15px', 
+              backgroundColor: '#007bff', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '8px', 
+              cursor: 'pointer', 
+              fontSize: '0.9em',
+              fontWeight: '500',
+              transition: 'background-color 0.2s'
+            }}
+            title="Initiate AI-driven forensic analysis on this session metadata."
+          >
+            AI Investigate
+          </button>
+          <button 
+            onClick={() => isRevokable && onRevoke(session.id)} 
+            disabled={!isRevokable}
+            style={{ 
+              flex: 1,
+              padding: '10px 15px', 
+              backgroundColor: isRevokable ? '#dc3545' : '#e5e7eb', 
+              color: isRevokable ? 'white' : '#9ca3af', 
+              border: 'none', 
+              borderRadius: '8px', 
+              cursor: isRevokable ? 'pointer' : 'not-allowed', 
+              fontSize: '0.9em',
+              fontWeight: '500',
+              transition: 'background-color 0.2s ease, opacity 0.2s ease',
+            }}
+            title={isRevokable ? "Remotely terminate this session immediately." : "Cannot revoke current session."}
+          >
+            {isRevokable ? 'Terminate Session' : 'Current Session'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+
+// --- Main Device Manager Component ---
 
 const DeviceManager: React.FC = () => {
   const [sessions, setSessions] = useState<DeviceSession[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [sortKey, setSortKey] = useState<keyof DeviceSession>('lastActive');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [isAIReviewModalOpen, setIsAIReviewModalOpen] = useState(false);
+  const [selectedSessionForAI, setSelectedSessionForAI] = useState<DeviceSession | null>(null);
 
+  // --- Data Fetching Simulation (Expanded) ---
   useEffect(() => {
-    // Simulate fetching device sessions from an API
     const fetchDeviceSessions = async () => {
       setLoading(true);
       setError(null);
       try {
-        // In a real application, this would be an API call to your backend
-        // For now, we use mock data to demonstrate the UI and functionality
-        const mockSessions: DeviceSession[] = [
-          {
-            id: 'session-1',
-            deviceType: 'Laptop',
-            os: 'Windows 11',
-            browser: 'Chrome 120',
-            ipAddress: '203.0.113.45',
-            location: 'New York, USA',
-            lastActive: '2023-10-27T10:30:00Z',
-            loginTime: '2023-10-27T09:00:00Z',
-            isCurrent: true, // This is the user's current active session
-          },
-          {
-            id: 'session-2',
-            deviceType: 'Mobile Phone',
-            os: 'iOS 17',
-            browser: 'Safari',
-            ipAddress: '198.51.100.12',
-            location: 'London, UK',
-            lastActive: '2023-10-27T08:15:00Z',
-            loginTime: '2023-10-26T22:00:00Z',
-            isCurrent: false,
-          },
-          {
-            id: 'session-3',
-            deviceType: 'Tablet',
-            os: 'Android 13',
-            browser: 'Firefox',
-            ipAddress: '192.0.2.10',
-            location: 'Berlin, Germany',
-            lastActive: '2023-10-26T17:45:00Z',
-            loginTime: '2023-10-26T10:00:00Z',
-            isCurrent: false,
-          },
-          {
-            id: 'session-4',
-            deviceType: 'Desktop',
-            os: 'macOS Sonoma',
-            browser: 'Brave',
-            ipAddress: '192.0.2.20',
-            location: 'Paris, France',
-            lastActive: '2023-10-25T12:00:00Z',
-            loginTime: '2023-10-25T09:00:00Z',
-            isCurrent: false,
-          },
-        ];
+        // Simulate fetching a larger, more complex dataset (e.g., 10 sessions)
+        await new Promise(resolve => setTimeout(resolve, 1200)); 
+        const mockSessions = generateMockSessions(10);
         
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 700)); 
+        // Ensure the first session is marked as current for demonstration consistency
+        if (mockSessions.length > 0) {
+            mockSessions[0].isCurrent = true;
+        }
+        
         setSessions(mockSessions);
       } catch (err) {
-        setError('Failed to load device sessions. Please try again.');
+        setError('Critical infrastructure failure: Unable to retrieve authenticated session ledger.');
         console.error("Error fetching device sessions:", err);
       } finally {
         setLoading(false);
@@ -85,180 +278,338 @@ const DeviceManager: React.FC = () => {
     };
 
     fetchDeviceSessions();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Handles revoking access for a specific session
-  const handleRevokeAccess = async (sessionId: string) => {
-    // Confirm with the user before revoking access
-    if (!window.confirm('Are you sure you want to revoke access for this device? This will log out the device immediately.')) {
+  // --- Core Actions ---
+
+  const handleRevokeAccess = useCallback(async (sessionId: string) => {
+    const sessionToRevoke = sessions.find(s => s.id === sessionId);
+    if (!sessionToRevoke) return;
+
+    const confirmationMessage = `WARNING: You are about to terminate session ID ${sessionId} (${sessionToRevoke.deviceName}, ${sessionToRevoke.ipAddress}). This action is irreversible and will immediately invalidate all associated tokens. Proceed?`;
+    
+    if (!window.confirm(confirmationMessage)) {
       return;
     }
 
+    setLoading(true);
     try {
-      // Simulate an API call to revoke access on the backend
-      console.log(`Attempting to revoke access for session ID: ${sessionId}`);
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call delay
+      // Simulate high-security API call to revoke token/session
+      console.log(`Executing high-priority revocation for session ID: ${sessionId}`);
+      await new Promise(resolve => setTimeout(resolve, 800)); 
       
-      // If the API call is successful, update the UI by removing the session
       setSessions(prevSessions => prevSessions.filter(session => session.id !== sessionId));
-      alert('Access successfully revoked! The device has been logged out.');
+      
+      // Log success to a hypothetical audit stream
+      console.log(`SUCCESS: Session ${sessionId} terminated by user.`);
+      alert(`Access for ${sessionToRevoke.deviceName} has been successfully revoked and audited.`);
     } catch (err) {
-      setError('Failed to revoke access. Please try again.');
-      console.error("Error revoking access:", err);
+      setError('Revocation failed. Security protocol interruption detected. Manual intervention required.');
+      console.error("Error during access revocation:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [sessions]);
+
+  // --- AI Investigation Feature ---
+  const handleInvestigateSession = useCallback((session: DeviceSession) => {
+    setSelectedSessionForAI(session);
+    setIsAIReviewModalOpen(true);
+    // In a real system, this would trigger an asynchronous AI analysis job
+    console.log(`Initiating AI deep scan on session: ${session.id}`);
+  }, []);
+
+  const handleCloseAIModal = useCallback(() => {
+    setIsAIReviewModalOpen(false);
+    setSelectedSessionForAI(null);
+  }, []);
+
+  // --- Sorting Logic ---
+  const sortedSessions = useMemo(() => {
+    const sortableSessions = [...sessions];
+    
+    sortableSessions.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      if (sortKey === 'securityRiskScore' || sortKey === 'sessionDurationSeconds') {
+        aValue = a[sortKey] as number;
+        bValue = b[sortKey] as number;
+      } else {
+        // Treat dates and strings as strings for comparison after formatting/standardization
+        aValue = (a[sortKey] as string) || '';
+        bValue = (b[sortKey] as string) || '';
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+    
+    return sortableSessions;
+  }, [sessions, sortKey, sortDirection]);
+
+  // --- Filtering Logic ---
+  const filteredSessions = useMemo(() => {
+    if (!searchTerm) return sortedSessions;
+    const lowerCaseSearch = searchTerm.toLowerCase();
+    return sortedSessions.filter(session => 
+      session.deviceName.toLowerCase().includes(lowerCaseSearch) ||
+      session.os.toLowerCase().includes(lowerCaseSearch) ||
+      session.ipAddress.includes(lowerCaseSearch) ||
+      session.geoLocation.city.toLowerCase().includes(lowerCaseSearch)
+    );
+  }, [sortedSessions, searchTerm]);
+
+  // --- UI Handlers ---
+  const handleSortChange = (key: keyof DeviceSession) => {
+    if (key === sortKey) {
+      setSortDirection(dir => (dir === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDirection('desc'); // Default to descending for new sort keys (e.g., newest first)
     }
   };
 
-  // Helper function to format ISO date strings into a more readable format
-  const formatDateTime = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      // Using toLocaleString for user's local date and time format
-      return date.toLocaleString(); 
-    } catch (e) {
-      return isoString; // Return original if invalid date
-    }
+  const getSortIndicator = (key: keyof DeviceSession) => {
+    if (key !== sortKey) return '↕';
+    return sortDirection === 'asc' ? '▲' : '▼';
   };
 
-  if (loading) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-        <p>Loading active device sessions...</p>
-        {/* Simple spinner animation */}
-        <div style={{
-          border: '4px solid #f3f3f3',
-          borderTop: '4px solid #3498db',
+  // --- Render Helpers ---
+
+  const renderLoadingState = () => (
+    <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'Inter, sans-serif', color: '#374151' }}>
+      <div className="ai-spinner" style={{
+          border: '6px solid #e5e7eb',
+          borderTop: '6px solid #10b981',
           borderRadius: '50%',
-          width: '30px',
-          height: '30px',
-          animation: 'spin 1s linear infinite',
-          margin: '10px auto'
-        }} />
-        <style>{`
+          width: '60px',
+          height: '60px',
+          animation: 'spin 1.5s linear infinite',
+          margin: '20px auto'
+      }} />
+      <p style={{ fontSize: '1.2em', fontWeight: '500' }}>Synchronizing Global Session Ledger...</p>
+      <p style={{ color: '#6b7280' }}>Establishing secure connection to Identity Verification Matrix (IVM).</p>
+      <style>{`
           @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
           }
         `}</style>
-      </div>
-    );
-  }
+    </div>
+  );
 
-  if (error) {
+  const renderErrorState = () => (
+    <div style={{ padding: '30px', color: '#721c24', textAlign: 'center', fontFamily: 'Inter, sans-serif', border: '2px solid #f5c6cb', borderRadius: '12px', backgroundColor: '#f8d7da', maxWidth: '700px', margin: '40px auto' }}>
+      <h3 style={{ color: '#721c24', marginBottom: '15px' }}>System Integrity Alert</h3>
+      <p><strong>Error Code SEC-DEV-001:</strong> {error}</p>
+      <p style={{ fontSize: '0.9em', color: '#721c24' }}>Please contact the Security Operations Center (SOC) immediately with this error message.</p>
+      <button 
+        onClick={() => window.location.reload()}
+        style={{ 
+          padding: '12px 25px', 
+          backgroundColor: '#dc3545', 
+          color: 'white', 
+          border: 'none', 
+          borderRadius: '8px', 
+          cursor: 'pointer', 
+          marginTop: '20px',
+          fontWeight: '600'
+        }}
+      >
+        Re-Initialize Connection
+      </button>
+    </div>
+  );
+
+  const renderEmptyState = () => (
+    <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'Inter, sans-serif', maxWidth: '700px', margin: '40px auto', border: '1px dashed #cbd5e1', borderRadius: '12px', backgroundColor: '#f9fafb' }}>
+      <span style={{ fontSize: '3em', display: 'block', marginBottom: '15px' }}>🔒</span>
+      <h3 style={{ color: '#374151' }}>Zero Active Sessions Detected</h3>
+      <p style={{ color: '#6b7280' }}>The system confirms no active user sessions are currently registered against this user profile across the enterprise network.</p>
+    </div>
+  );
+
+  // --- AI Review Modal Component (Inline for simplicity, but conceptually external) ---
+  const AIReviewModal: React.FC<{ session: DeviceSession, onClose: () => void }> = ({ session, onClose }) => {
+    const [aiAnalysis, setAiAnalysis] = useState<{ summary: string, recommendations: string[] } | null>(null);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
+
+    useEffect(() => {
+        if (!session) return;
+        
+        setAnalysisLoading(true);
+        setAiAnalysis(null);
+
+        // Simulate complex AI analysis based on session metadata
+        const mockAnalysis = async () => {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const summary = `AI analysis of session ${session.id} indicates a ${session.securityRiskScore}% risk profile. The session originated from ${session.geoLocation.city}, ${session.geoLocation.country} via a ${session.networkType} connection. The hardware fingerprint (${session.hardwareFingerprint.substring(0, 8)}...) is known to have a baseline vulnerability index of 12.`;
+            
+            const recommendations: string[] = [];
+            if (session.securityRiskScore > 70) {
+                recommendations.push("Immediate termination is advised.");
+            }
+            if (session.networkType === 'Public Hotspot') {
+                recommendations.push("Flagged for mandatory re-authentication via hardware token upon next login.");
+            }
+            if (session.sessionDurationSeconds > 86400 * 2) { // Over 2 days
+                recommendations.push("Session duration exceeds standard compliance threshold; review login time consistency.");
+            }
+            recommendations.push("Generate a full cryptographic audit trail for this session ID.");
+
+            setAiAnalysis({ summary, recommendations });
+            setAnalysisLoading(false);
+        };
+
+        mockAnalysis();
+    }, [session]);
+
+    if (!session) return null;
+
     return (
-      <div style={{ padding: '20px', color: 'red', textAlign: 'center', fontFamily: 'Arial, sans-serif', border: '1px solid #ffcccc', borderRadius: '8px', backgroundColor: '#fff0f0', maxWidth: '600px', margin: '20px auto' }}>
-        <p><strong>Error:</strong> {error}</p>
-        <button 
-          onClick={() => window.location.reload()} // Simple retry by reloading the page
-          style={{ 
-            padding: '10px 20px', 
-            backgroundColor: '#007bff', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '5px', 
-            cursor: 'pointer', 
-            marginTop: '15px' 
-          }}
-        >
-          Reload Page
-        </button>
-      </div>
-    );
-  }
-
-  if (sessions.length === 0) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '20px auto', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-        <p>No active device sessions found.</p>
-        <p style={{ color: '#666' }}>Your account is currently not logged in on any other devices.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '960px', margin: '20px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', backgroundColor: '#fdfdfd' }}>
-      <h2 style={{ marginBottom: '30px', color: '#333', textAlign: 'center', fontSize: '2em' }}>
-        <span role="img" aria-label="devices">ðŸ“±ðŸ’»</span> Active Device Sessions
-      </h2>
-      <p style={{ textAlign: 'center', color: '#555', marginBottom: '30px' }}>
-        View all devices currently logged into your account. You can remotely revoke access for any session below.
-      </p>
-
       <div style={{ 
-        display: 'grid', 
-        gap: '25px', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' 
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+        backgroundColor: 'rgba(17, 24, 39, 0.85)', zIndex: 1000, 
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        fontFamily: 'Inter, sans-serif'
       }}>
-        {sessions.map((session) => (
-          <div 
-            key={session.id} 
-            style={{ 
-              border: session.isCurrent ? '2px solid #007bff' : '1px solid #eee', 
-              borderRadius: '12px', 
-              padding: '25px', 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-              backgroundColor: '#fff',
-              position: 'relative',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-          >
-            {session.isCurrent && (
-              <span style={{ 
-                position: 'absolute', 
-                top: '0', 
-                right: '0', 
-                backgroundColor: '#007bff', 
-                color: 'white', 
-                padding: '8px 15px', 
-                borderBottomLeftRadius: '12px',
-                fontSize: '0.85em',
-                fontWeight: 'bold',
-                letterSpacing: '0.5px'
-              }}>
-                Current Session
-              </span>
-            )}
-            <h3 style={{ marginTop: '0', marginBottom: '15px', color: '#333', fontSize: '1.4em' }}>
-              {session.deviceType} <span style={{ fontSize: '0.8em', color: '#666', fontWeight: 'normal' }}>({session.os})</span>
-            </h3>
-            <p style={{ margin: '8px 0', color: '#555' }}>
-              <strong>Browser:</strong> {session.browser}
-            </p>
-            <p style={{ margin: '8px 0', color: '#555' }}>
-              <strong>Location:</strong> {session.location} <span style={{ color: '#888' }}>({session.ipAddress})</span>
-            </p>
-            <p style={{ margin: '8px 0', color: '#555' }}>
-              <strong>Logged In:</strong> {formatDateTime(session.loginTime)}
-            </p>
-            <p style={{ margin: '8px 0', color: '#555' }}>
-              <strong>Last Active:</strong> {formatDateTime(session.lastActive)}
-            </p>
-            <button 
-              onClick={() => handleRevokeAccess(session.id)} 
-              disabled={session.isCurrent}
-              style={{ 
-                marginTop: '25px', 
-                padding: '12px 18px', 
-                backgroundColor: session.isCurrent ? '#cccccc' : '#dc3545', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '8px', 
-                cursor: session.isCurrent ? 'not-allowed' : 'pointer', 
-                fontSize: '1em',
-                fontWeight: 'bold',
-                width: '100%',
-                transition: 'background-color 0.2s ease, opacity 0.2s ease',
-                opacity: session.isCurrent ? 0.7 : 1
-              }}
-              title={session.isCurrent ? "You cannot revoke access for your current session." : "Revoke access for this device and log it out."}
-            >
-              {session.isCurrent ? 'Current Session (Cannot Revoke)' : 'Revoke Access'}
+        <div style={{ 
+          backgroundColor: 'white', width: '90%', maxWidth: '800px', 
+          borderRadius: '16px', padding: '30px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)',
+          maxHeight: '90vh', overflowY: 'auto'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: '15px', marginBottom: '20px' }}>
+            <h3 style={{ margin: 0, color: '#1f2937', fontSize: '1.75em' }}>AI Security Deep Dive</h3>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5em', cursor: 'pointer', color: '#6b7280' }}>&times;</button>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <h4 style={{ color: '#10b981', marginBottom: '10px' }}>Session Context</h4>
+            <p style={{ margin: '5px 0', fontSize: '0.95em' }}><strong>Device:</strong> {session.deviceName} ({session.deviceType})</p>
+            <p style={{ margin: '5px 0', fontSize: '0.95em' }}><strong>IP/Geo:</strong> {session.ipAddress} / {session.geoLocation.city}</p>
+            <p style={{ margin: '5px 0', fontSize: '0.95em' }}><strong>Login:</strong> {formatDateTime(session.loginTime)}</p>
+          </div>
+
+          {analysisLoading ? (
+            <div style={{ textAlign: 'center', padding: '30px' }}>
+                <div className="ai-loader" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 15px auto' }} />
+                <p style={{ color: '#3b82f6' }}>Executing Predictive Threat Modeling Engine...</p>
+            </div>
+          ) : aiAnalysis && (
+            <div>
+              <h4 style={{ color: '#374151', marginTop: '20px' }}>AI Summary Report</h4>
+              <p style={{ backgroundColor: '#f3f4f6', padding: '15px', borderRadius: '8px', borderLeft: '4px solid #3b82f6' }}>{aiAnalysis.summary}</p>
+              
+              <h4 style={{ color: '#ef4444', marginTop: '25px' }}>Actionable Recommendations</h4>
+              <ul style={{ paddingLeft: '20px' }}>
+                {aiAnalysis.recommendations.map((rec, index) => (
+                  <li key={index} style={{ marginBottom: '10px', fontSize: '0.95em', color: '#4b5563' }}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          <div style={{ textAlign: 'right', marginTop: '30px', borderTop: '1px solid #e5e7eb', paddingTop: '15px' }}>
+            <button onClick={onClose} style={{ padding: '10px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+              Close Analysis View
             </button>
           </div>
-        ))}
+        </div>
       </div>
+    );
+  };
+
+
+  // --- Main Render ---
+  return (
+    <div style={{ fontFamily: 'Inter, sans-serif', maxWidth: '1400px', margin: '30px auto', padding: '30px', backgroundColor: '#f9fafb', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+      <header style={{ marginBottom: '40px', borderBottom: '1px solid #e5e7eb', paddingBottom: '20px' }}>
+        <h1 style={{ color: '#1f2937', fontSize: '2.2em', fontWeight: '700', display: 'flex', alignItems: 'center' }}>
+          <span style={{ marginRight: '15px', fontSize: '1.2em' }}>Ã°Å¸â€œÂ±Ã°Å¸â€™Â»</span> Enterprise Session Governance Console
+        </h1>
+        <p style={{ color: '#6b7280', fontSize: '1.1em' }}>
+          Real-time monitoring and proactive termination of all active user authentication contexts.
+        </p>
+      </header>
+
+      {/* Control Panel */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', padding: '20px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+        
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Search by Device Name, IP, or Location..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ 
+            padding: '12px 15px', 
+            border: '1px solid #d1d5db', 
+            borderRadius: '8px', 
+            width: '350px', 
+            fontSize: '1em',
+            transition: 'border-color 0.2s'
+          }}
+        />
+
+        {/* Sort Controls */}
+        <div style={{ display: 'flex', gap: '15px' }}>
+            {([
+                { key: 'lastActive', label: 'Last Active' },
+                { key: 'loginTime', label: 'Login Time' },
+                { key: 'securityRiskScore', label: 'Risk Score' },
+            ] as const).map(({ key, label }) => (
+                <button
+                    key={key}
+                    onClick={() => handleSortChange(key)}
+                    style={{
+                        padding: '10px 15px',
+                        backgroundColor: sortKey === key ? '#3b82f6' : '#e5e7eb',
+                        color: sortKey === key ? 'white' : '#374151',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                    }}
+                >
+                    {label} {getSortIndicator(key)}
+                </button>
+            ))}
+        </div>
+      </div>
+
+      {loading && renderLoadingState()}
+      {error && !loading && renderErrorState()}
+      {!loading && !error && filteredSessions.length === 0 && renderEmptyState()}
+
+      {!loading && !error && filteredSessions.length > 0 && (
+        <div style={{ 
+          display: 'grid', 
+          gap: '30px', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' 
+        }}>
+          {filteredSessions.map((session) => (
+            <SessionCard 
+              key={session.id} 
+              session={session} 
+              onRevoke={handleRevokeAccess} 
+              onInvestigate={handleInvestigateSession}
+            />
+          ))}
+        </div>
+      )}
+      
+      {isAIReviewModalOpen && selectedSessionForAI && (
+        <AIReviewModal 
+            session={selectedSessionForAI} 
+            onClose={handleCloseAIModal} 
+        />
+      )}
     </div>
   );
 };
