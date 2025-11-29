@@ -121,23 +121,23 @@ import {
   Settings as SettingsIcon,
 } from '@mui/icons-material';
 
-// --- Sidebar Navigation Data (Expanded to OS level) ---
+// Sidebar Navigation Data
 const navItems = [
-  // CORE FINANCIAL SOVEREIGNTY (Tier 1)
-  { name: 'AI Sovereign Dashboard', icon: DashboardIcon, path: '/dashboard' },
+  // Core Financial Management (Tier 1)
+  { name: 'AI Management Dashboard', icon: DashboardIcon, path: '/dashboard' },
   { name: 'Global Transaction Ledger', icon: TransactionsIcon, path: '/transactions' },
   { name: 'AI Capital Allocation', icon: SendMoneyIcon, path: '/send-money' },
   { name: 'Predictive Budgeting Engine', icon: BudgetsIcon, path: '/budgets' },
-  { name: 'Exponential Growth Goals', icon: FinancialGoalsIcon, path: '/goals' },
+  { name: 'Growth Goals', icon: FinancialGoalsIcon, path: '/goals' },
   { name: 'Credit & Risk Matrix', icon: CreditHealthIcon, path: '/credit' },
   
   // QUANTUM INVESTMENT & ASSET MANAGEMENT (Tier 2)
   { name: 'Quantum Investment Engine', icon: InvestmentsIcon, path: '/investments' },
-  { name: 'Decentralized Asset Nexus', icon: CryptoIcon, path: '/crypto' },
-  { name: 'Hyper-Frequency Algo Lab', icon: AlgoTradingIcon, path: '/algo-trading' },
-  { name: 'Global Forex Arbitrage', icon: ForexIcon, path: '/forex' },
+  { name: 'Decentralized Asset Interface', icon: CryptoIcon, path: '/crypto' },
+  { name: 'Algo Lab', icon: AlgoTradingIcon, path: '/algo-trading' },
+  { name: 'Forex Arbitrage', icon: ForexIcon, path: '/forex' },
   { name: 'Strategic Commodities Desk', icon: CommoditiesIcon, path: '/commodities' },
-  { name: 'Global Real Estate Registry', icon: RealEstateIcon, path: '/real-estate' },
+  { name: 'Real Estate Registry', icon: RealEstateIcon, path: '/real-estate' },
   { name: 'Digital Art & IP Valuation', icon: ArtIcon, path: '/art' },
   { name: 'Derivatives & Hedging Matrix', icon: DerivativesIcon, path: '/derivatives' },
   { name: 'Venture Capital Synthesis', icon: VentureCapitalIcon, path: '/venture-capital' },
@@ -145,13 +145,13 @@ const navItems = [
   
   // ENTERPRISE COMMAND & CONTROL (Tier 3)
   { name: 'Corporate Command Center', icon: CorporateCommandIcon, path: '/corporate' },
-  { name: 'Modern Treasury OS', icon: ModernTreasuryIcon, path: '/modern-treasury' },
-  { name: 'Global Card Programs', icon: CardProgramsIcon, path: '/card-programs' },
+  { name: 'Treasury OS', icon: ModernTreasuryIcon, path: '/modern-treasury' },
+  { name: 'Card Programs', icon: CardProgramsIcon, path: '/card-programs' },
   { name: 'Supply Chain Optimization', icon: SupplyChainIcon, path: '/supply-chain' },
   { name: 'HR & Talent Synthesis', icon: HRManagementIcon, path: '/hr-management' },
-  { name: 'AI Procurement Engine', icon: ProcurementIcon, path: '/procurement' },
-  { name: 'Global Logistics Network', icon: LogisticsIcon, path: '/logistics' },
-  { name: 'Legal & Compliance AI', icon: LegalTechIcon, path: '/legal-compliance' },
+  { name: 'Procurement Engine', icon: ProcurementIcon, path: '/procurement' },
+  { name: 'Logistics Network', icon: LogisticsIcon, path: '/logistics' },
+  { name: 'Legal & Compliance', icon: LegalTechIcon, path: '/legal-compliance' },
   { name: 'Project & Task Synthesis', icon: TaskManagementIcon, path: '/task-management' },
   { name: 'Scheduling & Resource Mgmt', icon: SchedulingIcon, path: '/scheduling' },
   { name: 'Enterprise Reporting Suite', icon: ReportingIcon, path: '/reporting' },
@@ -161,7 +161,7 @@ const navItems = [
   { name: 'Developer Portal', icon: CodeEditorIcon, path: '/developer' }, // Main entry point
   { name: 'Quantum Weaver AI Core', icon: QuantumWeaverIcon, path: '/quantum-weaver' },
   { name: 'AI Agent Marketplace', icon: AgentMarketplaceIcon, path: '/agent-marketplace' },
-  { name: 'Generative AI Studio', icon: GenerativeAIIcon, path: '/generative-studio' },
+  { name: 'Generative Studio', icon: GenerativeAIIcon, path: '/generative-studio' },
   { name: 'Data Lake & Synthesis', icon: DataLakeIcon, path: '/data-lake' },
   { name: 'API Key Management', icon: APIKeyIcon, path: '/api-keys' },
   { name: 'Integration Hub', icon: IntegrationIcon, path: '/integration-hub' },
@@ -173,16 +173,16 @@ const navItems = [
   
   // GOVERNANCE, SECURITY & VISION (Tier 5)
   { name: 'Security Command Center', icon: SecurityCenterIcon, path: '/security' },
-  { name: 'Audit & Immutable Logs', icon: AuditLogIcon, path: '/audit-logs' },
-  { name: 'Global Compliance Engine', icon: ComplianceIcon, path: '/compliance' },
-  { name: 'Biometric Identity Nexus', icon: BiometricsIcon, path: '/identity-nexus' },
+  { name: 'Audit Log Viewer', icon: AuditLogIcon, path: '/audit-logs' },
+  { name: 'Regulatory Compliance Engine', icon: ComplianceIcon, path: '/compliance' },
+  { name: 'Biometric Identity Configuration', icon: BiometricsIcon, path: '/identity-nexus' },
   { name: 'Tax Optimization Engine', icon: TaxIcon, path: '/tax' },
   { name: 'Legacy & Succession Builder', icon: LegacyBuilderIcon, path: '/legacy' },
   { name: 'Philanthropy & Impact', icon: PhilanthropyIcon, path: '/philanthropy' },
-  { name: 'Sovereign Wealth Simulation', icon: SovereignWealthIcon, path: '/sovereign-wealth' },
-  { name: 'The Architectural Vision', icon: VisionIcon, path: '/vision' },
+  { name: 'Wealth Simulation', icon: SovereignWealthIcon, path: '/sovereign-wealth' },
+  { name: 'Architectural Vision', icon: VisionIcon, path: '/vision' },
   { name: 'Personalization Engine', icon: PersonalizationIcon, path: '/personalization' },
-  { name: 'Concierge AI Support', icon: ConciergeIcon, path: '/concierge' },
+  { name: 'Concierge Support', icon: ConciergeIcon, path: '/concierge' },
 ];
 
 const Sidebar = ({ currentPath }) => {
@@ -226,10 +226,10 @@ const ProfileSection = () => {
   const location = useLocation();
   const isDeveloperPage = location.pathname.startsWith('/developer');
 
-  // Dummy profile data (simulating Sovereign Entity profile)
+  // Dummy profile data
   const profile = {
-    name: "James Burvel O'Callaghan III",
-    email: 'james.o.callaghan.iii@sovereign-os.io',
+    name: "User Profile",
+    email: 'user.profile@system-os.io',
     avatarUrl: 'https://i.pravatar.cc/150?img=59', // Placeholder User avatar
   };
 
@@ -255,7 +255,7 @@ const ProfileSection = () => {
         </Button>
       </Box>
       <Typography variant="caption" display="block" sx={{ mt: 1, color: isDeveloperPage ? 'lightyellow' : 'text.secondary' }}>
-        Status: Operational Sovereign Entity Link Established. QWC Access Level 5.
+        Status: Operational System Link Established. QWC Access Level 5.
       </Typography>
     </Paper>
   );
@@ -350,7 +350,7 @@ const QuantumWeaverContent = () => {
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography variant="h3" gutterBottom>Quantum Weaver AI Core Management</Typography>
             <Typography variant="subtitle1" color="textSecondary" paragraph>
-                The nexus for managing the Sovereign AI's computational fabric. Ensure optimal entanglement and predictive integrity.
+                The core for managing the AI's computational fabric. Aims for optimal entanglement and predictive integrity.
             </Typography>
 
             <Grid container spacing={3}>
@@ -369,7 +369,7 @@ const QuantumWeaverContent = () => {
                         value="T+100 Years" 
                         trend={-0.5} 
                         icon={ForecastingIcon} 
-                        description="Maximum reliable forecasting window based on current data synthesis."
+                        description="Maximum forecasting window based on current data synthesis."
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -386,7 +386,7 @@ const QuantumWeaverContent = () => {
             <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
                 <Typography variant="h5" gutterBottom>Core Model Calibration</Typography>
                 <Typography variant="body1" paragraph>
-                    Adjust the hyper-parameters of the foundational economic models (AEC-1000). Recalibration is resource-intensive.
+                    Adjust the hyper-parameters of the foundational economic models (AEC-1000).
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -452,12 +452,12 @@ const AgentCard = ({ name, description, price, rating, icon: IconComponent }) =>
 
 const AgentMarketplaceContent = () => {
     const agents = [
-        { name: 'Hyper-Venture Scout', description: 'Identifies pre-seed opportunities with >100x potential using predictive behavioral modeling.', price: '100,000 Credits/Mo', rating: 4.9, icon: VentureCapitalIcon },
-        { name: 'Global Tax Harmonizer', description: 'Optimizes multi-jurisdictional tax liabilities in real-time, ensuring 100% compliance.', price: '50,000 Credits/Mo', rating: 4.7, icon: TaxIcon },
+        { name: 'Hyper-Venture Scout', description: 'Identifies pre-seed opportunities using predictive behavioral modeling.', price: '100,000 Credits/Mo', rating: 4.9, icon: VentureCapitalIcon },
+        { name: 'Global Tax Harmonizer', description: 'Optimizes multi-jurisdictional tax liabilities in real-time, aiming for compliance.', price: '50,000 Credits/Mo', rating: 4.7, icon: TaxIcon },
         { name: 'Zero-Day Threat Hunter', description: 'Continuously scans the entire OS and external networks for novel security exploits.', price: '250,000 Credits/Mo', rating: 5.0, icon: ThreatIntelligenceIcon },
-        { name: 'Legacy Succession Planner', description: 'Models generational wealth transfer across 500 years, minimizing entropy.', price: '1,000,000 Credits/Yr', rating: 4.5, icon: LegacyBuilderIcon },
+        { name: 'Legacy Succession Planner', description: 'Models generational wealth transfer across 500 years, aiming to minimize entropy.', price: '1,000,000 Credits/Yr', rating: 4.5, icon: LegacyBuilderIcon },
         { name: 'Supply Chain Resilience Agent', description: 'Predicts geopolitical and climate risks impacting logistics and suggests immediate rerouting.', price: '75,000 Credits/Mo', rating: 4.8, icon: SupplyChainIcon },
-        { name: 'Ethical Governance Monitor', description: 'Ensures all automated decisions adhere strictly to predefined ethical and regulatory frameworks.', price: 'Free (Core OS)', rating: 5.0, icon: GovernanceIcon },
+        { name: 'Ethical Governance Monitor', description: 'Aims to ensure all automated decisions adhere to predefined ethical and regulatory frameworks.', price: 'Free (Core OS)', rating: 5.0, icon: GovernanceIcon },
         { name: 'Forex Arbitrage Engine', description: 'Executes micro-trades across 180 global currencies based on quantum predictive models.', price: '150,000 Credits/Mo', rating: 4.9, icon: ForexIcon },
         { name: 'Real Estate Acquisition AI', description: 'Identifies undervalued global real estate assets based on 50-year demographic shifts.', price: '300,000 Credits/Mo', rating: 4.6, icon: RealEstateIcon },
     ];
@@ -480,7 +480,7 @@ const AgentMarketplaceContent = () => {
             <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
                 <Typography variant="h5" gutterBottom>Agent Development SDK</Typography>
                 <Typography variant="body1" paragraph>
-                    Use the Sovereign AI SDK (SASDK) to build and deploy your own proprietary agents directly onto the Quantum Weaver Core.
+                    Use the AI SDK (SASDK) to build and deploy your own proprietary agents directly onto the Quantum Weaver Core.
                 </Typography>
                 <Button variant="contained" color="primary" startIcon={<CodeEditorIcon />}>
                     Download SASDK v3.1 (Rust/Q#)
@@ -508,7 +508,7 @@ const SecurityCenterContent = () => {
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography variant="h3" gutterBottom>Security Command Center</Typography>
             <Typography variant="subtitle1" color="textSecondary" paragraph>
-                Real-time threat intelligence and Zero Trust architecture management, powered by Sentinel AI.
+                Real-time threat intelligence and Zero Trust architecture management.
             </Typography>
 
             <Grid container spacing={3}>
@@ -518,7 +518,7 @@ const SecurityCenterContent = () => {
                         value={threatLevel} 
                         trend={0} 
                         icon={ThreatIntelligenceIcon} 
-                        description="AI assessment of immediate systemic risk."
+                        description="Assessment of immediate systemic risk."
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -547,7 +547,7 @@ const SecurityCenterContent = () => {
                     {threatData.map((threat) => (
                         <ListItem key={threat.id} divider>
                             <ListItemIcon>
-                                {threat.severity === 'High' ? <LockOpen color="error" /> : threat.severity === 'Medium' ? <Security color="warning" /> : <Security color="success" />}
+                                {threat.severity === 'High' ? <LockOpen color="error" /> : threat.severity === 'Medium' ? <Security color="warning" /> : <Security color="success'} />}
                             </ListItemIcon>
                             <ListItemText 
                                 primary={`${threat.type} - ${threat.status}`} 
@@ -564,7 +564,7 @@ const SecurityCenterContent = () => {
 
             <AIConfigurationPanel
                 title="Zero Trust Policy Engine Configuration"
-                description="Define granular access policies enforced by the Biometric Identity Nexus."
+                description="Define granular access policies."
                 settings={{
                     geoFencingEnabled: true,
                     biometricRevalidationFrequency: '5 minutes',
@@ -581,10 +581,10 @@ const DeveloperPortalLanding = () => {
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography variant="h3" component="h1" gutterBottom>
-                Sovereign OS Developer Command Center
+                System Developer Command Center
             </Typography>
             <Typography variant="h6" color="textSecondary" paragraph>
-                The foundational layer for building the next 1000 years of global commerce and finance. Access the Quantum Weaver Core and deploy sovereign applications.
+                A foundational layer for building global commerce and finance. Access the Quantum Weaver Core and deploy applications.
             </Typography>
 
             <Grid container spacing={4}>
@@ -613,28 +613,28 @@ const DeveloperPortalLanding = () => {
                 <Grid item xs={12} md={6} lg={3}>
                     <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
                         <Typography variant="h6" gutterBottom startIcon={<APIKeyIcon />}>API Key Management</Typography>
-                        <Typography variant="body2">Manage and rotate your high-frequency API keys for secure, low-latency access.</Typography>
+                        <Typography variant="body2">Manage and rotate your API keys for secure access.</Typography>
                         <Button size="small" component={Link} to="/api-keys" sx={{ mt: 1 }}>Manage Keys</Button>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
                     <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
                         <Typography variant="h6" gutterBottom startIcon={<CodeEditorIcon />}>Code Sandbox & Debugging</Typography>
-                        <Typography variant="body2">Test code snippets and debug integrations in a fully isolated, production-mirror environment.</Typography>
+                        <Typography variant="body2">Test code snippets and debug integrations in an isolated environment.</Typography>
                         <Button size="small" component={Link} to="/developer/sandbox" sx={{ mt: 1 }}>Launch Sandbox</Button>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
                     <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
                         <Typography variant="h6" gutterBottom startIcon={<DocumentManagementIcon />}>Architectural Documentation</Typography>
-                        <Typography variant="body2">Access comprehensive guides on data schemas, quantum protocols, and integration patterns.</Typography>
+                        <Typography variant="body2">Access guides on data schemas, quantum protocols, and integration patterns.</Typography>
                         <Button size="small" component={Link} to="/developer/api-docs" sx={{ mt: 1 }}>View Docs</Button>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
                     <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
                         <Typography variant="h6" gutterBottom startIcon={<PluginsIcon />}>Plugin & Extension Store</Typography>
-                        <Typography variant="body2">Browse and deploy certified extensions to enhance core OS functionality.</Typography>
+                        <Typography variant="body2">Browse and deploy extensions to enhance core OS functionality.</Typography>
                         <Button size="small" component={Link} to="/integration-hub" sx={{ mt: 1 }}>Browse Plugins</Button>
                     </Paper>
                 </Grid>
@@ -646,12 +646,12 @@ const DeveloperPortalLanding = () => {
                             AI Model Deployment Pipeline
                         </Typography>
                         <Typography variant="body1" paragraph>
-                            Utilize the Sovereign AI Training Fabric (SATF) to train, validate, and deploy custom machine learning models directly into your enterprise workflow.
+                            Utilize the AI Training Fabric (SATF) to train, validate, and deploy custom machine learning models directly into your enterprise workflow.
                         </Typography>
                         <List>
                             <ListItem>
                                 <ListItemIcon><ValidationIcon /></ListItemIcon>
-                                <ListItemText primary="Validation Gate 1: Ethical Bias Check (Passed)" secondary="Ensures compliance with Global Ethical Mandate (GEM)." />
+                                <ListItemText primary="Validation Gate 1: Ethical Bias Check (Passed)" secondary="Aims for compliance with Global Ethical Mandate (GEM)." />
                             </ListItem>
                             <ListItem>
                                 <ListItemIcon><DeploymentIcon /></ListItemIcon>
@@ -665,22 +665,22 @@ const DeveloperPortalLanding = () => {
                 </Grid>
             </Grid>
 
-            {/* Architectural Vision Block (Professionalized) */}
+            {/* Architectural Vision Block */}
             <Paper elevation={6} sx={{ mt: 6, p: 4, bgcolor: '#0d47a1', color: 'white' }}>
                 <Typography variant="h5" component="h2" gutterBottom sx={{ color: '#80cbc4' }}>
-                    The Architectural Imperative: Building the Sovereign OS
+                    The Architectural Imperative: Building the System
                 </Typography>
                 <Typography variant="body1" paragraph>
-                    This platform represents the convergence of quantum computation, decentralized ledger technology, and sovereign AI governance. It is engineered to eliminate systemic friction, maximize global utility, and establish a flawless, self-optimizing financial and operational infrastructure for the next millennium.
+                    This platform represents the convergence of quantum computation, decentralized ledger technology, and AI governance. It aims to reduce systemic friction, enhance global utility, and establish a robust, self-optimizing financial and operational infrastructure.
                 </Typography>
                 <Typography variant="body1" paragraph>
-                    Our mandate is driven by the principle of **Computational Integrity**. Every transaction, every decision, and every forecast is processed through the Quantum Weaver Core (QWC) to ensure absolute accuracy and ethical alignment. We are moving beyond traditional banking and enterprise resource planning into a unified, intelligent operating system.
+                    Our mandate is driven by the principle of **Computational Integrity**. Transactions, decisions, and forecasts are processed through the Quantum Weaver Core (QWC) to support accuracy and ethical alignment. We are moving beyond traditional banking and enterprise resource planning into a unified operating system.
                 </Typography>
                 <Typography variant="body1" paragraph sx={{ fontWeight: 'bold' }}>
-                    Focus: Efficiency, Security, and Exponential Scale.
+                    Focus: Efficiency, Security, and Scalability.
                 </Typography>
                 <Typography variant="body1" paragraph>
-                    Developers are the architects of this future. The tools provided here grant unprecedented access to the core economic engine of the world. We encourage rigorous testing, adherence to the Sovereign AI SDK standards, and a commitment to building solutions that scale across planetary and inter-planetary economic systems.
+                    Developers are key to this future. The tools provided here offer access to the core economic engine. We encourage testing, adherence to the AI SDK standards, and a commitment to building solutions that scale across economic systems.
                 </Typography>
             </Paper>
 
@@ -699,54 +699,54 @@ const DeveloperPortalContent = () => {
         '/quantum-weaver': QuantumWeaverContent,
         '/agent-marketplace': AgentMarketplaceContent,
         '/security': SecurityCenterContent,
-        // Placeholder for other major OS features (to ensure comprehensive OS coverage)
-        '/api-keys': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>API Key Management Console (AI Governance)</Typography><AIConfigurationPanel title="Key Rotation Policy" description="Automated quantum key rotation schedule." settings={{ rotationFrequency: '1 hour', quantumEntropySource: true }} onSettingChange={()=>{}} /></Container>,
-        '/integration-hub': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Integration Hub (10,000+ Certified Connectors)</Typography><Typography variant="body1" sx={{ px: 4 }}>Manage connections to external sovereign and legacy systems.</Typography></Container>,
-        '/cloud-infra': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Cloud Infrastructure & Resource Allocation (AI Optimized)</Typography><KPIWidget title="Resource Utilization" value="12.5 Petaflops" trend={-1.2} icon={InfrastructureIcon} description="Current compute usage optimized by QWC." /></Container>,
+        // Placeholder for other OS features
+        '/api-keys': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>API Key Management Console</Typography><AIConfigurationPanel title="Key Rotation Policy" description="Automated quantum key rotation schedule." settings={{ rotationFrequency: '1 hour', quantumEntropySource: true }} onSettingChange={()=>{}} /></Container>,
+        '/integration-hub': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Integration Hub</Typography><Typography variant="body1" sx={{ px: 4 }}>Manage connections to external and legacy systems.</Typography></Container>,
+        '/cloud-infra': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Cloud Infrastructure & Resource Allocation</Typography><KPIWidget title="Resource Utilization" value="12.5 Petaflops" trend={-1.2} icon={InfrastructureIcon} description="Current compute usage." /></Container>,
         '/zero-trust': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Zero Trust Policy Editor</Typography><Typography variant="body1" sx={{ px: 4 }}>Define micro-segmentation and least-privilege access rules.</Typography></Container>,
         '/system-health': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>System Health & Latency Monitoring</Typography><AIStatusIndicator modelName="Global Network Fabric" status="Operational" latency={0.000001} /></Container>,
-        '/model-training': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>AI Model Training Lab Interface</Typography><Typography variant="body1" sx={{ px: 4 }}>Access petabytes of synthesized data for model refinement.</Typography></Container>,
+        '/model-training': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Model Training Lab Interface</Typography><Typography variant="body1" sx={{ px: 4 }}>Access synthesized data for model refinement.</Typography></Container>,
         '/quantum-compute': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Quantum Compute Resource Scheduler</Typography><Typography variant="body1" sx={{ px: 4 }}>Schedule time on the dedicated quantum annealing processors.</Typography></Container>,
-        '/audit-logs': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Immutable Audit Log Viewer (Blockchain Verified)</Typography><Typography variant="body1" sx={{ px: 4 }}>View tamper-proof records of all system events.</Typography></Container>,
-        '/compliance': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Regulatory Compliance Engine</Typography><Typography variant="body1" sx={{ px: 4 }}>Real-time compliance checks against 1,000+ global jurisdictions.</Typography></Container>,
-        '/identity-nexus': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Biometric Identity Nexus Configuration</Typography><Typography variant="body1" sx={{ px: 4 }}>Manage sovereign identity proofs and access controls.</Typography></Container>,
-        '/vision': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>The Architectural Vision Documentation</Typography><Typography variant="body1" sx={{ px: 4 }}>Deep dive into the 1000-year roadmap.</Typography></Container>,
-        '/dashboard': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>AI Sovereign Dashboard (Enterprise View)</Typography></Container>,
+        '/audit-logs': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Audit Log Viewer</Typography><Typography variant="body1" sx={{ px: 4 }}>View records of all system events.</Typography></Container>,
+        '/compliance': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Regulatory Compliance Engine</Typography><Typography variant="body1" sx={{ px: 4 }}>Real-time compliance checks against global jurisdictions.</Typography></Container>,
+        '/identity-nexus': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Biometric Identity Configuration</Typography><Typography variant="body1" sx={{ px: 4 }}>Manage identity proofs and access controls.</Typography></Container>,
+        '/vision': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Architectural Vision Documentation</Typography><Typography variant="body1" sx={{ px: 4 }}>Review the roadmap.</Typography></Container>,
+        '/dashboard': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Dashboard (Enterprise View)</Typography></Container>,
         '/transactions': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Transaction Ledger Interface</Typography></Container>,
-        '/send-money': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>AI Capital Allocation Interface</Typography></Container>,
+        '/send-money': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Capital Allocation Interface</Typography></Container>,
         '/budgets': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Predictive Budgeting Engine Interface</Typography></Container>,
-        '/goals': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Exponential Growth Goals Tracker</Typography></Container>,
+        '/goals': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Growth Goals Tracker</Typography></Container>,
         '/credit': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Credit & Risk Matrix Console</Typography></Container>,
         '/investments': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Quantum Investment Engine Console</Typography></Container>,
-        '/crypto': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Decentralized Asset Nexus Interface</Typography></Container>,
-        '/algo-trading': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Hyper-Frequency Algo Lab Interface</Typography></Container>,
-        '/forex': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Forex Arbitrage Console</Typography></Container>,
+        '/crypto': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Decentralized Asset Interface</Typography></Container>,
+        '/algo-trading': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Algo Lab Interface</Typography></Container>,
+        '/forex': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Forex Arbitrage Console</Typography></Container>,
         '/commodities': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Strategic Commodities Desk Interface</Typography></Container>,
-        '/real-estate': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Real Estate Registry Interface</Typography></Container>,
+        '/real-estate': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Real Estate Registry Interface</Typography></Container>,
         '/art': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Digital Art & IP Valuation Console</Typography></Container>,
         '/derivatives': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Derivatives & Hedging Matrix Interface</Typography></Container>,
         '/venture-capital': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Venture Capital Synthesis Console</Typography></Container>,
         '/private-equity': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Private Equity Command Interface</Typography></Container>,
         '/corporate': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Corporate Command Center Interface</Typography></Container>,
-        '/modern-treasury': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Modern Treasury OS Interface</Typography></Container>,
-        '/card-programs': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Card Programs Management</Typography></Container>,
+        '/modern-treasury': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Treasury OS Interface</Typography></Container>,
+        '/card-programs': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Card Programs Management</Typography></Container>,
         '/supply-chain': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Supply Chain Optimization Console</Typography></Container>,
         '/hr-management': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>HR & Talent Synthesis Console</Typography></Container>,
-        '/procurement': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>AI Procurement Engine Console</Typography></Container>,
-        '/logistics': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Global Logistics Network Console</Typography></Container>,
-        '/legal-compliance': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Legal & Compliance AI Console</Typography></Container>,
+        '/procurement': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Procurement Engine Console</Typography></Container>,
+        '/logistics': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Logistics Network Console</Typography></Container>,
+        '/legal-compliance': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Legal & Compliance Console</Typography></Container>,
         '/task-management': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Project & Task Synthesis Console</Typography></Container>,
         '/scheduling': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Scheduling & Resource Management Console</Typography></Container>,
         '/reporting': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Enterprise Reporting Suite Console</Typography></Container>,
         '/billing': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Billing & Invoicing Engine Console</Typography></Container>,
-        '/generative-studio': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Generative AI Studio (Content & Code Generation)</Typography></Container>,
+        '/generative-studio': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Generative Studio (Content & Code Generation)</Typography></Container>,
         '/data-lake': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Data Lake & Synthesis Console</Typography></Container>,
         '/tax': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Tax Optimization Engine Console</Typography></Container>,
         '/legacy': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Legacy & Succession Builder Console</Typography></Container>,
         '/philanthropy': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Philanthropy & Impact Hub</Typography></Container>,
-        '/sovereign-wealth': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Sovereign Wealth Simulation Interface</Typography></Container>,
+        '/sovereign-wealth': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Wealth Simulation Interface</Typography></Container>,
         '/personalization': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Personalization Engine Configuration</Typography></Container>,
-        '/concierge': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Concierge AI Support Interface</Typography></Container>,
+        '/concierge': () => <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}><Typography variant="h4" sx={{ p: 4 }}>Concierge Support Interface</Typography></Container>,
     };
 
     const CurrentContent = ContentMap[currentPath];
@@ -790,7 +790,7 @@ const DeveloperPortal = () => {
                 ml: { xs: '0', sm: '250px' }, // Offset for responsive sidebar
             }}
         >
-            {/* Profile Bar (Always Visible in the Dev Portal Layout) */}
+            {/* Profile Bar */}
             <Paper elevation={1} sx={{ p: 2, borderBottom: '1px solid #eee', borderRadius: 0 }}>
                 <ProfileSection />
             </Paper>
