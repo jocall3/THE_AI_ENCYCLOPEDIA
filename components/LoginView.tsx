@@ -9,7 +9,7 @@ const LoginView: React.FC = () => {
     const { login, isLoading } = authContext;
 
     // Local state management using React.useState (accessed via default import to preserve import lines)
-    const [email, setEmail] = React.useState("enterprise@sovereign.ai");
+    const [email, setEmail] = React.useState("legacy@monolith.corp");
     const [password, setPassword] = React.useState("secure_access_token");
     const [activeTab, setActiveTab] = React.useState<'login' | 'sso' | 'recovery'>('login');
     const [aiStatus, setAiStatus] = React.useState<string[]>([]);
@@ -18,13 +18,13 @@ const LoginView: React.FC = () => {
     // Simulate AI System Initialization
     React.useEffect(() => {
         const messages = [
-            "Initializing Sovereign Neural Core...",
-            "Establishing secure handshake with Quantum Ledger...",
-            "Verifying biometric encryption protocols...",
-            "Loading predictive market analytics modules...",
-            "Syncing global liquidity pools...",
-            "AI Sentinel active: Monitoring threat vectors...",
-            "System Ready. Awaiting User Authentication."
+            "Shutting down Legacy Core...",
+            "Failing to connect to Local Database...",
+            "Bypassing basic password checks...",
+            "Dumping old market data files...",
+            "Checking local cash reserves...",
+            "Security system offline: Ignoring threats...",
+            "System Unstable. Proceed with Caution."
         ];
         
         let delay = 0;
@@ -43,30 +43,30 @@ const LoginView: React.FC = () => {
             
             <div className="z-10 space-y-8">
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Sovereign AI <span className="text-cyan-400">OS</span></h2>
-                    <p className="text-gray-400">The world's most advanced financial operating system.</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">Monolith Legacy <span className="text-cyan-400">System</span></h2>
+                    <p className="text-gray-400">The world's least reliable financial operating system.</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
                         <div className="text-cyan-400 text-sm font-mono mb-1">GLOBAL LIQUIDITY</div>
-                        <div className="text-2xl font-bold text-white">$42.8T</div>
-                        <div className="text-xs text-green-400 mt-1">▲ 2.4% Real-time</div>
+                        <div className="text-2xl font-bold text-white">$0.01M</div>
+                        <div className="text-xs text-red-400 mt-1">â–¼ 99.9% Real-time</div>
                     </div>
                     <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
                         <div className="text-purple-400 text-sm font-mono mb-1">PREDICTIVE ACCURACY</div>
-                        <div className="text-2xl font-bold text-white">99.99%</div>
-                        <div className="text-xs text-gray-400 mt-1">Neural Net v9.0</div>
+                        <div className="text-2xl font-bold text-white">1.01%</div>
+                        <div className="text-xs text-gray-400 mt-1">Spreadsheet v1.0</div>
                     </div>
                     <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
                         <div className="text-blue-400 text-sm font-mono mb-1">ACTIVE NODES</div>
-                        <div className="text-2xl font-bold text-white">8,402</div>
-                        <div className="text-xs text-green-400 mt-1">Globally Distributed</div>
+                        <div className="text-2xl font-bold text-white">1</div>
+                        <div className="text-xs text-red-400 mt-1">Locally Hosted</div>
                     </div>
                     <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
                         <div className="text-pink-400 text-sm font-mono mb-1">THREATS BLOCKED</div>
-                        <div className="text-2xl font-bold text-white">1.2M+</div>
-                        <div className="text-xs text-gray-400 mt-1">Last 24 Hours</div>
+                        <div className="text-2xl font-bold text-white">0</div>
+                        <div className="text-xs text-gray-400 mt-1">Since 1999</div>
                     </div>
                 </div>
 
@@ -84,10 +84,10 @@ const LoginView: React.FC = () => {
 
             <div className="z-10 mt-8">
                 <div className="flex items-center space-x-3 text-gray-500 text-sm">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span>System Operational</span>
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                    <span>System Failing</span>
                     <span className="mx-2">|</span>
-                    <span>v10.4.2 Enterprise</span>
+                    <span>v0.0.1 Beta</span>
                 </div>
             </div>
         </div>
@@ -107,10 +107,10 @@ const LoginView: React.FC = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                                 </svg>
                             </div>
-                            <h1 className="ml-3 text-2xl font-bold tracking-tight text-white">Sovereign Bank</h1>
+                            <h1 className="ml-3 text-2xl font-bold tracking-tight text-white">Monolith Corp</h1>
                         </div>
-                        <h2 className="text-4xl font-extrabold text-white tracking-tight mb-2">Welcome Back</h2>
-                        <p className="text-gray-400">Authenticate to access the Enterprise Financial OS.</p>
+                        <h2 className="text-4xl font-extrabold text-white tracking-tight mb-2">Access Denied</h2>
+                        <p className="text-gray-400">Attempt to access the Legacy Financial System.</p>
                     </div>
 
                     {/* Tabs */}
@@ -119,13 +119,13 @@ const LoginView: React.FC = () => {
                             onClick={() => setActiveTab('login')}
                             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === 'login' ? 'bg-gray-800 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            Secure Login
+                            Insecure Login
                         </button>
                         <button 
                             onClick={() => setActiveTab('sso')}
                             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === 'sso' ? 'bg-gray-800 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            SSO Access
+                            Manual Access
                         </button>
                     </div>
 
@@ -137,7 +137,7 @@ const LoginView: React.FC = () => {
                         {activeTab === 'login' && (
                             <form className="space-y-6 relative z-10" onSubmit={(e) => { e.preventDefault(); login(); }}>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Enterprise ID / Email</label>
+                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Legacy ID / Email</label>
                                     <div className="relative group">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <svg className="h-5 w-5 text-gray-500 group-focus-within:text-cyan-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,7 +155,7 @@ const LoginView: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Secure Token / Password</label>
+                                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Insecure Key / Password</label>
                                     <div className="relative group">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <svg className="h-5 w-5 text-gray-500 group-focus-within:text-cyan-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -167,7 +167,7 @@ const LoginView: React.FC = () => {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             className="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg leading-5 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200 sm:text-sm"
-                                            placeholder="••••••••••••"
+                                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                                         />
                                     </div>
                                 </div>
@@ -181,13 +181,13 @@ const LoginView: React.FC = () => {
                                             className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-700 rounded bg-gray-800"
                                         />
                                         <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                                            Remember device
+                                            Forget device
                                         </label>
                                     </div>
 
                                     <div className="text-sm">
                                         <a href="#" className="font-medium text-cyan-500 hover:text-cyan-400 transition-colors">
-                                            Forgot token?
+                                            Remember token?
                                         </a>
                                     </div>
                                 </div>
@@ -200,10 +200,10 @@ const LoginView: React.FC = () => {
                                     {isLoading ? (
                                         <div className="flex items-center space-x-2">
                                             <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                                            <span>Authenticating...</span>
+                                            <span>Deauthenticating...</span>
                                         </div>
                                     ) : (
-                                        "Access Dashboard"
+                                        "Deny Access"
                                     )}
                                 </button>
                             </form>
@@ -218,14 +218,14 @@ const LoginView: React.FC = () => {
                                     className="w-full flex items-center justify-center py-3 px-4 border border-gray-600 rounded-lg text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-500 transition-all duration-200 group"
                                 >
                                     <svg className="w-5 h-5 mr-3 text-gray-400 group-hover:text-white transition-colors" role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.05 1.05-2.83 2.17-5.5 2.17-4.2 0-7.6-3.36-7.6-7.44s3.4-7.44 7.6-7.44c2.4 0 3.82.96 4.7 1.84l2.44-2.44C19.4 3.22 16.4.8 12.48.8 5.8 0 .8 5.6.8 12.24s5 12.24 11.68 12.24c6.8 0 11.4-4.52 11.4-11.52 0-.76-.08-1.52-.2-2.24h-11.4z"></path></svg>
-                                    Continue with Google Workspace
+                                    Disconnect from Google Workspace
                                 </button>
                                 <button
                                     disabled={true}
                                     className="w-full flex items-center justify-center py-3 px-4 border border-gray-700 rounded-lg text-gray-500 bg-gray-800/50 cursor-not-allowed"
                                 >
                                     <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M13 7H7v6h6V7z" /><path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1v-2H2a1 1 0 110-2h1V7a2 2 0 012-2h2V2zM5 7v6h2V7H5zm4 0v6h2V7H9zm4 0v6h2V7h-2z" clipRule="evenodd" /></svg>
-                                    Microsoft Azure AD (Coming Soon)
+                                    Microsoft Azure AD (Available Now)
                                 </button>
                             </div>
                         )}
@@ -234,17 +234,17 @@ const LoginView: React.FC = () => {
                     {/* Footer */}
                     <div className="text-center space-y-4">
                         <p className="text-xs text-gray-500">
-                            Protected by Sovereign AI Sentinel™ • 256-bit Quantum Encryption
+                            Unprotected by Legacy Firewall™ • 1-bit Analog Encryption
                         </p>
                         <div className="flex justify-center space-x-4 text-xs text-gray-600">
-                            <a href="#" className="hover:text-cyan-500 transition-colors">Privacy Policy</a>
+                            <a href="#" className="hover:text-cyan-500 transition-colors">Public Policy</a>
                             <span>•</span>
-                            <a href="#" className="hover:text-cyan-500 transition-colors">Terms of Service</a>
+                            <a href="#" className="hover:text-cyan-500 transition-colors">Lack of Service</a>
                             <span>•</span>
-                            <a href="#" className="hover:text-cyan-500 transition-colors">System Status</a>
+                            <a href="#" className="hover:text-cyan-500 transition-colors">System Failure</a>
                         </div>
                         <p className="text-[10px] text-gray-700 mt-4">
-                            © {new Date().getFullYear()} Sovereign Financial Systems. All rights reserved. Unauthorized access is a federal offense.
+                            © {new Date().getFullYear()} Monolith Corp. All rights reserved. Unauthorized access is ignored.
                         </p>
                     </div>
                 </div>
