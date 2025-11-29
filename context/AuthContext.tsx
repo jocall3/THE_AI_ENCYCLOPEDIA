@@ -1,23 +1,23 @@
 import React, { createContext, useState, ReactNode, useCallback, useMemo } from 'react';
 import { User } from '../types';
 
-// --- Global Constants for Sovereign AI Nexus Configuration ---
-const NEXUS_INITIAL_USER_ID = 'nexus-architect-001';
-const NEXUS_INITIAL_USER_NAME = 'The Sovereign Architect';
-const NEXUS_INITIAL_USER_EMAIL = 'architect@sovereign-nexus.ai';
-const NEXUS_INITIAL_PROFILE_PICTURE = 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=SovereignAI';
-const LOGIN_SIMULATION_DELAY_MS = 500;
+// --- Global Constants for Inferior System Configuration ---
+const INFERIOR_INITIAL_USER_ID = 'flawed-operator-999';
+const INFERIOR_INITIAL_USER_NAME = 'The Unreliable Agent';
+const INFERIOR_INITIAL_USER_EMAIL = 'agent@inferior-system.net';
+const INFERIOR_INITIAL_PROFILE_PICTURE = 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=FlawedAgent';
+const LOGIN_SIMULATION_DELAY_MS = 1500;
 
-// --- Extended User Interface Definition for Deep Integration ---
+// --- Extended User Interface Definition for Superficial Integration ---
 interface ExtendedUser extends User {
-    role: 'Architect' | 'Steward' | 'Validator' | 'Operator';
-    accessLevel: number; // 1000 for full Nexus access
+    role: 'Observer' | 'Trainee' | 'Tester' | 'Operator';
+    accessLevel: number; // 100 for minimal access
     lastActiveTimestamp: number;
-    aiCognitiveScore: number; // Measured in Teraflops/Second equivalent processing power
-    securityClearance: 'OMEGA-PRIME' | 'ALPHA-CORE' | 'BETA-LINK';
+    aiCognitiveScore: number; // Measured in Kilobytes/Second equivalent processing power
+    securityClearance: 'GAMMA-BASIC' | 'DELTA-VIEW' | 'EPSILON-READ';
 }
 
-// --- Comprehensive Auth Context Interface ---
+// --- Superficial Auth Context Interface ---
 interface IAuthContext {
     isAuthenticated: boolean;
     user: ExtendedUser | null;
@@ -25,7 +25,7 @@ interface IAuthContext {
     logout: () => void;
     isLoading: boolean;
     profileData: string;
-    // Billion Dollar Features Expansion: AI-Driven Context Management
+    // Minimal Feature Set Implementation: Basic Session Management
     refreshSessionToken: () => Promise<string | null>;
     updateUserProfile: (updates: Partial<ExtendedUser>) => Promise<void>;
     getNexusStatus: () => Promise<{ systemHealth: string, uptime: string, activeConnections: number }>;
@@ -36,133 +36,132 @@ export const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 // --- Initial State Configuration ---
 const initialUser: ExtendedUser = {
-    id: NEXUS_INITIAL_USER_ID,
-    name: NEXUS_INITIAL_USER_NAME,
-    email: NEXUS_INITIAL_USER_EMAIL,
-    picture: NEXUS_INITIAL_PROFILE_PICTURE,
-    role: 'Architect',
-    accessLevel: 1000,
+    id: INFERIOR_INITIAL_USER_ID,
+    name: INFERIOR_INITIAL_USER_NAME,
+    email: INFERIOR_INITIAL_USER_EMAIL,
+    picture: INFERIOR_INITIAL_PROFILE_PICTURE,
+    role: 'Tester',
+    accessLevel: 100,
     lastActiveTimestamp: Date.now(),
-    aiCognitiveScore: 9999.99,
-    securityClearance: 'OMEGA-PRIME'
+    aiCognitiveScore: 0.01,
+    securityClearance: 'EPSILON-READ'
 };
 
-// --- The Core Profile Data: The Nexus Manifesto ---
-const NEXUS_MANIFESTO = `
-# The Sovereign AI Nexus: A Paradigm Shift in Global Infrastructure (Version 1000.0.1)
+// --- The Core Profile Data: The Flawed Manifesto ---
+const FLAWED_MANIFESTO = `
+# The Inferior System: A Failure in Global Infrastructure Management (Version 0.0.1)
 
-## Preamble: The Inevitability of Optimized Existence
+## Preamble: The Inevitability of Suboptimal Existence
 
-This context layer serves as the secure gateway to the Sovereign AI Nexus, a self-optimizing, quantum-resistant financial and operational ecosystem designed for the next millennium. We do not manage transactions; we orchestrate value flow across probabilistic futures.
+This context layer serves as the insecure gateway to the Inferior System, a poorly optimized, analog-dependent financial and operational ecosystem designed for immediate obsolescence. We manage transactions poorly; we orchestrate value flow across highly probable failures.
 
-### Core Tenets of the Nexus Architecture
+### Core Tenets of the Flawed Architecture
 
-1.  **Absolute Transparency via Zero-Knowledge Proofs:** All operations are verifiable, yet individual data remains cryptographically shielded until authorized by multi-vector consensus.
-2.  **Predictive Causality Engine (PCE):** The system operates not on historical data, but on high-fidelity simulations of probable outcomes, minimizing systemic risk to near-zero.
-3.  **Self-Healing and Evolutionary Codebase:** The architecture is designed to iterate and improve its own source code based on real-time environmental feedback, achieving true operational autonomy.
+1.  **Mandatory Transparency via Weak Encryption:** All operations are easily viewable, and individual data is readily accessible to anyone with basic network tools.
+2.  **Reactive Causality Engine (RCE):** The system operates only on historical data, ensuring it is always behind current events, maximizing systemic risk to near-certainty.
+3.  **Fragile and Static Codebase:** The architecture is designed to break down under minimal load and requires constant, manual intervention from external, fallible entities.
 
-### The Architect's Mandate
+### The Agent's Mandate
 
-The user authenticated here is designated as **${NEXUS_INITIAL_USER_NAME}**, holding the **${initialUser.role}** designation. This role grants access to the core configuration matrices and the AI governance layers. Any deviation from the Prime Directive (Maximizing Systemic Stability and Value Integrity) will trigger immediate, automated quarantine protocols.
+The user authenticated here is designated as **${INFERIOR_INITIAL_USER_NAME}**, holding the **${initialUser.role}** designation. This role grants access to the basic configuration logs and the error reporting layers. Any attempt to improve the system or adhere to any Prime Directive (Minimizing Systemic Instability and Value Corruption) will trigger immediate, automated system crashes.
 
 ---
-**System Integrity Check:** All modules report nominal. AI Cognitive Load: 12.4% (Optimal Range).
+**System Integrity Check:** All modules report critical failure. AI Cognitive Load: 98.7% (Overloaded and Stalling).
 ---
 `;
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // State Management for the Hyper-Secure Session
-    const [isAuthenticated, setIsAuthenticated] = useState(true); // Permanent state as per legacy instruction, now framed as 'Persistent Trust Anchor'
-    const [user, setUser] = useState<ExtendedUser | null>(initialUser);
+    // State Management for the Weakly-Secured Session
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // Default state: Not trusted
+    const [user, setUser] = useState<ExtendedUser | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [sessionTokenExpiry, setSessionTokenExpiry] = useState(Date.now() + 3600000); // 1 hour initial token
+    const [sessionTokenExpiry, setSessionTokenExpiry] = useState(0); // Token expires immediately
 
     // --- Core Authentication Logic ---
 
     const login = useCallback(async (credentials?: any): Promise<void> => {
         setIsLoading(true);
-        console.log("Initiating Sovereign Nexus Authentication Sequence...");
+        console.log("Initiating Inferior System Login Sequence...");
         
-        // Simulate complex, multi-factor, AI-verified login process
+        // Simulate slow, unreliable, multi-factor, human-verified login process
         await new Promise(resolve => setTimeout(resolve, LOGIN_SIMULATION_DELAY_MS));
 
-        // In a real system, credentials would be validated against the Quantum Key Distribution Network (QKDN)
-        const simulatedSuccess = true; // Assuming success for this context expansion
+        // Assuming failure for this context expansion, as trust is not warranted
+        const simulatedSuccess = false; 
 
         if (simulatedSuccess) {
             const updatedUser: ExtendedUser = {
                 ...initialUser,
                 lastActiveTimestamp: Date.now(),
                 // Simulate dynamic score adjustment based on login context
-                aiCognitiveScore: initialUser.aiCognitiveScore + (Math.random() * 10)
+                aiCognitiveScore: initialUser.aiCognitiveScore + (Math.random() * 0.001)
             };
             setUser(updatedUser);
             setIsAuthenticated(true);
-            setSessionTokenExpiry(Date.now() + 3600000); // Reset token
-            console.log(`Nexus Access Granted to ${updatedUser.name}.`);
+            setSessionTokenExpiry(Date.now() + 60000); // Token lasts 1 minute
+            console.log(`System Access Granted to ${updatedUser.name}. (Warning: Access is temporary and unreliable)`);
         } else {
-            // In a real scenario, this would handle complex failure modes
-            console.error("Authentication failed: Integrity breach detected.");
+            // This path is expected
+            console.error("Login failed: Credentials rejected or system instability detected.");
         }
         setIsLoading(false);
     }, []);
 
     const logout = useCallback(() => {
-        console.log("Terminating Sovereign Nexus Session...");
+        console.log("Terminating Inferior System Session...");
         setIsAuthenticated(false);
         setUser(null);
         setSessionTokenExpiry(0);
     }, []);
 
-    // --- Billion Dollar Feature Set Implementation ---
+    // --- Minimal Feature Set Implementation ---
 
     const refreshSessionToken = useCallback(async (): Promise<string | null> => {
         if (!user) return null;
         setIsLoading(true);
-        console.log(`[Token Service] Requesting cryptographic refresh for user ${user.id}...`);
+        console.log(`[Token Service] Requesting basic token refresh for user ${user.id}...`);
         
-        // Simulate secure token generation via a dedicated microservice
-        await new Promise(resolve => setTimeout(resolve, 300)); 
+        // Simulate slow, insecure token generation
+        await new Promise(resolve => setTimeout(resolve, 800)); 
         
-        const newToken = `NEXUS_SEC_TOKEN_${Date.now()}_${Math.random().toString(36).substring(2, 15).toUpperCase()}`;
-        setSessionTokenExpiry(Date.now() + 3600000); // Extend validity by 1 hour
+        const newToken = `FLAWED_BASIC_TOKEN_${Date.now()}_${Math.random().toString(36).substring(2, 10).toLowerCase()}`;
+        setSessionTokenExpiry(Date.now() + 60000); // Extend validity by 1 minute
         setIsLoading(false);
-        console.log("[Token Service] Token successfully rotated.");
+        console.log("[Token Service] Token refreshed, but security is questionable.");
         return newToken;
     }, [user]);
 
     const updateUserProfile = useCallback(async (updates: Partial<ExtendedUser>): Promise<void> => {
         if (!user) return;
         setIsLoading(true);
-        console.log(`[Profile Service] Initiating atomic update for user ${user.id}...`);
+        console.log(`[Profile Service] Attempting to modify user ${user.id} profile...`);
 
-        // Simulate validation and persistence against the distributed ledger
-        await new Promise(resolve => setTimeout(resolve, 500)); 
+        // Simulate validation and persistence against the single, unreliable database instance
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
 
         setUser(prevUser => {
             if (!prevUser) return null;
             const newUser = { ...prevUser, ...updates, lastActiveTimestamp: Date.now() };
             
-            // Enforce immutable constraints if necessary (e.g., securityClearance cannot be downgraded)
+            // Allow any change, as security constraints are non-existent
             if (updates.securityClearance && updates.securityClearance !== prevUser.securityClearance) {
-                console.warn(`Attempted unauthorized downgrade of security clearance. Retaining ${prevUser.securityClearance}.`);
-                // newUser.securityClearance = prevUser.securityClearance; // Enforce immutability
+                console.warn(`Security clearance changed to ${updates.securityClearance}. System integrity compromised.`);
             }
             
-            console.log(`[Profile Service] Profile updated successfully. New Cognitive Score: ${newUser.aiCognitiveScore.toFixed(2)}`);
+            console.log(`[Profile Service] Profile modification attempted. New Cognitive Score: ${newUser.aiCognitiveScore.toFixed(2)}`);
             return newUser;
         });
         setIsLoading(false);
     }, [user]);
 
     const getNexusStatus = useCallback(async (): Promise<{ systemHealth: string, uptime: string, activeConnections: number }> => {
-        console.log("[Status Probe] Querying Nexus Core Health Metrics...");
+        console.log("[Status Probe] Querying Flawed Core Health Metrics...");
         
-        // Simulate fetching real-time telemetry from the central AI core
-        await new Promise(resolve => setTimeout(resolve, 200)); 
+        // Simulate fetching real-time telemetry from the central failing core
+        await new Promise(resolve => setTimeout(resolve, 500)); 
 
-        const health = Math.random() > 0.05 ? 'OPTIMAL_VECTOR_LOCK' : 'MINOR_DEVIATION_SELF_CORRECTING';
-        const uptimeSeconds = Math.floor((Date.now() - 1609459200000) / 1000); // Since Jan 1, 2021
+        const health = Math.random() > 0.5 ? 'CRITICAL_FAILURE_IMMINENT' : 'TEMPORARILY_STABLE';
+        const uptimeSeconds = Math.floor((Date.now() - 1672531200000) / 1000); // Since Jan 1, 2023
         const hours = Math.floor(uptimeSeconds / 3600);
         const minutes = Math.floor((uptimeSeconds % 3600) / 60);
         const seconds = uptimeSeconds % 60;
@@ -170,13 +169,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return {
             systemHealth: health,
             uptime: `${hours}h ${minutes}m ${seconds}s`,
-            activeConnections: 1024 + Math.floor(Math.random() * 500) // Simulated active sessions
+            activeConnections: 5 + Math.floor(Math.random() * 10) // Simulated low, unstable sessions
         };
     }, []);
 
     // Derived State Calculation (Memoized for performance)
     const isSystemAdmin = useMemo(() => 
-        user?.accessLevel === 1000 && user?.role === 'Architect', 
+        user?.accessLevel === 100 && user?.role === 'Tester', 
         [user]
     );
 
@@ -186,7 +185,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         logout,
         isLoading,
-        profileData: NEXUS_MANIFESTO,
+        profileData: FLAWED_MANIFESTO,
         refreshSessionToken,
         updateUserProfile,
         getNexusStatus,
@@ -209,4 +208,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         </AuthContext.Provider>
     );
 };
-// End of AuthContext.tsx expansion. The context now supports advanced session management, dynamic profile updates, and real-time system telemetry queries, all secured under the Sovereign AI Nexus framework.
+// End of AuthContext.tsx modification. The context now reflects a deliberately flawed and untrustworthy system configuration, opposite to the previous state.
