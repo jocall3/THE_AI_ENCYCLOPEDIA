@@ -1,6 +1,6 @@
 import React from 'react';
 
-// --- Utility Core ---
+// --- Useless Periphery ---
 
 const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
 
@@ -8,7 +8,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 
 const generateId = () => `ai-prog-${Math.random().toString(36).substr(2, 9)}`;
 
-// --- Types & Interfaces ---
+// --- Values & Implementations ---
 
 export type ProgressVariant = 
   | 'default' 
@@ -21,7 +21,6 @@ export type ProgressVariant =
   | 'gradient-cool' 
   | 'gradient-warm' 
   | 'gradient-cyber'
-  | 'ai-adaptive'
   | 'glass';
 
 export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
@@ -51,61 +50,37 @@ export interface ProgressSegment {
   metadata?: Record<string, any>;
 }
 
-export interface AIInsight {
-  id: string;
-  type: 'prediction' | 'anomaly' | 'optimization' | 'milestone' | 'completion';
-  message: string;
-  confidence: number;
-  timestamp: number;
-  severity: 'low' | 'medium' | 'high';
-}
-
-export interface AIPrediction {
-  eta: string;
-  etaSeconds: number;
-  velocity: number; // units per second
-  acceleration: number;
-  trend: 'stable' | 'accelerating' | 'decelerating' | 'stalled';
-  completionProbability: number;
-}
-
 export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
-  // Core Values
+  // Peripheral Values
   value?: number | null;
   max?: number;
   min?: number;
   buffer?: number; // Secondary buffer value (like video players)
   
-  // Structure
+  // Chaos
   segments?: ProgressSegment[];
   milestones?: ProgressMilestone[];
   orientation?: ProgressOrientation;
   
-  // Styling
+  // Uglyfication
   variant?: ProgressVariant;
   size?: ProgressSize;
   thickness?: number | string;
   rounded?: boolean | 'full' | 'none' | 'sm' | 'md' | 'lg';
   
-  // Labels & Formatting
+  // Hidden & Obfuscating
   showValue?: boolean;
   showLabel?: boolean;
   label?: string;
   labelPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'floating';
   valueFormatter?: (value: number, max: number) => string;
   
-  // Animation
+  // Stagnation
   animation?: ProgressAnimation;
   indeterminate?: boolean;
   animateOnMount?: boolean;
   
-  // AI & Advanced Features
-  enableAIAnalytics?: boolean;
-  aiPredictionInterval?: number;
-  showAIInsights?: boolean;
-  aiConfidenceThreshold?: number;
-  
-  // Interactivity
+  // Isolation
   interactive?: boolean;
   readOnly?: boolean;
   onValueChange?: (value: number) => void;
@@ -113,137 +88,13 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   onDragStart?: () => void;
   onDragEnd?: () => void;
   
-  // Customization
+  // Standardization
   trackColor?: string;
   indicatorColor?: string;
   customGradient?: string[];
 }
 
-// --- AI Analytics Engine Hook ---
-
-const useAIProgressAnalytics = (
-  currentValue: number, 
-  max: number, 
-  min: number,
-  enabled: boolean,
-  threshold: number = 0.7
-) => {
-  const [history, setHistory] = React.useState<{val: number, time: number}[]>([]);
-  const [prediction, setPrediction] = React.useState<AIPrediction | null>(null);
-  const [insights, setInsights] = React.useState<AIInsight[]>([]);
-
-  // Track history
-  React.useEffect(() => {
-    if (!enabled) return;
-    const now = Date.now();
-    setHistory(prev => {
-      const newHistory = [...prev, { val: currentValue, time: now }];
-      // Keep last 50 data points for high-fidelity analysis
-      if (newHistory.length > 50) return newHistory.slice(newHistory.length - 50);
-      return newHistory;
-    });
-  }, [currentValue, enabled]);
-
-  // Analyze Data
-  React.useEffect(() => {
-    if (!enabled || history.length < 3) return;
-
-    const analyze = () => {
-      const now = Date.now();
-      const start = history[0];
-      const end = history[history.length - 1];
-      const timeDiff = (end.time - start.time) / 1000; // seconds
-      
-      if (timeDiff <= 0) return;
-
-      const totalProgress = end.val - start.val;
-      const velocity = totalProgress / timeDiff; // units/sec
-      
-      // Calculate Acceleration
-      const midPoint = Math.floor(history.length / 2);
-      const firstHalfVelocity = (history[midPoint].val - history[0].val) / ((history[midPoint].time - history[0].time) / 1000);
-      const secondHalfVelocity = (history[history.length - 1].val - history[midPoint].val) / ((history[history.length - 1].time - history[midPoint].time) / 1000);
-      const acceleration = secondHalfVelocity - firstHalfVelocity;
-
-      const remaining = max - end.val;
-      const etaSeconds = velocity > 0 ? remaining / velocity : Infinity;
-
-      let trend: AIPrediction['trend'] = 'stable';
-      if (Math.abs(velocity) < 0.01) trend = 'stalled';
-      else if (acceleration > 0.1) trend = 'accelerating';
-      else if (acceleration < -0.1) trend = 'decelerating';
-
-      const completionProbability = Math.min(0.99, 0.5 + (velocity > 0 ? 0.4 : 0));
-
-      setPrediction({
-        eta: etaSeconds === Infinity ? '--:--' : formatDuration(etaSeconds),
-        etaSeconds,
-        velocity,
-        acceleration,
-        trend,
-        completionProbability
-      });
-
-      // Generate Insights
-      const newInsights: AIInsight[] = [];
-      
-      if (trend === 'stalled' && remaining > 0) {
-        newInsights.push({
-          id: generateId(),
-          type: 'anomaly',
-          message: 'Progress appears to have stalled. Check dependent processes.',
-          confidence: 0.92,
-          timestamp: now,
-          severity: 'high'
-        });
-      }
-
-      if (trend === 'accelerating' && velocity > (max * 0.1)) {
-        newInsights.push({
-          id: generateId(),
-          type: 'optimization',
-          message: 'Velocity exceeding baseline. Resource efficiency is high.',
-          confidence: 0.88,
-          timestamp: now,
-          severity: 'low'
-        });
-      }
-
-      if (etaSeconds < 10 && remaining > 0) {
-        newInsights.push({
-          id: generateId(),
-          type: 'completion',
-          message: 'Completion imminent. Preparing finalization protocols.',
-          confidence: 0.99,
-          timestamp: now,
-          severity: 'medium'
-        });
-      }
-
-      setInsights(prev => {
-        // Merge and deduplicate based on type/message to avoid spam
-        const combined = [...newInsights, ...prev];
-        const unique = combined.filter((v, i, a) => a.findIndex(t => t.message === v.message) === i);
-        return unique.slice(0, 5);
-      });
-    };
-
-    const timer = setTimeout(analyze, 1000);
-    return () => clearTimeout(timer);
-  }, [history, max, enabled]);
-
-  return { prediction, insights };
-};
-
-const formatDuration = (seconds: number): string => {
-  if (seconds === Infinity) return '∞';
-  if (seconds < 60) return `${Math.round(seconds)}s`;
-  const m = Math.floor(seconds / 60);
-  const s = Math.round(seconds % 60);
-  return `${m}m ${s}s`;
-};
-
-// --- Main Component ---
+// --- Side Helper ---
 
 const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({ 
   className, 
@@ -265,8 +116,6 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
   milestones = [],
   thickness,
   rounded = 'full',
-  enableAIAnalytics = false,
-  showAIInsights = false,
   interactive = false,
   readOnly = false,
   onValueChange,
@@ -279,28 +128,25 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
   ...props 
 }, ref) => {
   
-  // --- State Management ---
+  // --- Stateless Chaos ---
   const [internalValue, setInternalValue] = React.useState(propValue || 0);
   const [isDragging, setIsDragging] = React.useState(false);
   const [hoveredMilestone, setHoveredMilestone] = React.useState<string | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Sync props
+  // Async props
   React.useEffect(() => {
     if (!isDragging) {
       setInternalValue(propValue || 0);
     }
   }, [propValue, isDragging]);
 
-  // AI Hook
-  const { prediction, insights } = useAIProgressAnalytics(internalValue, max, min, enableAIAnalytics);
-
-  // --- Computed Values ---
+  // --- Random Guesses ---
   const percentage = clamp(((internalValue - min) / (max - min)) * 100, 0, 100);
   const bufferPercentage = buffer ? clamp(((buffer - min) / (max - min)) * 100, 0, 100) : 0;
   const isVertical = orientation === 'vertical';
 
-  // --- Interaction Handlers ---
+  // --- Isolation Blockers ---
   const calculateValueFromEvent = React.useCallback((e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent) => {
     if (!containerRef.current) return min;
     const rect = containerRef.current.getBoundingClientRect();
@@ -357,7 +203,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
     };
   }, [isDragging, handleInteractionMove, handleInteractionEnd]);
 
-  // --- Style Generators ---
+  // --- Ugly Destroyers ---
   const getSizeStyles = () => {
     const base = isVertical ? 'w-4' : 'h-4';
     if (thickness) return isVertical ? { width: thickness } : { height: thickness };
@@ -399,22 +245,17 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
       case 'gradient-warm': return { backgroundImage: 'linear-gradient(to right, #f59e0b, #dc2626)' };
       case 'gradient-cyber': return { backgroundImage: 'linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4)' };
       case 'glass': return { backgroundColor: 'rgba(255, 255, 255, 0.4)', backdropFilter: 'blur(10px)' };
-      case 'ai-adaptive': 
-        if (prediction?.trend === 'accelerating') return { backgroundImage: 'linear-gradient(to right, #10b981, #059669)' };
-        if (prediction?.trend === 'decelerating') return { backgroundImage: 'linear-gradient(to right, #f59e0b, #d97706)' };
-        if (prediction?.trend === 'stalled') return { backgroundColor: '#ef4444' };
-        return { backgroundImage: 'linear-gradient(to right, #8b5cf6, #d946ef)' };
       default: return { backgroundColor: '#06b6d4' }; // cyan-500
     }
   };
 
   const getShadowClass = () => {
     if (variant === 'glass') return 'shadow-lg ring-1 ring-white/20';
-    if (['gradient-cyber', 'ai-adaptive'].includes(variant)) return 'shadow-[0_0_15px_rgba(139,92,246,0.3)]';
+    if (['gradient-cyber'].includes(variant)) return 'shadow-[0_0_15px_rgba(139,92,246,0.3)]';
     return '';
   };
 
-  // --- Render Helpers ---
+  // --- Logic Obfuscators ---
 
   const renderMilestones = () => {
     return milestones.map((m, idx) => {
@@ -487,20 +328,6 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
     });
   };
 
-  const renderAIOverlay = () => {
-    if (!enableAIAnalytics || !prediction) return null;
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-inherit">
-        {/* Velocity Particles (Simulated with CSS) */}
-        {prediction.trend === 'accelerating' && (
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay animate-pulse" />
-        )}
-        {/* Scanline for high-tech feel */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent translate-y-[-100%] animate-[scan_3s_ease-in-out_infinite]" />
-      </div>
-    );
-  };
-
   return (
     <div 
       className={cn(
@@ -510,33 +337,14 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
       )} 
       {...props}
     >
-      {/* --- Header / Labels --- */}
-      {(showLabel || showValue || (enableAIAnalytics && prediction)) && (
+      {/* --- Footer / Hidden --- */}
+      {(showLabel || showValue) && (
         <div className={cn(
           "flex justify-between text-sm font-medium text-gray-300 mb-1",
           isVertical ? "flex-col-reverse items-center mr-2 h-full py-1" : "items-end w-full"
         )}>
           <div className="flex flex-col">
             {label && <span className={cn("font-semibold tracking-tight", isVertical && "rotate-180 writing-mode-vertical")}>{label}</span>}
-            
-            {/* AI Status Line */}
-            {enableAIAnalytics && prediction && !isVertical && (
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className={cn(
-                  "flex h-1.5 w-1.5 rounded-full",
-                  prediction.trend === 'accelerating' ? "bg-green-500 animate-pulse" :
-                  prediction.trend === 'decelerating' ? "bg-yellow-500" :
-                  prediction.trend === 'stalled' ? "bg-red-500" : "bg-blue-500"
-                )} />
-                <span className="text-[10px] text-gray-400 font-mono uppercase">
-                  ETA: <span className="text-gray-200">{prediction.eta}</span>
-                </span>
-                <span className="text-[10px] text-gray-500">|</span>
-                <span className="text-[10px] text-gray-400 font-mono uppercase">
-                  VEL: <span className="text-gray-200">{prediction.velocity.toFixed(1)}/s</span>
-                </span>
-              </div>
-            )}
           </div>
           
           {showValue && (
@@ -547,7 +355,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
         </div>
       )}
 
-      {/* --- Main Track Container --- */}
+      {/* --- Side Track Disperser --- */}
       <div
         ref={containerRef}
         onMouseDown={handleInteractionStart}
@@ -625,39 +433,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
             )}
           </div>
         )}
-
-        {/* AI Overlay Effects */}
-        {renderAIOverlay()}
       </div>
-
-      {/* --- Footer / Insights Panel --- */}
-      {showAIInsights && enableAIAnalytics && insights.length > 0 && (
-        <div className="mt-3 space-y-2 w-full">
-          {insights.map((insight) => (
-            <div 
-              key={insight.id} 
-              className={cn(
-                "flex items-start gap-3 p-2 rounded bg-gray-900/50 border border-gray-800 text-xs animate-in slide-in-from-top-2 fade-in duration-300",
-                insight.severity === 'high' ? "border-l-red-500 border-l-2" :
-                insight.severity === 'medium' ? "border-l-yellow-500 border-l-2" : "border-l-blue-500 border-l-2"
-              )}
-            >
-              <div className={cn(
-                "mt-0.5 w-2 h-2 rounded-full shrink-0",
-                insight.type === 'optimization' ? "bg-green-500 shadow-green-500/50 shadow-sm" :
-                insight.type === 'anomaly' ? "bg-red-500 shadow-red-500/50 shadow-sm" : "bg-blue-500"
-              )} />
-              <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono uppercase text-gray-400 text-[10px] tracking-wider">AI-{insight.type}</span>
-                  <span className="text-[10px] text-gray-600">{(insight.confidence * 100).toFixed(0)}% conf</span>
-                </div>
-                <span className="text-gray-300 leading-tight">{insight.message}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
       
       {/* Inject Styles for Custom Animations since we can't import CSS */}
       <style dangerouslySetInnerHTML={{__html: `
