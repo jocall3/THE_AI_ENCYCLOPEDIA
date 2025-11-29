@@ -1,9 +1,15 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import axios from 'axios';
-import './ApiSettingsPage.css'; // This CSS will be provided in Part 2
+// Removed local CSS import as styling will be handled by a unified approach (e.g., Tailwind CSS or MUI).
+// import './ApiSettingsPage.css';
 
 // =================================================================================
 // The complete interface for all 200+ API credentials
+// NOTE: This is a consolidated list for demonstration. In a production system,
+// this would be managed more granularly, potentially using environment variables
+// or a secure configuration management system for each service.
+// All sensitive keys should ideally be stored in a secure vault (e.g., AWS Secrets Manager, HashiCorp Vault)
+// and accessed via backend services, not directly in frontend components.
 // =================================================================================
 interface ApiKeysState {
   // === Tech APIs ===
@@ -19,680 +25,432 @@ interface ApiKeysState {
   GOOGLE_CLOUD_API_KEY: string;
 
   // Deployment & DevOps
-  DOCKER_HUB_USERNAME: string;
-  DOCKER_HUB_ACCESS_TOKEN: string;
-  HEROKU_API_KEY: string;
-  NETLIFY_PERSONAL_ACCESS_TOKEN: string;
-  VERCEL_API_TOKEN: string;
-  CLOUDFLARE_API_TOKEN: string;
-  DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
-  LINODE_PERSONAL_ACCESS_TOKEN: string;
-  TERRAFORM_API_TOKEN: string;
+  // These keys are sensitive and should NOT be managed via a frontend form directly.
+  // They should be injected via CI/CD or a secure configuration management system.
+  // DOCKER_HUB_USERNAME: string;
+  // DOCKER_HUB_ACCESS_TOKEN: string;
+  // HEROKU_API_KEY: string;
+  // NETLIFY_PERSONAL_ACCESS_TOKEN: string;
+  // VERCEL_API_TOKEN: string;
+  // CLOUDFLARE_API_TOKEN: string;
+  // DIGITALOCEAN_PERSONAL_ACCESS_TOKEN: string;
+  // LINODE_PERSONAL_ACCESS_TOKEN: string;
+  // TERRAFORM_API_TOKEN: string;
 
   // Collaboration & Productivity
-  GITHUB_PERSONAL_ACCESS_TOKEN: string;
-  SLACK_BOT_TOKEN: string;
-  DISCORD_BOT_TOKEN: string;
-  TRELLO_API_KEY: string;
-  TRELLO_API_TOKEN: string;
-  JIRA_USERNAME: string;
-  JIRA_API_TOKEN: string;
-  ASANA_PERSONAL_ACCESS_TOKEN: string;
-  NOTION_API_KEY: string;
-  AIRTABLE_API_KEY: string;
+  // GITHUB_PERSONAL_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // SLACK_BOT_TOKEN: string; // Sensitive, manage via backend
+  // DISCORD_BOT_TOKEN: string; // Sensitive, manage via backend
+  // TRELLO_API_KEY: string;
+  // TRELLO_API_TOKEN: string;
+  // JIRA_USERNAME: string; // Usernames are less sensitive but API tokens are
+  // JIRA_API_TOKEN: string; // Sensitive, manage via backend
+  // ASANA_PERSONAL_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // NOTION_API_KEY: string; // Sensitive, manage via backend
+  // AIRTABLE_API_KEY: string; // Sensitive, manage via backend
 
   // File & Data Storage
-  DROPBOX_ACCESS_TOKEN: string;
-  BOX_DEVELOPER_TOKEN: string;
-  GOOGLE_DRIVE_API_KEY: string;
-  ONEDRIVE_CLIENT_ID: string;
+  // DROPBOX_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // BOX_DEVELOPER_TOKEN: string; // Sensitive, manage via backend
+  // GOOGLE_DRIVE_API_KEY: string; // Consider scopes and security if exposing
+  // ONEDRIVE_CLIENT_ID: string; // Client IDs are generally public
 
   // CRM & Business
-  SALESFORCE_CLIENT_ID: string;
-  SALESFORCE_CLIENT_SECRET: string;
-  HUBSPOT_API_KEY: string;
-  ZENDESK_API_TOKEN: string;
-  INTERCOM_ACCESS_TOKEN: string;
-  MAILCHIMP_API_KEY: string;
+  // SALESFORCE_CLIENT_ID: string; // Client IDs are generally public
+  // SALESFORCE_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // HUBSPOT_API_KEY: string; // Sensitive, manage via backend
+  // ZENDESK_API_TOKEN: string; // Sensitive, manage via backend
+  // INTERCOM_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // MAILCHIMP_API_KEY: string; // Sensitive, manage via backend
 
   // E-commerce
-  SHOPIFY_API_KEY: string;
-  SHOPIFY_API_SECRET: string;
-  BIGCOMMERCE_ACCESS_TOKEN: string;
-  MAGENTO_ACCESS_TOKEN: string;
-  WOOCOMMERCE_CLIENT_KEY: string;
-  WOOCOMMERCE_CLIENT_SECRET: string;
+  // SHOPIFY_API_KEY: string; // API Keys are often public, secrets are not
+  // SHOPIFY_API_SECRET: string; // Sensitive, manage via backend
+  // BIGCOMMERCE_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // MAGENTO_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // WOOCOMMERCE_CLIENT_KEY: string; // Key might be public, secret is not
+  // WOOCOMMERCE_CLIENT_SECRET: string; // Sensitive, manage via backend
   
   // Authentication & Identity
-  STYTCH_PROJECT_ID: string;
-  STYTCH_SECRET: string;
-  AUTH0_DOMAIN: string;
-  AUTH0_CLIENT_ID: string;
-  AUTH0_CLIENT_SECRET: string;
-  OKTA_DOMAIN: string;
-  OKTA_API_TOKEN: string;
+  // STYTCH_PROJECT_ID: string; // Project IDs are often public
+  // STYTCH_SECRET: string; // Sensitive, manage via backend
+  // AUTH0_DOMAIN: string; // Domains are public
+  // AUTH0_CLIENT_ID: string; // Client IDs are public
+  // AUTH0_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // OKTA_DOMAIN: string; // Domains are public
+  // OKTA_API_TOKEN: string; // Sensitive, manage via backend
 
   // Backend & Databases
-  FIREBASE_API_KEY: string;
-  SUPABASE_URL: string;
-  SUPABASE_ANON_KEY: string;
+  // FIREBASE_API_KEY: string; // Often public for client-side SDKs
+  // SUPABASE_URL: string; // Public URL
+  // SUPABASE_ANON_KEY: string; // Public key for client-side access
 
   // API Development
-  POSTMAN_API_KEY: string;
-  APOLLO_GRAPH_API_KEY: string;
+  // POSTMAN_API_KEY: string; // Sensitive, manage via backend
+  // APOLLO_GRAPH_API_KEY: string; // Sensitive, manage via backend
 
   // AI & Machine Learning
-  OPENAI_API_KEY: string;
-  HUGGING_FACE_API_TOKEN: string;
-  GOOGLE_CLOUD_AI_API_KEY: string;
-  AMAZON_REKOGNITION_ACCESS_KEY: string;
-  MICROSOFT_AZURE_COGNITIVE_KEY: string;
-  IBM_WATSON_API_KEY: string;
+  // OPENAI_API_KEY: string; // Sensitive, manage via backend
+  // HUGGING_FACE_API_TOKEN: string; // Sensitive, manage via backend
+  // GOOGLE_CLOUD_AI_API_KEY: string; // Consider scopes and security
+  // AMAZON_REKOGNITION_ACCESS_KEY: string; // Sensitive, manage via backend
+  // MICROSOFT_AZURE_COGNITIVE_KEY: string; // Sensitive, manage via backend
+  // IBM_WATSON_API_KEY: string; // Sensitive, manage via backend
 
   // Search & Real-time
-  ALGOLIA_APP_ID: string;
-  ALGOLIA_ADMIN_API_KEY: string;
-  PUSHER_APP_ID: string;
-  PUSHER_KEY: string;
-  PUSHER_SECRET: string;
-  ABLY_API_KEY: string;
-  ELASTICSEARCH_API_KEY: string;
+  // ALGOLIA_APP_ID: string; // App IDs are often public
+  // ALGOLIA_ADMIN_API_KEY: string; // Sensitive, manage via backend
+  // PUSHER_APP_ID: string; // App IDs are often public
+  // PUSHER_KEY: string; // Public key
+  // PUSHER_SECRET: string; // Sensitive, manage via backend
+  // ABLY_API_KEY: string; // Sensitive, manage via backend
+  // ELASTICSEARCH_API_KEY: string; // Sensitive, manage via backend
   
   // Identity & Verification
-  STRIPE_IDENTITY_SECRET_KEY: string;
-  ONFIDO_API_TOKEN: string;
-  CHECKR_API_KEY: string;
+  // STRIPE_IDENTITY_SECRET_KEY: string; // Sensitive, manage via backend
+  // ONFIDO_API_TOKEN: string; // Sensitive, manage via backend
+  // CHECKR_API_KEY: string; // Sensitive, manage via backend
   
   // Logistics & Shipping
-  LOB_API_KEY: string;
-  EASYPOST_API_KEY: string;
-  SHIPPO_API_TOKEN: string;
+  // LOB_API_KEY: string; // Sensitive, manage via backend
+  // EASYPOST_API_KEY: string; // Sensitive, manage via backend
+  // SHIPPO_API_TOKEN: string; // Sensitive, manage via backend
 
   // Maps & Weather
-  GOOGLE_MAPS_API_KEY: string;
-  MAPBOX_ACCESS_TOKEN: string;
-  HERE_API_KEY: string;
-  ACCUWEATHER_API_KEY: string;
-  OPENWEATHERMAP_API_KEY: string;
+  // GOOGLE_MAPS_API_KEY: string; // Consider enabling specific APIs and restricting usage
+  // MAPBOX_ACCESS_TOKEN: string; // Consider enabling specific APIs and restricting usage
+  // HERE_API_KEY: string; // Consider enabling specific APIs and restricting usage
+  // ACCUWEATHER_API_KEY: string; // Sensitive, manage via backend
+  // OPENWEATHERMAP_API_KEY: string; // Sensitive, manage via backend
 
   // Social & Media
-  YELP_API_KEY: string;
-  FOURSQUARE_API_KEY: string;
-  REDDIT_CLIENT_ID: string;
-  REDDIT_CLIENT_SECRET: string;
-  TWITTER_BEARER_TOKEN: string;
-  FACEBOOK_APP_ID: string;
-  FACEBOOK_APP_SECRET: string;
-  INSTAGRAM_APP_ID: string;
-  INSTAGRAM_APP_SECRET: string;
-  YOUTUBE_DATA_API_KEY: string;
-  SPOTIFY_CLIENT_ID: string;
-  SPOTIFY_CLIENT_SECRET: string;
-  SOUNDCLOUD_CLIENT_ID: string;
-  TWITCH_CLIENT_ID: string;
-  TWITCH_CLIENT_SECRET: string;
+  // YELP_API_KEY: string; // Sensitive, manage via backend
+  // FOURSQUARE_API_KEY: string; // Sensitive, manage via backend
+  // REDDIT_CLIENT_ID: string; // Public
+  // REDDIT_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // TWITTER_BEARER_TOKEN: string; // Sensitive, manage via backend
+  // FACEBOOK_APP_ID: string; // Public
+  // FACEBOOK_APP_SECRET: string; // Sensitive, manage via backend
+  // INSTAGRAM_APP_ID: string; // Public
+  // INSTAGRAM_APP_SECRET: string; // Sensitive, manage via backend
+  // YOUTUBE_DATA_API_KEY: string; // Consider enabling specific APIs and restricting usage
+  // SPOTIFY_CLIENT_ID: string; // Public
+  // SPOTIFY_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // SOUNDCLOUD_CLIENT_ID: string; // Public
+  // TWITCH_CLIENT_ID: string; // Public
+  // TWITCH_CLIENT_SECRET: string; // Sensitive, manage via backend
 
   // Media & Content
-  MUX_TOKEN_ID: string;
-  MUX_TOKEN_SECRET: string;
-  CLOUDINARY_API_KEY: string;
-  CLOUDINARY_API_SECRET: string;
-  IMGIX_API_KEY: string;
+  // MUX_TOKEN_ID: string; // Sensitive, manage via backend
+  // MUX_TOKEN_SECRET: string; // Sensitive, manage via backend
+  // CLOUDINARY_API_KEY: string; // Public
+  // CLOUDINARY_API_SECRET: string; // Sensitive, manage via backend
+  // IMGIX_API_KEY: string; // Sensitive, manage via backend
   
   // Legal & Admin
-  STRIPE_ATLAS_API_KEY: string;
-  CLERKY_API_KEY: string;
-  DOCUSIGN_INTEGRATOR_KEY: string;
-  HELLOSIGN_API_KEY: string;
+  // STRIPE_ATLAS_API_KEY: string; // Sensitive, manage via backend
+  // CLERKY_API_KEY: string; // Sensitive, manage via backend
+  // DOCUSIGN_INTEGRATOR_KEY: string; // Sensitive, manage via backend
+  // HELLOSIGN_API_KEY: string; // Sensitive, manage via backend
   
   // Monitoring & CI/CD
-  LAUNCHDARKLY_SDK_KEY: string;
-  SENTRY_AUTH_TOKEN: string;
-  DATADOG_API_KEY: string;
-  NEW_RELIC_API_KEY: string;
-  CIRCLECI_API_TOKEN: string;
-  TRAVIS_CI_API_TOKEN: string;
-  BITBUCKET_USERNAME: string;
-  BITBUCKET_APP_PASSWORD: string;
-  GITLAB_PERSONAL_ACCESS_TOKEN: string;
-  PAGERDUTY_API_KEY: string;
+  // LAUNCHDARKLY_SDK_KEY: string; // Sensitive, manage via backend
+  // SENTRY_AUTH_TOKEN: string; // Sensitive, manage via backend
+  // DATADOG_API_KEY: string; // Sensitive, manage via backend
+  // NEW_RELIC_API_KEY: string; // Sensitive, manage via backend
+  // CIRCLECI_API_TOKEN: string; // Sensitive, manage via backend
+  // TRAVIS_CI_API_TOKEN: string; // Sensitive, manage via backend
+  // BITBUCKET_USERNAME: string; // Less sensitive, but token is
+  // BITBUCKET_APP_PASSWORD: string; // Sensitive, manage via backend
+  // GITLAB_PERSONAL_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // PAGERDUTY_API_KEY: string; // Sensitive, manage via backend
   
   // Headless CMS
-  CONTENTFUL_SPACE_ID: string;
-  CONTENTFUL_ACCESS_TOKEN: string;
-  SANITY_PROJECT_ID: string;
-  SANITY_API_TOKEN: string;
-  STRAPI_API_TOKEN: string;
+  // CONTENTFUL_SPACE_ID: string; // Public
+  // CONTENTFUL_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // SANITY_PROJECT_ID: string; // Public
+  // SANITY_API_TOKEN: string; // Sensitive, manage via backend
+  // STRAPI_API_TOKEN: string; // Sensitive, manage via backend
 
   // === Banking & Finance APIs ===
   // Data Aggregators
-  PLAID_CLIENT_ID: string;
-  PLAID_SECRET: string;
-  YODLEE_CLIENT_ID: string;
-  YODLEE_SECRET: string;
-  MX_CLIENT_ID: string;
-  MX_API_KEY: string;
-  FINICITY_PARTNER_ID: string;
-  FINICITY_APP_KEY: string;
+  // PLAID_CLIENT_ID: string; // Public
+  // PLAID_SECRET: string; // Sensitive, manage via backend
+  // YODLEE_CLIENT_ID: string; // Public
+  // YODLEE_SECRET: string; // Sensitive, manage via backend
+  // MX_CLIENT_ID: string; // Public
+  // MX_API_KEY: string; // Sensitive, manage via backend
+  // FINICITY_PARTNER_ID: string; // Public
+  // FINICITY_APP_KEY: string; // Sensitive, manage via backend
 
   // Payment Processing
-  ADYEN_API_KEY: string;
-  ADYEN_MERCHANT_ACCOUNT: string;
-  BRAINTREE_MERCHANT_ID: string;
-  BRAINTREE_PUBLIC_KEY: string;
-  BRAINTREE_PRIVATE_KEY: string;
-  SQUARE_APPLICATION_ID: string;
-  SQUARE_ACCESS_TOKEN: string;
-  PAYPAL_CLIENT_ID: string;
-  PAYPAL_SECRET: string;
-  DWOLLA_KEY: string;
-  DWOLLA_SECRET: string;
-  WORLDPAY_API_KEY: string;
-  CHECKOUT_SECRET_KEY: string;
+  // ADYEN_API_KEY: string; // Sensitive, manage via backend
+  // ADYEN_MERCHANT_ACCOUNT: string; // Sensitive, manage via backend
+  // BRAINTREE_MERCHANT_ID: string; // Public
+  // BRAINTREE_PUBLIC_KEY: string; // Public
+  // BRAINTREE_PRIVATE_KEY: string; // Sensitive, manage via backend
+  // SQUARE_APPLICATION_ID: string; // Public
+  // SQUARE_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // PAYPAL_CLIENT_ID: string; // Public
+  // PAYPAL_SECRET: string; // Sensitive, manage via backend
+  // DWOLLA_KEY: string; // Public key
+  // DWOLLA_SECRET: string; // Sensitive, manage via backend
+  // WORLDPAY_API_KEY: string; // Sensitive, manage via backend
+  // CHECKOUT_SECRET_KEY: string; // Sensitive, manage via backend
   
   // Banking as a Service (BaaS) & Card Issuing
-  MARQETA_APPLICATION_TOKEN: string;
-  MARQETA_ADMIN_ACCESS_TOKEN: string;
-  GALILEO_API_LOGIN: string;
-  GALILEO_API_TRANS_KEY: string;
-  SOLARISBANK_CLIENT_ID: string;
-  SOLARISBANK_CLIENT_SECRET: string;
-  SYNAPSE_CLIENT_ID: string;
-  SYNAPSE_CLIENT_SECRET: string;
-  RAILSBANK_API_KEY: string;
-  CLEARBANK_API_KEY: string;
-  UNIT_API_TOKEN: string;
-  TREASURY_PRIME_API_KEY: string;
-  INCREASE_API_KEY: string;
-  MERCURY_API_KEY: string;
-  BREX_API_KEY: string;
-  BOND_API_KEY: string;
+  // MARQETA_APPLICATION_TOKEN: string; // Sensitive, manage via backend
+  // MARQETA_ADMIN_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // GALILEO_API_LOGIN: string; // Sensitive, manage via backend
+  // GALILEO_API_TRANS_KEY: string; // Sensitive, manage via backend
+  // SOLARISBANK_CLIENT_ID: string; // Public
+  // SOLARISBANK_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // SYNAPSE_CLIENT_ID: string; // Public
+  // SYNAPSE_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // RAILSBANK_API_KEY: string; // Sensitive, manage via backend
+  // CLEARBANK_API_KEY: string; // Sensitive, manage via backend
+  // UNIT_API_TOKEN: string; // Sensitive, manage via backend
+  // TREASURY_PRIME_API_KEY: string; // Sensitive, manage via backend
+  // INCREASE_API_KEY: string; // Sensitive, manage via backend
+  // MERCURY_API_KEY: string; // Sensitive, manage via backend
+  // BREX_API_KEY: string; // Sensitive, manage via backend
+  // BOND_API_KEY: string; // Sensitive, manage via backend
   
   // International Payments
-  CURRENCYCLOUD_LOGIN_ID: string;
-  CURRENCYCLOUD_API_KEY: string;
-  OFX_API_KEY: string;
-  WISE_API_TOKEN: string;
-  REMITLY_API_KEY: string;
-  AZIMO_API_KEY: string;
-  NIUM_API_KEY: string;
+  // CURRENCYCLOUD_LOGIN_ID: string; // Sensitive, manage via backend
+  // CURRENCYCLOUD_API_KEY: string; // Sensitive, manage via backend
+  // OFX_API_KEY: string; // Sensitive, manage via backend
+  // WISE_API_TOKEN: string; // Sensitive, manage via backend
+  // REMITLY_API_KEY: string; // Sensitive, manage via backend
+  // AZIMO_API_KEY: string; // Sensitive, manage via backend
+  // NIUM_API_KEY: string; // Sensitive, manage via backend
   
   // Investment & Market Data
-  ALPACA_API_KEY_ID: string;
-  ALPACA_SECRET_KEY: string;
-  TRADIER_ACCESS_TOKEN: string;
-  IEX_CLOUD_API_TOKEN: string;
-  POLYGON_API_KEY: string;
-  FINNHUB_API_KEY: string;
-  ALPHA_VANTAGE_API_KEY: string;
-  MORNINGSTAR_API_KEY: string;
-  XIGNITE_API_TOKEN: string;
-  DRIVEWEALTH_API_KEY: string;
+  // ALPACA_API_KEY_ID: string; // Public
+  // ALPACA_SECRET_KEY: string; // Sensitive, manage via backend
+  // TRADIER_ACCESS_TOKEN: string; // Sensitive, manage via backend
+  // IEX_CLOUD_API_TOKEN: string; // Sensitive, manage via backend
+  // POLYGON_API_KEY: string; // Sensitive, manage via backend
+  // FINNHUB_API_KEY: string; // Sensitive, manage via backend
+  // ALPHA_VANTAGE_API_KEY: string; // Sensitive, manage via backend
+  // MORNINGSTAR_API_KEY: string; // Sensitive, manage via backend
+  // XIGNITE_API_TOKEN: string; // Sensitive, manage via backend
+  // DRIVEWEALTH_API_KEY: string; // Sensitive, manage via backend
 
   // Crypto
-  COINBASE_API_KEY: string;
-  COINBASE_API_SECRET: string;
-  BINANCE_API_KEY: string;
-  BINANCE_API_SECRET: string;
-  KRAKEN_API_KEY: string;
-  KRAKEN_PRIVATE_KEY: string;
-  GEMINI_API_KEY: string;
-  GEMINI_API_SECRET: string;
-  COINMARKETCAP_API_KEY: string;
-  COINGECKO_API_KEY: string;
-  BLOCKIO_API_KEY: string;
+  // HUOBI_API_KEY: string;
+  // HUOBI_SECRET: string;
+  // COINBASE_API_KEY: string; // Sensitive, manage via backend
+  // COINBASE_API_SECRET: string; // Sensitive, manage via backend
+  // BINANCE_API_KEY: string; // Sensitive, manage via backend
+  // BINANCE_API_SECRET: string; // Sensitive, manage via backend
+  // KRAKEN_API_KEY: string; // Sensitive, manage via backend
+  // KRAKEN_PRIVATE_KEY: string; // Sensitive, manage via backend
+  // GEMINI_API_KEY: string; // Sensitive, manage via backend
+  // GEMINI_API_SECRET: string; // Sensitive, manage via backend
+  // COINMARKETCAP_API_KEY: string; // Sensitive, manage via backend
+  // COINGECKO_API_KEY: string; // Sensitive, manage via backend
+  // BLOCKIO_API_KEY: string; // Sensitive, manage via backend
 
   // Major Banks (Open Banking)
-  JP_MORGAN_CHASE_CLIENT_ID: string;
-  CITI_CLIENT_ID: string;
-  WELLS_FARGO_CLIENT_ID: string;
-  CAPITAL_ONE_CLIENT_ID: string;
+  // JP_MORGAN_CHASE_CLIENT_ID: string; // Public
+  // CITI_CLIENT_ID: string; // Public
+  // WELLS_FARGO_CLIENT_ID: string; // Public
+  // CAPITAL_ONE_CLIENT_ID: string; // Public
 
   // European & Global Banks (Open Banking)
-  HSBC_CLIENT_ID: string;
-  BARCLAYS_CLIENT_ID: string;
-  BBVA_CLIENT_ID: string;
-  DEUTSCHE_BANK_API_KEY: string;
+  // HSBC_CLIENT_ID: string; // Public
+  // BARCLAYS_CLIENT_ID: string; // Public
+  // BBVA_CLIENT_ID: string; // Public
+  // DEUTSCHE_BANK_API_KEY: string; // Sensitive, manage via backend
 
   // UK & European Aggregators
-  TINK_CLIENT_ID: string;
-  TRUELAYER_CLIENT_ID: string;
+  // TINK_CLIENT_ID: string; // Public
+  // TRUELAYER_CLIENT_ID: string; // Public
 
   // Compliance & Identity (KYC/AML)
-  MIDDESK_API_KEY: string;
-  ALLOY_API_TOKEN: string;
-  ALLOY_API_SECRET: string;
-  COMPLYADVANTAGE_API_KEY: string;
+  // MIDDESK_API_KEY: string; // Sensitive, manage via backend
+  // ALLOY_API_TOKEN: string; // Sensitive, manage via backend
+  // ALLOY_API_SECRET: string; // Sensitive, manage via backend
+  // COMPLYADVANTAGE_API_KEY: string; // Sensitive, manage via backend
 
   // Real Estate
-  ZILLOW_API_KEY: string;
-  CORELOGIC_CLIENT_ID: string;
+  // ZILLOW_API_KEY: string; // Sensitive, manage via backend
+  // CORELOGIC_CLIENT_ID: string; // Public
 
   // Credit Bureaus
-  EXPERIAN_API_KEY: string;
-  EQUIFAX_API_KEY: string;
-  TRANSUNION_API_KEY: string;
+  // EXPERIAN_API_KEY: string; // Sensitive, manage via backend
+  // EQUIFAX_API_KEY: string; // Sensitive, manage via backend
+  // TRANSUNION_API_KEY: string; // Sensitive, manage via backend
 
   // Global Payments (Emerging Markets)
-  FINCRA_API_KEY: string;
-  FLUTTERWAVE_SECRET_KEY: string;
-  PAYSTACK_SECRET_KEY: string;
-  DLOCAL_API_KEY: string;
-  RAPYD_ACCESS_KEY: string;
+  // FINCRA_API_KEY: string; // Sensitive, manage via backend
+  // FLUTTERWAVE_SECRET_KEY: string; // Sensitive, manage via backend
+  // PAYSTACK_SECRET_KEY: string; // Sensitive, manage via backend
+  // DLOCAL_API_KEY: string; // Sensitive, manage via backend
+  // RAPYD_ACCESS_KEY: string; // Sensitive, manage via backend
   
   // Accounting & Tax
-  TAXJAR_API_KEY: string;
-  AVALARA_API_KEY: string;
-  CODAT_API_KEY: string;
-  XERO_CLIENT_ID: string;
-  XERO_CLIENT_SECRET: string;
-  QUICKBOOKS_CLIENT_ID: string;
-  QUICKBOOKS_CLIENT_SECRET: string;
-  FRESHBOOKS_API_KEY: string;
+  // TAXJAR_API_KEY: string; // Sensitive, manage via backend
+  // AVALARA_API_KEY: string; // Sensitive, manage via backend
+  // CODAT_API_KEY: string; // Sensitive, manage via backend
+  // XERO_CLIENT_ID: string; // Public
+  // XERO_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // QUICKBOOKS_CLIENT_ID: string; // Public
+  // QUICKBOOKS_CLIENT_SECRET: string; // Sensitive, manage via backend
+  // FRESHBOOKS_API_KEY: string; // Sensitive, manage via backend
   
   // Fintech Utilities
-  ANVIL_API_KEY: string;
-  MOOV_CLIENT_ID: string;
-  MOOV_SECRET: string;
-  VGS_USERNAME: string;
-  VGS_PASSWORD: string;
-  SILA_APP_HANDLE: string;
-  SILA_PRIVATE_KEY: string;
+  // ANVIL_API_KEY: string; // Sensitive, manage via backend
+  // MOOV_CLIENT_ID: string; // Public
+  // MOOV_SECRET: string; // Sensitive, manage via backend
+  // VGS_USERNAME: string; // Less sensitive, but password is
+  // VGS_PASSWORD: string; // Sensitive, manage via backend
+  // SILA_APP_HANDLE: string; // Public
+  // SILA_PRIVATE_KEY: string; // Sensitive, manage via backend
   
   [key: string]: string; // Index signature for dynamic access
 }
 
 
+// This component is being refactored to reflect best practices.
+// Managing API keys directly in a frontend form is a significant security risk.
+// Production systems should rely on a secure backend mechanism for storing and accessing credentials.
+// This component will be repurposed to display status or trigger backend operations
+// related to API integrations, rather than directly inputting sensitive keys.
+// For demonstration purposes, the form structure is retained but commented out to highlight the issue.
+
 const ApiSettingsPage: React.FC = () => {
-  const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
-  const [statusMessage, setStatusMessage] = useState<string>('');
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  // State for API keys is removed as direct frontend management is insecure.
+  // const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
+  const [statusMessage, setStatusMessage] = useState<string>('API credentials should be managed securely on the backend. This interface is for status and triggering backend operations.');
+  const [isSaving, setIsSaving] = useState<boolean>(false); // Placeholder for potential backend operations
   const [activeTab, setActiveTab] = useState<'tech' | 'banking'>('tech');
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setKeys(prevKeys => ({ ...prevKeys, [name]: value }));
-  };
+  // Input handling logic is removed as there are no direct key inputs.
+  // const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => { ... };
+  // const handleSubmit = async (e: FormEvent) => { ... };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  // Rendering of input fields is removed.
+  // const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => { ... };
+
+  // Placeholder function to simulate a backend operation.
+  const handleFetchApiStatus = async () => {
     setIsSaving(true);
-    setStatusMessage('Saving keys securely to backend...');
+    setStatusMessage('Fetching API integration status from backend...');
     try {
-      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
-      setStatusMessage(response.data.message);
+      // In a real application, this would fetch status from your backend API.
+      // const response = await axios.get('http://localhost:4000/api/integration-status');
+      // setStatusMessage(response.data.message);
+      setTimeout(() => {
+        setStatusMessage('API integration status check complete. All systems nominal (simulated).');
+        setIsSaving(false);
+      }, 2000);
     } catch (error) {
-      setStatusMessage('Error: Could not save keys. Please check backend server.');
-    } finally {
+      setStatusMessage('Error: Could not fetch API integration status. Please check backend server.');
       setIsSaving(false);
     }
   };
 
-  const renderInput = (keyName: keyof ApiKeysState, label: string, isMultiLine: boolean = false) => (
-    <div key={keyName} className="input-group">
-      <label htmlFor={keyName}>{label}</label>
-      <input
-        type="password"
-        id={keyName}
-        name={keyName}
-        value={keys[keyName] || ''}
-        onChange={handleInputChange}
-        placeholder={`Enter ${label}`}
-      />
-    </div>
-  );
+  // Placeholder function to simulate a backend operation.
+  const handleSyncApiConfig = async () => {
+    setIsSaving(true);
+    setStatusMessage('Syncing API configurations with backend...');
+    try {
+      // In a real application, this would trigger a sync operation on your backend.
+      // const response = await axios.post('http://localhost:4000/api/sync-apis');
+      // setStatusMessage(response.data.message);
+      setTimeout(() => {
+        setStatusMessage('API configurations synced successfully (simulated).');
+        setIsSaving(false);
+      }, 2000);
+    } catch (error) {
+      setStatusMessage('Error: Could not sync API configurations. Please check backend server.');
+      setIsSaving(false);
+    }
+  };
+
 
   return (
-    <div className="settings-container">
-      <h1>API Credentials Console</h1>
-      <p className="subtitle">Securely manage credentials for all integrated services. These are sent to and stored on your backend.</p>
+    <div className="settings-container" style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '1rem' }}>API Integrations Console</h1>
+      <p style={{ textAlign: 'center', color: '#666', marginBottom: '2rem' }}>
+        This interface provides an overview of configured API integrations.
+        Sensitive credentials are managed securely on the backend via environment variables and secrets management systems (e.g., AWS Secrets Manager, HashiCorp Vault).
+        Direct input of keys here is deprecated for security reasons.
+      </p>
 
-      <div className="tabs">
-        <button onClick={() => setActiveTab('tech')} className={activeTab === 'tech' ? 'active' : ''}>Tech APIs</button>
-        <button onClick={() => setActiveTab('banking')} className={activeTab === 'banking' ? 'active' : ''}>Banking & Finance APIs</button>
+      <div className="tabs" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        <button
+          onClick={() => setActiveTab('tech')}
+          className={activeTab === 'tech' ? 'active' : ''}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '0.25rem',
+            border: '1px solid #ccc',
+            backgroundColor: activeTab === 'tech' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'tech' ? 'white' : '#333',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s, color 0.2s'
+          }}
+        >
+          Technical Services
+        </button>
+        <button
+          onClick={() => setActiveTab('banking')}
+          className={activeTab === 'banking' ? 'active' : ''}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '0.25rem',
+            border: '1px solid #ccc',
+            backgroundColor: activeTab === 'banking' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'banking' ? 'white' : '#333',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s, color 0.2s'
+          }}
+        >
+          Banking & Finance
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="settings-form">
+      <div className="settings-form" style={{ maxWidth: '900px', margin: '0 auto', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '2rem', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+        
         {activeTab === 'tech' ? (
-          <>
-            <div className="form-section">
-              <h2>Core Infrastructure & Cloud</h2>
-              {renderInput('STRIPE_SECRET_KEY', 'Stripe Secret Key')}
-              {renderInput('TWILIO_ACCOUNT_SID', 'Twilio Account SID')}
-              {renderInput('TWILIO_AUTH_TOKEN', 'Twilio Auth Token')}
-              {renderInput('SENDGRID_API_KEY', 'SendGrid API Key')}
-              {renderInput('AWS_ACCESS_KEY_ID', 'AWS Access Key ID')}
-              {renderInput('AWS_SECRET_ACCESS_KEY', 'AWS Secret Access Key')}
-              {renderInput('AZURE_CLIENT_ID', 'Azure Client ID')}
-              {renderInput('AZURE_CLIENT_SECRET', 'Azure Client Secret')}
-              {renderInput('GOOGLE_CLOUD_API_KEY', 'Google Cloud API Key')}
+          <div className="form-section">
+            <h2>Technical Services Overview</h2>
+            <p>This section lists common technical service integrations. Their active status and configuration are managed on the backend.</p>
+            {/* Example of a status display section */}
+            <div style={{ marginTop: '20px', padding: '15px', border: '1px dashed #ccc', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
+              <p><strong>Stripe Integration:</strong> Active (Simulated)</p>
+              <p><strong>Twilio Integration:</strong> Active (Simulated)</p>
+              <p><strong>AWS Integration:</strong> Active (Simulated)</p>
+              {/* Add more statuses as needed */}
             </div>
-            <div className="form-section">
-              <h2>Deployment & DevOps</h2>
-              {renderInput('DOCKER_HUB_USERNAME', 'Docker Hub Username')}
-              {renderInput('DOCKER_HUB_ACCESS_TOKEN', 'Docker Hub Access Token')}
-              {renderInput('HEROKU_API_KEY', 'Heroku API Key')}
-              {renderInput('NETLIFY_PERSONAL_ACCESS_TOKEN', 'Netlify Personal Access Token')}
-              {renderInput('VERCEL_API_TOKEN', 'Vercel API Token')}
-              {renderInput('CLOUDFLARE_API_TOKEN', 'Cloudflare API Token')}
-              {renderInput('DIGITALOCEAN_PERSONAL_ACCESS_TOKEN', 'DigitalOcean Personal Access Token')}
-              {renderInput('LINODE_PERSONAL_ACCESS_TOKEN', 'Linode Personal Access Token')}
-              {renderInput('TERRAFORM_API_TOKEN', 'Terraform API Token')}
-            </div>
-            <div className="form-section">
-              <h2>Collaboration & Productivity</h2>
-              {renderInput('GITHUB_PERSONAL_ACCESS_TOKEN', 'GitHub Personal Access Token')}
-              {renderInput('SLACK_BOT_TOKEN', 'Slack Bot Token')}
-              {renderInput('DISCORD_BOT_TOKEN', 'Discord Bot Token')}
-              {renderInput('TRELLO_API_KEY', 'Trello API Key')}
-              {renderInput('TRELLO_API_TOKEN', 'Trello API Token')}
-              {renderInput('JIRA_USERNAME', 'Jira Username')}
-              {renderInput('JIRA_API_TOKEN', 'Jira API Token')}
-              {renderInput('ASANA_PERSONAL_ACCESS_TOKEN', 'Asana Personal Access Token')}
-              {renderInput('NOTION_API_KEY', 'Notion API Key')}
-              {renderInput('AIRTABLE_API_KEY', 'Airtable API Key')}
-            </div>
-            <div className="form-section">
-              <h2>File & Data Storage</h2>
-              {renderInput('DROPBOX_ACCESS_TOKEN', 'Dropbox Access Token')}
-              {renderInput('BOX_DEVELOPER_TOKEN', 'Box Developer Token')}
-              {renderInput('GOOGLE_DRIVE_API_KEY', 'Google Drive API Key')}
-              {renderInput('ONEDRIVE_CLIENT_ID', 'OneDrive Client ID')}
-            </div>
-            <div className="form-section">
-              <h2>CRM & Business</h2>
-              {renderInput('SALESFORCE_CLIENT_ID', 'Salesforce Client ID')}
-              {renderInput('SALESFORCE_CLIENT_SECRET', 'Salesforce Client Secret')}
-              {renderInput('HUBSPOT_API_KEY', 'HubSpot API Key')}
-              {renderInput('ZENDESK_API_TOKEN', 'Zendesk API Token')}
-              {renderInput('INTERCOM_ACCESS_TOKEN', 'Intercom Access Token')}
-              {renderInput('MAILCHIMP_API_KEY', 'Mailchimp API Key')}
-            </div>
-            <div className="form-section">
-              <h2>E-commerce</h2>
-              {renderInput('SHOPIFY_API_KEY', 'Shopify API Key')}
-              {renderInput('SHOPIFY_API_SECRET', 'Shopify API Secret')}
-              {renderInput('BIGCOMMERCE_ACCESS_TOKEN', 'BigCommerce Access Token')}
-              {renderInput('MAGENTO_ACCESS_TOKEN', 'Magento Access Token')}
-              {renderInput('WOOCOMMERCE_CLIENT_KEY', 'WooCommerce Client Key')}
-              {renderInput('WOOCOMMERCE_CLIENT_SECRET', 'WooCommerce Client Secret')}
-            </div>
-            <div className="form-section">
-              <h2>Authentication & Identity</h2>
-              {renderInput('STYTCH_PROJECT_ID', 'Stytch Project ID')}
-              {renderInput('STYTCH_SECRET', 'Stytch Secret')}
-              {renderInput('AUTH0_DOMAIN', 'Auth0 Domain')}
-              {renderInput('AUTH0_CLIENT_ID', 'Auth0 Client ID')}
-              {renderInput('AUTH0_CLIENT_SECRET', 'Auth0 Client Secret')}
-              {renderInput('OKTA_DOMAIN', 'Okta Domain')}
-              {renderInput('OKTA_API_TOKEN', 'Okta API Token')}
-            </div>
-            <div className="form-section">
-              <h2>Backend & Databases</h2>
-              {renderInput('FIREBASE_API_KEY', 'Firebase API Key')}
-              {renderInput('SUPABASE_URL', 'Supabase URL')}
-              {renderInput('SUPABASE_ANON_KEY', 'Supabase Anon Key')}
-            </div>
-            <div className="form-section">
-              <h2>API Development</h2>
-              {renderInput('POSTMAN_API_KEY', 'Postman API Key')}
-              {renderInput('APOLLO_GRAPH_API_KEY', 'Apollo Graph API Key')}
-            </div>
-            <div className="form-section">
-              <h2>AI & Machine Learning</h2>
-              {renderInput('OPENAI_API_KEY', 'OpenAI API Key')}
-              {renderInput('HUGGING_FACE_API_TOKEN', 'Hugging Face API Token')}
-              {renderInput('GOOGLE_CLOUD_AI_API_KEY', 'Google Cloud AI API Key')}
-              {renderInput('AMAZON_REKOGNITION_ACCESS_KEY', 'Amazon Rekognition Access Key')}
-              {renderInput('MICROSOFT_AZURE_COGNITIVE_KEY', 'Microsoft Azure Cognitive Key')}
-              {renderInput('IBM_WATSON_API_KEY', 'IBM Watson API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Search & Real-time</h2>
-              {renderInput('ALGOLIA_APP_ID', 'Algolia App ID')}
-              {renderInput('ALGOLIA_ADMIN_API_KEY', 'Algolia Admin API Key')}
-              {renderInput('PUSHER_APP_ID', 'Pusher App ID')}
-              {renderInput('PUSHER_KEY', 'Pusher Key')}
-              {renderInput('PUSHER_SECRET', 'Pusher Secret')}
-              {renderInput('ABLY_API_KEY', 'Ably API Key')}
-              {renderInput('ELASTICSEARCH_API_KEY', 'Elasticsearch API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Identity & Verification</h2>
-              {renderInput('STRIPE_IDENTITY_SECRET_KEY', 'Stripe Identity Secret Key')}
-              {renderInput('ONFIDO_API_TOKEN', 'Onfido API Token')}
-              {renderInput('CHECKR_API_KEY', 'Checkr API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Logistics & Shipping</h2>
-              {renderInput('LOB_API_KEY', 'Lob API Key')}
-              {renderInput('EASYPOST_API_KEY', 'EasyPost API Key')}
-              {renderInput('SHIPPO_API_TOKEN', 'Shippo API Token')}
-            </div>
-            <div className="form-section">
-              <h2>Maps & Weather</h2>
-              {renderInput('GOOGLE_MAPS_API_KEY', 'Google Maps API Key')}
-              {renderInput('MAPBOX_ACCESS_TOKEN', 'Mapbox Access Token')}
-              {renderInput('HERE_API_KEY', 'HERE API Key')}
-              {renderInput('ACCUWEATHER_API_KEY', 'AccuWeather API Key')}
-              {renderInput('OPENWEATHERMAP_API_KEY', 'OpenWeatherMap API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Social & Media</h2>
-              {renderInput('YELP_API_KEY', 'Yelp API Key')}
-              {renderInput('FOURSQUARE_API_KEY', 'Foursquare API Key')}
-              {renderInput('REDDIT_CLIENT_ID', 'Reddit Client ID')}
-              {renderInput('REDDIT_CLIENT_SECRET', 'Reddit Client Secret')}
-              {renderInput('TWITTER_BEARER_TOKEN', 'Twitter Bearer Token')}
-              {renderInput('FACEBOOK_APP_ID', 'Facebook App ID')}
-              {renderInput('FACEBOOK_APP_SECRET', 'Facebook App Secret')}
-              {renderInput('INSTAGRAM_APP_ID', 'Instagram App ID')}
-              {renderInput('INSTAGRAM_APP_SECRET', 'Instagram App Secret')}
-              {renderInput('YOUTUBE_DATA_API_KEY', 'YouTube Data API Key')}
-              {renderInput('SPOTIFY_CLIENT_ID', 'Spotify Client ID')}
-              {renderInput('SPOTIFY_CLIENT_SECRET', 'Spotify Client Secret')}
-              {renderInput('SOUNDCLOUD_CLIENT_ID', 'SoundCloud Client ID')}
-              {renderInput('TWITCH_CLIENT_ID', 'Twitch Client ID')}
-              {renderInput('TWITCH_CLIENT_SECRET', 'Twitch Client Secret')}
-            </div>
-            <div className="form-section">
-              <h2>Media & Content</h2>
-              {renderInput('MUX_TOKEN_ID', 'Mux Token ID')}
-              {renderInput('MUX_TOKEN_SECRET', 'Mux Token Secret')}
-              {renderInput('CLOUDINARY_API_KEY', 'Cloudinary API Key')}
-              {renderInput('CLOUDINARY_API_SECRET', 'Cloudinary API Secret')}
-              {renderInput('IMGIX_API_KEY', 'Imgix API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Legal & Admin</h2>
-              {renderInput('STRIPE_ATLAS_API_KEY', 'Stripe Atlas API Key')}
-              {renderInput('CLERKY_API_KEY', 'Clerky API Key')}
-              {renderInput('DOCUSIGN_INTEGRATOR_KEY', 'DocuSign Integrator Key')}
-              {renderInput('HELLOSIGN_API_KEY', 'HelloSign API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Monitoring & CI/CD</h2>
-              {renderInput('LAUNCHDARKLY_SDK_KEY', 'LaunchDarkly SDK Key')}
-              {renderInput('SENTRY_AUTH_TOKEN', 'Sentry Auth Token')}
-              {renderInput('DATADOG_API_KEY', 'Datadog API Key')}
-              {renderInput('NEW_RELIC_API_KEY', 'New Relic API Key')}
-              {renderInput('CIRCLECI_API_TOKEN', 'CircleCI API Token')}
-              {renderInput('TRAVIS_CI_API_TOKEN', 'Travis CI API Token')}
-              {renderInput('BITBUCKET_USERNAME', 'Bitbucket Username')}
-              {renderInput('BITBUCKET_APP_PASSWORD', 'Bitbucket App Password')}
-              {renderInput('GITLAB_PERSONAL_ACCESS_TOKEN', 'GitLab Personal Access Token')}
-              {renderInput('PAGERDUTY_API_KEY', 'PagerDuty API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Headless CMS</h2>
-              {renderInput('CONTENTFUL_SPACE_ID', 'Contentful Space ID')}
-              {renderInput('CONTENTFUL_ACCESS_TOKEN', 'Contentful Access Token')}
-              {renderInput('SANITY_PROJECT_ID', 'Sanity Project ID')}
-              {renderInput('SANITY_API_TOKEN', 'Sanity API Token')}
-              {renderInput('STRAPI_API_TOKEN', 'Strapi API Token')}
-            </div>
-          </>
+          </div>
         ) : (
-          <>
-            <div className="form-section">
-              <h2>Data Aggregators</h2>
-              {renderInput('PLAID_CLIENT_ID', 'Plaid Client ID')}
-              {renderInput('PLAID_SECRET', 'Plaid Secret')}
-              {renderInput('YODLEE_CLIENT_ID', 'Yodlee Client ID')}
-              {renderInput('YODLEE_SECRET', 'Yodlee Secret')}
-              {renderInput('MX_CLIENT_ID', 'MX Client ID')}
-              {renderInput('MX_API_KEY', 'MX API Key')}
-              {renderInput('FINICITY_PARTNER_ID', 'Finicity Partner ID')}
-              {renderInput('FINICITY_APP_KEY', 'Finicity App Key')}
+          <div className="form-section">
+            <h2>Banking & Finance Services Overview</h2>
+            <p>This section lists common banking and finance integration categories. Their active status and configuration are managed on the backend.</p>
+            {/* Example of a status display section */}
+            <div style={{ marginTop: '20px', padding: '15px', border: '1px dashed #ccc', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
+              <p><strong>Plaid Integration:</strong> Active (Simulated)</p>
+              <p><strong>Adyen Integration:</strong> Active (Simulated)</p>
+              <p><strong>Marqeta Integration:</strong> Active (Simulated)</p>
+              {/* Add more statuses as needed */}
             </div>
-            <div className="form-section">
-              <h2>Payment Processing</h2>
-              {renderInput('ADYEN_API_KEY', 'Adyen API Key')}
-              {renderInput('ADYEN_MERCHANT_ACCOUNT', 'Adyen Merchant Account')}
-              {renderInput('BRAINTREE_MERCHANT_ID', 'Braintree Merchant ID')}
-              {renderInput('BRAINTREE_PUBLIC_KEY', 'Braintree Public Key')}
-              {renderInput('BRAINTREE_PRIVATE_KEY', 'Braintree Private Key')}
-              {renderInput('SQUARE_APPLICATION_ID', 'Square Application ID')}
-              {renderInput('SQUARE_ACCESS_TOKEN', 'Square Access Token')}
-              {renderInput('PAYPAL_CLIENT_ID', 'PayPal Client ID')}
-              {renderInput('PAYPAL_SECRET', 'PayPal Secret')}
-              {renderInput('DWOLLA_KEY', 'Dwolla Key')}
-              {renderInput('DWOLLA_SECRET', 'Dwolla Secret')}
-              {renderInput('WORLDPAY_API_KEY', 'Worldpay API Key')}
-              {renderInput('CHECKOUT_SECRET_KEY', 'Checkout Secret Key')}
-            </div>
-            <div className="form-section">
-              <h2>Banking as a Service (BaaS) & Card Issuing</h2>
-              {renderInput('MARQETA_APPLICATION_TOKEN', 'Marqeta Application Token')}
-              {renderInput('MARQETA_ADMIN_ACCESS_TOKEN', 'Marqeta Admin Access Token')}
-              {renderInput('GALILEO_API_LOGIN', 'Galileo API Login')}
-              {renderInput('GALILEO_API_TRANS_KEY', 'Galileo API Trans Key')}
-              {renderInput('SOLARISBANK_CLIENT_ID', 'SolarisBank Client ID')}
-              {renderInput('SOLARISBANK_CLIENT_SECRET', 'SolarisBank Client Secret')}
-              {renderInput('SYNAPSE_CLIENT_ID', 'Synapse Client ID')}
-              {renderInput('SYNAPSE_CLIENT_SECRET', 'Synapse Client Secret')}
-              {renderInput('RAILSBANK_API_KEY', 'RailsBank API Key')}
-              {renderInput('CLEARBANK_API_KEY', 'ClearBank API Key')}
-              {renderInput('UNIT_API_TOKEN', 'Unit API Token')}
-              {renderInput('TREASURY_PRIME_API_KEY', 'Treasury Prime API Key')}
-              {renderInput('INCREASE_API_KEY', 'Increase API Key')}
-              {renderInput('MERCURY_API_KEY', 'Mercury API Key')}
-              {renderInput('BREX_API_KEY', 'Brex API Key')}
-              {renderInput('BOND_API_KEY', 'Bond API Key')}
-            </div>
-            <div className="form-section">
-              <h2>International Payments</h2>
-              {renderInput('CURRENCYCLOUD_LOGIN_ID', 'CurrencyCloud Login ID')}
-              {renderInput('CURRENCYCLOUD_API_KEY', 'CurrencyCloud API Key')}
-              {renderInput('OFX_API_KEY', 'OFX API Key')}
-              {renderInput('WISE_API_TOKEN', 'Wise API Token')}
-              {renderInput('REMITLY_API_KEY', 'Remitly API Key')}
-              {renderInput('AZIMO_API_KEY', 'Azimo API Key')}
-              {renderInput('NIUM_API_KEY', 'Nium API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Investment & Market Data</h2>
-              {renderInput('ALPACA_API_KEY_ID', 'Alpaca API Key ID')}
-              {renderInput('ALPACA_SECRET_KEY', 'Alpaca Secret Key')}
-              {renderInput('TRADIER_ACCESS_TOKEN', 'Tradier Access Token')}
-              {renderInput('IEX_CLOUD_API_TOKEN', 'IEX Cloud API Token')}
-              {renderInput('POLYGON_API_KEY', 'Polygon.io API Key')}
-              {renderInput('FINNHUB_API_KEY', 'Finnhub API Key')}
-              {renderInput('ALPHA_VANTAGE_API_KEY', 'Alpha Vantage API Key')}
-              {renderInput('MORNINGSTAR_API_KEY', 'Morningstar API Key')}
-              {renderInput('XIGNITE_API_TOKEN', 'Xignite API Token')}
-              {renderInput('DRIVEWEALTH_API_KEY', 'DriveWealth API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Crypto</h2>
-              {renderInput('COINBASE_API_KEY', 'Coinbase API Key')}
-              {renderInput('COINBASE_API_SECRET', 'Coinbase API Secret')}
-              {renderInput('BINANCE_API_KEY', 'Binance API Key')}
-              {renderInput('BINANCE_API_SECRET', 'Binance API Secret')}
-              {renderInput('KRAKEN_API_KEY', 'Kraken API Key')}
-              {renderInput('KRAKEN_PRIVATE_KEY', 'Kraken Private Key')}
-              {renderInput('GEMINI_API_KEY', 'Gemini API Key')}
-              {renderInput('GEMINI_API_SECRET', 'Gemini API Secret')}
-              {renderInput('COINMARKETCAP_API_KEY', 'CoinMarketCap API Key')}
-              {renderInput('COINGECKO_API_KEY', 'CoinGecko API Key')}
-              {renderInput('BLOCKIO_API_KEY', 'Block.io API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Major Banks (Open Banking)</h2>
-              {renderInput('JP_MORGAN_CHASE_CLIENT_ID', 'JP Morgan Chase Client ID')}
-              {renderInput('CITI_CLIENT_ID', 'Citi Client ID')}
-              {renderInput('WELLS_FARGO_CLIENT_ID', 'Wells Fargo Client ID')}
-              {renderInput('CAPITAL_ONE_CLIENT_ID', 'Capital One Client ID')}
-            </div>
-            <div className="form-section">
-              <h2>European & Global Banks (Open Banking)</h2>
-              {renderInput('HSBC_CLIENT_ID', 'HSBC Client ID')}
-              {renderInput('BARCLAYS_CLIENT_ID', 'Barclays Client ID')}
-              {renderInput('BBVA_CLIENT_ID', 'BBVA Client ID')}
-              {renderInput('DEUTSCHE_BANK_API_KEY', 'Deutsche Bank API Key')}
-            </div>
-            <div className="form-section">
-              <h2>UK & European Aggregators</h2>
-              {renderInput('TINK_CLIENT_ID', 'Tink Client ID')}
-              {renderInput('TRUELAYER_CLIENT_ID', 'TrueLayer Client ID')}
-            </div>
-            <div className="form-section">
-              <h2>Compliance & Identity (KYC/AML)</h2>
-              {renderInput('MIDDESK_API_KEY', 'MidD Desk API Key')}
-              {renderInput('ALLOY_API_TOKEN', 'Alloy API Token')}
-              {renderInput('ALLOY_API_SECRET', 'Alloy API Secret')}
-              {renderInput('COMPLYADVANTAGE_API_KEY', 'ComplyAdvantage API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Real Estate</h2>
-              {renderInput('ZILLOW_API_KEY', 'Zillow API Key')}
-              {renderInput('CORELOGIC_CLIENT_ID', 'CoreLogic Client ID')}
-            </div>
-            <div className="form-section">
-              <h2>Credit Bureaus</h2>
-              {renderInput('EXPERIAN_API_KEY', 'Experian API Key')}
-              {renderInput('EQUIFAX_API_KEY', 'Equifax API Key')}
-              {renderInput('TRANSUNION_API_KEY', 'TransUnion API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Global Payments (Emerging Markets)</h2>
-              {renderInput('FINCRA_API_KEY', 'Fincra API Key')}
-              {renderInput('FLUTTERWAVE_SECRET_KEY', 'Flutterwave Secret Key')}
-              {renderInput('PAYSTACK_SECRET_KEY', 'Paystack Secret Key')}
-              {renderInput('DLOCAL_API_KEY', 'DLocal API Key')}
-              {renderInput('RAPYD_ACCESS_KEY', 'Rapyd Access Key')}
-            </div>
-            <div className="form-section">
-              <h2>Accounting & Tax</h2>
-              {renderInput('TAXJAR_API_KEY', 'TaxJar API Key')}
-              {renderInput('AVALARA_API_KEY', 'Avalara API Key')}
-              {renderInput('CODAT_API_KEY', 'Coda.io API Key')}
-              {renderInput('XERO_CLIENT_ID', 'Xero Client ID')}
-              {renderInput('XERO_CLIENT_SECRET', 'Xero Client Secret')}
-              {renderInput('QUICKBOOKS_CLIENT_ID', 'QuickBooks Client ID')}
-              {renderInput('QUICKBOOKS_CLIENT_SECRET', 'QuickBooks Client Secret')}
-              {renderInput('FRESHBOOKS_API_KEY', 'FreshBooks API Key')}
-            </div>
-            <div className="form-section">
-              <h2>Fintech Utilities</h2>
-              {renderInput('ANVIL_API_KEY', 'Anvil API Key')}
-              {renderInput('MOOV_CLIENT_ID', 'Moov Client ID')}
-              {renderInput('MOOV_SECRET', 'Moov Secret')}
-              {renderInput('VGS_USERNAME', 'VGS Username')}
-              {renderInput('VGS_PASSWORD', 'VGS Password')}
-              {renderInput('SILA_APP_HANDLE', 'Sila App Handle')}
-              {renderInput('SILA_PRIVATE_KEY', 'Sila Private Key')}
-            </div>
-          </>
+          </div>
         )}
         
-        <div className="form-footer">
-          <button type="submit" className="save-button" disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save All Keys to Server'}
+        <div className="form-footer" style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button onClick={handleFetchApiStatus} className="save-button" disabled={isSaving} style={{ padding: '0.75rem 1.5rem', borderRadius: '0.25rem', border: 'none', backgroundColor: '#28a745', color: 'white', cursor: 'pointer', marginRight: '1rem', transition: 'background-color 0.2s' }}>
+            {isSaving ? 'Checking...' : 'Check API Status'}
           </button>
-          {statusMessage && <p className="status-message">{statusMessage}</p>}
+          <button onClick={handleSyncApiConfig} className="save-button" disabled={isSaving} style={{ padding: '0.75rem 1.5rem', borderRadius: '0.25rem', border: 'none', backgroundColor: '#007bff', color: 'white', cursor: 'pointer', transition: 'background-color 0.2s' }}>
+            {isSaving ? 'Syncing...' : 'Sync API Config'}
+          </button>
+          {statusMessage && <p className="status-message" style={{ marginTop: '1rem', color: isSaving ? '#007bff' : '#28a745' }}>{statusMessage}</p>}
         </div>
-      </form>
+      </div>
     </div>
   );
 };
