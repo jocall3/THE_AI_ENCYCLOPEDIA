@@ -1,7 +1,8 @@
 import React from 'react';
 import { View } from './types';
 import {
-    Bot, FileText, Shuffle, PiggyBank, Target, Shield, TrendingUp, Gem, Code, Globe, Cuboid, Home, Palette, Percent, Rocket, Briefcase, Calculator, Scroll, Building, Landmark, Link, Users, Megaphone, Network, ShoppingBag, User, FileCog, Settings, Eye, CreditCard, Lock, Leaf
+    Bot, FileText, Shuffle, PiggyBank, Target, Shield, TrendingUp, Gem, Code, Globe, Cuboid, Home, Palette, Percent, Rocket, Briefcase, Calculator, Scroll, Building, Landmark, Link, Users, Megaphone, Network, ShoppingBag, User, FileCog, Settings, Eye, CreditCard, Lock, Leaf,
+    Handshake, Star, Heart, LifeBuoy, MessageCircle, Scale, Lightbulb, CheckCircle, Cloud, Server, RefreshCw, Activity, Plane, Book, Bell, Ship, Mountain
 } from 'lucide-react';
 
 export const banks = [
@@ -24,7 +25,7 @@ export const banks = [
     { name: 'TD Bank', logo: <PiggyBank className="w-6 h-6 text-green-600" />, institution_id: 'ins_17' },
     { name: 'Scotiabank', logo: <Globe className="w-6 h-6 text-red-500" />, institution_id: 'ins_18' },
     { name: 'BMO', logo: <Building className="w-6 h-6 text-blue-800" />, institution_id: 'ins_19' },
-    { name: 'BlackRock', logo: <Rock className="w-6 h-6 text-black" />, institution_id: 'ins_20' },
+    { name: 'BlackRock', logo: <Mountain className="w-6 h-6 text-black" />, institution_id: 'ins_20' },
     { name: 'Vanguard', logo: <Ship className="w-6 h-6 text-red-800" />, institution_id: 'ins_21' },
     { name: 'Fidelity', logo: <TrendingUp className="w-6 h-6 text-green-700" />, institution_id: 'ins_22' },
     { name: 'Charles Schwab', logo: <Briefcase className="w-6 h-6 text-blue-400" />, institution_id: 'ins_23' },
