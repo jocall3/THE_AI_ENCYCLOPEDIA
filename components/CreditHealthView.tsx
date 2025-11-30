@@ -254,7 +254,6 @@ const CreditHealthView: React.FC = () => {
                 <p className="mt-2">CreditHealthView requires a valid DataProvider context. Please ensure initialization is complete.</p>
             </div>
         );
-    );
     }
     
     const { creditScore, creditFactors, geminiApiKey } = context;
