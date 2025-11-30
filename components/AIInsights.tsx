@@ -16,7 +16,6 @@
 // Any actual API key configuration should be handled by a secure backend system, not a frontend UI.
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 // Using a simple CSS-in-JS or inline style approach to avoid external CSS files for demonstration,
 // aligning with the goal to "Unify the Technology Stack" (Instruction 2) by preferring Tailwind or MUI,
 // but without a full setup, simple inline/local styles serve the purpose of demonstrating UI structure.
@@ -41,33 +40,27 @@ const AIInsights: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        // Simulating an API call to a secure backend endpoint for AI insights.
-        // This adheres to "Standardize all AI calls behind a single service interface" (backend concern)
-        // and ensures the frontend doesn't block UI during API calls (Instruction 5).
-        const response = await axios.get<Insight[]>('/api/ai/insights', {
-          timeout: 10000 // Added for Instruction 5: timeouts
-        });
-        setInsights(response.data);
+        // Using Electron's IPC to request data from the main process.
+        // This replaces the direct axios call, integrating with the Electron architecture.
+        // The main process is now responsible for making the actual API call securely.
+        const fetchedInsights: Insight[] = await window.electron.ipcRenderer.invoke('get-ai-insights');
+        setInsights(fetchedInsights);
       } catch (err: any) {
         // Enhanced error handling for AI components (Instruction 5)
-        if (axios.isCancel(err)) {
-          setError('Insight fetch cancelled.');
-        } else if (err.code === 'ECONNABORTED') {
-          setError('Request timed out. Please try again.'); // Timeout fallback
-        } else {
-          setError('Failed to fetch AI insights. Please check the backend service. Fallback data may be displayed.');
-          // Instruction 5: Add fallbacks - can load cached/default insights here
-          setInsights([
-            {
-              id: 'fallback-1',
-              title: 'Unexpected Spending Increase (Fallback)',
-              summary: 'Spending in "Utilities" category increased by 25% last month. Investigate potential causes.',
-              type: 'anomaly',
-              severity: 'medium',
-              explainability: 'This insight is a fallback due to an error fetching live data. Real-time data would provide dynamic thresholds and trend analysis.'
-            }
-          ]);
-        }
+        // The error is now whatever the main process decided to throw/return.
+        console.error("Error fetching insights via IPC:", err);
+        setError('Failed to fetch AI insights from the main process. Fallback data may be displayed.');
+        // Instruction 5: Add fallbacks - can load cached/default insights here
+        setInsights([
+          {
+            id: 'fallback-1',
+            title: 'Unexpected Spending Increase (Fallback)',
+            summary: 'Spending in "Utilities" category increased by 25% last month. Investigate potential causes.',
+            type: 'anomaly',
+            severity: 'medium',
+            explainability: 'This insight is a fallback due to an error fetching live data. Real-time data would provide dynamic thresholds and trend analysis.'
+          }
+        ]);
       } finally {
         setLoading(false);
       }
