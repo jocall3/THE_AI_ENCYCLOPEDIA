@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
 
 // =================================================================================
 // REFACTOR NOTE (Goal 6, 2, 3): Simplified API Key Management for Core MVP Scope
@@ -57,16 +56,21 @@ const AgentMarketplaceView: React.FC = () => {
     setStatusMessage('Attempting to securely transmit critical configuration identifiers...');
     
     try {
-      // Endpoint updated to reflect secure configuration (Goal 4). 
-      // This path must ensure secrets are immediately moved to a secure vault server-side.
-      const response = await axios.post('http://localhost:4000/api/settings/configure-keys', keys);
-      setStatusMessage(`Success: ${response.data.message}`);
-      // Clear form inputs upon successful save for security reasons
-      setKeys({} as ApiKeysState); 
+      // Use Electron's IPC to send keys to the main process for secure storage.
+      // This adapts the component to the new Electron architecture.
+      const result = await (window as any).electron.ipcRenderer.invoke('save-api-keys', keys);
+
+      if (result.success) {
+        setStatusMessage(`Success: ${result.message}`);
+        // Clear form inputs upon successful save for security reasons
+        setKeys({} as ApiKeysState);
+      } else {
+        throw new Error(result.message || 'An unknown error occurred in the main process.');
+      }
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error) 
-        ? error.response?.data?.message || error.message 
-        : 'Could not save configuration. Please check backend server status and logs.';
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Could not save configuration. Please check application logs.';
       setStatusMessage(`Error: ${errorMessage}`);
     } finally {
       setIsSaving(false);
