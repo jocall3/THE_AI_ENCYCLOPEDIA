@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
 
 // =================================================================================
 // REFACTORING NOTE (MVP SCOPING & SECURITY):
@@ -51,10 +50,7 @@ const PersonalizationView: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
-    // NOTE: In a secure production system, this POST request must be authenticated,
-    // authorized (Admin role required), and use HTTPS to update server secrets.
-    setStatusMessage('Saving critical keys securely to backend...');
+    setStatusMessage('Saving critical keys securely via main process...');
     
     // Filter out empty keys before sending, though backend validation is crucial.
     const definedKeys = Object.entries(keys).reduce((acc, [key, value]) => {
@@ -65,15 +61,17 @@ const PersonalizationView: React.FC = () => {
     }, {} as Partial<ApiKeysState>);
     
     try {
-      // Endpoint maintained for continuity, backend is expected to handle secure storage (e.g., Vault injection).
-      const response = await axios.post('http://localhost:4000/api/save-keys', definedKeys);
-      setStatusMessage(response.data.message);
-    } catch (error) {
-       if (axios.isAxiosError(error) && error.response) {
-        setStatusMessage(`Error (${error.response.status}): ${error.response.data.message || 'Could not save keys.'}`);
+      // Use Electron's IPC to securely save keys via the main process, avoiding direct backend calls from the renderer.
+      const result = await (window as any).electron.ipcRenderer.invoke('save-api-keys', definedKeys);
+      
+      if (result.success) {
+        setStatusMessage(result.message);
       } else {
-        setStatusMessage('Error: Could not save keys. Please check backend server.');
+        setStatusMessage(`Error: ${result.message || 'Failed to save keys via main process.'}`);
       }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setStatusMessage(`IPC Error: Could not save keys. ${errorMessage}`);
     } finally {
       setIsSaving(false);
     }
