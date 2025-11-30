@@ -46,6 +46,7 @@ const MOCK_LOGS: AgentLogEntry[] = [
   { id: '6', timestamp: '2024-07-29T10:08:00Z', level: 'SUCCESS', source: 'Orchestrator', message: 'Agent run completed with 1 error and 1 warning.', details: { duration_ms: 480000 } },
   { id: '7', timestamp: '2024-07-29T10:09:00Z', level: 'INFO', source: 'ComplianceChecker', message: 'Pre-flight check passed for AML compliance.', details: { checkId: 'AML-C-2024' } },
   { id: '8', timestamp: '2024-07-29T10:10:00Z', level: 'SYSTEM', source: 'Scheduler', message: 'Next run scheduled for 15:00 UTC.', details: {} },
+  { id: '9', timestamp: '2024-07-29T10:11:00Z', level: 'INFO', source: 'ReportingEngine', message: 'Generated Q3 Treasury Summary Report.', details: { reportId: 'REP-Q3-2024', format: 'PDF' } },
 ];
 
 const ITEMS_PER_PAGE = 10;
