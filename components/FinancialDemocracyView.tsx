@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
 // NOTE: Retaining legacy CSS import, assuming it provides necessary structure styling.
 
 // =================================================================================
@@ -51,9 +50,9 @@ const FinancialDemocracyView: React.FC = () => {
     e.preventDefault();
     setIsSaving(true);
 
-    setStatusMessage('Saving essential MVP configuration keys securely to backend...');
+    setStatusMessage('Saving essential MVP configuration keys securely via main process...');
     
-    // Basic validation before POSTing
+    // Basic validation before sending
     const requiredKeys = Object.keys(keys) as (keyof MvpApiKeysState)[];
     const missingKeys = requiredKeys.filter(k => !keys[k]);
     
@@ -64,12 +63,20 @@ const FinancialDemocracyView: React.FC = () => {
     }
 
     try {
-      // NOTE: Using a dedicated, more specific endpoint for configuration saving.
-      const response = await axios.post('http://localhost:4000/api/config/mvp-integrations', keys);
-      setStatusMessage(`Success: ${response.data.message}`);
+      // Use Electron's IPC to securely save keys via the main process.
+      // This assumes a preload script has exposed ipcRenderer on window.electron.
+      const result = await (window as any).electron.ipcRenderer.invoke('save-mvp-integrations', keys);
+      
+      if (result.success) {
+        setStatusMessage(`Success: ${result.message}`);
+      } else {
+        // If the main process returns a failure, treat it as an error.
+        throw new Error(result.message || 'An unknown error occurred in the main process.');
+      }
     } catch (error) {
       console.error('API Key Save Error:', error);
-      setStatusMessage('Error: Could not save keys. Check network connectivity and backend server logs.');
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred. Check main process logs.';
+      setStatusMessage(`Error: Could not save keys. ${errorMessage}`);
     } finally {
       setIsSaving(false);
     }
