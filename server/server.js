@@ -20,62 +20,81 @@ app.post('/api/save-keys', async (req, res) => {
     // authorization to ensure only permitted users/roles can update secrets.
     // Example: if (!req.user || !req.user.isAdmin) { return res.status(403).send('Forbidden'); }
 
-    let savedCount = 0;
-    const errors = [];
+    // Filter out empty/invalid keys before processing
+    const validKeys = Object.entries(keys).filter(([, value]) =>
+        value && typeof value === 'string' && value.trim() !== ''
+    );
 
-    for (const [key, value] of Object.entries(keys)) {
-        // Process only keys that have a non-empty string value
-        if (value && typeof value === 'string' && value.trim() !== '') {
-            const secretName = `api_keys/${key}`;
-            try {
-                // Attempt to create the secret first
-                const createCommand = new CreateSecretCommand({
-                    Name: secretName,
-                    SecretString: value,
-                    Description: `API credential for ${key}`,
-                });
-                await secretsManagerClient.send(createCommand);
-                savedCount++;
-            } catch (error) {
-                // If the secret already exists, update it instead
-                if (error.name === 'ResourceExistsException') {
-                    try {
-                        const updateCommand = new UpdateSecretCommand({
-                            SecretId: secretName,
-                            SecretString: value,
-                        });
-                        await secretsManagerClient.send(updateCommand);
-                        savedCount++;
-                    } catch (updateError) {
-                        console.error(`SERVER ERROR: Failed to update secret ${secretName}.`, updateError);
-                        errors.push(`Failed to update ${key}`);
-                    }
-                } else {
-                    console.error(`SERVER ERROR: Failed to create secret ${secretName}.`, error);
-                    errors.push(`Failed to create ${key}`);
-                }
-            }
-        }
-    }
-
-    if (errors.length > 0) {
-        return res.status(500).json({
-            message: `Server error: Saved ${savedCount} keys, but failed on: ${errors.join(', ')}. Check server logs for details.`,
-            savedCount,
-            errors,
-        });
-    }
-
-    if (savedCount === 0) {
+    if (validKeys.length === 0) {
         return res.status(200).json({
             message: 'No new keys were provided to save.'
         });
     }
 
+    // Process all valid keys in parallel
+    const savePromises = validKeys.map(async ([key, value]) => {
+        const secretName = `api_keys/${key}`;
+        try {
+            // Attempt to create the secret first
+            const createCommand = new CreateSecretCommand({
+                Name: secretName,
+                SecretString: value,
+                Description: `API credential for ${key}`,
+            });
+            await secretsManagerClient.send(createCommand);
+            return { key, status: 'created' };
+        } catch (error) {
+            // If the secret already exists, update it instead
+            if (error.name === 'ResourceExistsException') {
+                try {
+                    const updateCommand = new UpdateSecretCommand({
+                        SecretId: secretName,
+                        SecretString: value,
+                    });
+                    await secretsManagerClient.send(updateCommand);
+                    return { key, status: 'updated' };
+                } catch (updateError) {
+                    console.error(`SERVER ERROR: Failed to update secret ${secretName}.`, updateError);
+                    // Throw a structured error for Promise.allSettled to catch
+                    throw { key, error: `Failed to update secret. Reason: ${updateError.message}` };
+                }
+            } else {
+                console.error(`SERVER ERROR: Failed to create secret ${secretName}.`, error);
+                // Throw a structured error for Promise.allSettled to catch
+                throw { key, error: `Failed to create secret. Reason: ${error.message}` };
+            }
+        }
+    });
+
+    const results = await Promise.allSettled(savePromises);
+
+    const successfulSaves = [];
+    const failedSaves = [];
+
+    results.forEach(result => {
+        if (result.status === 'fulfilled') {
+            successfulSaves.push(result.value.key);
+        } else {
+            // result.reason will contain our structured error object
+            failedSaves.push(result.reason);
+        }
+    });
+
+    if (failedSaves.length > 0) {
+        return res.status(500).json({
+            message: `Completed with ${failedSaves.length} error(s). Successfully saved ${successfulSaves.length} key(s).`,
+            savedCount: successfulSaves.length,
+            successfulKeys: successfulSaves,
+            errors: failedSaves, // This will be an array of { key, error } objects
+        });
+    }
+
     res.status(200).json({
-        message: `Successfully saved ${savedCount} keys to AWS Secrets Manager!`
+        message: `Successfully saved ${successfulSaves.length} keys to AWS Secrets Manager!`,
+        savedCount: successfulSaves.length,
     });
 });
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
