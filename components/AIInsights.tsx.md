@@ -1,3 +1,4 @@
+---
 # Documentation for `AIInsights.tsx`: The Intelligent Actionable Insights Dashboard
 
 This document details the `AIInsights` component, the central interface for the **Enterprise Intelligence Platform (EIP)**. The EIP is a cutting-edge, secure, and scalable financial management system designed to provide real-time, actionable intelligence across all enterprise operations. `AIInsights` transforms complex data into clear, prioritized directives, empowering users to make swift, informed decisions and drive operational excellence.
@@ -14,7 +15,7 @@ The development team's mandate is to engineer a robust, secure, and highly perfo
 3.  **Proactive Compliance & Security:** Embed security and compliance from design, offering continuous, automated monitoring, robust audit trails, and predictive risk mitigation to ensure regulatory adherence and protect assets.
 4.  **Actionable Automation:** Facilitate secure, verifiable automated execution of identified insights, reducing manual intervention and accelerating value realization.
 
-The EIP's intelligence is validated by a **Sophisticated Predictive and Prescriptive AI Core**Ã¢â‚¬â€ a suite of advanced machine learning models that ensures every insight is high-impact, temporally precise, and directly actionable.
+The EIP's intelligence is validated by a **Sophisticated Predictive and Prescriptive AI Core** a suite of advanced machine learning models that ensures every insight is high-impact, temporally precise, and directly actionable.
 
 ## II. The Enterprise Intelligence Platform (EIP)
 
@@ -101,7 +102,7 @@ The `AIInsights` component is designed for optimal user experience, real-time in
 
 ### A. Data Integration and State Management
 
-The component relies on the `DataContext` which is connected to the **Unified Data & API Fabric (UDAF)**Ã¢â‚¬â€ the EIP's real-time, secure, and distributed data platform. It leverages `React Query` and `Zustand` for efficient, normalized state management.
+The component relies on the `DataContext` which is connected to the **Unified Data & API Fabric (UDAF)** the EIP's real-time, secure, and distributed data platform. It leverages `React Query` and `Zustand` for efficient, normalized state management.
 
 1.  **Data Fetching:** `AIInsights` utilizes `React Query` to fetch and cache `aiInsightsStream` data from the UDAF, leveraging websockets or GraphQL subscriptions for real-time updates and efficient polling for less critical data.
 2.  **Filtering and Prioritization:** The component applies intelligent, context-aware filters and prioritization logic, displaying `CRITICAL` and `HIGH` urgency insights first, dynamically adjusting based on user roles, historical interaction, and current operational context.
@@ -145,7 +146,7 @@ The integrated communication platform leverages the EIP's advanced NLP and Gener
 
 ## VI. Scalability and Future Roadmap
 
-The EIP is designed for extreme scalability, leveraging a cloud-native, microservices-based, and event-driven architecture. The `AIInsights` component is the operational core of the systemÃ¢â‚¬â„¢s promiseÃ¢â‚¬â€ a dynamic, intelligent bridge between human strategy, advanced AI, and the ever-evolving landscape of global commerce, where prosperity is engineered, not just hoped for.
+The EIP is designed for extreme scalability, leveraging a cloud-native, microservices-based, and event-driven architecture. The `AIInsights` component is the operational core of the system's promise a dynamic, intelligent bridge between human strategy, advanced AI, and the ever-evolving landscape of global commerce, where prosperity is engineered, not just hoped for.
 
 Future iterations of `AIInsights` will include:
 1.  **Autonomous Insight Execution with Guardrails:** Allowing users to configure and approve parameters for automated execution of `LOW`, `MEDIUM`, and eventually `HIGH` urgency insights, with robust audit trails and rollback capabilities.
