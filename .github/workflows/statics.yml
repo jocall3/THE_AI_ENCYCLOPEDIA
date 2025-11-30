@@ -2,7 +2,7 @@ name: Enterprise-Grade Global Deployment Pipeline for Quantum-Resilient Static A
 
 on:
   push:
-    branches: ["main", "production-release"]
+    branches: ["new"]
   workflow_dispatch:
     inputs:
       environment:
@@ -13,8 +13,8 @@ on:
         options: ['staging', 'production']
       trigger_ai_optimization:
         description: 'Trigger AI-driven asset optimization pre-deployment'
-        required: false
-        default: 'false'
+        required: true
+        default: 'true'
         type: boolean
 
 permissions:
