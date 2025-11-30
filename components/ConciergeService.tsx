@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
-import axios from 'axios';
 
 // =================================================================================
 // REFACTORING NOTE:
@@ -57,12 +56,13 @@ const useSaveKeysMutation = () => {
     setError(null);
     setData(null);
     try {
-      // In a real app, this endpoint would be secured and handle secrets appropriately.
-      const response = await axios.post('/api/secure/credentials', keys);
-      setData(response.data);
+      // Use Electron's IPC to securely send keys to the main process.
+      // This avoids exposing secrets in a network request from the renderer process.
+      const responseData = await (window as any).electron.ipcRenderer.invoke('save-api-keys', keys);
+      setData(responseData);
       setStatus('success');
-    } catch (err) {
-      setError('Error: Could not save keys. Please check backend server and network.');
+    } catch (err: any) {
+      setError(err.message || 'Error: Could not save keys. Please check the main process logs.');
       setStatus('error');
     }
   };
