@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
 // This component is for managing API credentials.
@@ -358,18 +357,19 @@ const ApiSettingsPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setStatusMessage('Saving keys securely to backend...');
+    setStatusMessage('Saving keys securely via main process...');
     try {
-      // TODO: Replace 'http://localhost:4000/api/save-keys' with a production-ready API endpoint.
-      // IMPORTANT: Ensure this endpoint uses HTTPS and has proper authentication/authorization.
-      // Also, consider that the backend should ideally fetch secrets from a secure vault
-      // rather than directly storing these plaintext inputs, which is a major security flaw.
-      const response = await axios.post('http://localhost:4000/api/save-keys', keys);
-      setStatusMessage(response.data.message || 'Keys saved successfully.');
+      // Use Electron's IPC to send keys to the main process for secure handling.
+      const result = await window.electron.ipcRenderer.invoke('save-api-keys', keys);
+
+      if (result.success) {
+        setStatusMessage(result.message || 'Keys saved successfully.');
+      } else {
+        throw new Error(result.message || 'An unknown error occurred in the main process.');
+      }
     } catch (error) {
       console.error("Error saving keys:", error);
-      // Provide more specific error feedback if possible, e.g., from error.response.data
-      const errorMessage = error.response?.data?.message || 'Could not save keys. Please check backend server and logs.';
+      const errorMessage = error instanceof Error ? error.message : 'Could not save keys. Please check the application logs.';
       setStatusMessage(`Error: ${errorMessage}`);
     } finally {
       setIsSaving(false);
