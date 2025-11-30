@@ -1,5 +1,4 @@
 import React from 'react';
-import './CorporateCommandView.css';
 
 // =================================================================================
 // REFACTORING NOTE:
