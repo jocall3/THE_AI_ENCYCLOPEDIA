@@ -833,7 +833,7 @@ export const GenerationControls: React.FC<{
                             disabled={isGenerating}
                             className="w-full bg-gray-700 border border-gray-600 rounded-l-lg p-2 text-white text-sm"
                         />
-                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">🎲</button>
+                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">ðŸŽ²</button>
                      </div>
                 </div>
                 
@@ -1492,7 +1492,7 @@ const AIAdStudioView: React.FC = () => {
                     <div className="bg-gray-800 rounded-xl max-w-5xl w-[90%] md:w-[80%] p-6 space-y-6 shadow-3xl border border-cyan-600/50" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center border-b border-gray-700 pb-3">
                             <h3 className="text-2xl font-bold text-white">Asset Manifest Viewer: {selectedAsset.id.substring(0, 12)}</h3>
-                            <button onClick={() => setSelectedAsset(null)} className="text-gray-400 hover:text-white text-2xl p-1">✕</button>
+                            <button onClick={() => setSelectedAsset(null)} className="text-gray-400 hover:text-white text-2xl p-1">×</button>
                         </div>
                         
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
