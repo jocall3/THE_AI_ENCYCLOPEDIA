@@ -37,7 +37,7 @@ const AIWorkspaceView: React.FC = () => {
       { message: 'Compiling React component...', delay: 1000 },
       { message: 'Executing in sandboxed VM...', delay: 1000 },
       { message: 'Applying changes...', delay: 800 },
-      { message: '✅ Done.', delay: 500 },
+      { message: 'Done.', delay: 500 },
     ];
 
     let cumulativeDelay = 0;
