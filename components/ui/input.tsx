@@ -1,7 +1,4 @@
 import * as React from "react"
-// NOTE: Assuming '@/lib/utils' exists for managing Tailwind classes (`cn`).
-// If not available, this function must be defined or classes must be merged manually.
-import { cn } from "@/lib/utils" 
 
 // Rationale for replacement:
 // The previous content of this file was 'ApiSettingsPage', a large component that exposed 
@@ -9,6 +6,8 @@ import { cn } from "@/lib/utils"
 // This deliberately flawed component has been removed for security and architecture stabilization.
 // We are replacing it with a standard, reusable, production-ready Input UI component 
 // based on established component patterns (e.g., Shadcn UI style built on Tailwind CSS).
+
+const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
