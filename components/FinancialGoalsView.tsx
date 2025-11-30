@@ -1696,7 +1696,7 @@ export const GoalDetailView: React.FC<{
 const FinancialGoalsView: React.FC = () => {
     const context = useContext(DataContext);
     const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
-    const [selectedGoal, setSelectedGoal] = useState<FinancialGoal | null>(null);
+    const [selectedGoal, setSelectedGoal] = useState<ExtendedFinancialGoal | null>(null);
     const [loadingGoalId, setLoadingGoalId] = useState<string | null>(null);
 
     if (!context) {
@@ -1707,6 +1707,18 @@ const FinancialGoalsView: React.FC = () => {
         addRecurringContributionToGoal, updateRecurringContributionInGoal, 
         deleteRecurringContributionFromGoal, updateFinancialGoal, linkGoals, unlinkGoals 
     } = context;
+
+    const extendedGoals: ExtendedFinancialGoal[] = useMemo(() => {
+        return financialGoals.map(goal => ({
+            ...goal,
+            contributions: goal.contributions || [],
+            recurringContributions: goal.recurringContributions || [],
+            riskProfile: goal.riskProfile || 'moderate',
+            status: goal.status || 'on_track',
+            linkedGoals: goal.linkedGoals || [],
+            startDate: goal.startDate || new Date().toISOString().split('T')[0],
+        }));
+    }, [financialGoals]);
 
     const handleCreateGoal = (newGoalData: Omit<FinancialGoal, 'id' | 'currentAmount' | 'plan' | 'contributions' | 'recurringContributions' | 'linkedGoals' | 'status'>) => {
         addFinancialGoal(newGoalData);
@@ -1719,7 +1731,7 @@ const FinancialGoalsView: React.FC = () => {
         setLoadingGoalId(null);
     };
 
-    const handleViewDetails = (goal: FinancialGoal) => {
+    const handleViewDetails = (goal: ExtendedFinancialGoal) => {
         setSelectedGoal(goal);
         setView('detail');
     };
@@ -1738,8 +1750,8 @@ const FinancialGoalsView: React.FC = () => {
                 if (selectedGoal) {
                     return (
                         <GoalDetailView
-                            goal={selectedGoal as ExtendedFinancialGoal}
-                            allGoals={financialGoals as ExtendedFinancialGoal[]}
+                            goal={selectedGoal}
+                            allGoals={extendedGoals}
                             onBack={() => setView('list')}
                             onGeneratePlan={handleGeneratePlan}
                             loadingGoalId={loadingGoalId}
@@ -1764,9 +1776,9 @@ const FinancialGoalsView: React.FC = () => {
                                 + New Goal
                             </button>
                         </div>
-                        {financialGoals.length > 0 ? (
+                        {extendedGoals.length > 0 ? (
                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {financialGoals.map(goal => {
+                                {extendedGoals.map(goal => {
                                     const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
                                     const Icon = GOAL_ICONS[goal.iconName] || GOAL_ICONS.default;
                                     return (
