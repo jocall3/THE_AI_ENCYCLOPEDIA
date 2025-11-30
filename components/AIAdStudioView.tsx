@@ -678,8 +678,8 @@ export const ProjectSidebar: React.FC<{
                                     <span className="truncate font-medium text-sm">{project.name}</span>
                                 )}
                                 <div className="flex items-center space-x-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button title="Rename" onClick={(e) => { e.stopPropagation(); setRenamingId(project.id); setRenamingText(project.name); }} className="text-gray-400 hover:text-yellow-400 text-xs p-1">✏️</button>
-                                    <button title="Delete" onClick={(e) => { e.stopPropagation(); if(window.confirm(`Confirm deletion of Project: "${project.name}"?`)) onDeleteProject(project.id);}} className="text-gray-400 hover:text-red-500 text-xs p-1">🗑️</button>
+                                    <button title="Rename" onClick={(e) => { e.stopPropagation(); setRenamingId(project.id); setRenamingText(project.name); }} className="text-gray-400 hover:text-yellow-400 text-xs p-1">Edit</button>
+                                    <button title="Delete" onClick={(e) => { e.stopPropagation(); if(window.confirm(`Confirm deletion of Project: "${project.name}"?`)) onDeleteProject(project.id);}} className="text-gray-400 hover:text-red-500 text-xs p-1">Delete</button>
                                 </div>
                             </div>
                             <p className="text-xs text-gray-400 mt-0.5 truncate">Client: {project.clientName}</p>
@@ -833,7 +833,7 @@ export const GenerationControls: React.FC<{
                             disabled={isGenerating}
                             className="w-full bg-gray-700 border border-gray-600 rounded-l-lg p-2 text-white text-sm"
                         />
-                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">🎲</button>
+                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">Random</button>
                      </div>
                 </div>
                 
@@ -877,7 +877,7 @@ export const AssetGrid: React.FC<{
     if (assets.length === 0) {
         return (
             <div className="text-center py-16 text-gray-500 border border-dashed border-gray-700 rounded-lg">
-                <p className="text-lg mb-2">📦 Asset Repository Empty</p>
+                <p className="text-lg mb-2">Asset Repository Empty</p>
                 <p>Generate your first video asset using the controls above to populate this library.</p>
             </div>
         );
@@ -895,9 +895,9 @@ export const AssetGrid: React.FC<{
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                         <div className="flex justify-end space-x-2">
                             <button title="Favorite" onClick={() => onToggleFavorite(asset.id)} className={`text-xl ${asset.isFavorite ? 'text-yellow-400' : 'text-white/70 hover:text-white'}`}>
-                                {asset.isFavorite ? '★' : '☆'}
+                                {asset.isFavorite ? '\u2605' : '\u2606'}
                             </button>
-                            <button title="Delete Asset" onClick={() => onDelete(asset.id)} className="text-white/70 hover:text-red-500">🗑️</button>
+                            <button title="Delete Asset" onClick={() => onDelete(asset.id)} className="text-white/70 hover:text-red-500">Delete</button>
                         </div>
                         <div className="bg-black/50 p-1 rounded-md">
                             <p className="text-xs text-white truncate font-mono">{asset.id.substring(0, 8)}...</p>
@@ -994,7 +994,7 @@ export const StoryboardEditor: React.FC<{
                             disabled={isGenerating || scenes.length <= 1} 
                             title="Remove Scene"
                             className="text-gray-400 hover:text-red-500 disabled:opacity-30 mt-2 p-1"
-                        >🗑️</button>
+                        >Delete</button>
                     </div>
                 ))}
             </div>
@@ -1011,7 +1011,7 @@ export const StoryboardEditor: React.FC<{
                                 <span>AI Directing...</span>
                             </>
                         ) : (
-                            <span>✨ Synthesize Director Notes</span>
+                            <span>Synthesize Director Notes</span>
                         )}
                     </button>
                     <p className="text-sm text-gray-400">Total Estimated Duration: <span className="font-bold text-white">{totalDuration}s</span></p>
@@ -1492,7 +1492,7 @@ const AIAdStudioView: React.FC = () => {
                     <div className="bg-gray-800 rounded-xl max-w-5xl w-[90%] md:w-[80%] p-6 space-y-6 shadow-3xl border border-cyan-600/50" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center border-b border-gray-700 pb-3">
                             <h3 className="text-2xl font-bold text-white">Asset Manifest Viewer: {selectedAsset.id.substring(0, 12)}</h3>
-                            <button onClick={() => setSelectedAsset(null)} className="text-gray-400 hover:text-white text-2xl p-1">×</button>
+                            <button onClick={() => setSelectedAsset(null)} className="text-gray-400 hover:text-white text-2xl p-1">&times;</button>
                         </div>
                         
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
