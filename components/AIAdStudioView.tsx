@@ -833,7 +833,7 @@ export const GenerationControls: React.FC<{
                             disabled={isGenerating}
                             className="w-full bg-gray-700 border border-gray-600 rounded-l-lg p-2 text-white text-sm"
                         />
-                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">ðŸŽ²</button>
+                        <button onClick={() => onSettingsChange({seed: -1})} title="Use Random Seed" className="bg-gray-600 hover:bg-gray-500 p-2 rounded-r-lg text-sm font-bold">🎲</button>
                      </div>
                 </div>
                 
