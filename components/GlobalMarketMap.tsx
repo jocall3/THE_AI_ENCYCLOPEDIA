@@ -25,6 +25,8 @@ import {
   Cog6ToothIcon,
   CheckCircleIcon,
   ArrowPathIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 
 // -----------------------------------------------------------------------------
@@ -727,7 +729,7 @@ const GlobalMarketMap: React.FC = () => {
             {notifications.filter(n => n.level !== 'AI_INSIGHT').map(note => (
               <div key={note.id} className="flex items-center gap-2 text-xs p-2 border-b border-slate-800">
                 {note.level === 'INFO' && <CheckCircleIcon className="w-4 h-4 text-emerald-500" />}
-                {note.level === 'WARNING' && <TriangleExclamationIcon className="w-4 h-4 text-yellow-500" />}
+                {note.level === 'WARNING' && <ExclamationTriangleIcon className="w-4 h-4 text-yellow-500" />}
                 {note.level === 'CRITICAL' && <ExclamationCircleIcon className="w-4 h-4 text-red-500" />}
                 <span className="text-slate-400">{new Date(note.timestamp).toLocaleDateString()}</span>
                 <span className="text-slate-200">{note.message}</span>
