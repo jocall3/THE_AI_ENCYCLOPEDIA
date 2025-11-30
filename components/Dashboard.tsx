@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from '../types';
 
 // REFACTOR: The original Dashboard.tsx was a massive, insecure form for entering 200+ API keys.
 // This is a critical anti-pattern. Secrets should never be managed through a frontend UI.
@@ -35,7 +36,7 @@ const Card: React.FC<{ title: string; children: React.ReactNode; className?: str
   </div>
 );
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{ setActiveView: (view: View) => void }> = ({ setActiveView }) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -63,6 +64,29 @@ const Dashboard: React.FC = () => {
         </Card>
         <Card title="Expenses (30d)">
           <p style={{ fontSize: '2.25rem', margin: 0, fontWeight: 700, color: '#e53e3e' }}>{formatCurrency(mockFinancialData.expenses)}</p>
+        </Card>
+        <Card title="AI Development Workspace">
+          <p style={{ margin: '0 0 1rem 0', color: '#4a5568', lineHeight: 1.5 }}>
+            Access the integrated environment for developing, backtesting, and deploying algorithmic trading strategies.
+          </p>
+          <button
+            onClick={() => setActiveView(View.AlgoTradingLab)}
+            style={{
+              cursor: 'pointer',
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#5a67d8')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#667eea')}
+          >
+            Launch Workspace
+          </button>
         </Card>
       </div>
 
