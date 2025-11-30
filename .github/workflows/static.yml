@@ -1,3 +1,4 @@
+---
 name: Deploy static content to Pages
 
 on:
@@ -39,7 +40,7 @@ jobs:
       - name: Build project
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: npm run build
+        run: npx vite build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -52,3 +53,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        ---
