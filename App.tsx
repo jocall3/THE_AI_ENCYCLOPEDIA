@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 // import AIAdStudioView from './components/AIAdStudioView'; // Removed: Not part of "Unified Business Financial Dashboard" MVP.
 // import AIAdvisorView from './components/AIAdvisorView'; // Removed: Not part of "Unified Business Financial Dashboard" MVP.
-// import AlgoTradingLab from './components/AlgoTradingLab'; // Removed: Specialized trading, not part of "Unified Business Financial Dashboard" MVP.
+import AIWorkspaceView from './components/AIWorkspaceView';
 // import APIIntegrationView from './components/APIIntegrationView'; // Removed: API configuration, not a primary dashboard feature for MVP.
 // import ArtCollectibles from './components/ArtCollectibles'; // Removed: Niche, not part of "Unified Business Financial Dashboard" MVP.
 import BudgetsView from './components/BudgetsView';
@@ -55,7 +55,7 @@ function AppLayout() {
       case View.Dashboard: return <Dashboard setActiveView={setActiveView} />;
       // case View.AIAdStudio: return <AIAdStudioView />; // Removed as per MVP scope
       // case View.AIAdvisor: return <AIAdvisorView />; // Removed as per MVP scope
-      // case View.AlgoTradingLab: return <AlgoTradingLab />; // Removed as per MVP scope
+      case View.AlgoTradingLab: return <AIWorkspaceView />;
       // case View.APIIntegration: return <APIIntegrationView />; // Removed as per MVP scope
       // case View.ApiSettings: return <ApiSettingsPage />; // Removed as per MVP scope
       // case View.ArtCollectibles: return <ArtCollectibles />; // Removed as per MVP scope
