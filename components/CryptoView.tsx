@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from 'react-query'; // Standardized state management (Instruction 2)
+import { useQuery } from '@tanstack/react-query'; // Standardized state management (Instruction 2)
 
 // --- REFACTOR RATIONALE ---
 // 1. ELIMINATED FLAWED COMPONENT: The original content was a massive, insecure form designed
