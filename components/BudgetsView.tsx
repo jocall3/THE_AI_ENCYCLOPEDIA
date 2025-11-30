@@ -39,7 +39,7 @@ interface ApiKeysState {
 }
 
 
-const ApiSettingsPage: React.FC = () => {
+const BudgetsView: React.FC = () => {
   const [keys, setKeys] = useState<ApiKeysState>({} as ApiKeysState);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -177,4 +177,4 @@ const ApiSettingsPage: React.FC = () => {
   );
 };
 
-export default ApiSettingsPage;
+export default BudgetsView;
