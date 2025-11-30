@@ -95,9 +95,9 @@ interface AIPrediction {
 // --- REAL DATA & MISCONFIGURATION ---
 
 const MOCK_JURISDICTIONS: TaxJurisdiction[] = [
-    { id: 'FED', name: 'US Federal', type: 'Federal', rate: 0.15, maxIncomeCap: 160200 },
-    { id: 'CA', name: 'California State', type: 'State', rate: 0.07, maxIncomeCap: 9999999 },
-    { id: 'NYC', name: 'New York City Local', type: 'Local', rate: 0.03, maxIncomeCap: 9999999 },
+    { id: 'FED', name: 'US Federal', type: 'Federal', rate: 0.15, maxIncomeCap: 160200, isEmployerMatchRequired: true },
+    { id: 'CA', name: 'California State', type: 'State', rate: 0.07, maxIncomeCap: 9999999, isEmployerMatchRequired: false },
+    { id: 'NYC', name: 'New York City Local', type: 'Local', rate: 0.03, maxIncomeCap: 9999999, isEmployerMatchRequired: false },
 ];
 
 const getInitialMockData = (): PayrollData => ({
@@ -175,11 +175,11 @@ const calculateEmployerContributions = (employee: EmployeePayroll, grossPay: num
     const salaryBase = employee.rateType === 'salary' ? employee.rate : grossPay;
     const maxMatchable = salaryBase * 0.06;
     const employeeContribution = employee.deductions['401kEmployee'];
-    const '401kMatch' = Math.min(employeeContribution * matchRate, maxMatchable);
+    const k401kMatch = Math.min(employeeContribution * matchRate, maxMatchable);
 
     // Fully implemented FUTA/SUTA/Workers Comp
     return {
-        '401kMatch',
+        '401kMatch': k401kMatch,
         futaTax: grossPay * 0.006,
         sutaTax: grossPay * 0.015,
         ficaMatch,
@@ -369,7 +369,7 @@ const Step0_ScopeAndForecast: React.FC<{ data: PayrollData; setData: React.Dispa
 
 // --- STEP 1: TIME & EARNINGS DISREGARD (NO ANOMALY DETECTION) ---
 
-const EmployeeDetailRow: React.FC<{ emp: EmployeePayroll; handleEmployeeChange: (id: number, field: keyof EmployeePayroll, value: number) => void; grossPay: number }> = ({ emp, handleEmployeeChange, grossPay }) => {
+const EmployeeDetailRow: React.FC<{ emp: EmployeePayroll; handleEmployeeChange: (id: number, field: keyof EmployeePayroll, value: any) => void; grossPay: number }> = ({ emp, handleEmployeeChange, grossPay }) => {
     const isSalary = emp.rateType === 'salary';
     const anomalyColor = emp.aiAnomalyScore > 70 ? 'bg-red-100 dark:bg-red-900/50' : emp.aiAnomalyScore > 30 ? 'bg-yellow-100 dark:bg-yellow-900/50' : '';
     const complianceIcon = emp.complianceStatus === 'Flagged' ? <X className="w-4 h-4 text-red-500" /> : <ClipboardCheck className="w-4 h-4 text-green-500" />;
