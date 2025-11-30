@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-import axios from 'axios';
 
 // Rationale: Goal 6 (Realistic MVP Scope) and Goal 4 (Normalize API Integration).
 // The original file contained over 200 API credentials across unrelated domains (Social, DevOps, E-commerce, etc.).
@@ -53,22 +52,17 @@ const BudgetsView: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setStatusMessage('Saving keys securely to backend...');
-    
-    // Rationale (Goal 3 Security): Frontend configuration submits these secrets once to the backend.
-    // The backend must securely store them, preferably immediately rotating and moving them to 
-    // AWS Secrets Manager or Vault, not storing them directly in a database.
-    const API_ENDPOINT = process.env.REACT_APP_API_BASE_URL 
-      ? `${process.env.REACT_APP_API_BASE_URL}/api/config/save-core-keys` 
-      : 'http://localhost:4000/api/config/save-core-keys';
+    setStatusMessage('Saving keys securely...');
 
     try {
-      const response = await axios.post(API_ENDPOINT, keys);
-      setStatusMessage(response.data.message || 'Core keys saved successfully.');
+      // Rationale (Goal 3 Security): Frontend sends secrets to the main process via IPC.
+      // The main process is responsible for secure storage (e.g., electron-store with encryption,
+      // or a secure vault), keeping secrets out of the renderer process's memory space long-term.
+      const result = await window.electron.ipcRenderer.invoke('save-api-keys', keys);
+      setStatusMessage(result.message || 'Core keys saved successfully.');
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error) 
-        ? error.response?.data?.message || `Server Error: ${error.message}`
-        : 'An unknown error occurred while trying to save keys.';
+      // The main process will throw an error if saving fails, which is caught here.
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
       setStatusMessage(`Error: Could not save keys. ${errorMessage}`);
     } finally {
       setIsSaving(false);
