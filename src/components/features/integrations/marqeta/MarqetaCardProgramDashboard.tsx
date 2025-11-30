@@ -116,7 +116,7 @@ const MarqetaCardProgramDashboard: React.FC<MarqetaCardProgramDashboardProps> = 
       setMerchantCategoryOptions(dummyCategories);
 
       setRecommendations([
-        { id: 'R001', title: 'Optimize Interchange Fees in EU', description: 'Adjust routing rules for transactions under â‚¬50 in SEPA zone. Projected annual savings: $120k.', impactScore: 0.95, status: 'Pending' },
+        { id: 'R001', title: 'Optimize Interchange Fees in EU', description: 'Adjust routing rules for transactions under Ã¢â€šÂ¬50 in SEPA zone. Projected annual savings: $120k.', impactScore: 0.95, status: 'Pending' },
         { id: 'R002', title: 'Increase Daily Limit for High-Trust Profiles', description: 'Suggests increasing the daily limit for 5,000 corporate profiles based on 12 months of zero-fraud history.', impactScore: 0.88, status: 'Pending' },
         { id: 'R003', title: 'Deactivate Legacy Fraud Model', description: 'The RuleEngine_Legacy model is causing 0.05% false positives. Deactivate and rely solely on DeepLearning_V3.', impactScore: 0.70, status: 'Applied' },
       ]);
@@ -547,7 +547,7 @@ const MarqetaCardProgramDashboard: React.FC<MarqetaCardProgramDashboardProps> = 
 
                 {/* Repetitive detail for scale */}
                 <Grid item xs={12}>
-                  <Typography variant="h6" sx={{ mt: 2}>Predictive Cash Flow Analysis</Typography>
+                  <Typography variant="h6" sx={{ mt: 2 }}>Predictive Cash Flow Analysis</Typography>
                   <Card variant="outlined" sx={{ p: 2 }}>
                     <Typography variant="body1">Next 7-Day Projected Outflow: $8.5M (95% Confidence Interval)</Typography>
                     <Typography variant="body1">Recommended Pre-funding Action: $9.0M transfer by EOD today.</Typography>
