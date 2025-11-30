@@ -912,7 +912,7 @@ export default function CommoditiesExchange() {
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
               <span style={{ color: '#94a3b8' }}>{c.name}</span>
               <span style={isGain ? styles.priceUp : styles.priceDown}>
-                {isGain ? '▲' : '▼'}{pct.toFixed(2)}%
+                {isGain ? '\u25B2' : '\u25BC'}{pct.toFixed(2)}%
               </span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.5rem' }}>
@@ -1066,7 +1066,7 @@ export default function CommoditiesExchange() {
               {kpi.value.toFixed(2)} {kpi.unit}
             </div>
             <div style={{ fontSize: '0.8rem', color: kpi.trend > 0 ? '#10b981' : '#ef4444' }}>
-              {kpi.trend > 0 ? '▲' : '▼'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
+              {kpi.trend > 0 ? '\u25B2' : '\u25BC'} {Math.abs(kpi.trend).toFixed(2)}% (24h)
             </div>
             <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94a3b8', borderTop: '1px solid #334155', paddingTop: '0.5rem' }}>
               AI Insight: {kpi.aiInsight}
@@ -1113,7 +1113,7 @@ export default function CommoditiesExchange() {
               <div style={styles.label}>{m.name} ({m.symbol})</div>
               <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{m.value.toFixed(2)}</div>
               <div style={{ fontSize: '0.8rem', color: m.trend > 0 ? '#10b981' : '#ef4444' }}>
-                {m.trend > 0 ? '▲' : '▼'} {Math.abs(m.trend).toFixed(2)}% (Daily)
+                {m.trend > 0 ? '\u25B2' : '\u25BC'} {Math.abs(m.trend).toFixed(2)}% (Daily)
               </div>
             </div>
           ))}
@@ -1323,7 +1323,7 @@ export default function CommoditiesExchange() {
                     ${selectedPrice.toFixed(2)}
                   </div>
                   <div style={{ color: isUp ? '#10b981' : '#ef4444' }}>
-                    {isUp ? '▲' : '▼'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
+                    {isUp ? '\u25B2' : '\u25BC'} {Math.abs(selectedPrice - previousPrice).toFixed(2)} ({percentChange.toFixed(2)}%)
                   </div>
                 </div>
               </div>
