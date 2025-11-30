@@ -1,3 +1,4 @@
+// components/views/personal/OpenBankingView.tsx
 import React, { useState, useReducer, useEffect, useCallback, useMemo, FC } from 'react';
 import Card from './Card';
 
@@ -729,7 +730,7 @@ const OpenBankingView: React.FC = () => {
                 </p>
             </Card>
             
-            <Card title="Your Connected Applications">
+            <Card title="Your Connected Applications" titleTooltip="This is a list of all third-party applications you have granted access to your financial data.">
                 <div className="mb-4 flex flex-col sm:flex-row gap-4">
                     <input
                         type="text"

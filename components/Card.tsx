@@ -61,9 +61,13 @@ export interface CardProps {
   padding?: 'sm' | 'md' | 'lg' | 'none'; // Control internal padding.
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   isMetric?: boolean;
+  style?: React.CSSProperties; // Added to fix BudgetsView issue
 
   // Custom Components
   loadingIndicator?: ReactNode;
+  
+  // Enhanced Features
+  titleTooltip?: string; // Added to fix OpenBankingView issue
 }
 
 
@@ -173,7 +177,8 @@ const CardHeader: React.FC<{
   isCollapsed: boolean;
   toggleCollapse: () => void;
   actions?: CardHeaderAction[];
-}> = ({ title, subtitle, icon, isCollapsible, isCollapsed, toggleCollapse, actions }) => {
+  titleTooltip?: string;
+}> = ({ title, subtitle, icon, isCollapsible, isCollapsed, toggleCollapse, actions, titleTooltip }) => {
   if (!title && !subtitle && (!actions || actions.length === 0) && !isCollapsible && !icon) {
     return null;
   }
@@ -188,17 +193,29 @@ const CardHeader: React.FC<{
 
   return (
     <div
-      className={`flex items-start justify-between pb-4 ${headerCursorClass}`}
+      className={`flex items-start justify-between ${headerCursorClass} ${title || subtitle || icon ? 'pb-4' : ''}`}
       onClick={handleHeaderClick}
     >
-      <div className="flex items-center flex-1 pr-4">
+      <div className="flex items-center flex-1 pr-4 min-w-0">
         {icon && <div className="mr-3 flex-shrink-0">{icon}</div>}
-        <div>
+        <div className="min-w-0">
             {title && (
-            <h3 className="text-xl font-semibold text-gray-100 truncate">{title}</h3>
+                <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-semibold text-gray-100 truncate">{title}</h3>
+                    {titleTooltip && (
+                        <div className="group relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-900 text-xs text-gray-300 rounded shadow-lg border border-gray-700 z-10 pointer-events-none">
+                                {titleTooltip}
+                            </div>
+                        </div>
+                    )}
+                </div>
             )}
             {subtitle && (
-            <p className="text-sm text-gray-400 mt-1">{subtitle}</p>
+            <p className="text-sm text-gray-400 mt-1 truncate">{subtitle}</p>
             )}
         </div>
       </div>
@@ -269,6 +286,8 @@ const Card: React.FC<CardProps> = ({
   loadingIndicator,
   onClick,
   isMetric = false,
+  style,
+  titleTooltip,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(isCollapsible && defaultCollapsed);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -285,11 +304,17 @@ const Card: React.FC<CardProps> = ({
       if (isCollapsed) {
         setContentHeight(0);
       } else {
-        const contentEl = contentRef.current;
-        setContentHeight(contentEl ? contentEl.scrollHeight : 'auto');
+        // Force reflow/repaint before measuring to ensure we capture the actual height after transition starts
+        requestAnimationFrame(() => {
+            const contentEl = contentRef.current;
+            if (contentEl) {
+                // Set height immediately to avoid jump, then let CSS handle transition
+                setContentHeight(contentEl.scrollHeight);
+            }
+        });
       }
     }
-  }, [isCollapsed, isCollapsible, children]);
+  }, [isCollapsed, isCollapsed, isCollapsible, children]); // Added children to dependency array to re-measure if content changes
 
   useEffect(() => {
     if (!isCollapsible && isCollapsed) {
@@ -317,20 +342,24 @@ const Card: React.FC<CardProps> = ({
       return <ErrorDisplay message={errorState} onRetry={onRetry} />;
     }
 
-    const contentWrapperStyle = {
+    const contentWrapperStyle: React.CSSProperties = {
       height: isCollapsible ? contentHeight : 'auto',
     };
 
-    const contentPadding = (title || subtitle || icon || isCollapsible || headerActions) ? 'pt-4' : '';
+    // Determine if we need padding above the main content, assuming header is already handled.
+    const needsContentPadding = (title || subtitle || icon || headerActions) && !isMetric;
 
     return (
         <div
           style={contentWrapperStyle}
-          className="transition-[height] duration-500 ease-in-out overflow-hidden"
+          className={`transition-[height] duration-500 ease-in-out overflow-hidden ${isCollapsible ? 'relative' : ''}`}
           aria-hidden={isCollapsed}
         >
-          <div ref={contentRef}>
-             <div className={contentPadding}>
+          <div 
+            ref={contentRef} 
+            className={isCollapsible ? 'absolute top-0 left-0 right-0' : ''}
+          >
+             <div className={needsContentPadding ? 'pt-4' : ''}>
                 {children}
              </div>
           </div>
@@ -339,7 +368,7 @@ const Card: React.FC<CardProps> = ({
   };
   
   return (
-    <div className={finalContainerClasses.trim().replace(/\s+/g, ' ')} onClick={onClick}>
+    <div className={finalContainerClasses.trim().replace(/\s+/g, ' ')} onClick={onClick} style={style}>
       <div className={`${paddingClasses} ${isMetric ? 'text-center' : ''}`}>
         <CardHeader
           title={title}
@@ -349,16 +378,24 @@ const Card: React.FC<CardProps> = ({
           isCollapsed={!!isCollapsed}
           toggleCollapse={toggleCollapse}
           actions={headerActions}
+          titleTooltip={titleTooltip}
         />
         
-        {(isLoading || errorState) ? (
-            renderCardContent()
-        ) : (
-            <>
-                {renderCardContent()}
-                <CardFooter>{footerContent}</CardFooter>
-            </>
-        )}
+        {/* Wrapper to ensure loading/error states take up the full padded area */}
+        <div className={`
+            ${(isLoading || errorState) ? paddingClasses : ''} 
+            ${(isLoading || errorState) && !(title || subtitle || icon || headerActions) ? 'p-0' : ''}
+        `}>
+            {(isLoading || errorState) ? (
+                renderCardContent()
+            ) : (
+                <>
+                    {renderCardContent()}
+                    <CardFooter>{footerContent}</CardFooter>
+                </>
+            )}
+        </div>
+
       </div>
     </div>
   );

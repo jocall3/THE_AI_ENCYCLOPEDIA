@@ -9,14 +9,14 @@ const BalanceSummary: React.FC = () => {
     const { transactions } = context;
 
     const { chartData, totalBalance, change30d } = useMemo(() => {
-        const sortedTx = [...(transactions || [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        if (!transactions || transactions.length === 0) {
+            return { chartData: [], totalBalance: 0, change30d: 0 };
+        }
+
+        const sortedTx = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        
         let runningBalance = 0;
         const balanceHistory: { date: Date, balance: number }[] = [];
-
-        // We assume a starting balance of 5000 for a more realistic chart base
-        runningBalance = 5000;
-        balanceHistory.push({ date: new Date(sortedTx[0]?.date || Date.now()), balance: runningBalance });
-
 
         for (const tx of sortedTx) {
             if (tx.type === 'income') {
@@ -29,58 +29,75 @@ const BalanceSummary: React.FC = () => {
         
         const totalBalance = runningBalance;
 
-        // For chart, group by month
+        // For chart, group by month, taking the last balance of each month
         const monthlyData: { [key: string]: { date: Date, balance: number} } = {};
         for (const record of balanceHistory) {
-            const monthKey = record.date.toISOString().substring(0, 7); // e.g., '2023-01'
-            monthlyData[monthKey] = record; // Store last balance for each month
+            const monthKey = record.date.toISOString().substring(0, 7); // YYYY-MM
+            monthlyData[monthKey] = record; // Overwrites until the last record for the month is stored
         }
         
-        const chartData = Object.values(monthlyData).map(d => ({ 
-            name: d.date.toLocaleString('default', { month: 'short' }),
-            balance: d.balance
-        }));
+        const chartData = Object.values(monthlyData)
+            .sort((a, b) => a.date.getTime() - b.date.getTime())
+            .map(record => ({ 
+                name: record.date.toLocaleString('default', { month: 'short' }), 
+                balance: record.balance 
+            }));
 
-        // Calculate 30-day change
-        const date30daysAgo = new Date();
-        date30daysAgo.setDate(date30daysAgo.getDate() - 30);
-        const balance30daysAgo = balanceHistory.find(b => b.date >= date30daysAgo)?.balance || balanceHistory[0]?.balance || 5000;
-        const change30d = totalBalance - balance30daysAgo;
+        // 30 day change calculation
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const lastKnownBalanceBefore30d = [...balanceHistory]
+          .reverse()
+          .find(h => h.date < thirtyDaysAgo)?.balance;
+
+        const balance30dAgo = lastKnownBalanceBefore30d || 0;
+        const change30d = totalBalance - balance30dAgo;
 
         return { chartData, totalBalance, change30d };
-
     }, [transactions]);
-
-    const changeIsPositive = change30d >= 0;
+    
+    const balance30dAgo = totalBalance - change30d;
+    const changePercentage = balance30dAgo !== 0 ? (change30d / balance30dAgo) * 100 : 0;
 
     return (
-        <Card title="Total Balance" className="col-span-1 md:col-span-2 row-span-2 relative">
-            <div className="h-full flex flex-col justify-between">
+        <Card title="Balance Summary">
+            <div className="flex justify-between items-start mb-4">
                 <div>
-                    <p className="text-4xl font-bold tracking-tighter">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                    <div className={`flex items-center text-sm font-semibold ${changeIsPositive ? 'text-green-400' : 'text-red-400'}`}>
-                        {changeIsPositive ? '▲' : '▼'}
-                        ${Math.abs(change30d).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (30d)
-                    </div>
+                    <p className="text-gray-400 text-sm">Total Balance</p>
+                    <p className="text-4xl font-bold text-white">${totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
-                <div className="h-48 md:h-64 -ml-6 -mr-2 -mb-4">
-                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                            <defs>
-                                <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.4}/>
-                                    <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
-                                </linearGradient>
-                            </defs>
-                            <Tooltip 
-                                cursor={{ stroke: '#6b7280', strokeWidth: 1, strokeDasharray: '3 3' }}
-                                contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #4b5563', borderRadius: '0.5rem' }} 
-                                labelStyle={{ color: '#d1d5db' }}
-                            />
-                            <Area type="monotone" dataKey="balance" stroke="#22d3ee" strokeWidth={2} fillOpacity={1} fill="url(#balanceGradient)" />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                <div className="text-right">
+                    <p className="text-gray-400 text-sm">Change (30d)</p>
+                    <p className={`text-lg font-semibold ${change30d >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {change30d >= 0 ? '+' : ''}${change30d.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {balance30dAgo !== 0 && ` (${changePercentage.toFixed(1)}%)`}
+                    </p>
                 </div>
+            </div>
+            <div className="h-60">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                                <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                        <YAxis stroke="#9ca3af" fontSize={12} domain={['dataMin - 1000', 'dataMax + 1000']} tickFormatter={(value) => `$${Number(value).toLocaleString()}`} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: 'rgba(31, 41, 55, 0.8)',
+                                borderColor: '#4b5563',
+                                color: '#e5e7eb',
+                            }}
+                            formatter={(value: number) => `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        />
+                        <Area type="monotone" dataKey="balance" stroke="#06b6d4" fillOpacity={1} fill="url(#colorBalance)" />
+                    </AreaChart>
+                </ResponsiveContainer>
             </div>
         </Card>
     );

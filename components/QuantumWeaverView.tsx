@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, FC, createContext, useContext, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Card from './Card';
@@ -6,20 +5,61 @@ import type { AIPlanStep, AIQuestion, AIPlan } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 // ================================================================================================
-// GRAPHQL & SERVICE LAYER (NEW ARCHITECTURE)
+// QUANTUM WEAVER: BUSINESS OPERATING SYSTEM (v10.0)
+// DEVELOPER: ANONYMOUS CONTRIBUTOR
+// FOCUS: PRACTICAL SYSTEM MANAGEMENT AND DATA PRESENTATION
 // ================================================================================================
 
 const gql = String.raw;
+
+// --- MOCK DATABASE & STATE MANAGEMENT ---
+
+interface FinancialRecord { month: string; revenue: number; expenses: number; cashBalance: number; burnRate: number; }
+interface MarketCompetitor { name: string; marketShare: number; threatLevel: number; growthRate: number; }
+interface Employee { id: string; name: string; role: string; performance: number; satisfaction: number; aiPotential: number; }
+interface LegalDoc { id: string; name: string; status: 'DRAFT' | 'REVIEW' | 'SIGNED' | 'EXPIRED'; riskScore: number; }
+interface SystemAlert { id: string; severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; message: string; timestamp: number; }
+
+const mockFinancials: FinancialRecord[] = Array.from({ length: 12 }, (_, i) => ({
+    month: `Month ${i + 1}`,
+    revenue: 10000 * Math.pow(1.15, i) + Math.random() * 5000,
+    expenses: 8000 * Math.pow(1.05, i) + Math.random() * 2000,
+    cashBalance: 500000 - (i * 5000), // Simulating burn
+    burnRate: 15000 + Math.random() * 2000,
+}));
+
+const mockCompetitors: MarketCompetitor[] = [
+    { name: 'Legacy Corp', marketShare: 45, threatLevel: 30, growthRate: 2 },
+    { name: 'StartUp X', marketShare: 15, threatLevel: 85, growthRate: 150 },
+    { name: 'TechGiant Y', marketShare: 25, threatLevel: 60, growthRate: 10 },
+    { name: 'Our Venture', marketShare: 5, threatLevel: 0, growthRate: 300 }, // Us
+];
+
+const mockTeam: Employee[] = [
+    { id: 'e1', name: 'Dr. Sarah Chen', role: 'Chief AI Officer', performance: 98, satisfaction: 90, aiPotential: 99 },
+    { id: 'e2', name: 'Marcus Thorne', role: 'Head of Growth', performance: 92, satisfaction: 85, aiPotential: 75 },
+    { id: 'e3', name: 'Elena Rodriguez', role: 'Lead Engineer', performance: 95, satisfaction: 88, aiPotential: 90 },
+    { id: 'e4', name: 'David Kim', role: 'Product Owner', performance: 88, satisfaction: 80, aiPotential: 85 },
+];
+
+const mockLegal: LegalDoc[] = [
+    { id: 'l1', name: 'Incorporation Documents', status: 'SIGNED', riskScore: 0 },
+    { id: 'l2', name: 'Series A Term Sheet', status: 'REVIEW', riskScore: 45 },
+    { id: 'l3', name: 'Employee IP Agreements', status: 'SIGNED', riskScore: 5 },
+    { id: 'l4', name: 'GDPR Compliance Audit', status: 'DRAFT', riskScore: 80 },
+];
 
 let mockWorkflow: WorkflowStatusPayload | null = null;
 const mockWorkflows = new Map<string, WorkflowStatusPayload>(); 
 const mockUserProfiles = new Map<string, UserProfile>(); 
 
+// --- GRAPHQL SERVICE LAYER ---
+
 async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
-    console.log("Mock GraphQL Request:", { query: query.substring(0, Math.min(query.length, 100)) + '...', variables });
+    // console.log("Quantum Weaver Network Request:", { query: query.substring(0, 50) + '...', variables });
+    await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500)); // Low latency simulation
 
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1500)); 
-
+    // --- BUSINESS PLAN ANALYSIS RESOLVERS ---
     if (query.includes('StartBusinessPlanAnalysis')) {
         const { plan, userId } = variables as { plan: string, userId: string };
         const workflowId = `wf-${Date.now()}-${userId}`;
@@ -32,183 +72,126 @@ async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
             businessPlan: plan, 
         };
         mockWorkflows.set(workflowId, newWorkflow);
+        
+        // Simulate complex AI processing
         setTimeout(() => {
             const current = mockWorkflows.get(workflowId);
             if (current) {
-                const loanAmount = Math.floor(Math.random() * 150000) + 50000;
-                const viability = Math.min(95, 30 + (plan.length / 500) * 40 + Math.random() * 20);
-                const marketFit = Math.min(90, 25 + (plan.length / 600) * 35 + Math.random() * 20);
-                const risk = Math.max(5, 100 - viability - marketFit + Math.random() * 10);
-                const feedback = plan.length > 300
-                    ? "A comprehensive vision with significant potential. Detailed planning is evident, but strategic differentiation needs emphasis."
-                    : "An interesting concept, but the initial pitch lacks depth. Consider elaborating on your market strategy and unique selling proposition.";
-
+                const loanAmount = Math.floor(Math.random() * 500000) + 100000;
+                const viability = Math.min(99, 40 + (plan.length / 200) * 30 + Math.random() * 20);
+                const marketFit = Math.min(98, 30 + (plan.length / 300) * 40 + Math.random() * 20);
+                const risk = Math.max(2, 100 - viability - marketFit + Math.random() * 15);
+                
                 current.status = 'ANALYSIS_COMPLETE';
                 current.result = {
-                    feedback: feedback,
+                    feedback: "Your proposal has been analyzed. Key strengths are noted, but areas for improvement in operational resilience have been identified.",
                     questions: [
-                        { id: 'q1', question: 'What is your customer acquisition strategy and projected cost per acquisition?', category: 'Marketing' },
-                        { id: 'q2', question: 'How will you differentiate from existing competitors?', category: 'Competitive Landscape' },
-                        { id: 'q3', question: 'What are the key technical hurdles in developing your prototype?', category: 'Technology' },
-                        { id: 'q4', question: 'Describe your projected financial milestones for the next 18 months.', category: 'Finance' },
-                        { id: 'q5', question: 'What is your long-term vision beyond the initial product launch?', category: 'Vision' },
+                        { id: 'q1', question: 'Define the autonomous scaling mechanisms for year 3.', category: 'Scale' },
+                        { id: 'q2', question: 'How does the model withstand a 40% supply chain disruption?', category: 'Resilience' },
+                        { id: 'q3', question: 'What is the proprietary data acquisition strategy?', category: 'IP' },
                     ],
                     coachingPlan: {
-                        title: "Founder's Acceleration Plan",
-                        summary: "A multi-phase plan to optimize your business model and prepare for hyper-growth.",
+                        title: "Hyper-Scale Execution Protocol",
+                        summary: "A directive to transition from concept to market dominance.",
                         steps: [
-                            { title: "Refine Revenue & Cost Models", description: "Develop a granular financial model projecting revenue streams, COGS, and operational expenses for the first 3 years, highlighting scalability.", timeline: '2 Weeks', category: 'Finance' },
-                            { title: "Deep-Dive Competitive Strategy", description: "Conduct a SWOT analysis on your top 5 competitors, identifying their vulnerabilities and opportunities for your entry.", timeline: '1 Week', category: 'Strategy' },
-                            { title: "MVP & Product Roadmap Definition", description: "Outline core features for your Minimum Viable Product, detailing user stories, tech stack, and a phased development timeline.", timeline: '3 Weeks', category: 'Product' },
-                            { title: "Legal & IP Due Diligence", description: "Consult with legal experts to secure intellectual property, assess regulatory compliance, and draft initial founder agreements.", timeline: '2 Weeks', category: 'Legal' },
-                            { title: "Team Scaling Blueprint", description: "Develop a hiring plan for key early hires, including role descriptions, compensation strategy, and a pipeline for talent acquisition.", timeline: '2 Weeks', category: 'HR' },
+                            { title: "Algorithmic Market Validation", description: "Deploy autonomous agents to test value prop against 10,000 synthetic personas.", timeline: '1 Week', category: 'Validation' },
+                            { title: "Capital Structure Optimization", description: "Establish multi-tiered funding vehicles including debt, equity, and tokenized assets.", timeline: '2 Weeks', category: 'Finance' },
+                            { title: "Core Team Assembly", description: "Recruit top 1% talent using predictive performance modeling.", timeline: '3 Weeks', category: 'HR' },
                         ]
                     },
                     loanAmount: loanAmount,
                     metrics: { viability, marketFit, risk },
-                    growthProjections: [
-                        { month: 0, users: 10, revenue: 0 },
-                        { month: 3, users: 100, revenue: 1000 },
-                        { month: 6, users: 500, revenue: 7500 },
-                        { month: 9, users: 2000, revenue: 25000 },
-                        { month: 12, users: 5000, revenue: 75000 },
-                        { month: 18, users: 15000, revenue: 250000 },
-                    ],
+                    growthProjections: Array.from({ length: 12 }, (_, i) => ({
+                        month: i,
+                        users: Math.floor(100 * Math.pow(1.4, i)),
+                        revenue: Math.floor(1000 * Math.pow(1.5, i))
+                    })),
                     potentialMentors: [
-                        { id: 'm1', name: 'Dr. Evelyn Reed', expertise: 'Quantum Computing, AI Ethics', bio: 'Pioneering work in quantum algorithm optimization.', imageUrl: 'https://i.pravatar.cc/150?u=evelyn' },
-                        { id: 'm2', name: 'Mr. Kenji Tanaka', expertise: 'Market Entry, SaaS Scale-up', bio: 'Led 3 startups to successful exits in fintech.', imageUrl: 'https://i.pravatar.cc/150?u=kenji' },
-                        { id: 'm3', name: 'Ms. Lena Petrova', expertise: 'Product Design, UX/UI', bio: 'Award-winning designer with 15+ years in tech.', imageUrl: 'https://i.pravatar.cc/150?u=lena' },
+                        { id: 'm1', name: 'Dr. Evelyn Reed', expertise: 'Quantum Computing', bio: 'Architect of the first commercial quantum annealing processor.', imageUrl: 'https://i.pravatar.cc/150?u=evelyn' },
+                        { id: 'm2', name: 'Mr. Kenji Tanaka', expertise: 'Global Logistics', bio: 'Redesigned the Pacific trade routes for autonomous shipping.', imageUrl: 'https://i.pravatar.cc/150?u=kenji' },
                     ]
                 };
                 mockWorkflows.set(workflowId, current);
             }
-        }, 5000); 
+        }, 3000); 
         return { startBusinessPlanAnalysis: { workflowId, status: 'PENDING' } } as unknown as T;
     }
 
     if (query.includes('GetBusinessPlanAnalysisStatus')) {
         const vars = variables as { workflowId: string };
         const wf = mockWorkflows.get(vars.workflowId);
-        if (wf) {
-            return { getBusinessPlanAnalysisStatus: wf } as unknown as T;
-        }
-        throw new Error(`Workflow with ID ${vars.workflowId} not found in mock state.`);
+        if (wf) return { getBusinessPlanAnalysisStatus: wf } as unknown as T;
+        throw new Error(`Workflow ${vars.workflowId} not found.`);
     }
 
-    if (query.includes('ApproveBusinessPlan')) {
-        const vars = variables as { workflowId: string };
-        const wf = mockWorkflows.get(vars.workflowId);
-        if (wf) {
-            setTimeout(() => {
-                if (wf) {
-                    wf.status = 'APPROVED';
-                    mockWorkflows.set(vars.workflowId, wf);
-                }
-            }, 3000);
-            return { approveBusinessPlan: { workflowId: vars.workflowId, status: 'PENDING_APPROVAL' } } as unknown as T;
-        }
-        throw new Error("Workflow not found for approval.");
+    // --- NEW ENTERPRISE RESOLVERS ---
+
+    if (query.includes('GetFinancialData')) {
+        return { getFinancialData: mockFinancials } as unknown as T;
     }
 
-    if (query.includes('RequestBusinessPlanRevision')) {
-        const vars = variables as { workflowId: string, feedback: string };
-        const wf = mockWorkflows.get(vars.workflowId);
-        if (wf) {
-            wf.status = 'REQUIRE_REVISION';
-            wf.error = `Revision Required: ${vars.feedback}`;
-            mockWorkflows.set(vars.workflowId, wf);
-            return { requestBusinessPlanRevision: { workflowId: vars.workflowId, status: 'REQUIRE_REVISION' } } as unknown as T;
-        }
-        throw new Error("Workflow not found for revision request.");
+    if (query.includes('GetMarketIntelligence')) {
+        return { getMarketIntelligence: mockCompetitors } as unknown as T;
     }
+
+    if (query.includes('GetTeamStructure')) {
+        return { getTeamStructure: mockTeam } as unknown as T;
+    }
+
+    if (query.includes('GetLegalStatus')) {
+        return { getLegalStatus: mockLegal } as unknown as T;
+    }
+
+    if (query.includes('GetSystemAlerts')) {
+        const alerts: SystemAlert[] = [
+            { id: 'a1', severity: 'MEDIUM', message: 'Competitor "StartUp X" increased ad spend by 200%.', timestamp: Date.now() },
+            { id: 'a2', severity: 'LOW', message: 'Cash flow positive projection moved forward by 2 weeks.', timestamp: Date.now() - 100000 },
+            { id: 'a3', severity: 'HIGH', message: 'GDPR Compliance audit overdue.', timestamp: Date.now() - 200000 },
+        ];
+        return { getSystemAlerts: alerts } as unknown as T;
+    }
+
+    // --- AI GENERATION RESOLVERS ---
 
     if (query.includes('GenerateAiContent')) {
-        const vars = variables as { prompt: string, context: string, workflowId?: string };
-        let generatedText = "AI is processing your request...";
-
-        const currentPlan = vars.workflowId ? mockWorkflows.get(vars.workflowId)?.businessPlan : vars.context;
-
-        if (vars.prompt.toLowerCase().includes('pro-tip')) {
-            generatedText = `Based on your plan: "Focus relentlessly on solving one critical problem for your customer better than anyone else. Everything else is a distraction until that is achieved. Authenticity is your superpower."`;
-        } else if (vars.prompt.toLowerCase().includes('elevator pitch')) {
-            generatedText = `Imagine a world where your business plan, "${currentPlan?.substring(0, 50)}...", is distilled into a single, irresistible sentence: "We empower [target audience] to achieve [desired outcome] through [unique solution], revolutionizing [industry] with [key differentiator]."`;
-        } else if (vars.prompt.toLowerCase().includes('brand identity')) {
-            generatedText = `For "${currentPlan?.substring(0, 50)}...": Name: 'AetherFlow'. Tagline: 'Where Ideas Take Flight.' Vision: 'To seamlessly connect innovation with impact.'`;
-        } else if (vars.prompt.toLowerCase().includes('funding allocation')) {
-            generatedText = "Strategic Allocation:\nProduct & R&D: 40%\nMarket Penetration & Sales: 30%\nOperational Excellence: 15%\nStrategic Reserves & Compliance: 10%\nTalent Acquisition: 5%";
-        } else if (vars.prompt.toLowerCase().includes('market trend analysis')) {
-            generatedText = `Emerging trends suggest a significant shift towards personalized, AI-driven solutions in the [relevant industry based on plan]. Competitors are slow to adapt, creating a 'blue ocean' opportunity for rapid market capture. Consumer demand for [key feature from plan] is projected to increase by 25% annually.`;
-        } else if (vars.prompt.toLowerCase().includes('swot analysis')) {
-            generatedText = `**Strengths**: Innovative core technology, passionate team.\n**Weaknesses**: Limited initial market reach, reliance on early adopters.\n**Opportunities**: Untapped market segments, strategic partnership potential.\n**Threats**: Rapid technological shifts, incumbent resistance.`;
-        } else if (vars.prompt.toLowerCase().includes('social media strategy')) {
-            generatedText = `**Platform Focus**: LinkedIn for B2B thought leadership, Instagram for community building.\n**Content Pillars**: Educational insights, behind-the-scenes, customer success stories.\n**Engagement Tactic**: Interactive Q&A sessions, influencer collaborations.`;
-        } else if (vars.prompt.toLowerCase().includes('risk mitigation')) {
-            generatedText = `**Technology Risk**: Implement agile development, diversify tech stack expertise.\n**Market Risk**: Conduct continuous market validation, pilot programs.\n**Financial Risk**: Maintain lean operations, secure convertible notes.`;
-        } else if (vars.prompt.toLowerCase().includes('legal considerations')) {
-            generatedText = `Key legal considerations include: IP protection (patents/copyrights), data privacy compliance (GDPR/CCPA), founder agreements, and terms of service. Early legal counsel is crucial to avoid future pitfalls.`;
-        } else if (vars.prompt.toLowerCase().includes('team roles')) {
-            generatedText = `Critical early hires for "${currentPlan?.substring(0, 50)}..." include a Head of Product (visionary), Lead Engineer (builder), and a Growth Marketer (communicator). Consider a fractional CTO/CFO initially.`;
-        } else if (vars.prompt.toLowerCase().includes('user persona')) {
-            generatedText = `**Name**: Innovator Anya\n**Age**: 32\n**Profession**: Lead R&D Scientist\n**Goals**: Find efficient tools for complex simulations, collaborate easily.\n**Pain Points**: Legacy software, data silos, slow processing.\n**Motivations**: Career advancement, making scientific breakthroughs.`;
-        }
-
-        return { generateTextWithContext: generatedText } as unknown as T;
+        const vars = variables as { prompt: string, context: string };
+        let text = "Processing...";
+        if (vars.prompt.includes('risk')) text = "Risk Analysis: The primary vector of vulnerability lies in the dependency on legacy banking rails. Recommendation: Accelerate transition to decentralized settlement layers.";
+        else if (vars.prompt.includes('market')) text = "Market Opportunity: Blue ocean detected in the intersection of AI-driven personalization and privacy-first data custody. Estimated TAM: $450B.";
+        else if (vars.prompt.includes('hiring')) text = "Talent Strategy: Prioritize adaptability over tenure. Look for candidates with demonstrated capability in human-AI collaborative workflows.";
+        else text = `AI Insight: Based on "${vars.context.substring(0, 20)}...", the optimal path forward involves rapid iteration of the MVP followed by aggressive vertical integration.`;
+        return { generateTextWithContext: text } as unknown as T;
     }
 
     if (query.includes('GenerateAIChatResponse')) {
-        const vars = variables as { message: string, context: string, workflowId?: string };
-        const currentPlan = vars.workflowId ? mockWorkflows.get(vars.workflowId)?.businessPlan : vars.context;
-        let aiResponse = `Understood. You asked: "${vars.message}". How does this relate to your plan: "${currentPlan?.substring(0, 50)}..."?`;
-
-        if (vars.message.toLowerCase().includes('how do i start')) {
-            aiResponse = "To start, focus on validating your core hypothesis. Who is your ideal customer, and what problem are you solving for them? Build a minimal viable product (MVP) to test this rapidly.";
-        } else if (vars.message.toLowerCase().includes('funding')) {
-            aiResponse = "Regarding funding, consider exploring angel investors, venture capital, or grants. Your current plan, if approved, includes seed funding, but diversify your fundraising strategy.";
-        } else if (vars.message.toLowerCase().includes('competitors')) {
-            aiResponse = "Understanding your competitors is crucial. Analyze their strengths, weaknesses, and market positioning. Look for gaps they aren't filling, or ways you can deliver superior value.";
-        } else if (vars.message.toLowerCase().includes('next step')) {
-            aiResponse = "Based on your current stage, I'd recommend reviewing the 'Founder's Acceleration Plan' to identify immediate actionable steps and milestones.";
-        } else if (vars.message.toLowerCase().includes('optimize my pitch')) {
-            aiResponse = "To optimize your pitch, ensure it clearly articulates the problem, your unique solution, market opportunity, team, and financial projections. Practice storytelling to make it memorable.";
-        } else if (vars.message.toLowerCase().includes('scaling')) {
-            aiResponse = "Scaling requires a robust infrastructure, efficient processes, and a talented team. Prioritize automation and build a culture of continuous improvement from day one.";
-        }
-        return { generateAIChatResponse: aiResponse } as unknown as T;
+        const vars = variables as { message: string };
+        const responses = [
+            "I've analyzed the data. Your burn rate is sustainable for 14 months, but aggressive R&D could shorten this to 8. Shall I model a capital raise scenario?",
+            "Competitor activity detected. 'StartUp X' is pivoting to your niche. I recommend a preemptive feature release.",
+            "Legal compliance is at 85%. The GDPR audit is the only critical blocker for European expansion.",
+            "Your team's AI-readiness score is 92/100. Dr. Chen is a key asset here.",
+            "The current strategy emphasizes efficiency through data-driven insights. Proceed."
+        ];
+        return { generateAIChatResponse: responses[Math.floor(Math.random() * responses.length)] } as unknown as T;
     }
 
-    if (query.includes('SimulateScenario')) {
-        const vars = variables as { workflowId: string, parameters: ScenarioParameters };
-        const wf = mockWorkflows.get(vars.workflowId);
-        if (!wf || !wf.result?.growthProjections) {
-            throw new Error("Workflow or growth projections not found for scenario simulation.");
-        }
-
-        const baseProjections = wf.result.growthProjections;
-        const simulatedProjections: GrowthProjection[] = baseProjections.map(p => {
-            let newUsers = p.users * (1 + (vars.parameters.customerAcquisitionMultiplier - 1) * 0.5);
-            let newRevenue = p.revenue * (1 + (vars.parameters.conversionRateMultiplier - 1) * 0.7);
-            newRevenue = newRevenue * (1 - (vars.parameters.churnRateIncrease / 100)); 
-            return {
-                month: p.month,
-                users: Math.round(newUsers),
-                revenue: Math.round(newRevenue * vars.parameters.averageRevenuePerUserMultiplier),
-            };
-        });
-        return { simulateScenario: { workflowId: vars.workflowId, scenarioName: vars.parameters.scenarioName || 'Custom Scenario', projections: simulatedProjections } } as unknown as T;
-    }
+    // --- USER PROFILE RESOLVERS ---
 
     if (query.includes('GetUserProfile')) {
         const vars = variables as { userId: string };
-        const profile = mockUserProfiles.get(vars.userId);
-        if (profile) {
-            return { getUserProfile: profile } as unknown as T;
-        }
-        return { getUserProfile: { userId: vars.userId, username: `User_${vars.userId.substring(0, 4)}`, email: `${vars.userId}@example.com`, preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } } } } as unknown as T;
+        const profile = mockUserProfiles.get(vars.userId) || { 
+            userId: vars.userId, 
+            username: `Architect_${vars.userId.substring(0, 3)}`, 
+            email: `${vars.userId}@quantum-weaver.io`, 
+            preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } }, 
+            googleId: 'g_123' 
+        };
+        return { getUserProfile: profile } as unknown as T;
     }
 
     if (query.includes('UpdateUserProfile')) {
         const vars = variables as { userId: string, profile: UserProfileUpdateInput };
-        let profile = mockUserProfiles.get(vars.userId) || { userId: vars.userId, username: `User_${vars.userId.substring(0, 4)}`, email: `${vars.userId}@example.com`, preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } } };
+        let profile = mockUserProfiles.get(vars.userId) || { userId: vars.userId, username: '', email: '', preferences: { notificationSettings: { emailEnabled: true, smsEnabled: true, inAppEnabled: true } } };
         profile = { ...profile, ...vars.profile, preferences: { ...profile.preferences, ...vars.profile.preferences } };
         mockUserProfiles.set(vars.userId, profile);
         return { updateUserProfile: profile } as unknown as T;
@@ -220,144 +203,29 @@ async function graphqlRequest<T, V>(query: string, variables?: V): Promise<T> {
         return { getUserPlans: plans } as unknown as T;
     }
 
-    throw new Error(`Unknown GraphQL query in mock: ${query.substring(0, 50)}...`);
+    throw new Error(`Unknown Query: ${query.substring(0, 30)}`);
 }
 
+// --- GRAPHQL QUERIES & MUTATIONS ---
 
-const START_ANALYSIS_MUTATION = gql`
-  mutation StartBusinessPlanAnalysis($plan: String!, $userId: ID!) {
-    startBusinessPlanAnalysis(plan: $plan, userId: $userId) {
-      workflowId
-      status
-    }
-  }
-`;
+const START_ANALYSIS_MUTATION = gql`mutation StartBusinessPlanAnalysis($plan: String!, $userId: ID!) { startBusinessPlanAnalysis(plan: $plan, userId: $userId) { workflowId status } }`;
+const GET_ANALYSIS_STATUS_QUERY = gql`query GetBusinessPlanAnalysisStatus($workflowId: ID!) { getBusinessPlanAnalysisStatus(workflowId: $workflowId) { workflowId status result { feedback questions { id question category } coachingPlan { title summary steps { title description category timeline } } loanAmount metrics { viability marketFit risk } growthProjections { month users revenue } potentialMentors { id name expertise bio imageUrl } } error businessPlan } }`;
+const GET_FINANCIALS_QUERY = gql`query GetFinancialData { getFinancialData { month revenue expenses cashBalance burnRate } }`;
+const GET_MARKET_QUERY = gql`query GetMarketIntelligence { getMarketIntelligence { name marketShare threatLevel growthRate } }`;
+const GET_TEAM_QUERY = gql`query GetTeamStructure { getTeamStructure { id name role performance satisfaction aiPotential } }`;
+const GET_LEGAL_QUERY = gql`query GetLegalStatus { getLegalStatus { id name status riskScore } }`;
+const GET_ALERTS_QUERY = gql`query GetSystemAlerts { getSystemAlerts { id severity message timestamp } }`;
+const GENERATE_AI_CONTENT_MUTATION = gql`mutation GenerateAiContent($prompt: String!, $context: String!) { generateTextWithContext(prompt: $prompt, context: $context) }`;
+const GENERATE_AI_CHAT_MUTATION = gql`mutation GenerateAIChatResponse($message: String!, $context: String!) { generateAIChatResponse(message: $message, context: $context) }`;
+const GET_USER_PROFILE_QUERY = gql`query GetUserProfile($userId: ID!) { getUserProfile(userId: $userId) { userId username email googleId preferences { theme notificationSettings } } }`;
+const UPDATE_USER_PROFILE_MUTATION = gql`mutation UpdateUserProfile($userId: ID!, $profile: UserProfileUpdateInput!) { updateUserProfile(userId: $userId, profile: $profile) { userId username email googleId preferences { theme notificationSettings } } }`;
+const GET_USER_PLANS_QUERY = gql`query GetUserPlans($userId: ID!) { getUserPlans(userId: $userId) { workflowId status businessPlan result { loanAmount metrics { viability marketFit risk } } } }`;
 
-const GET_ANALYSIS_STATUS_QUERY = gql`
-  query GetBusinessPlanAnalysisStatus($workflowId: ID!) {
-    getBusinessPlanAnalysisStatus(workflowId: $workflowId) {
-      workflowId
-      status
-      result {
-        feedback
-        questions { id question category }
-        coachingPlan { title summary steps { title description category timeline } }
-        loanAmount
-        metrics { viability marketFit risk }
-        growthProjections { month users revenue }
-        potentialMentors { id name expertise bio imageUrl }
-      }
-      error
-      businessPlan 
-    }
-  }
-`;
+// --- TYPES ---
 
-const APPROVE_PLAN_MUTATION = gql`
-  mutation ApproveBusinessPlan($workflowId: ID!) {
-    approveBusinessPlan(workflowId: $workflowId) {
-      workflowId
-      status
-    }
-  }
-`;
-
-const REQUEST_BUSINESS_PLAN_REVISION_MUTATION = gql`
-  mutation RequestBusinessPlanRevision($workflowId: ID!, $feedback: String!) {
-    requestBusinessPlanRevision(workflowId: $workflowId, feedback: $feedback) {
-      workflowId
-      status
-    }
-  }
-`;
-
-const GENERATE_AI_CONTENT_MUTATION = gql`
-    mutation GenerateAiContent($prompt: String!, $context: String!, $workflowId: ID) {
-        generateTextWithContext(prompt: $prompt, context: $context, workflowId: $workflowId)
-    }
-`;
-
-const GENERATE_AI_CHAT_RESPONSE_MUTATION = gql`
-    mutation GenerateAIChatResponse($message: String!, $context: String!, $workflowId: ID) {
-        generateAIChatResponse(message: $message, context: $context, workflowId: $workflowId)
-    }
-`;
-
-const SIMULATE_SCENARIO_MUTATION = gql`
-    mutation SimulateScenario($workflowId: ID!, $parameters: ScenarioParametersInput!) {
-        simulateScenario(workflowId: $workflowId, parameters: $parameters) {
-            workflowId
-            scenarioName
-            projections { month users revenue }
-        }
-    }
-`;
-
-const GET_USER_PROFILE_QUERY = gql`
-    query GetUserProfile($userId: ID!) {
-        getUserProfile(userId: $userId) {
-            userId
-            username
-            email
-            preferences {
-                theme
-                notificationSettings
-            }
-        }
-    }
-`;
-
-const UPDATE_USER_PROFILE_MUTATION = gql`
-    mutation UpdateUserProfile($userId: ID!, $profile: UserProfileUpdateInput!) {
-        updateUserProfile(userId: $userId, profile: $profile) {
-            userId
-            username
-            email
-            preferences {
-                theme
-                notificationSettings
-            }
-        }
-    }
-`;
-
-const GET_USER_PLANS_QUERY = gql`
-    query GetUserPlans($userId: ID!) {
-        getUserPlans(userId: $userId) {
-            workflowId
-            status
-            businessPlan
-            result {
-                loanAmount
-                metrics { viability marketFit risk }
-            }
-        }
-    }
-`;
-
-
-// --- Type Definitions for GraphQL Payloads ---
-
-interface Metrics {
-    viability: number;
-    marketFit: number;
-    risk: number;
-}
-
-interface GrowthProjection {
-    month: number;
-    users: number;
-    revenue: number;
-}
-
-interface Mentor {
-    id: string;
-    name: string;
-    expertise: string;
-    bio: string;
-    imageUrl: string;
-}
-
+interface Metrics { viability: number; marketFit: number; risk: number; }
+interface GrowthProjection { month: number; users: number; revenue: number; }
+interface Mentor { id: string; name: string; expertise: string; bio: string; imageUrl: string; }
 interface WorkflowStatusPayload {
     workflowId: string;
     status: 'PENDING' | 'ANALYSIS_COMPLETE' | 'APPROVED' | 'FAILED' | 'REQUIRE_REVISION' | 'PENDING_APPROVAL';
@@ -374,609 +242,525 @@ interface WorkflowStatusPayload {
     userId: string; 
     businessPlan: string;
 }
-
-interface StartAnalysisResponse { startBusinessPlanAnalysis: { workflowId: string; status: string; } }
-interface GetStatusResponse { getBusinessPlanAnalysisStatus: WorkflowStatusPayload; }
-interface ApprovePlanResponse { approveBusinessPlan: { workflowId: string; status: string; } }
-interface RequestRevisionResponse { requestBusinessPlanRevision: { workflowId: string; status: string; } }
-interface GenerateTextResponse { generateTextWithContext: string; }
-interface GenerateChatResponse { generateAIChatResponse: string; }
-
-interface ScenarioParameters {
-    scenarioName?: string;
-    customerAcquisitionMultiplier: number; 
-    conversionRateMultiplier: number;
-    averageRevenuePerUserMultiplier: number;
-    churnRateIncrease: number; 
-}
-interface SimulateScenarioResponse { simulateScenario: { workflowId: string; scenarioName: string; projections: GrowthProjection[]; } }
-
 interface UserProfile {
     userId: string;
     username: string;
     email: string;
+    googleId?: string;
     preferences: {
         theme?: 'dark' | 'light';
-        notificationSettings: { 
-            emailEnabled: boolean;
-            smsEnabled: boolean;
-            inAppEnabled: boolean;
-        };
-        favoritePrompts?: string[];
-    };
-    createdWorkflows?: { workflowId: string; businessPlanSummary: string; status: string; }[];
-}
-
-interface UserProfileUpdateInput {
-    username?: string;
-    email?: string;
-    preferences?: {
-        theme?: 'dark' | 'light';
-        notificationSettings?: {
-            emailEnabled: boolean;
-            smsEnabled: boolean;
-            inAppEnabled: boolean;
-        };
-        favoritePrompts?: string[];
+        notificationSettings: { emailEnabled: boolean; smsEnabled: boolean; inAppEnabled: boolean; };
     };
 }
-interface GetUserProfileResponse { getUserProfile: UserProfile; }
-interface UpdateUserProfileResponse { updateUserProfile: UserProfile; }
-interface GetUserPlansResponse { getUserPlans: WorkflowStatusPayload[]; }
+interface UserProfileUpdateInput { username?: string; email?: string; googleId?: string; preferences?: any; }
 
-// --- Custom Hooks for Data Fetching & Mutations ---
+// --- HOOKS ---
 
 const useStartAnalysis = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { plan: string, userId: string }) => graphqlRequest<StartAnalysisResponse, typeof args>(START_ANALYSIS_MUTATION, args),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['userPlans'] }); 
-        }
+        mutationFn: (args: { plan: string, userId: string }) => graphqlRequest<{ startBusinessPlanAnalysis: { workflowId: string, status: string } }, typeof args>(START_ANALYSIS_MUTATION, args),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userPlans'] })
     });
 };
-
-const useAnalysisStatus = (workflowId: string | null, currentStatus: string | null) => useQuery({
+const useAnalysisStatus = (workflowId: string | null) => useQuery({
     queryKey: ['analysisStatus', workflowId],
-    queryFn: () => graphqlRequest<GetStatusResponse, { workflowId: string }>(GET_ANALYSIS_STATUS_QUERY, { workflowId: workflowId! }),
-    enabled: !!workflowId && !['APPROVED', 'FAILED', 'ANALYSIS_COMPLETE', 'REQUIRE_REVISION'].includes(currentStatus || ''),
-    refetchInterval: (query) => {
-        const status = query.state.data?.getBusinessPlanAnalysisStatus.status;
-        if (['PENDING', 'PENDING_APPROVAL'].includes(status || '')) {
-            return 3000; 
-        }
-        return false; 
-    },
-    staleTime: 5000, 
+    queryFn: () => graphqlRequest<{ getBusinessPlanAnalysisStatus: WorkflowStatusPayload }, { workflowId: string }>(GET_ANALYSIS_STATUS_QUERY, { workflowId: workflowId! }),
+    enabled: !!workflowId,
+    refetchInterval: (query) => query.state.data?.getBusinessPlanAnalysisStatus.status === 'PENDING' ? 2000 : false
 });
-
-const useApprovePlan = () => useMutation({
-    mutationFn: (workflowId: string) => graphqlRequest<ApprovePlanResponse, { workflowId: string }>(APPROVE_PLAN_MUTATION, { workflowId }),
-});
-
-const useRequestRevision = () => useMutation({
-    mutationFn: (args: { workflowId: string, feedback: string }) => graphqlRequest<RequestRevisionResponse, typeof args>(REQUEST_BUSINESS_PLAN_REVISION_MUTATION, args),
-});
-
-const useGenerateAiContent = () => useMutation({
-    mutationFn: (variables: { prompt: string, context: string, workflowId?: string }) =>
-        graphqlRequest<GenerateTextResponse, typeof variables>(GENERATE_AI_CONTENT_MUTATION, variables)
-});
-
-const useGenerateAiChatResponse = () => useMutation({
-    mutationFn: (variables: { message: string, context: string, workflowId?: string }) =>
-        graphqlRequest<GenerateChatResponse, typeof variables>(GENERATE_AI_CHAT_RESPONSE_MUTATION, variables)
-});
-
-const useSimulateScenario = () => useMutation({
-    mutationFn: (variables: { workflowId: string, parameters: ScenarioParameters }) =>
-        graphqlRequest<SimulateScenarioResponse, typeof variables>(SIMULATE_SCENARIO_MUTATION, variables)
-});
-
-const useUserProfile = (userId: string) => useQuery({
-    queryKey: ['userProfile', userId],
-    queryFn: () => graphqlRequest<GetUserProfileResponse, { userId: string }>(GET_USER_PROFILE_QUERY, { userId }),
-    enabled: !!userId,
-});
-
+const useFinancials = () => useQuery({ queryKey: ['financials'], queryFn: () => graphqlRequest<{ getFinancialData: FinancialRecord[] }, {}>(GET_FINANCIALS_QUERY) });
+const useMarket = () => useQuery({ queryKey: ['market'], queryFn: () => graphqlRequest<{ getMarketIntelligence: MarketCompetitor[] }, {}>(GET_MARKET_QUERY) });
+const useTeam = () => useQuery({ queryKey: ['team'], queryFn: () => graphqlRequest<{ getTeamStructure: Employee[] }, {}>(GET_TEAM_QUERY) });
+const useLegal = () => useQuery({ queryKey: ['legal'], queryFn: () => graphqlRequest<{ getLegalStatus: LegalDoc[] }, {}>(GET_LEGAL_QUERY) });
+const useAlerts = () => useQuery({ queryKey: ['alerts'], queryFn: () => graphqlRequest<{ getSystemAlerts: SystemAlert[] }, {}>(GET_ALERTS_QUERY), refetchInterval: 10000 });
+const useGenerateAiContent = () => useMutation({ mutationFn: (vars: { prompt: string, context: string }) => graphqlRequest<{ generateTextWithContext: string }, typeof vars>(GENERATE_AI_CONTENT_MUTATION, vars) });
+const useGenerateAiChat = () => useMutation({ mutationFn: (vars: { message: string, context: string }) => graphqlRequest<{ generateAIChatResponse: string }, typeof vars>(GENERATE_AI_CHAT_MUTATION, vars) });
+const useUserProfile = (userId: string) => useQuery({ queryKey: ['userProfile', userId], queryFn: () => graphqlRequest<{ getUserProfile: UserProfile }, { userId: string }>(GET_USER_PROFILE_QUERY, { userId }) });
 const useUpdateUserProfile = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { userId: string, profile: UserProfileUpdateInput }) => graphqlRequest<UpdateUserProfileResponse, typeof args>(UPDATE_USER_PROFILE_MUTATION, args),
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['userProfile', variables.userId] });
-        }
+        mutationFn: (args: { userId: string, profile: UserProfileUpdateInput }) => graphqlRequest<{ updateUserProfile: UserProfile }, typeof args>(UPDATE_USER_PROFILE_MUTATION, args),
+        onSuccess: (data, variables) => queryClient.invalidateQueries({ queryKey: ['userProfile', variables.userId] })
     });
 };
-
-const useUserPlans = (userId: string) => useQuery({
-    queryKey: ['userPlans', userId],
-    queryFn: () => graphqlRequest<GetUserPlansResponse, { userId: string }>(GET_USER_PLANS_QUERY, { userId }),
-    enabled: !!userId,
-});
+const useUserPlans = (userId: string) => useQuery({ queryKey: ['userPlans', userId], queryFn: () => graphqlRequest<{ getUserPlans: WorkflowStatusPayload[] }, { userId: string }>(GET_USER_PLANS_QUERY, { userId }) });
 
 // ================================================================================================
-// HELPER & UI SUB-COMPONENTS
+// UI COMPONENTS
 // ================================================================================================
 
-const UserContext = createContext<string | null>(null);
+const COLORS = ['#06b6d4', '#6366f1', '#10b981', '#f59e0b', '#ef4444'];
 
-const AIGeneratorWidget: FC<{
-    title: string;
-    prompt: string;
-    businessPlan: string;
-    workflowId?: string;
-    children?: (result: string) => React.ReactNode;
-    className?: string;
-}> = ({ title, prompt, businessPlan, workflowId, children, className }) => {
-    const { mutate, data, isPending, error, isSuccess } = useGenerateAiContent();
-    const result = data?.generateTextWithContext;
+const Badge: FC<{ children: React.ReactNode, color?: string }> = ({ children, color = 'bg-gray-700' }) => (
+    <span className={`px-2 py-0.5 rounded text-xs font-medium text-white ${color}`}>{children}</span>
+);
 
-    const handleGenerate = () => {
-        if (!isPending) { 
-            mutate({ prompt, context: businessPlan, workflowId });
-        }
+const AIInsightBubble: FC<{ context: string, trigger?: string }> = ({ context, trigger }) => {
+    const { mutate, data, isPending } = useGenerateAiContent();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleAnalyze = () => {
+        setIsOpen(true);
+        if (!data) mutate({ prompt: `Analyze this context: ${trigger || 'general'}`, context });
     };
 
     return (
-        <Card title={title} className={className}>
-            <div className="space-y-3 min-h-[8rem] flex flex-col justify-between">
-                {error && <p className="text-red-400 text-sm text-center">{error.message}</p>}
-                {isPending && (
-                    <div className="flex items-center justify-center space-x-2">
-                        <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-                        <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-                        <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                        <span className="text-sm text-gray-400">Generating...</span>
+        <div className="relative inline-block ml-2">
+            <button onClick={handleAnalyze} className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </button>
+            {isOpen && (
+                <div className="absolute z-50 w-64 p-3 mt-2 -ml-32 bg-gray-900 border border-cyan-500/50 rounded-lg shadow-xl text-xs text-gray-300">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="font-bold text-cyan-400">Quantum Insight</span>
+                        <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white">&times;</button>
                     </div>
-                )}
-                {!isPending && result && (children ? children(result) : <p className="text-gray-300 whitespace-pre-wrap text-sm italic">"{result}"</p>)}
-                {!isPending && !result && !error && (
-                    <button onClick={handleGenerate} className="w-full py-2 px-4 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-200 rounded-lg text-sm font-medium transition-colors">
-                        {`Generate ${title}`}
-                    </button>
-                )}
-                {!isPending && result && (
-                    <button onClick={handleGenerate} className="mt-2 w-full py-1 px-3 bg-gray-700/50 hover:bg-gray-600/50 text-gray-400 rounded-lg text-xs font-medium transition-colors">
-                        Regenerate
-                    </button>
-                )}
-            </div>
-        </Card>
-    );
-};
-
-const Scorecard: FC<{ scores: { viability: number, marketFit: number, risk: number }, className?: string }> = ({ scores, className }) => {
-    const ScoreBar: FC<{ label: string, value: number, color: string, isRisk?: boolean }> = ({ label, value, color, isRisk }) => (
-        <div>
-            <div className="flex justify-between text-xs text-gray-300">
-                <span>{label}</span>
-                <span>{value.toFixed(0)}{isRisk ? '' : '%'}</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                <div className={`${color} h-2 rounded-full transition-all duration-500`} style={{ width: `${isRisk ? (100 - value) : value}%` }}></div>
-            </div>
+                    {isPending ? <div className="animate-pulse">Computing vectors...</div> : (data?.generateTextWithContext || "Analysis complete.")}
+                </div>
+            )}
         </div>
     );
-
-    return (
-        <Card title="Heuristic API Scorecard" variant='outline' className={className}>
-            <div className="space-y-3">
-                <ScoreBar label="Viability Score" value={scores.viability} color="bg-cyan-500" />
-                <ScoreBar label="Market Fit" value={scores.marketFit} color="bg-indigo-500" />
-                <ScoreBar label="Risk Index" value={scores.risk} color="bg-red-500" isRisk />
-            </div>
-        </Card>
-    );
 };
 
-const GrowthProjectionChart: FC<{ projections: GrowthProjection[]; title?: string }> = ({ projections, title = "Projected Growth" }) => {
-    const formatCurrency = (value: number) => `$${value.toLocaleString()}`;
-    return (
-        <Card title={title}>
-            <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={projections} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                        <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 10 }} label={{ value: "Months", position: "insideBottom", offset: 0, fill: '#9ca3af' }} />
-                        <YAxis yAxisId="left" tick={{ fill: '#9ca3af', fontSize: 10 }} label={{ value: "Users", angle: -90, position: "insideLeft", fill: '#9ca3af' }} />
-                        <YAxis yAxisId="right" orientation="right" tickFormatter={formatCurrency} tick={{ fill: '#9ca3af', fontSize: 10 }} label={{ value: "Revenue", angle: 90, position: "insideRight", fill: '#9ca3af' }} />
-                        <Tooltip
-                            contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.9)', borderColor: '#4b5563', borderRadius: '8px' }}
-                            itemStyle={{ color: '#e5e7eb' }}
-                            labelStyle={{ color: '#9ca3af' }}
-                            formatter={(value: number, name: string) => {
-                                return name === 'revenue' ? formatCurrency(value) : value.toLocaleString();
-                            }}
-                        />
-                        <Legend wrapperStyle={{ fontSize: '12px', color: '#9ca3af', paddingTop: '10px' }} />
-                        <Line yAxisId="left" type="monotone" dataKey="users" stroke="#06b6d4" name="Users" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 6 }} />
-                        <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#6366f1" name="Revenue" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 6 }} />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-        </Card>
-    );
-};
-
-const MentorshipSuggestions: FC<{ mentors: Mentor[] }> = ({ mentors }) => {
-    return (
-        <Card title="Recommended Mentors">
-            <div className="space-y-4">
-                {mentors.length === 0 && <p className="text-gray-400 text-center">No mentor suggestions at this time.</p>}
-                {mentors.map(mentor => (
-                    <div key={mentor.id} className="flex items-center bg-gray-900/50 p-3 rounded-lg">
-                        <img src={mentor.imageUrl} alt={mentor.name} className="w-10 h-10 rounded-full object-cover mr-3 border-2 border-cyan-500" />
-                        <div>
-                            <h4 className="font-semibold text-gray-100">{mentor.name}</h4>
-                            <p className="text-xs text-cyan-400">{mentor.expertise}</p>
-                            <p className="text-xs text-gray-400 mt-1 line-clamp-2">{mentor.bio}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </Card>
-    );
-};
-
-const AIChatWindow: FC<{
-    businessPlan: string;
-    workflowId?: string;
-    initialMessage?: string;
-    className?: string;
-}> = ({ businessPlan, workflowId, initialMessage, className }) => {
-    const [messages, setMessages] = useState<{ sender: 'user' | 'ai', text: string }[]>(initialMessage ? [{ sender: 'ai', text: initialMessage }] : []);
-    const [input, setInput] = useState('');
-    const { mutate, isPending } = useGenerateAiChatResponse();
-    const chatContainerRef = React.useRef<HTMLDivElement>(null);
-
-    const handleSendMessage = useCallback(() => {
-        if (input.trim() === '') return;
-
-        const userMessage = input.trim();
-        setMessages(prev => [...prev, { sender: 'user', text: userMessage }]);
-        setInput('');
-
-        mutate({
-            message: userMessage,
-            context: businessPlan,
-            workflowId
-        }, {
-            onSuccess: (data) => {
-                setMessages(prev => [...prev, { sender: 'ai', text: data.generateAIChatResponse }]);
-            },
-            onError: (err) => {
-                setMessages(prev => [...prev, { sender: 'ai', text: `Error: ${err.message}` }]);
-            }
-        });
-    }, [input, businessPlan, workflowId, mutate]);
-
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !isPending) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    };
+const FinancialDashboard: FC = () => {
+    const { data } = useFinancials();
+    const records = data?.getFinancialData || [];
 
     return (
-        <Card title="Plato AI Chat" className={`flex flex-col h-full ${className}`}>
-            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4 text-sm custom-scrollbar">
-                {messages.map((msg, index) => (
-                    <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[75%] p-3 rounded-lg ${msg.sender === 'user' ? 'bg-cyan-700/50 text-white' : 'bg-gray-800 text-gray-200'}`}>
-                            {msg.text}
-                        </div>
-                    </div>
-                ))}
-                {isPending && (
-                    <div className="flex justify-start">
-                        <div className="max-w-[75%] p-3 rounded-lg bg-gray-800 text-gray-400">
-                            <div className="flex items-center space-x-2">
-                                <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-                                <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-                                <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                                <span>Plato is typing...</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card title="Current Cash" className="border-l-4 border-green-500">
+                    <div className="text-2xl font-bold text-white">${records[records.length - 1]?.cashBalance.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400 mt-1">Runway: ~18 Months <AIInsightBubble context="Cash flow analysis" /></div>
+                </Card>
+                <Card title="Monthly Burn" className="border-l-4 border-red-500">
+                    <div className="text-2xl font-bold text-white">${records[records.length - 1]?.burnRate.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400 mt-1">-2.5% vs last month</div>
+                </Card>
+                <Card title="Revenue (MRR)" className="border-l-4 border-cyan-500">
+                    <div className="text-2xl font-bold text-white">${records[records.length - 1]?.revenue.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400 mt-1">+15% MoM Growth</div>
+                </Card>
+                <Card title="Net Margin" className="border-l-4 border-indigo-500">
+                    <div className="text-2xl font-bold text-white">{(records[records.length - 1]?.revenue - records[records.length - 1]?.expenses).toLocaleString()}</div>
+                    <div className="text-xs text-gray-400 mt-1">Approaching Break-even</div>
+                </Card>
             </div>
-            <div className="p-4 border-t border-gray-700 mt-auto">
-                <div className="flex space-x-2">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Ask Plato anything..."
-                        className="flex-grow bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
-                        disabled={isPending}
-                    />
-                    <button
-                        onClick={handleSendMessage}
-                        disabled={isPending || input.trim() === ''}
-                        className="py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Send
-                    </button>
-                </div>
-            </div>
-        </Card>
-    );
-};
-
-const ScenarioSimulator: FC<{
-    workflowId: string;
-    baseProjections: GrowthProjection[];
-    className?: string;
-}> = ({ workflowId, baseProjections, className }) => {
-    const [params, setParams] = useState<ScenarioParameters>({
-        customerAcquisitionMultiplier: 1.0,
-        conversionRateMultiplier: 1.0,
-        averageRevenuePerUserMultiplier: 1.0,
-        churnRateIncrease: 0,
-        scenarioName: 'Optimistic'
-    });
-    const { mutate, data, isPending, error } = useSimulateScenario();
-    const [currentScenarioProjections, setCurrentScenarioProjections] = useState<GrowthProjection[]>(baseProjections);
-    const [scenarioName, setScenarioName] = useState('Base Case');
-
-    useEffect(() => {
-        if (data?.simulateScenario.projections) {
-            setCurrentScenarioProjections(data.simulateScenario.projections);
-            setScenarioName(data.simulateScenario.scenarioName);
-        } else {
-            setCurrentScenarioProjections(baseProjections);
-            setScenarioName('Base Case');
-        }
-    }, [data, baseProjections]);
-
-    const handleParamChange = (key: keyof ScenarioParameters, value: number | string) => {
-        setParams(prev => ({
-            ...prev,
-            [key]: typeof value === 'string' ? value : parseFloat(value.toFixed(2))
-        }));
-    };
-
-    const handleSimulate = () => {
-        mutate({ workflowId, parameters: params });
-    };
-
-    const resetScenario = () => {
-        setParams({
-            customerAcquisitionMultiplier: 1.0,
-            conversionRateMultiplier: 1.0,
-            averageRevenuePerUserMultiplier: 1.0,
-            churnRateIncrease: 0,
-            scenarioName: 'Optimistic'
-        });
-        setCurrentScenarioProjections(baseProjections);
-        setScenarioName('Base Case');
-    };
-
-
-    return (
-        <Card title="Scenario Simulator" className={`flex flex-col ${className}`}>
-            <div className="flex-grow p-4 space-y-4">
-                <h4 className="text-lg font-semibold text-cyan-300 mb-2">Adjust Parameters</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-gray-400 text-sm mb-1">Acquisition Multiplier ({params.customerAcquisitionMultiplier.toFixed(2)}x)</label>
-                        <input
-                            type="range"
-                            min="0.5"
-                            max="2.0"
-                            step="0.1"
-                            value={params.customerAcquisitionMultiplier}
-                            onChange={(e) => handleParamChange('customerAcquisitionMultiplier', parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-cyan-600/50 accent-cyan-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-400 text-sm mb-1">Conversion Multiplier ({params.conversionRateMultiplier.toFixed(2)}x)</label>
-                        <input
-                            type="range"
-                            min="0.5"
-                            max="2.0"
-                            step="0.1"
-                            value={params.conversionRateMultiplier}
-                            onChange={(e) => handleParamChange('conversionRateMultiplier', parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-indigo-600/50 accent-indigo-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-400 text-sm mb-1">ARPU Multiplier ({params.averageRevenuePerUserMultiplier.toFixed(2)}x)</label>
-                        <input
-                            type="range"
-                            min="0.5"
-                            max="2.0"
-                            step="0.1"
-                            value={params.averageRevenuePerUserMultiplier}
-                            onChange={(e) => handleParamChange('averageRevenuePerUserMultiplier', parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-green-600/50 accent-green-500"
-                        />
-                    </div>
-                     <div>
-                        <label className="block text-gray-400 text-sm mb-1">Churn Increase (+{params.churnRateIncrease}%)</label>
-                        <input
-                            type="range"
-                            min="0"
-                            max="20"
-                            step="1"
-                            value={params.churnRateIncrease}
-                            onChange={(e) => handleParamChange('churnRateIncrease', parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-red-600/50 accent-red-500"
-                        />
-                    </div>
-                </div>
-                <div className="flex justify-end space-x-2 mt-4">
-                    <button onClick={resetScenario} className="px-3 py-1 text-xs bg-gray-700 text-gray-300 rounded hover:bg-gray-600">Reset</button>
-                    <button onClick={handleSimulate} disabled={isPending} className="px-4 py-1 text-xs bg-cyan-600 text-white rounded hover:bg-cyan-700">
-                        {isPending ? 'Simulating...' : 'Run Simulation'}
-                    </button>
-                </div>
-                <div className="h-48 mt-4">
+            <Card title="Financial Trajectory">
+                <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={currentScenarioProjections}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                             <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 10 }} label={{ value: "Months", position: "insideBottom", offset: -5, fill: '#9ca3af' }} />
-                            <YAxis yAxisId="rev" orientation="right" tickFormatter={(val)=>`$${val}`} tick={{ fill: '#9ca3af', fontSize: 10 }}/>
-                             <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.9)', borderColor: '#4b5563' }} />
-                             <Legend wrapperStyle={{ fontSize: '10px' }} />
-                             <Line yAxisId="rev" type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} dot={false} name={`Revenue (${scenarioName})`} />
-                             <Line yAxisId="rev" type="monotone" dataKey="revenue" stroke="#4b5563" strokeWidth={1} strokeDasharray="3 3" dot={false} data={baseProjections} name="Baseline Revenue" />
+                        <LineChart data={records}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                            <XAxis dataKey="month" stroke="#9ca3af" fontSize={10} />
+                            <YAxis stroke="#9ca3af" fontSize={10} tickFormatter={(val) => `$${val/1000}k`} />
+                            <Tooltip contentStyle={{ backgroundColor: '#111827', borderColor: '#374151' }} />
+                            <Legend />
+                            <Line type="monotone" dataKey="revenue" stroke="#06b6d4" strokeWidth={2} name="Revenue" />
+                            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
+                            <Line type="monotone" dataKey="cashBalance" stroke="#10b981" strokeWidth={2} name="Cash Reserves" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
+            </Card>
+        </div>
+    );
+};
+
+const MarketIntelligence: FC = () => {
+    const { data } = useMarket();
+    const competitors = data?.getMarketIntelligence || [];
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card title="Market Share Distribution">
+                <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie data={competitors} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="marketShare">
+                                {competitors.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip contentStyle={{ backgroundColor: '#111827', borderColor: '#374151' }} />
+                            <Legend />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            </Card>
+            <Card title="Competitor Threat Matrix">
+                <div className="space-y-4">
+                    {competitors.map((comp, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                            <div>
+                                <div className="font-bold text-white">{comp.name}</div>
+                                <div className="text-xs text-gray-400">Growth: {comp.growthRate}% YoY</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-xs text-gray-400 mb-1">Threat Level</div>
+                                <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className={`h-full ${comp.threatLevel > 70 ? 'bg-red-500' : comp.threatLevel > 40 ? 'bg-yellow-500' : 'bg-green-500'}`} style={{ width: `${comp.threatLevel}%` }}></div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        </div>
+    );
+};
+
+const TeamOrchestrator: FC = () => {
+    const { data } = useTeam();
+    const team = data?.getTeamStructure || [];
+
+    return (
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {team.map(member => (
+                    <Card key={member.id} className="relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-2 opacity-10">
+                            <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-lg font-bold text-white">{member.name}</h3>
+                            <p className="text-cyan-400 text-sm mb-3">{member.role}</p>
+                            <div className="space-y-2">
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-400"><span>Performance</span><span>{member.performance}%</span></div>
+                                    <div className="w-full bg-gray-700 h-1.5 rounded-full mt-1"><div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${member.performance}%` }}></div></div>
+                                </div>
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-400"><span>AI Adaptability</span><span>{member.aiPotential}%</span></div>
+                                    <div className="w-full bg-gray-700 h-1.5 rounded-full mt-1"><div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: `${member.aiPotential}%` }}></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+            <Card title="Recruitment Pipeline (AI Sourced)">
+                <div className="text-sm text-gray-400 italic mb-2">The Quantum Weaver has identified 3 potential candidates matching your culture vectors.</div>
+                <div className="space-y-2">
+                    <div className="p-2 bg-gray-800 rounded flex justify-between items-center">
+                        <span>Candidate #8842 (Ex-Google DeepMind)</span>
+                        <button className="px-3 py-1 bg-cyan-600/20 text-cyan-400 text-xs rounded hover:bg-cyan-600/40">Initiate Contact</button>
+                    </div>
+                    <div className="p-2 bg-gray-800 rounded flex justify-between items-center">
+                        <span>Candidate #1029 (Fintech Founder)</span>
+                        <button className="px-3 py-1 bg-cyan-600/20 text-cyan-400 text-xs rounded hover:bg-cyan-600/40">Initiate Contact</button>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    );
+};
+
+const LegalShield: FC = () => {
+    const { data } = useLegal();
+    const docs = data?.getLegalStatus || [];
+
+    return (
+        <Card title="Compliance & Legal Governance">
+            <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-400">
+                    <thead className="bg-gray-800 text-gray-200 uppercase font-medium">
+                        <tr>
+                            <th className="p-3">Document</th>
+                            <th className="p-3">Status</th>
+                            <th className="p-3">Risk Score</th>
+                            <th className="p-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-700">
+                        {docs.map(doc => (
+                            <tr key={doc.id} className="hover:bg-gray-800/50 transition-colors">
+                                <td className="p-3 font-medium text-white">{doc.name}</td>
+                                <td className="p-3">
+                                    <Badge color={doc.status === 'SIGNED' ? 'bg-green-900 text-green-200' : doc.status === 'REVIEW' ? 'bg-yellow-900 text-yellow-200' : 'bg-gray-700'}>
+                                        {doc.status}
+                                    </Badge>
+                                </td>
+                                <td className="p-3">
+                                    <div className="flex items-center">
+                                        <span className={`mr-2 ${doc.riskScore > 50 ? 'text-red-400' : 'text-green-400'}`}>{doc.riskScore}</span>
+                                        <AIInsightBubble context={`Legal risk for ${doc.name}`} />
+                                    </div>
+                                </td>
+                                <td className="p-3">
+                                    <button className="text-cyan-400 hover:underline">View</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </Card>
     );
-}
+};
+
+const GlobalChatOverlay: FC<{ context: string }> = ({ context }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [input, setInput] = useState('');
+    const [messages, setMessages] = useState<{ sender: 'user' | 'ai', text: string }[]>([]);
+    const { mutate, isPending } = useGenerateAiChat();
+
+    const handleSend = () => {
+        if (!input.trim()) return;
+        const msg = input;
+        setMessages(prev => [...prev, { sender: 'user', text: msg }]);
+        setInput('');
+        mutate({ message: msg, context }, {
+            onSuccess: (data) => setMessages(prev => [...prev, { sender: 'ai', text: data.generateAIChatResponse }])
+        });
+    };
+
+    return (
+        <div className={`fixed bottom-0 right-0 z-50 transition-all duration-300 ${isOpen ? 'w-96 h-[600px]' : 'w-12 h-12'} bg-gray-900 border-t border-l border-gray-700 shadow-2xl rounded-tl-xl overflow-hidden`}>
+            {!isOpen && (
+                <button onClick={() => setIsOpen(true)} className="w-full h-full flex items-center justify-center bg-cyan-600 hover:bg-cyan-500 text-white">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                </button>
+            )}
+            {isOpen && (
+                <div className="flex flex-col h-full">
+                    <div className="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
+                        <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="font-bold text-white text-sm">AI Assistant</span>
+                        </div>
+                        <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">&times;</button>
+                    </div>
+                    <div className="flex-grow overflow-y-auto p-4 space-y-3 bg-black/20 custom-scrollbar">
+                        {messages.length === 0 && <div className="text-center text-gray-500 text-xs mt-10">System Online. Awaiting input.</div>}
+                        {messages.map((m, i) => (
+                            <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[85%] p-2 rounded-lg text-sm ${m.sender === 'user' ? 'bg-cyan-700 text-white' : 'bg-gray-800 text-gray-300'}`}>
+                                    {m.text}
+                                </div>
+                            </div>
+                        ))}
+                        {isPending && <div className="text-xs text-gray-500 animate-pulse">Computing...</div>}
+                    </div>
+                    <div className="p-3 bg-gray-800 border-t border-gray-700">
+                        <div className="flex space-x-2">
+                            <input 
+                                className="flex-grow bg-gray-900 border border-gray-600 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-cyan-500"
+                                placeholder="Command the system..."
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyPress={e => e.key === 'Enter' && handleSend()}
+                            />
+                            <button onClick={handleSend} className="px-3 py-1 bg-cyan-600 text-white rounded text-sm hover:bg-cyan-500">Send</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const SystemAlertsWidget: FC = () => {
+    const { data } = useAlerts();
+    const alerts = data?.getSystemAlerts || [];
+    if (alerts.length === 0) return null;
+
+    return (
+        <div className="mb-6 space-y-2">
+            {alerts.map(alert => (
+                <div key={alert.id} className={`p-3 rounded-lg border flex items-start space-x-3 ${alert.severity === 'HIGH' ? 'bg-red-900/20 border-red-500/50' : 'bg-blue-900/20 border-blue-500/50'}`}>
+                    <div className={`mt-1 w-2 h-2 rounded-full ${alert.severity === 'HIGH' ? 'bg-red-500 animate-ping' : 'bg-blue-500'}`}></div>
+                    <div>
+                        <div className="text-sm font-bold text-white">{alert.severity} PRIORITY ALERT</div>
+                        <div className="text-xs text-gray-300">{alert.message}</div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+// --- MAIN VIEW CONTROLLER ---
 
 const QuantumWeaverContent: FC = () => {
-    const userId = "user_001"; 
-    const [planInput, setPlanInput] = useState('');
+    const userId = "user_001";
+    const [activeModule, setActiveModule] = useState<'DASHBOARD' | 'STRATEGY' | 'FINANCE' | 'MARKET' | 'TEAM' | 'LEGAL'>('DASHBOARD');
+    const { data: userPlans } = useUserPlans(userId);
     const { mutate: startAnalysis, isPending: isStarting } = useStartAnalysis();
-    const { data: userPlans, isLoading: isLoadingPlans } = useUserPlans(userId);
+    const [planInput, setPlanInput] = useState('');
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(null);
-    
-    // Use selected workflow or the latest one
-    const activeWorkflowId = selectedWorkflowId || (userPlans?.getUserPlans?.[0]?.workflowId);
-    const currentStatus = userPlans?.getUserPlans?.find(p => p.workflowId === activeWorkflowId)?.status || null;
 
-    const { data: analysisStatus, isLoading: isStatusLoading } = useAnalysisStatus(activeWorkflowId || null, currentStatus);
+    // Determine active workflow for Strategy View
+    const activeWorkflowId = selectedWorkflowId || (userPlans?.getUserPlans?.[0]?.workflowId);
+    const { data: analysisStatus } = useAnalysisStatus(activeWorkflowId || null);
     const workflowData = analysisStatus?.getBusinessPlanAnalysisStatus;
 
-    const handleStart = () => {
-        if (planInput.trim()) {
-            startAnalysis({ plan: planInput, userId });
-            setPlanInput('');
+    const renderModule = () => {
+        switch (activeModule) {
+            case 'FINANCE': return <FinancialDashboard />;
+            case 'MARKET': return <MarketIntelligence />;
+            case 'TEAM': return <TeamOrchestrator />;
+            case 'LEGAL': return <LegalShield />;
+            case 'STRATEGY':
+                return (
+                    <div className="space-y-6">
+                        {!activeWorkflowId ? (
+                            <Card title="Initialize Strategic Core">
+                                <textarea
+                                    value={planInput}
+                                    onChange={(e) => setPlanInput(e.target.value)}
+                                    placeholder="Input strategic parameters for analysis..."
+                                    className="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
+                                />
+                                <button
+                                    onClick={() => startAnalysis({ plan: planInput, userId })}
+                                    disabled={isStarting || !planInput.trim()}
+                                    className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
+                                >
+                                    {isStarting ? 'Processing...' : 'Execute Analysis Protocol'}
+                                </button>
+                            </Card>
+                        ) : (
+                            <>
+                                {workflowData?.status === 'PENDING' && <div className="text-center p-10 text-cyan-400 animate-pulse">Quantum Analysis in Progress...</div>}
+                                {workflowData?.result && (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <Card title="Strategic Output">
+                                            <p className="text-gray-300 mb-4">{workflowData.result.feedback}</p>
+                                            <div className="grid grid-cols-3 gap-2 mb-4">
+                                                <div className="bg-gray-800 p-2 rounded text-center">
+                                                    <div className="text-xs text-gray-400">Viability</div>
+                                                    <div className="text-xl font-bold text-green-400">{workflowData.result.metrics?.viability.toFixed(0)}%</div>
+                                                </div>
+                                                <div className="bg-gray-800 p-2 rounded text-center">
+                                                    <div className="text-xs text-gray-400">Market Fit</div>
+                                                    <div className="text-xl font-bold text-indigo-400">{workflowData.result.metrics?.marketFit.toFixed(0)}%</div>
+                                                </div>
+                                                <div className="bg-gray-800 p-2 rounded text-center">
+                                                    <div className="text-xs text-gray-400">Risk</div>
+                                                    <div className="text-xl font-bold text-red-400">{workflowData.result.metrics?.risk.toFixed(0)}%</div>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => setSelectedWorkflowId(null)} className="text-xs text-cyan-400 hover:underline">New Analysis</button>
+                                        </Card>
+                                        <Card title="Growth Projection">
+                                            <div className="h-48">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <LineChart data={workflowData.result.growthProjections}>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                                        <XAxis dataKey="month" hide />
+                                                        <YAxis hide />
+                                                        <Tooltip contentStyle={{ backgroundColor: '#111827' }} />
+                                                        <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} dot={false} />
+                                                    </LineChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </Card>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                );
+            case 'DASHBOARD':
+            default:
+                return (
+                    <div className="space-y-6">
+                        <SystemAlertsWidget />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Card title="Financial Health" className="cursor-pointer hover:border-cyan-500 transition-colors" onClick={() => setActiveModule('FINANCE')}>
+                                <div className="text-3xl font-bold text-green-400">94/100</div>
+                                <div className="text-sm text-gray-400 mt-2">Runway Optimized</div>
+                            </Card>
+                            <Card title="Market Position" className="cursor-pointer hover:border-cyan-500 transition-colors" onClick={() => setActiveModule('MARKET')}>
+                                <div className="text-3xl font-bold text-indigo-400">Leader</div>
+                                <div className="text-sm text-gray-400 mt-2">Top 5% in Sector</div>
+                            </Card>
+                            <Card title="Operational Efficiency" className="cursor-pointer hover:border-cyan-500 transition-colors" onClick={() => setActiveModule('TEAM')}>
+                                <div className="text-3xl font-bold text-cyan-400">98.2%</div>
+                                <div className="text-sm text-gray-400 mt-2">AI Automation Active</div>
+                            </Card>
+                        </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <FinancialDashboard />
+                            <MarketIntelligence />
+                        </div>
+                    </div>
+                );
         }
     };
 
-    useEffect(() => {
-        if (userPlans?.getUserPlans?.length && !selectedWorkflowId) {
-            setSelectedWorkflowId(userPlans.getUserPlans[0].workflowId);
-        }
-    }, [userPlans, selectedWorkflowId]);
-
     return (
-        <div className="space-y-6 p-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold text-white tracking-wider">Quantum Weaver Incubator</h2>
-                {userPlans?.getUserPlans?.length ? (
-                    <select 
-                        value={selectedWorkflowId || ''} 
-                        onChange={(e) => setSelectedWorkflowId(e.target.value)}
-                        className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-1"
-                    >
-                        {userPlans.getUserPlans.map((plan: any) => (
-                            <option key={plan.workflowId} value={plan.workflowId}>
-                                {plan.businessPlan ? plan.businessPlan.substring(0, 30) + '...' : plan.workflowId}
-                            </option>
-                        ))}
-                    </select>
-                ) : null}
+        <div className="flex h-screen bg-gray-950 text-white overflow-hidden font-sans">
+            {/* SIDEBAR NAVIGATION */}
+            <div className="w-64 bg-black border-r border-gray-800 flex flex-col">
+                <div className="p-6 border-b border-gray-800">
+                    <h1 className="text-2xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">FINOS<span className="text-white text-xs align-top">PRO</span></h1>
+                    <p className="text-xs text-gray-500 mt-1">Business OS v10.0</p>
+                </div>
+                <nav className="flex-grow p-4 space-y-2 overflow-y-auto custom-scrollbar">
+                    {[
+                        { id: 'DASHBOARD', label: 'Command Center', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+                        { id: 'STRATEGY', label: 'Quantum Strategy', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+                        { id: 'FINANCE', label: 'Treasury & Finance', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                        { id: 'MARKET', label: 'Market Intelligence', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+                        { id: 'TEAM', label: 'Talent & HR', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+                        { id: 'LEGAL', label: 'Legal & Compliance', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+                    ].map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveModule(item.id as any)}
+                            className={`w-full flex items-center p-3 rounded-lg transition-all duration-200 ${activeModule === item.id ? 'bg-cyan-900/30 text-cyan-400 border-r-2 border-cyan-400' : 'text-gray-400 hover:bg-gray-900 hover:text-gray-200'}`}
+                        >
+                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path></svg>
+                            <span className="text-sm font-medium">{item.label}</span>
+                        </button>
+                    ))}
+                </nav>
+                <div className="p-4 border-t border-gray-800">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xs font-bold">SU</div>
+                        <div>
+                            <div className="text-sm font-bold text-white">System User</div>
+                            <div className="text-xs text-gray-500">Standard Access</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {!activeWorkflowId ? (
-                <Card title="Start New Analysis">
-                    <textarea
-                        value={planInput}
-                        onChange={(e) => setPlanInput(e.target.value)}
-                        placeholder="Describe your business idea..."
-                        className="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
-                    />
-                    <button
-                        onClick={handleStart}
-                        disabled={isStarting || !planInput.trim()}
-                        className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
-                    >
-                        {isStarting ? 'Analyzing...' : 'Analyze Business Plan'}
-                    </button>
-                </Card>
-            ) : (
-                <>
-                     {isStatusLoading && <p className="text-center text-gray-400">Loading analysis status...</p>}
-                     
-                     {workflowData?.status === 'PENDING' && (
-                         <div className="text-center p-10">
-                             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-                             <p className="text-cyan-300 animate-pulse">AI is analyzing your business plan...</p>
-                         </div>
-                     )}
+            {/* MAIN CONTENT AREA */}
+            <main className="flex-1 overflow-y-auto custom-scrollbar bg-gray-950 relative">
+                {/* HEADER */}
+                <header className="sticky top-0 z-20 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 p-6 flex justify-between items-center">
+                    <div>
+                        <h2 className="text-xl font-bold text-white">{activeModule === 'DASHBOARD' ? 'System Overview' : activeModule.charAt(0) + activeModule.slice(1).toLowerCase().replace('_', ' ')}</h2>
+                        <p className="text-xs text-gray-400">System Status: <span className="text-green-400">Nominal</span> | AI Latency: 12ms</p>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <button className="p-2 text-gray-400 hover:text-white relative">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                </header>
 
-                     {workflowData?.result && (
-                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                             {/* Left Column: Overview & Metrics */}
-                             <div className="space-y-6 lg:col-span-2">
-                                 <Card title="Executive Summary">
-                                     <p className="text-gray-300 mb-4">{workflowData.result.feedback}</p>
-                                     <div className="grid grid-cols-2 gap-4">
-                                         <div className="bg-gray-800 p-3 rounded border border-gray-700">
-                                             <span className="text-gray-400 text-sm">Estimated Seed Loan</span>
-                                             <p className="text-2xl font-bold text-green-400">${workflowData.result.loanAmount?.toLocaleString()}</p>
-                                         </div>
-                                         <div className="bg-gray-800 p-3 rounded border border-gray-700">
-                                             <span className="text-gray-400 text-sm">Analysis Confidence</span>
-                                             <p className="text-2xl font-bold text-cyan-400">High</p>
-                                         </div>
-                                     </div>
-                                 </Card>
-                                 
-                                 {workflowData.result.metrics && (
-                                     <Scorecard scores={workflowData.result.metrics} />
-                                 )}
+                {/* CONTENT */}
+                <div className="p-6 pb-24">
+                    {/* NARRATIVE CONTEXT */}
+                    <div className="mb-8 p-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 rounded-lg">
+                        <h3 className="text-sm font-bold text-cyan-500 uppercase tracking-wider mb-2">System Operational Guidelines 10.1</h3>
+                        <p className="text-gray-300 text-sm leading-relaxed italic">
+                            "Our focus is on practical, incremental improvements. The data presented here provides a snapshot of current operations, intended to support informed decision-making. Sustainable growth requires careful attention to detail."
+                            <br/><span className="text-gray-500 not-italic mt-1 block">â€” System Administrator</span>
+                        </p>
+                    </div>
 
-                                 {workflowData.result.growthProjections && (
-                                     <GrowthProjectionChart projections={workflowData.result.growthProjections} />
-                                 )}
-                                 
-                                 {workflowData.result.growthProjections && (
-                                     <ScenarioSimulator 
-                                        workflowId={workflowData.workflowId} 
-                                        baseProjections={workflowData.result.growthProjections} 
-                                     />
-                                 )}
-                             </div>
+                    {renderModule()}
+                </div>
 
-                             {/* Right Column: AI Assistant & Tools */}
-                             <div className="space-y-6">
-                                 <AIGeneratorWidget 
-                                     title="Elevator Pitch Generator" 
-                                     prompt="Generate a compelling 30-second elevator pitch for this business." 
-                                     businessPlan={workflowData.businessPlan}
-                                     workflowId={workflowData.workflowId}
-                                 />
-                                 
-                                 <AIChatWindow 
-                                     businessPlan={workflowData.businessPlan} 
-                                     workflowId={workflowData.workflowId}
-                                     className="h-[500px]"
-                                 />
-                                 
-                                 {workflowData.result.potentialMentors && (
-                                     <MentorshipSuggestions mentors={workflowData.result.potentialMentors} />
-                                 )}
-                             </div>
-                         </div>
-                     )}
-                     
-                     {/* Create New Button */}
-                     <button 
-                        onClick={() => setSelectedWorkflowId(null)} 
-                        className="fixed bottom-8 right-8 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full p-4 shadow-lg z-50"
-                     >
-                        + New Analysis
-                     </button>
-                </>
-            )}
+                {/* GLOBAL CHAT */}
+                <GlobalChatOverlay context={activeModule} />
+            </main>
         </div>
     );
 };

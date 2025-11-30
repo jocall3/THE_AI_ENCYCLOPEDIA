@@ -305,7 +305,7 @@ const ConciergeService: React.FC = () => {
           <span style={styles.subtitle}>Concierge & Lifestyle Management</span>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ color: '#d4af37', fontSize: '1.2rem' }}>∞ ACCESS</div>
+          <div style={{ color: '#d4af37', fontSize: '1.2rem' }}>âˆž ACCESS</div>
           <div style={{ color: '#555', fontSize: '0.8rem' }}>GLOBAL MEMBER</div>
         </div>
       </header>
@@ -368,7 +368,7 @@ const ConciergeService: React.FC = () => {
       {booking.isBooking && booking.asset && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
-            <button style={styles.closeButton} onClick={closeBooking}>×</button>
+            <button style={styles.closeButton} onClick={closeBooking}>Ã—</button>
             
             {!booking.confirmed ? (
               <>
@@ -413,7 +413,7 @@ const ConciergeService: React.FC = () => {
                   marginBottom: '20px',
                   animation: 'fadeIn 1s'
                 }}>
-                  ✓
+                  âœ“
                 </div>
                 <h2 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px' }}>Access Granted</h2>
                 <p style={{ color: '#888' }}>

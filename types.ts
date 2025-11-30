@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -7,14 +8,14 @@ export interface User {
 
 export interface Transaction {
   id: string;
-  type: 'income' | 'expense' | 'scheduled_expense';
+  type: 'income' | 'expense' | 'scheduled_expense' | 'transfer';
   category: string;
   description: string;
   amount: number;
   date: string;
   carbonFootprint?: number;
   isScheduled?: boolean;
-  scheduledRule?: ScheduledPaymentRule;
+  scheduledRule?: any;
 }
 
 export interface Asset {
@@ -27,14 +28,26 @@ export interface Asset {
   id?: string;
   category?: string;
   lastUpdated?: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
+  assetClass: string;
+  historicalData?: { date: string, value: number }[];
 }
 
 export interface AIInsight {
   id: string;
-  title: string;
-  description: string;
-  urgency: 'low' | 'medium' | 'high';
+  title?: string;
+  description?: string;
+  urgency?: 'low' | 'medium' | 'high';
   chartData?: { name: string; value: number }[];
+  // Stripe View Compatibility
+  type?: string;
+  severity?: 'Low' | 'Medium' | 'High' | 'Critical';
+  summary?: string;
+  details?: string;
+  timestamp?: number;
+  source?: string;
+  recommendation?: string;
+  confidence?: number;
 }
 
 export interface BudgetCategory {
@@ -75,538 +88,305 @@ export interface LinkedAccount {
   id: string;
   name: string;
   mask: string;
-  // Expanded fields for security view
-  type?: string; 
-  subtype?: string;
+  institution?: string;
+  institutionId?: string;
   balance?: number;
+  type?: string;
+  subtype?: string;
+  status?: 'active' | 'error' | 'disconnected';
   lastUpdated?: string;
 }
 
-export interface QuantumWeaverState {
-    stage: WeaverStage;
-    progress: number;
-    currentPlan: AIPlan | null;
-    questions: AIQuestion[];
-    answers: { [key: string]: string };
-}
+export type Account = LinkedAccount;
 
-export interface AIQuestion {
-    id: string;
-    question: string;
-    type: 'text' | 'number' | 'textarea';
-}
+// --- Marqeta Specific Types ---
 
-export interface Subscription {
-    id: string;
-    name: string;
-    amount: number;
-    billingCycle: 'monthly' | 'yearly';
-    nextPaymentDate: string;
-}
-
-export interface DetectedSubscription extends Subscription {
-    confidence: number;
-}
-
-export interface CreditScore {
-    score: number;
-    rating: 'Excellent' | 'Good' | 'Fair' | 'Poor';
-    lastUpdated: string;
-}
-
-export interface UpcomingBill {
-    id: string;
-    name: string;
-    amount: number;
-    dueDate: string;
-}
-
-export interface SavingsGoal {
-    id: string;
-    name: string;
-    targetAmount: number;
-    currentAmount: number;
-    deadline: string;
-}
-
-export interface MarketMover {
-    id: string;
-    name: string;
-    symbol: string;
-    price: number;
-    change: number;
-    changePercent: number;
-}
-
-export interface MarketplaceProduct {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    author: string;
-}
-
-export interface FinancialGoal {
-    id: string;
-    name: string;
-    targetAmount: number;
-    currentAmount: number;
-    targetDate: string;
-    aiPlan?: AIGoalPlan | null;
-}
-
-export interface AIGoalPlan {
-    monthlyContribution: number;
-    steps: string[];
-    feasibilitySummary: string;
-}
-
-export interface CryptoAsset {
-    id: string;
-    name: string;
-    symbol: string;
-    balance: number;
-    usdValue: number;
-    logo: string;
-    price: number;
-    change24h: number;
-}
-
-export interface VirtualCard {
-    id: string;
-    last4: string;
-    expiration: string;
-    cvv: string;
-    balance: number;
-}
-
-export interface PaymentOperation {
-    id: string;
-    status: 'pending' | 'completed' | 'failed';
-    error?: string;
-}
-
-export interface CorporateCard {
-    id: string;
-    cardholderName: string;
-    last4: string;
-    limit: number;
-    spent: number;
-    status: 'active' | 'frozen';
-}
-
-export interface CorporateTransaction {
-    id: string;
-    cardId: string;
-    merchant: string;
-    amount: number;
-    date: string;
-    approved: boolean;
-}
-
-export interface RewardPoints {
-    balance: number;
-}
-
-export interface Notification {
-    id: string;
-    message: string;
-    type: 'info' | 'warning' | 'error';
-    read: boolean;
-}
-
-export interface NFTAsset {
-    id: string;
-    name: string;
-    collection: string;
-    imageUrl: string;
-    floorPrice?: number;
-    lastSalePrice?: number;
-}
-
-export interface RewardItem {
-    id: string;
-    name: string;
-    cost: number;
-    type: 'cashback' | 'giftcard' | 'perk';
-}
-
-export interface APIStatus {
-    plaid: 'operational' | 'degraded' | 'outage';
-    stripe: 'operational' | 'degraded' | 'outage';
-    marqeta: 'operational' | 'degraded' | 'outage';
-    modernTreasury: 'operational' | 'degraded' | 'outage';
-    googleGenAI: 'operational' | 'degraded' | 'outage';
-}
-
-export interface CreditFactor {
-    name: string;
-    status: 'Good' | 'Fair' | 'Poor';
-    description: string;
-}
-
-
-export interface CorporateCardControls {
-    spendLimit: number;
-    blockedCategories: string[];
-}
-
-export interface Counterparty {
-    id: string;
-    name: string;
-    accountNumber: string;
-}
-
-export interface PaymentOrder {
-    id: string;
-    counterpartyId: string;
-    amount: number;
-    status: 'pending' | 'completed' | 'failed';
-}
-
-export interface Invoice {
-    id: string;
-    number: string;
-    amount: number;
-    dueDate: string;
-    status: 'paid' | 'unpaid';
-}
-
-export interface ComplianceCase {
-    id: string;
-    reason: string;
-    status: 'open' | 'closed';
-}
-
-
-export interface LedgerAccount {
-    id: string;
-    name: string;
-    description: string;
-    normal_balance: 'credit' | 'debit';
-    balances: {
-        pending_balance: { amount: number; currency: string; exponent: number };
-        posted_balance: { amount: number; currency: string; exponent: number };
+export interface MarqetaCardProductConfig {
+    poi: {
+        other: {
+            allow: boolean;
+            card_presence_required: boolean;
+            cardholder_presence_required: boolean;
+            track1_discretionary_data?: string;
+            track2_discretionary_data?: string;
+            use_static_pin: boolean;
+        };
+        ecommerce: boolean;
+        atm: boolean;
+    };
+    transaction_controls: {
+        accepted_countries_token: string;
+        always_require_pin: boolean;
+        always_require_icc: boolean;
+        allow_gpa_auth: boolean;
+        require_card_not_present_card_security_code: boolean;
+        allow_mcc_group_authorization_controls: boolean;
+        allow_first_pin_set_via_financial_transaction: boolean;
+        ignore_card_suspended_state: boolean;
+        allow_chip_fallback: boolean;
+        allow_network_load: boolean;
+        allow_network_load_card_activation: boolean;
+        allow_quasi_cash: boolean;
+        enable_partial_auth_approval: boolean;
+        address_verification: {
+            av_messages: {
+                validate: boolean;
+                decline_on_address_number_mismatch: boolean;
+                decline_on_postal_code_mismatch: boolean;
+            };
+            auth_messages: {
+                validate: boolean;
+                decline_on_address_number_mismatch: boolean;
+                decline_on_postal_code_mismatch: boolean;
+            };
+        };
+    };
+    card_life_cycle: {
+        activate_upon_issue: boolean;
+        expiration_offset: {
+            unit: string;
+            value: number;
+        };
+        card_service_code: number;
+        update_expiration_upon_activation: boolean;
+    };
+    fulfillment: {
+        payment_instrument: string;
+        package_id: string;
+        all_zero_card_security_code: boolean;
+        bin_prefix: string;
+        bulk_ship: boolean;
+        pan_length: string;
+        fulfillment_provider: string;
+        allow_card_creation: boolean;
+        uppercase_name_lines: boolean;
+        enable_offline_pin: boolean;
+    };
+    jit_funding?: {
+        program_funding_source: {
+            enabled: boolean;
+        }
     };
 }
 
-export interface UserPreferences {
-    theme: 'dark' | 'light';
-    notifications: {
-        largeTransactions: boolean;
-        budgetWarnings: boolean;
-        aiInsights: boolean;
-    };
-}
-
-export interface RecurringContribution {
-    goalId: string;
-    amount: number;
-    frequency: 'weekly' | 'monthly';
-}
-
-export interface Contribution {
-    id: string;
-    goalId: string;
-    amount: number;
-    date: string;
-}
-
-export interface LinkedGoal {
-    primaryGoalId: string;
-    secondaryGoalId: string;
-    contributionRatio: number;
-}
-
-export interface ScheduledPaymentRule {
-    frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
-    dayOfWeek?: number; // 0-6 for weekly
-    dayOfMonth?: number; // 1-31 for monthly
-    month?: number; // 0-11 for yearly
-    endDate?: string;
-}
-
-export interface PlaidLinkMetadata {
-    institution: {
-        name: string;
-        institution_id: string;
-    };
-    accounts: Array<{ 
-        id: string;
-        name: string;
-        mask: string;
-        type: string;
-        subtype: string;
-    }>;
-}
-
-export interface EIP6963ProviderInfo {
-    uuid: string;
-    name: string;
-    icon: string;
-    rdns: string;
-}
-
-export interface EIP6963ProviderDetail {
-    info: EIP6963ProviderInfo;
-    provider: any; // EIP-1193 provider object
-}
-
-export interface CompanyProfile {
-    id: string;
-    name: string;
-    sector: string;
-    marketCap: number; // in millions
-    esgScore: number; // 0-100
-    description: string;
-}
-
-export interface RealEstateProperty {
-    id: string;
-    name: string;
-    location: string;
-    value: number;
-    yield: number;
-}
-
-export interface ArtPiece {
-    id: string;
-    title: string;
-    artist: string;
-    value: number;
-    medium: string;
-}
-
-export interface AlgoStrategy {
-    id: string;
-    name: string;
-    description: string;
-    riskLevel: 'low' | 'medium' | 'high';
-}
-
-export interface VentureStartup {
-    id: string;
-    name: string;
-    sector: string;
-    valuation: number; // in millions
-    fundingStage: string;
-}
-
-
-
-export enum View {
-    Dashboard = 'dashboard',
-    Transactions = 'transactions',
-    SendMoney = 'send-money',
-    Budgets = 'budgets',
-    Investments = 'investments',
-    AIAdvisor = 'ai-advisor',
-    Security = 'security',
-    Settings = 'settings',
-    TheVision = 'the-vision',
-    APIIntegration = 'api-integration',
-    PlaidDashboard = 'plaid-dashboard',
-    StripeDashboard = 'stripe-dashboard',
-    MarqetaDashboard = 'marqeta-dashboard',
-    ModernTreasury = 'modern-treasury',
-    OpenBanking = 'open-banking',
-    FinancialDemocracy = 'financial-democracy',
-    Crypto = 'crypto',
-    AIAdStudio = 'ai-ad-studio',
-    QuantumWeaver = 'quantum-weaver',
-    Marketplace = 'marketplace',
-    CorporateCommand = 'corporate-command',
-    CardCustomization = 'card-customization',
-    CreditHealth = 'credit-health',
-    FinancialGoals = 'financial-goals',
-    Rewards = 'rewards',
-    Personalization = 'personalization',
-    // Enterprise Suite
-    SSO = 'sso',
-    AlgoTradingLab = 'algo-trading-lab',
-    VentureCapitalDesk = 'venture-capital-desk',
-    PrivateEquityLounge = 'private-equity-lounge',
-    DerivativesDesk = 'derivatives-desk',
-    ForexArena = 'forex-arena',
-    CommoditiesExchange = 'commodities-exchange',
-    TaxOptimizationChamber = 'tax-optimization-chamber',
-    RealEstateEmpire = 'real-estate-empire',
-    ArtCollectibles = 'art-collectibles',
-    LegacyBuilder = 'legacy-builder',
-    PhilanthropyHub = 'philanthropy-hub',
-    SovereignWealth = 'sovereign-wealth',
-    GlobalMarketMap = 'global-market-map',
-    QuantumAssets = 'quantum-assets',
-    ConciergeService = 'concierge-service',
-
-    // New src/components/features views
-    AutonomousFinanceAgentLog = 'autonomous-finance-agent-log',
-    FinancialRuleBuilder = 'financial-rule-builder',
-    JointBudgetTracker = 'joint-budget-tracker',
-    GamifiedGroupSavings = 'gamified-group-savings',
-    SharedVaultDashboard = 'shared-vault-dashboard',
-    CorporateCardControlsPanel = 'corporate-card-controls-panel',
-    AIAdCampaignManager = 'ai-ad-campaign-manager',
-    AIInsightFeed = 'ai-insight-feed',
-    RetirementPlanner = 'retirement-planner',
-    AIInvoiceScanner = 'ai-invoice-scanner',
-    PayrollProcessingWizard = 'payroll-processing-wizard',
-    SupplyChainFinancePortal = 'supply-chain-finance-portal',
-    TreasuryDashboard = 'treasury-dashboard',
-    FinancialLiteracyModule = 'financial-literacy-module',
-    TeenDebitCardManager = 'teen-debit-card-manager',
-    ForeignExchangeHedgingTool = 'foreign-exchange-hedging-tool',
-    MultiCurrencyWallet = 'multi-currency-wallet',
-    APIHealthDashboard = 'api-health-dashboard',
-    MarqetaCardProgramDashboard = 'marqeta-card-program-dashboard',
-    PlaidConnectionManager = 'plaid-connection-manager',
-    StripeChargeDashboard = 'stripe-charge-dashboard',
-    DigitalTrustAndWillCreator = 'digital-trust-and-will-creator',
-    CollegeSavingsPlanner529 = 'college-savings-planner-529',
-    MortgageAffordabilityCalculator = 'mortgage-affordability-calculator',
-    AIBillNegotiator = 'ai-bill-negotiator',
-    DebtPayoffPlanner = 'debt-payoff-planner',
-    DeveloperPortal = 'developer-portal',
-    PitchAnalysisStepper = 'pitch-analysis-stepper',
-    SecurityScoreDashboard = 'security-score-dashboard',
-    DeviceManager = 'device-manager',
-    TransactionRuleBuilderUI = 'transaction-rule-builder-ui',
-    AccessibilitySettingsPanel = 'accessibility-settings-panel',
-    TwoFactorAuthSetup = 'two-factor-auth-setup',
-    ThemeBuilder = 'theme-builder',
-    CarbonFootprintOptimizer = 'carbon-footprint-optimizer',
-    AlternativeAssetTracker = 'alternative-asset-tracker',
-    AutomatedPortfolioRebalancer = 'automated-portfolio-rebalancer',
-    AITaxOptimizer = 'ai-tax-optimizer',
-    DeFiYieldExplorer = 'defi-yield-explorer',
-    NFTValuationTool = 'nft-valuation-tool',
-    Web3CorporateWallet = 'web3-corporate-wallet'
-}
-
-export enum WeaverStage {
-    INITIALIZING = 'initializing',
-    GATHERING_INFO = 'gathering_info',
-    ANALYZING = 'analyzing',
-    PLAN_READY = 'plan_ready'
-}
-
-
-// Login Activity for Security View
-export interface LoginActivity {
-    id: string;
-    timestamp: string;
-    ip: string;
-    location: string;
-    device: string;
-    status: 'success' | 'failed';
-}
-
-// Device Management for Security View
-export interface Device {
-    id: string;
-    name: string;
-    type: 'desktop' | 'mobile' | 'tablet';
-    lastLogin: string;
-    isTrusted: boolean;
-}
-
-// Data Sharing Policy for Security View
-export interface DataSharingPolicy {
-    appId: string;
-    appName: string;
-    permissions: string[];
-    status: 'active' | 'revoked';
-}
-
-// Transaction Rules for Security View
-export interface TransactionRule {
-    id: string;
-    description: string;
-    action: 'alert' | 'block';
-    isEnabled: boolean;
-}
-
-// Threat Alerts for Security View
-export interface ThreatAlert {
-    id: string;
-    timestamp: string;
-    severity: 'critical' | 'high' | 'medium' | 'low';
-    description: string;
-    status: 'new' | 'investigating' | 'resolved';
-}
-
-// Audit Logs for Security View
-export interface AuditLogEntry {
-    id: string;
-    timestamp: string;
-    user: string;
-    action: string;
-    details: string;
-}
-
-// API Key Management for Security View
-export interface APIKey {
-    id: string;
-    name: string;
-    keyPrefix: string;
-    createdDate: string;
-    lastUsed: string;
-    scopes: string[];
-}
-
-// Trusted Contacts for Security View
-export interface TrustedContact {
-    id: string;
-    name: string;
-    relationship: string;
-    contactInfo: string;
-}
-
-// Security Awareness Modules for Security View
-export interface SecurityAwarenessModule {
-    id: string;
-    title: string;
-    description: string;
-    isCompleted: boolean;
-}
-
-// Security Score Metrics for Security View
-export interface SecurityScoreMetric {
-    name: string;
-    score: number; // 0-100
-    description: string;
-}
-
-// Marqeta types (mocked)
-export interface MarqetaCardProgram {
+export interface MarqetaCardProduct {
     token: string;
     name: string;
     active: boolean;
-    fulfillment: any;
+    start_date: string;
+    config: MarqetaCardProductConfig;
     created_time: string;
+    last_modified_time: string;
 }
 
-export interface MarqetaCardholder {
-    token: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    active: boolean;
-    status: string;
-    created_time: string;
+export interface MarqetaAPIResponse {
+    count: number;
+    start_index: number;
+    end_index: number;
+    is_more: boolean;
+    data: MarqetaCardProduct[];
 }
 
-// Stripe types (mocked)
-export interface StripeBalance {
-    available: { amount: number; currency: string; }[];
-    pending: { amount: number; currency: string; }[];
+// --- Navigation Views ---
+
+export const View = {
+  Dashboard: 'Dashboard',
+  Transactions: 'Transactions',
+  SendMoney: 'Send Money',
+  Budgets: 'Budgets',
+  FinancialGoals: 'Financial Goals',
+  CreditHealth: 'Credit Health',
+  Investments: 'Investments',
+  CryptoWeb3: 'Crypto & Web3',
+  AlgoTradingLab: 'Algo-Trading Lab',
+  ForexArena: 'Forex Arena',
+  CommoditiesExchange: 'Commodities Exchange',
+  RealEstateEmpire: 'Real Estate Empire',
+  ArtCollectibles: 'Art & Collectibles',
+  DerivativesDesk: 'Derivatives Desk',
+  VentureCapital: 'Venture Capital',
+  PrivateEquity: 'Private Equity',
+  TaxOptimization: 'Tax Optimization',
+  LegacyBuilder: 'Legacy Builder',
+  CorporateCommand: 'Corporate Command',
+  ModernTreasury: 'Modern Treasury',
+  CardPrograms: 'Card Programs', // Marqeta
+  DataNetwork: 'Data Network', // Plaid
+  Payments: 'Payments', // Stripe
+  SSO: 'SSO',
+  AIAdvisor: 'AI Advisor',
+  QuantumWeaver: 'Quantum Weaver',
+  AgentMarketplace: 'Agent Marketplace',
+  AIAdStudio: 'AI Ad Studio',
+  CardCustomization: 'Card Customization',
+  FinancialDemocracy: 'Financial Democracy',
+  OpenBanking: 'Open Banking',
+  APIStatus: 'API Status',
+  ConciergeService: 'Concierge Service',
+  Philanthropy: 'Philanthropy',
+  SovereignWealth: 'Sovereign Wealth',
+  SecurityCenter: 'Security Center',
+  Personalization: 'Personalization',
+  TheVision: 'The Vision',
+  Settings: 'Settings',
+  APIIntegration: 'API Integration', // Added
+  AIStrategy: 'AI Strategy', // Added
+  Rewards: 'Rewards', // Added
+  Goals: 'Goals' // Added
+} as const;
+
+export type View = typeof View[keyof typeof View];
+
+export const WeaverStage = {
+  initial: 'initial',
+  analyzing: 'analyzing',
+  planning: 'planning',
+  complete: 'complete',
+  error: 'error',
+  Pitch: 'Pitch', // Added
+  Analysis: 'Analysis', // Added
+  Test: 'Test', // Added
+  Error: 'Error', // Added
+  FinalReview: 'FinalReview', // Added
+  Approved: 'Approved' // Added
+} as const;
+
+export type WeaverStage = typeof WeaverStage[keyof typeof WeaverStage];
+
+// --- Plaid Types ---
+
+export type PlaidProduct = 'transactions' | 'auth' | 'identity' | 'assets' | 'investments' | 'liabilities';
+
+export interface PlaidAccount {
+  id: string;
+  name: string;
+  mask: string;
+  type: string;
+  subtype: string;
+  verification_status?: string;
 }
 
-export interface StripeCharge {
-    id: string;
-    amount: number;
-    currency: string;
-    status: 'succeeded' | 'pending' | 'failed';
-    created: number; // unix timestamp
-    description: string | null;
+export interface PlaidLinkSuccessMetadata {
+  public_token: string;
+  institution: {
+    name: string;
+    institution_id: string;
+  };
+  accounts: PlaidAccount[];
+  link_session_id: string;
 }
+
+export type PlaidMetadata = PlaidLinkSuccessMetadata;
+
+// --- Other Shared Types ---
+
+export type QuantumWeaverState = any;
+export type AIQuestion = any;
+export type Subscription = any;
+export type CreditScore = { score: number; history: { date: string; score: number }[]; rating: 'Excellent' | 'Good' | 'Fair' | 'Poor'; change: number };
+export type UpcomingBill = any;
+export type SavingsGoal = any;
+export type MarketMover = any;
+export type MarketplaceProduct = any;
+export type FinancialGoal = any;
+export type AIGoalPlan = any;
+export type CryptoAsset = any;
+export type VirtualCard = any;
+export type PaymentOperation = any;
+export type CorporateCard = any;
+export type CorporateTransaction = any;
+export type RewardPoints = { balance: number; lastEarned: number; lastRedeemed: number; currency: string; };
+export type Notification = { id: string | number; message: string; timestamp: string; read: boolean; view?: View; type?: 'success' | 'error' | 'info' | 'warning' | 'critical'; };
+export type NFTAsset = any;
+export type RewardItem = any;
+export type APIStatus = any;
+export type CreditFactor = { id: string; name: string; status: 'Excellent' | 'Good' | 'Fair' | 'Poor'; impact: string; description: string };
+export type CorporateCardControls = any;
+export type Counterparty = any;
+export type PaymentOrder = any;
+export type Invoice = any;
+export type ComplianceCase = any;
+export type LedgerAccount = any;
+export type UserPreferences = any;
+export type RecurringContribution = any;
+export type Contribution = any;
+export type LinkedGoal = any;
+export type EIP6963ProviderDetail = any;
+export type CompanyProfile = any;
+export type RealEstateProperty = any;
+export type ArtPiece = any;
+export type AlgoStrategy = any;
+export type VentureStartup = any;
+export type DetectedSubscription = any;
+export type StripeBalance = { available: { amount: number, currency: string }[], pending: { amount: number, currency: string }[] };
+export type StripeCharge = { id: string; amount: number; currency: string; status: 'succeeded' | 'pending' | 'failed'; created: number; description: string; customer_id: string; };
+export type StripeCustomer = { id: string; email: string; name: string; created: number; total_spent: number; };
+export type StripeSubscription = { id: string; customer_id: string; plan_id: string; status: 'active' | 'canceled' | 'past_due'; current_period_end: number; amount: number; };
+export type LoginActivity = { id: string; device: string; browser: string; os: string; location: string; ip: string; timestamp: string; isCurrent: boolean; userAgent: string; };
+export type Device = { id: string; name: string; type: string; model: string; lastActivity: string; location: string; ip: string; isCurrent: boolean; permissions: string[]; status: string; firstSeen: string; userAgent: string; pushNotificationsEnabled: boolean; biometricAuthEnabled: boolean; encryptionStatus: string; };
+export type DataSharingPolicy = { policyId: string; policyName: string; scope: string; lastReviewed: string; isActive: boolean; };
+export type TransactionRule = { ruleId: string; name: string; triggerCondition: string; action: string; isEnabled: boolean; };
+export type ThreatAlert = { alertId: string; title: string; description: string; timestamp: string; };
+export type AuditLogEntry = { id: string; timestamp: string; userId: string; action: string; severity: 'Low' | 'Medium' | 'High' | 'Critical'; details: string; targetResource?: string; success?: boolean; };
+export type APIKey = { id: string; keyName: string; creationDate: string; scopes: string[]; };
+export type TrustedContact = { id: string; name: string; relationship: string; verified: boolean; };
+export type SecurityAwarenessModule = { moduleId: string; title: string; completionRate: number; };
+export type SecurityScoreMetric = { metricName: string; currentValue: string; };
+
+// --- Mega Dashboard Types (Added to fix errors) ---
+export type AccessLog = any;
+export type FraudCase = any;
+export type MLModel = any;
+export type LoanApplication = any;
+export type MortgageAsset = any;
+export type ThreatIntelBrief = any;
+export type InsuranceClaim = any;
+export type RiskProfile = any;
+export type DataSet = any;
+export type DataLakeStat = any;
+export type NexusNode = any;
+export type NexusLink = any;
+export type SalesDeal = any;
+export type MarketingCampaign = any;
+export type GrowthMetric = any;
+export type Competitor = any;
+export type Benchmark = any;
+export type License = any;
+export type Disclosure = any;
+export type LegalDoc = any;
+export type SandboxExperiment = any;
+export type ConsentRecord = any;
+export type ContainerImage = any;
+export type ApiUsage = any;
+export type Incident = any;
+export type BackupJob = any;
+export type PayRun = any;
+export type Project = any;
+export type Course = any;
+export type Employee = any;
+export type PortfolioAsset = any;
+export type FinancialAnomaly = any;
+export type AnomalyStatus = any;
+export type DynamicKpi = any;
+export type PaymentOrderStatus = any;
+export type NexusGraphData = any;
+export type WalletInfo = any;
+export type Recipient = any;
+export type Currency = any;
+export type SecurityProfile = any;
+export type UserProfile = { name: string; email: string; role: string; };
+
+
+// Extend the global Window interface
+declare global {
+    interface WindowEventMap {
+        "eip6963:announceProvider": CustomEvent<EIP6963AnnounceProviderEvent['detail']>;
+    }
+}
+
+export type EIP6963AnnounceProviderEvent = {
+    detail: {
+        info: any;
+        provider: any;
+    };
+};

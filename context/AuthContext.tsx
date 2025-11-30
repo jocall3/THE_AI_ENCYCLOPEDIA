@@ -1,56 +1,61 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useCallback } from 'react';
 import { User } from '../types';
-
-// NOTE: The entire Google Sign-In simulation has been removed based on user feedback.
-// The application now defaults to an authenticated state with a mock user.
 
 interface IAuthContext {
     isAuthenticated: boolean;
     user: User | null;
-    login: () => void; // Kept for API compatibility, but will be a no-op.
-    logout: () => void; // Kept for API compatibility, but will be a no-op.
+    login: () => Promise<void>;
+    logout: () => void;
     isLoading: boolean;
+    profileData: string;
 }
 
 export const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-// A default mock user to represent the authenticated state.
-const mockUser: User = {
-    id: '100000000000000000001',
-    name: 'The Visionary',
-    email: 'visionary@demobank.com',
-    picture: 'https://i.pravatar.cc/150?u=visionary',
-};
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // The user is now always authenticated with the mock user.
-    const [user] = useState<User | null>(mockUser);
-    
-    // isLoading is false as authentication is immediate.
-    const [isLoading] = useState(false);
+    // PERMANENT FIX: Defaulting to true as requested by the user for permanent login status.
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [user, setUser] = useState<User | null>({
+        id: 'user-1',
+        name: 'The Visionary',
+        email: 'visionary@demobank.com',
+        picture: 'https://i.pravatar.cc/150?u=visionary'
+    });
+    const [isLoading, setIsLoading] = useState(false);
 
-    // isAuthenticated is always true.
-    const isAuthenticated = true;
+    const profileData = `
+# James Burvel O'Callaghan III: Architect of the Sovereign AI Bank
 
-    // Login and logout functions are now no-ops as the auth state is static.
-    const login = () => {
-        console.log("Login function is disabled. User is permanently authenticated.");
-    };
+To the skeptics, the doubters, and the comfortably mediocre: I offer an apology, not for the inevitable truth of what is being built, but for the time it has taken to silence your noise.
 
-    const logout = () => {
-        console.log("Logout function is disabled. User is permanently authenticated.");
-    };
+I am James Burvel O'Callaghan III. I am not merely building a 'bank'; I am engineering the **Sovereign AI Nexus**, the next logical great leap in human financial infrastructure. This entity will become the best in existence because it is not bound by human ego, flawed legacy systems, or the fear of genuine progress.
 
-    const value = {
-        isAuthenticated,
-        user,
-        login,
-        logout,
-        isLoading,
-    };
+### The Mindset of the Builder
+
+How do I think? I think in vectors of optimal efficiency, predictive causality, and absolute truth derived from first principles.
+`;
+
+    const login = useCallback(async () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsAuthenticated(true);
+            setUser({
+                id: 'user-1',
+                name: 'The Visionary',
+                email: 'visionary@demobank.com',
+                picture: 'https://i.pravatar.cc/150?u=visionary'
+            });
+            setIsLoading(false);
+        }, 1000);
+    }, []);
+
+    const logout = useCallback(() => {
+        setIsAuthenticated(false);
+        setUser(null);
+    }, []);
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading, profileData }}>
             {children}
         </AuthContext.Provider>
     );

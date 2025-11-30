@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   ComposedChart,
@@ -77,6 +78,9 @@ interface MarketPointProps {
   size: number; // Market Cap influence
   color: string;
   payload: CompanyData;
+  // Recharts passes other props we might not use directly
+  cx?: number;
+  cy?: number;
 }
 
 const MarketPoint3D: React.FC<MarketPointProps> = (props) => {
@@ -88,23 +92,15 @@ const MarketPoint3D: React.FC<MarketPointProps> = (props) => {
 
   // Simulating depth based on size (market cap)
   const effectiveSize = Math.sqrt(size) * 1.5; // Scale size for better visual effect
-  const depthEffect = (size / 5000) * 50; // Max depth offset of 50px
-
   // Calculate position based on region index (for visual separation)
-  const regionMap: { [key in CompanyData['region']]: number } = {
-    NA: 0.1,
-    EU: 0.35,
-    APAC: 0.6,
-    LATAM: 0.85,
-  };
   
   // Recharts layout automatically maps X and Y to the axes. 
   // We use the custom tooltip to convey the "3D" feel through text and size representation.
   
   return (
     <circle 
-      cx={y} // y value in Recharts data maps to x-coordinate on chart
-      cy={x} // x value in Recharts data maps to y-coordinate on chart
+      cx={props.cx} // use provided cx from recharts
+      cy={props.cy} // use provided cy from recharts
       r={effectiveSize / 4 + 2} // Radius scaled by market cap
       fill={color} 
       opacity={0.8}
@@ -258,7 +254,7 @@ const GlobalMarketMap: React.FC = () => {
           {/* Scatter component to render the individual company points */}
           <Scatter 
             data={scatterPoints} 
-            shape={<MarketPoint3D />} 
+            shape={(props: any) => <MarketPoint3D {...props} />} 
             isAnimationActive={false} // Turn off animation for stable visualization
           />
 

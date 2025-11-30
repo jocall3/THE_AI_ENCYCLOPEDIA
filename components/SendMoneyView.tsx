@@ -188,7 +188,7 @@ export const QuantumChannelEstablishment: React.FC = () => (
             <p className="text-sm text-purple-300 animate-fade-in-out">Establishing Quantum Tunnel...</p>
         </div>
         <style>{`.animate-spin-slow { animation: spin-slow 8s linear infinite; } .animate-ping-once { animation: ping-once 2s ease-out infinite; } .animate-pulse-fast { animation: pulse-fast 1.5s ease-in-out infinite; } .animate-fade-in-out { animation: fade-in-out 3s ease-in-out infinite; }
-        @keyframes spin-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } @keyframes ping-once { 0% { transform: scale(0.2); opacity: 0; } 50% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } } @keyframes pulse-fast { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } } @keyframes fade-in-out { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }`}</style>
+        @keyframes spin-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } @keyframes ping-once { 0% { transform: scale(0.2); opacity: 0; } 50% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } } @keyframes pulse-fast { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } } @keyframes fade-in-out { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }`}</style>
     </>
 );
 

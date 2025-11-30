@@ -115,22 +115,55 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ setActiveView }) => {
         setVoiceState('processing');
         const lowerCommand = command.toLowerCase();
 
-        // Navigate
+        // --- Navigation Logic ---
         const navMatch = lowerCommand.match(/^(show|go to|take me to|open|view) (my )?(.+)$/i);
         if (navMatch) {
-            let viewName = navMatch[3].trim().replace(/\s+/g, '-');
-            if (viewName === 'home' || viewName === 'overview') viewName = 'dashboard';
-            
-            const targetView = Object.values(View).find(v => v.replace(/-/g, '') === viewName.replace(/-/g, ''));
-            
+            const spokenView = navMatch[3].trim();
+
+            const normalize = (text: string) =>
+                text
+                    .toLowerCase()
+                    .replace(/\(.*\)/g, '') // remove content in parentheses e.g. (Marqeta)
+                    .replace(/[^a-z0-9]+/g, ''); // remove all non-alphanumeric chars
+
+            const aliases: { [key: string]: string } = {
+                home: 'dashboard',
+                overview: 'dashboard',
+                sso: 'singlesignon',
+                plaid: 'datanetwork',
+                stripe: 'payments',
+                marqeta: 'cardprograms'
+            };
+
+            const searchKey = normalize(spokenView);
+            const canonicalKey = aliases[searchKey] || searchKey;
+
+            const targetView = Object.values(View).find(
+                (v) => normalize(v) === canonicalKey
+            );
+
             if (targetView) {
                 setActiveView(targetView);
-                await speak(`Navigating to ${targetView.replace(/-/g, ' ')}.`);
+                
+                const formatForTTS = (viewString: string) =>
+                    viewString
+                        .replace(/-/g, ' ')
+                        .split(' ')
+                        .map(word => {
+                            if (['ai', 'sso', 'api'].includes(word.toLowerCase())) {
+                                return word.toUpperCase();
+                            }
+                            // Capitalize first letter of each word
+                            return word.charAt(0).toUpperCase() + word.slice(1);
+                        })
+                        .join(' ');
+
+                await speak(`Navigating to ${formatForTTS(targetView)}.`);
                 setIsModalOpen(false);
                 return;
             }
         }
-        
+
         // Send Money
         const payMatch = lowerCommand.match(/^(pay|send) (.+?) \$?(\d+(\.\d{1,2})?)/i);
         if (payMatch && dataContext) {
