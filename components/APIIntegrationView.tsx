@@ -496,7 +496,7 @@ const FinancialOperationsDashboard: React.FC<{ modernTreasuryApiKey: string | nu
                             </ResponsiveContainer>
                         </div>
                         <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                            <h4 className="text-lg font-semibold text-white}>AI Forecast Summary</h4>
+                            <h4 className="text-lg font-semibold text-white">AI Forecast Summary</h4>
                             <p className="text-gray-400 text-sm">
                                 Our AI model predicts a strong financial outlook for the next 12 months, with consistent growth in revenue streams.
                                 Key factors include: increased customer retention, successful product launches, and optimized operational costs.
@@ -679,7 +679,7 @@ const BusinessIntelligenceDashboard: React.FC<{ geminiApiKey: string | null }> =
                             </ResponsiveContainer>
                         </div>
                         <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                            <h4 className="text-lg font-semibold text-white}>AI Marketing Optimization</h4>
+                            <h4 className="text-lg font-semibold text-white">AI Marketing Optimization</h4>
                             <p className="text-gray-400 text-sm">
                                 AI recommends reallocating 20% of your ad budget to social media campaigns, predicting a 15% increase in lead quality.
                             </p>
@@ -717,7 +717,7 @@ const BusinessIntelligenceDashboard: React.FC<{ geminiApiKey: string | null }> =
                             </ResponsiveContainer>
                         </div>
                         <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
-                            <h4 className="text-lg font-semibold text-white}>AI Operational Insights</h4>
+                            <h4 className="text-lg font-semibold text-white">AI Operational Insights</h4>
                             <p className="text-gray-400 text-sm">
                                 AI identifies a 25% potential for further automation in customer support workflows, leading to significant cost savings and improved response times.
                             </p>
